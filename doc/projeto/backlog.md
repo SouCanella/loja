@@ -2,10 +2,43 @@
 
 Itens **não concluídos** ou **parcialmente** entregues. Alinhado ao **§23 — Backlog enterprise** do [documento_enterprise.md](../documento_enterprise.md) e a débitos entre fases.
 
+## Onde está documentado o que já foi entregue
+
+O backlog **não duplica** o detalhe de trabalho fechado; use:
+
+| Entrega | Documentação |
+|---------|----------------|
+| **Fase 0** (monorepo, Docker, Makefile, smoke tests, `README` raiz) | [fase-00-kickoff.md](../fases/fase-00-kickoff.md) **Parte C** (entregue + pendências P1–P5) e **Parte B** (status concluído) |
+| Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — entrada *Fase 0 — implementação concluída* |
+| Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
+| Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |
+
+Commits na `main` com mensagem `feat(phase-0): …` fecham o registro técnico no Git.
+
 ## Legenda
 
 - **Estado:** `nao_iniciado` | `parcial` | `bloqueado` | `convertido` (promovido a requisito normativo)
 - **Origem:** enterprise | mvp | tecnico
+
+---
+
+## Melhorias de engenharia (MA-*) — pós-validação Fase 0
+
+Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md](../documento_enterprise.md) §5 (multi-tenant) e §20; não estavam como linhas explícitas até o mapeamento abaixo. **Estado** reflete se já existe norma/código.
+
+| ID | Item | Estado | Fase alvo | Notas |
+|----|------|--------|-----------|--------|
+| MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | nao_iniciado | 1 | Complementa **MVP-01**; após SQLAlchemy + rotas autenticadas |
+| MA-02 | Contrato HTTP com prefixo versionado (**ex. `/api/v1`**) desde o primeiro conjunto de rotas de negócio | nao_iniciado | 1 | Reduz dívida de versão pública da API |
+| MA-03 | **Storage** de ficheiros (imagens, logos) com **prefixo por `store_id`** ou tenant no bucket (S3-compatível) | nao_iniciado | 2+ | Alinha a **RF-CA-03** e §4 enterprise (storage) |
+| MA-04 | **Índices compostos** `(store_id, …)` nas tabelas mais consultadas (produtos, pedidos, etc.) | nao_iniciado | 1–2 | Performance e clareza de modelo multi-tenant |
+| MA-05 | **Row Level Security (RLS)** no Postgres como reforço opcional de isolamento | nao_iniciado | 4 / hardening | Avaliar custo operacional vs benefício; alternativa ao erro de aplicação |
+| MA-06 | **Read replicas** ou **sharding** por tenant | nao_iniciado | pós-MVP | Só se o monólito + uma BD deixarem de chegar; documentar gatilho |
+| MA-07 | **Next.js:** `route groups` separando **vitrine** `(public)/loja/[slug]` e **painel** `(painel)` / admin | nao_iniciado | 1 | Alinha **RF-AR-01** e reduz mistura de contextos |
+| MA-08 | Ciclo de **atualização de dependências** (npm / Next) e resposta a **audit/CVE** | parcial | contínuo | Liga às pendências P1 em [fase-00-kickoff.md](../fases/fase-00-kickoff.md) Parte C |
+| MA-09 | **Vitest:** migrar config para **ESM** (fim do aviso CJS da API Vite) | nao_iniciado | técnico | Liga à pendência P2 (fase-00 Parte C) |
+
+**Relação com itens existentes:** **BE-05** (multi-usuário por loja) e **MVP-01** cobrem parte do modelo; MA-01 e MA-07 explicitam **teste de isolamento** e **estrutura de rotas** no front.
 
 ---
 
@@ -67,4 +100,4 @@ Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/`
 
 ## Como sincronizar
 
-Ao concluir trabalho de uma fase, **remova ou atualize** linhas aqui e registre o que foi entregue no arquivo `doc/fases/fase-0X-*.md` correspondente.
+Ao concluir trabalho de uma fase, **remova ou atualize** linhas aqui e registre o que foi entregue no arquivo `doc/fases/fase-0X-*.md` correspondente (Parte C / relatório), em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) e, para MA-*, nesta tabela.

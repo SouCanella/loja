@@ -110,11 +110,13 @@ Política: artefatos em `backend/htmlcov/`, `backend/reports/`, `frontend/covera
 
 | # | Pendência | Nota |
 |---|-----------|------|
-| P1 | **Next.js / npm audit** | `npm audit` reporta vulnerabilidades transitórias; acompanhar releases Next 14.x/15.x e [avisos de segurança](https://nextjs.org/blog). Atualizar dependências num sprint dedicado. |
-| P2 | **Vitest (CJS)** | Aviso de depreciação da API CJS do Vite; migrar config para ESM quando conveniente. |
+| P1 | **Next.js / npm audit** | `npm audit` reporta vulnerabilidades transitórias; acompanhar releases Next 14.x/15.x e [avisos de segurança](https://nextjs.org/blog). Atualizar dependências num sprint dedicado. **Backlog:** **MA-08** em [backlog.md](../projeto/backlog.md). |
+| P2 | **Vitest (CJS)** | Aviso de depreciação da API CJS do Vite; migrar config para ESM quando conveniente. **Backlog:** **MA-09** em [backlog.md](../projeto/backlog.md). |
 | P3 | **Alembic** | `make migrate` é intencionalmente no-op; migrações na Fase 1. |
 | P4 | **Ligação backend ↔ Postgres** | Compose define `DATABASE_URL`; a API ainda não usa SQLAlchemy (Fase 1). |
 | P5 | **CI/CD** | Fora do âmbito da Fase 0; previsto evolução [documento_enterprise.md](../documento_enterprise.md) §24 / Fase 4. |
+
+Outras sugestões de revisão (API versionada, testes de isolamento tenant, RLS, route groups Next, etc.) estão mapeadas como **MA-01 … MA-09** em [projeto/backlog.md](../projeto/backlog.md).
 
 ### Como reproduzir localmente
 
