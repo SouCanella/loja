@@ -1,0 +1,47 @@
+# Serviços locais — alinhado a documento_enterprise.md §20 (postgres:16-alpine).
+# Fase 0: backend expõe apenas /health; ligação à BD na Fase 1.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-loja}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-loja}
+      POSTGRES_DB: ${POSTGRES_DB:-loja_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - loja_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-loja} -d ${POSTGRES_DB:-loja_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://loja:loja@postgres:5432/loja_dev}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    depends_on:
+      - backend
+
+volumes:
+  loja_pgdata:

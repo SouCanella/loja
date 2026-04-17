@@ -1,0 +1,45 @@
+# Ambiente e segredos
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+*.egg-info/
+.eggs/
+dist/
+build/
+.ruff_cache/
+.coverage
+htmlcov/
+.pytest_cache/
+myenv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Relatórios de teste (gerados localmente)
+backend/htmlcov/
+backend/reports/
+frontend/coverage/
+frontend/playwright-report/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

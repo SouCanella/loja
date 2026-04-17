@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Fase 0 — implementação concluída)
+
+- **Código:** monorepo na raiz com `backend/` (FastAPI, pytest, Ruff, Dockerfile), `frontend/` (Next.js 14, Tailwind, Vitest, Dockerfile standalone), `docker-compose.yml` (Postgres 16-alpine + API + frontend), `Makefile` (`up`, `down`, `test`, `test-report`, `migrate`, `lint`, `backend-venv`), [.env.example](../../.env.example), [.gitignore](../../.gitignore).
+- **Testes:** smoke pytest (`GET /health`) e Vitest; `make test` e `make lint` validados; `docker compose build` validado.
+- **Documentação:** [fase-00-kickoff.md](../fases/fase-00-kickoff.md) Parte C (entregues, pendências P1–P5); [README.md](../README.md) na raiz do repo para desenvolvedores.
+- **Pendências não bloqueantes:** ver tabela em fase-00 Parte C (audit npm, Vitest CJS, Alembic na Fase 1, SQLAlchemy, CI).
+
 ## 2026-04-17 (avaliações e layout vitrine)
 
 - **Produto:** avaliações por produto **desativadas no padrão inicial**, ativação e **moderação** (aprovar/rejeitar) pelo admin; **layout** catálogo grade vs **lista em linhas** — [requisitos-funcionais.md](../normativos/requisitos-funcionais.md) RF-CF-07/08, RF-CA-09/10, RF-AV; [regras-negocio.md](../normativos/regras-negocio.md) RN-025–027, RN-033; [documento_enterprise.md](../documento_enterprise.md) §6–§8; RNF-SEC-09, RNF-UX-05.
@@ -37,4 +44,4 @@ Registro opcional de marcos por data.
 ## 2026-04-16
 
 - **Planejamento roadmap:** criados [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) e planejamentos completos das Fases 1 a 4 (`fase-01` … `fase-04`); [fase-00-kickoff.md](../fases/fase-00-kickoff.md) atualizado (Parte A planejamento / Parte B execução).
-- **Fase 0 (implementação):** pendente até existir monorepo com Docker, Makefile, testes smoke e `make test-report` conforme checklist da Fase 0.
+- **Fase 0 (implementação):** ~~pendente~~ **concluída** em 2026-04-17 — ver entrada acima e [fase-00-kickoff.md](../fases/fase-00-kickoff.md) Parte C.

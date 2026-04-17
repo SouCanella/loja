@@ -12,6 +12,7 @@
 | **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
 | **[execucao/](execucao/)** | Changelog de marcos |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
+| **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — base da **Fase 0** implementada |
 
 ## Ordem de leitura sugerida
 

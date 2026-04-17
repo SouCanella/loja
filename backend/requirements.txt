@@ -1,0 +1,11 @@
+# Backend — Fase 0 (API mínima). SQLAlchemy/Alembic na Fase 1.
+fastapi>=0.115.0,<0.116
+uvicorn[standard]>=0.32.0,<0.35
+pydantic>=2.10.0,<3
+
+# Testes e qualidade
+httpx>=0.28.0,<0.29
+pytest>=8.3.0,<9
+pytest-cov>=6.0.0,<7
+pytest-html>=4.1.0,<5
+ruff>=0.8.0,<0.10

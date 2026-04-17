@@ -59,11 +59,11 @@ Os documentos abaixo descrevem **todo o roadmap** (entregáveis, critérios de a
 
 ### Definição de pronto (Fase 0 — execução)
 
-- [ ] `doc/README.md`, `d../projeto/backlog.md` e este arquivo coerentes com o repositório.
-- [ ] Esqueleto `frontend/` e `backend/` com serviços subindo via Docker Compose.
-- [ ] Makefile na raiz com `up`, `down`, `test`, `migrate`, `lint` (migrate/lint podem ser mínimos até Alembic/ESLint plenos).
-- [ ] Pelo menos um teste smoke por camada (backend e frontend).
-- [ ] Relatórios HTML de teste documentados em [doc/README.md](../README.md) e geráveis via `make test-report`.
+- [x] `doc/README.md`, [projeto/backlog.md](../projeto/backlog.md) e este arquivo coerentes com o repositório.
+- [x] Esqueleto `frontend/` e `backend/` com serviços subindo via Docker Compose.
+- [x] Makefile na raiz com `up`, `down`, `test`, `migrate`, `lint` (migrate/lint podem ser mínimos até Alembic/ESLint plenos).
+- [x] Pelo menos um teste smoke por camada (backend e frontend).
+- [x] Relatórios HTML de teste documentados em [doc/README.md](../README.md) e geráveis via `make test-report`.
 
 ### Relatórios HTML
 
@@ -84,7 +84,43 @@ Política: artefatos em `backend/htmlcov/`, `backend/reports/`, `frontend/covera
 | Campo | Valor |
 |-------|--------|
 | **Planejamento (docs fases 0–4)** | Concluído — ver [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) |
-| **Status da implementação da Fase 0** | `em_andamento` ou `pendente` (atualizar ao subir código/Docker) |
-| **Data última atualização** | 2026-04-16 |
+| **Status da implementação da Fase 0** | **concluída** (código-base e checklist Parte A satisfeitos) |
+| **Data última atualização** | 2026-04-17 |
 
-**Próximo passo após fechar a checklist da Parte A:** executar [fase-01-fundacao.md](fase-01-fundacao.md) (Docker estável, JWT, middleware de tenant, tabelas iniciais, Next com auth e layout mobile-first).
+**Próximo passo:** executar [fase-01-fundacao.md](fase-01-fundacao.md) (JWT, middleware de tenant, Alembic, rotas `/loja/[slug]`, OpenAPI operacional).
+
+---
+
+## Parte C — Relatório da implementação (2026-04-17)
+
+### Entregue
+
+| Item | Detalhe |
+|------|---------|
+| Monorepo na raiz | [README.md](../../README.md) com comandos, estrutura e convenções de branch |
+| `backend/` | FastAPI, `GET /health`, pytest smoke (`tests/test_smoke.py`), Ruff, `Dockerfile`, dependências em `requirements.txt` |
+| `frontend/` | Next.js 14 (App Router), Tailwind, página inicial mínima, Vitest smoke (`__tests__/smoke.test.ts`), ESLint, `Dockerfile` (output `standalone`) |
+| Orquestração | [docker-compose.yml](../../docker-compose.yml): `postgres:16-alpine`, `backend`, `frontend`; volume nomeado para dados PG |
+| Makefile | `up`, `down`, `test`, `test-report`, `migrate` (no-op documentado), `lint`, `backend-venv` (cria `backend/.venv` se necessário — PEP 668) |
+| Qualidade | `make test` validado (pytest + vitest); `docker compose build` validado |
+| Git | [.gitignore](../../.gitignore) (artefatos de cobertura, `.env`, `node_modules`, `.venv`, etc.) |
+| Ambiente | [.env.example](../../.env.example) |
+
+### Pendências (não bloqueiam Fase 1)
+
+| # | Pendência | Nota |
+|---|-----------|------|
+| P1 | **Next.js / npm audit** | `npm audit` reporta vulnerabilidades transitórias; acompanhar releases Next 14.x/15.x e [avisos de segurança](https://nextjs.org/blog). Atualizar dependências num sprint dedicado. |
+| P2 | **Vitest (CJS)** | Aviso de depreciação da API CJS do Vite; migrar config para ESM quando conveniente. |
+| P3 | **Alembic** | `make migrate` é intencionalmente no-op; migrações na Fase 1. |
+| P4 | **Ligação backend ↔ Postgres** | Compose define `DATABASE_URL`; a API ainda não usa SQLAlchemy (Fase 1). |
+| P5 | **CI/CD** | Fora do âmbito da Fase 0; previsto evolução [documento_enterprise.md](../documento_enterprise.md) §24 / Fase 4. |
+
+### Como reproduzir localmente
+
+```bash
+cp .env.example .env
+make test              # cria backend/.venv à primeira execução e corre testes
+make up                # sobe Postgres + API :8000 + frontend :3000
+# Opcional: make test-report  # cobertura HTML em backend/htmlcov e frontend/coverage
+```
