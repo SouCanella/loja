@@ -3,6 +3,8 @@
 **Referência:** [documento_enterprise.md](../documento_enterprise.md), [regras-negocio.md](../normativos/regras-negocio.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md)  
 **Última atualização do planejamento:** 2026-04-18  
 
+**Estado actual (implementação):** Fases **0** e **1** concluídas e documentadas ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)). **Próximo passo:** [fase-02-operacao.md](fase-02-operacao.md) (catálogo, estoque, pedidos).
+
 Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o MVP. Cada fase tem documento próprio com detalhamento (entregáveis, critérios de aceite, riscos). **Volte aqui** ao ajustar escopo ou datas; depois sincronize o arquivo da fase afetada e o [backlog.md](../projeto/backlog.md).
 
 **Decisões de produto** que afetam escopo (status de pedido, sessão, URL, categorias, etc.): [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) **DEC-14 … DEC-20** e tabela **Gates antes do desenvolvimento**.

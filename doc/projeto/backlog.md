@@ -9,7 +9,8 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | Entrega | Documentação |
 |---------|----------------|
 | **Fase 0** (monorepo, Docker, Makefile, smoke tests, `README` raiz) | [fase-00-kickoff.md](../fases/fase-00-kickoff.md) **Parte C** (entregue + pendências P1–P5) e **Parte B** (status concluído) |
-| Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — entrada *Fase 0 — implementação concluída* |
+| **Fase 1** (Postgres, Alembic, JWT, multi-tenant, OpenAPI estático, auth `/api/v1`, vitrine/painel stub) | [fase-01-fundacao.md](../fases/fase-01-fundacao.md) secção **10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md); [doc/api/README.md](../api/README.md) |
+| Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — entradas *Fase 0* e *Fase 1* |
 | Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
 | Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |
 
@@ -28,8 +29,8 @@ Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md]
 
 | ID | Item | Estado | Fase alvo | Notas |
 |----|------|--------|-----------|--------|
-| MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | nao_iniciado | 1 | Complementa **MVP-01**; após SQLAlchemy + rotas autenticadas |
-| MA-02 | Contrato HTTP com prefixo versionado (**ex. `/api/v1`**) desde o primeiro conjunto de rotas de negócio | nao_iniciado | 1 | Reduz dívida de versão pública da API |
+| MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | parcial | 1 | Cobertura inicial em pytest (BD em memória); reforço com Postgres real em CI — ver testes em `backend/tests/test_auth.py` |
+| MA-02 | Contrato HTTP com prefixo versionado (**ex. `/api/v1`**) desde o primeiro conjunto de rotas de negócio | convertido | 1 | Rotas sob `/api/v1`; OpenAPI em [doc/api/openapi.json](../api/openapi.json) |
 | MA-03 | **Storage** de ficheiros (imagens, logos) com **prefixo por `store_id`** ou tenant no bucket (S3-compatível) | nao_iniciado | 2+ | Alinha a **RF-CA-03** e §4 enterprise (storage) |
 | MA-04 | **Índices compostos** `(store_id, …)` nas tabelas mais consultadas (produtos, pedidos, etc.) | nao_iniciado | 1–2 | Performance e clareza de modelo multi-tenant |
 | MA-05 | **Row Level Security (RLS)** no Postgres como reforço opcional de isolamento | nao_iniciado | 4 / hardening | Avaliar custo operacional vs benefício; alternativa ao erro de aplicação |
@@ -62,7 +63,7 @@ Escopo MVP: autenticação, catálogo, pedidos, estoque básico, receitas, preci
 
 | ID | Requisito | Estado | Dependência |
 |----|-----------|--------|-------------|
-| MVP-01 | Autenticação (JWT) | parcial | Fase 1+ |
+| MVP-01 | Autenticação (JWT) | parcial | Fase 1 (access token); refresh token — backlog / DEC-16 |
 | MVP-02 | Catálogo | parcial | Fase 2 |
 | MVP-03 | Pedidos | parcial | Fase 2 |
 | MVP-04 | Estoque básico | parcial | Fase 2 |

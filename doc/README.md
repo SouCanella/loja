@@ -12,7 +12,8 @@
 | **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
 | **[execucao/](execucao/)** | Changelog de marcos |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
-| **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — base da **Fase 0** implementada |
+| **[api/](api/)** | Contrato **OpenAPI 3** versionado (`openapi.json`), UI **ReDoc** offline (`index.html`); **RNF-DevEx-08** — ver **[api/README.md](api/README.md)** |
+| **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — **Fases 0–1** (auth, migrações, rotas vitrine/painel, OpenAPI estático) |
 
 ## Ordem de leitura sugerida
 
@@ -24,6 +25,21 @@
 6. **[projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md)** — decisões **DEC-01 … DEC-20**, **ADR leve** por DEC e **gates por fase**.
 7. **[projeto/rastreabilidade-fontes.md](projeto/rastreabilidade-fontes.md)** — ligação entre [inicio_planejamento.txt](../inicio_planejamento.txt) e os documentos normativos.
 8. **[fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md)** — Fases 0–4 e equivalência com MVPs do planejamento em texto.
+
+## Contrato HTTP (OpenAPI 3)
+
+- **Ficheiros:** [api/openapi.json](api/openapi.json) (gerado a partir do código FastAPI) e [api/index.html](api/index.html) (ReDoc que lê o JSON no mesmo diretório).
+- **Regenerar** após alterar rotas ou schemas: na raiz do repo, `make openapi-export` (usa `backend/.venv`).
+- **Ler sem subir a API:** instruções em [api/README.md](api/README.md) (servidor HTTP local com `python3 -m http.server`).
+- **Com a API em execução:** `GET /openapi.json`, UI em `/redoc` (Swagger UI `/docs` desativado no código).
+
+## Estado do roadmap
+
+| Marco | Situação |
+|-------|----------|
+| Fase 0 — Kickoff | Concluída (ver [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md)) |
+| Fase 1 — Fundação | Concluída e documentada em [fases/fase-01-fundacao.md](fases/fase-01-fundacao.md) |
+| **Fase 2 — Operação** | **Próximo passo** planejado: [fases/fase-02-operacao.md](fases/fase-02-operacao.md) (catálogo, estoque, pedidos) |
 
 ## Checklist pré-desenvolvimento
 
@@ -77,6 +93,6 @@ make test-report   # gera relatórios HTML de cobertura e execução
 Para servir arquivos estáticos localmente (exemplo):
 
 ```bash
-cd backend && python -m http.server 8765 --directory htmlcov
+cd backend && python3 -m http.server 8765 --directory htmlcov
 # ou abrir os index.html diretamente no navegador
 ```

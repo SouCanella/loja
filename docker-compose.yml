@@ -8,8 +8,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-loja}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-loja}
       POSTGRES_DB: ${POSTGRES_DB:-loja_dev}
+    # Omissão 5433 no host para não colidir com Postgres local na 5432.
+    # Para publicar em 5432: POSTGRES_HOST_PORT=5432 no `.env`.
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - loja_pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +27,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://loja:loja@postgres:5432/loja_dev}
+      # Sempre rede Docker (`postgres`), não usar `DATABASE_URL` do `.env` (muitas vezes localhost).
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-loja}:${POSTGRES_PASSWORD:-loja}@postgres:5432/${POSTGRES_DB:-loja_dev}
+      JWT_SECRET: ${JWT_SECRET:-dev-insecure-jwt-secret-change-in-production}
     depends_on:
       postgres:
         condition: service_healthy

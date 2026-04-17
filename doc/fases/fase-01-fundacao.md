@@ -56,14 +56,14 @@ Estabelecer a **base técnica** do monolito modular: ambiente reproduzível, ban
 
 ## 3. Critérios de aceite (definição de pronto)
 
-- [ ] `make up` sobe os três serviços sem erro; `make down` encerra.
-- [ ] Imagem do serviço `postgres` **pinada** (tag major explícita; ver §20).
-- [ ] Especificação **OpenAPI 3** disponível com a API em execução local (ex.: `/openapi.json`).
-- [ ] `make migrate` aplica migrações no Postgres do Compose.
-- [ ] `make lint` executa linters backend + frontend (config mínima aceitável).
-- [ ] Usuário consegue autenticar e o backend associa requisições a um `store_id` válido.
-- [ ] Testes: smoke + testes de serviço/middleware tenant; relatórios HTML conforme [doc/README.md](../README.md).
-- [ ] Este arquivo atualizado com **seção Execução** (data, decisões, links/commits).
+- [x] `make up` sobe os três serviços sem erro; `make down` encerra.
+- [x] Imagem do serviço `postgres` **pinada** (tag major explícita; ver §20).
+- [x] Especificação **OpenAPI 3** disponível com a API em execução local (ex.: `/openapi.json`).
+- [x] `make migrate` aplica migrações no Postgres do Compose.
+- [x] `make lint` executa linters backend + frontend (config mínima aceitável).
+- [x] Usuário consegue autenticar e o backend associa requisições a um `store_id` válido.
+- [x] Testes: smoke + testes de serviço/middleware tenant; relatórios HTML conforme [doc/README.md](../README.md).
+- [x] Este arquivo atualizado com **seção Execução** (data, decisões, links/commits).
 
 ---
 
@@ -121,6 +121,6 @@ Exemplos a implementar como mínimo (além de health/auth):
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planejado` |
-| **Data de conclusão** | — |
-| **Notas** | Preencher ao concluir a fase. |
+| **Status** | `concluído` |
+| **Data de conclusão** | 2026-04-17 |
+| **Notas** | **Primeira loja + admin:** `POST /api/v1/auth/register` com `store_name`, `store_slug`, `admin_email`, `password` cria `Store` + `User` (`store_admin`). **Login:** `POST /api/v1/auth/login` (form OAuth2; `username` = email). **JWT:** só access token (TTL configurável); refresh em backlog (DEC-16). **Tenant:** claims `sub` (user id) e `store_id`; `GET /api/v1/me` exige consistência com a BD. **Driver:** `postgresql+psycopg` (sync). **Hash:** bcrypt direto (evitar incompatibilidade passlib/bcrypt 5). **Front:** `/loja/[slug]` vitrine stub; `/login` e `/painel` com `NEXT_PUBLIC_API_URL`. **OpenAPI (RNF-DevEx-08):** [doc/api/openapi.json](../api/openapi.json) versionado; `make openapi-export`; ReDoc em `/redoc` com API no ar; Swagger UI `/docs` desligado. **Docker:** Postgres publicado no host na porta **5433** por omissão (`POSTGRES_HOST_PORT`); contentor `backend` monta `DATABASE_URL` interna para `postgres:5432` (não usar `localhost` do `.env` dentro do contentor). Ver [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **Próximo marco:** [fase-02-operacao.md](fase-02-operacao.md). |

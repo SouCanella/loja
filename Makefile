@@ -1,7 +1,7 @@
-.PHONY: up down test test-report migrate lint help backend-venv
+.PHONY: up down test test-report migrate lint openapi-export help backend-venv
 
 help:
-	@echo "Comandos: up | down | test | test-report | migrate | lint | backend-venv"
+	@echo "Comandos: up | down | test | test-report | migrate | openapi-export | lint | backend-venv"
 
 # Cria backend/.venv na primeira utilização (PEP 668 / Debian).
 backend-venv:
@@ -29,9 +29,12 @@ test-report: backend-venv
 		--self-contained-html
 	cd frontend && npm run test:coverage
 
-migrate:
-	@echo "Fase 0: Alembic será configurado na Fase 1 — nada a aplicar."
-	@true
+migrate: backend-venv
+	@cd backend && .venv/bin/alembic upgrade head
+
+# Gera doc/api/openapi.json (+ use doc/api/index.html com servidor estático) sem subir a API.
+openapi-export: backend-venv
+	@cd backend && .venv/bin/python scripts/export_openapi.py
 
 lint: backend-venv
 	cd backend && .venv/bin/ruff check app tests

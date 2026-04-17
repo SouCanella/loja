@@ -2,6 +2,28 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (DEC-14 / DEC-17 / DEC-20 — políticas MVP para implementação)
+
+- **Decisões de produto:** transições de pedido **manuais e flexíveis** no MVP (sem integração WApp automática); baixa de estoque em **`confirmado`** com reversão ao **cancelar**; categorias **planas** + FK opcional — registado em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) e em [regras-negocio.md](../normativos/regras-negocio.md) (**RN-034**, **RN-058**, **RN-059**, **RN-071**, **RN-072**).
+- **Fase 2:** [fase-02-operacao.md](../fases/fase-02-operacao.md) com referência cruzada aos gates.
+
+## 2026-04-17 (documentação consolidada — Fase 1 → Fase 2)
+
+- **OpenAPI:** [doc/api/openapi.json](../api/openapi.json) + [doc/api/index.html](../api/index.html) (ReDoc offline); `make openapi-export`; [doc/api/README.md](../api/README.md) com `python3` no servidor estático.
+- **API em execução:** `/openapi.json`, `/redoc`; `/docs` (Swagger UI) desativado.
+- **Docker Compose:** porta host omissa **5433** para Postgres; `backend` com `DATABASE_URL` interna para `postgres:5432` (evita `localhost` do `.env` no contentor).
+- **Índice:** [doc/README.md](../README.md) — secções «Contrato HTTP», «Estado do roadmap»; [fase-01-fundacao.md](../fases/fase-01-fundacao.md) e [fase-02-operacao.md](../fases/fase-02-operacao.md) atualizados.
+- **Próximo marco:** implementação [fase-02-operacao.md](../fases/fase-02-operacao.md) (produtos, estoque, pedidos; gates DEC-14, DEC-17, DEC-20).
+
+## 2026-04-17 (Fase 1 — fundação implementada)
+
+- **Backend:** SQLAlchemy 2 + Alembic + `postgresql+psycopg`; modelos `stores` e `users`; JWT access (HS256); `POST /api/v1/auth/register` (loja + admin), `POST /api/v1/auth/login` (OAuth2 password), `GET /api/v1/me`; `GET /api/v1/health` e `GET /health`; CORS para `localhost:3000`. Passwords com **bcrypt** (sem passlib). Dependência `get_current_user` valida `store_id` no token.
+- **Migrações:** `backend/alembic/`, revisão `20260417_0001`; `make migrate` → `alembic upgrade head` (requer Postgres acessível e `DATABASE_URL`).
+- **Infra:** `docker-compose.yml` com `DATABASE_URL` sync + `JWT_SECRET`; `backend/Dockerfile` inclui Alembic; [.env.example](../../.env.example) com `JWT_SECRET` e URL sync.
+- **Testes:** pytest smoke + auth + isolamento dois tenants (SQLite em memória com override de sessão).
+- **Frontend:** rotas `/loja/[slug]`, `/login` (grava token), `/painel` (lê `/api/v1/me`); `NEXT_PUBLIC_API_URL`.
+- **Documentação:** [fase-01-fundacao.md](../fases/fase-01-fundacao.md) secção Execução.
+
 ## 2026-04-17 (Fase 0 — implementação concluída)
 
 - **Código:** monorepo na raiz com `backend/` (FastAPI, pytest, Ruff, Dockerfile), `frontend/` (Next.js 14, Tailwind, Vitest, Dockerfile standalone), `docker-compose.yml` (Postgres 16-alpine + API + frontend), `Makefile` (`up`, `down`, `test`, `test-report`, `migrate`, `lint`, `backend-venv`), [.env.example](../../.env.example), [.gitignore](../../.gitignore).

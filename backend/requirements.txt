@@ -1,7 +1,18 @@
-# Backend — Fase 0 (API mínima). SQLAlchemy/Alembic na Fase 1.
+# Backend — Fase 1+ (API, SQLAlchemy, Alembic, JWT)
 fastapi>=0.115.0,<0.116
+python-multipart>=0.0.9,<0.1
 uvicorn[standard]>=0.32.0,<0.35
-pydantic>=2.10.0,<3
+pydantic[email]>=2.10.0,<3
+pydantic-settings>=2.6.0,<3
+
+# Persistência (DEC-18)
+sqlalchemy>=2.0.36,<2.1
+psycopg[binary]>=3.2.0,<4
+alembic>=1.14.0,<2
+
+# Auth (DEC-16 — access JWT; refresh em evolução)
+python-jose[cryptography]>=3.3.0,<4
+bcrypt>=4.2.0,<5
 
 # Testes e qualidade
 httpx>=0.28.0,<0.29

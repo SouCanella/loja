@@ -52,6 +52,7 @@
 | RN-031 | **Categorias:** cada produto pode referenciar uma categoria da loja (`categories`); filtros no catálogo conforme **DEC-20**. Destaques e variações conforme RF. |
 | RN-032 | Histórico de alteração de preço é desejável para gestão (evolução). |
 | RN-033 | **Avaliações** (`product_reviews` ou equivalente) pertencem sempre à loja do produto; **nunca** misturar reviews entre tenants. |
+| RN-034 | **Modelo MVP (DEC-20):** categorias **planas** por loja (`name`, `slug` **único por `store_id`**); `products.category_id` **opcional** (NULL = sem categoria); filtros mínimos na API (`category_slug` e/ou `category_id`). Hierarquia `parent_id` fica para evolução. |
 
 ---
 
@@ -77,17 +78,21 @@
 | RN-055 | **Concorrência:** reserva de estoque com lock pessimista + timeout; ver enterprise §12. |
 | RN-056 | **Idempotência:** `idempotency_key` (ou header equivalente) na criação de pedido para evitar duplicidade. |
 | RN-057 | **Status canônicos** (string estável internamente, ex.: `snake_case`): ver tabela abaixo (**DEC-14**). |
+| RN-058 | **MVP sem integração automática WhatsApp ↔ sistema:** o staff pode **alterar manualmente** o status do pedido entre os oito valores canónicos (saltos e ordem livres, ex.: ir direto de `rascunho` a `em_producao`), desde que cada mudança fique em **histórico** (RN-053). Estados **terminais:** `entregue` e `cancelado` não devem transitar para estados operacionais pelo fluxo normal (correções extraordinárias ficam fora do fluxo padrão / backlog). |
+| RN-059 | **Evolução (pós-integração/orquestração):** passar a validar transições contra a **matriz restrita** (fluxo feliz abaixo + política de cancelamento explícita); o código deve permitir configurar ou aplicar essa matriz sem mudar o enum persistido. |
 
 ### Estados e transições (DEC-14)
 
 **Estados:** `rascunho` | `aguardando_confirmacao` | `confirmado` | `em_producao` | `pronto` | `saiu_entrega` | `entregue` | `cancelado`
 
-**Fluxo feliz típico (pedido web + WhatsApp):**  
+**Fluxo feliz típico (referência para relatórios e evolução — pedido web + WhatsApp):**  
 `rascunho` → `aguardando_confirmacao` (após registrar e abrir WhatsApp, se aplicável) → `confirmado` → `em_producao` → `pronto` → `saiu_entrega` → `entregue`
 
-**Cancelamento:** transição para `cancelado` a partir de estados permitidos pela política da loja (definir validações no service; ex.: não cancelar `entregue`).
+**Cancelamento (referência para evolução):** transição para `cancelado` a partir dos estados operacionais até `pronto` inclusive; **não** pelo fluxo padrão a partir de `saiu_entrega` ou `entregue` (ver ajuste em RN-058 para terminais).
 
 **Pedido manual/balcão:** pode entrar já em `confirmado` ou `em_producao` conforme operação.
+
+**Política MVP vs evolução:** ver **RN-058** e **RN-059**.
 
 Relatórios podem agrupar estados em fases macro (ex.: “em andamento” = `confirmado` … `saiu_entrega`) sem alterar o enum persistido.
 
@@ -108,6 +113,8 @@ Relatórios podem agrupar estados em fases macro (ex.: “em andamento” = `con
 | RN-068 | **Ordem de consumo físico de lotes:** **DEC-17** — FEFO quando houver `expiration_date`; senão FIFO por data de entrada do lote; sempre em transação consistente. |
 | RN-069 | Ajustes manuais e perdas impactam movimentações e relatórios financeiros. |
 | RN-070 | Embalagens entram como insumo quando a operação exigir. |
+| RN-071 | **MVP — momento da baixa em venda (DEC-17):** a **primeira baixa física** de lotes (produto final ou item vendível conforme modelagem da Fase 2) ocorre na transição do pedido para **`confirmado`** (incluindo quando se salta directamente para `confirmado`). Empates na ordenação de lotes: `expiration_date` ASC (lotes sem validade tratados após os com data, dentro da política FEFO/FIFO); depois data de entrada do lote; depois `id` do lote. |
+| RN-072 | **MVP — cancelamento e estoque:** se o pedido for para `cancelado` **depois** de já ter consumido stock (estado tinha sido `confirmado` ou posterior), **reverter** na mesma transação de BD as movimentações de baixa associadas a esse pedido, mantendo estoque não negativo. |
 
 ---
 

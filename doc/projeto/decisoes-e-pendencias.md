@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última atualização:** 2026-04-17 — ADR leve para **DEC-01 … DEC-20**; melhorias não bloqueantes (OpenAPI, pin Postgres, idempotência produção, matriz RN→testes) incorporadas à documentação normativa.
+**Última atualização:** 2026-04-17 — ADR leve para **DEC-01 … DEC-20**; melhorias não bloqueantes (OpenAPI, pin Postgres, idempotência produção, matriz RN→testes) incorporadas à documentação normativa. **Secção «Decisões de implementação MVP (Fase 2)»** com políticas DEC-14/17/20 para codificação.
 
 ---
 
@@ -74,6 +74,18 @@ Cada decisão abaixo resume **por que** foi escolhida e **o que isso obriga** no
 - **DEC-19:** Subdomínio por loja complica cookies, DNS e SSL no primeiro deploy. **Consequência:** vitrine em `/loja/[slug]` no mesmo domínio; subdomínio como evolução documentada.
 
 - **DEC-20:** Catálogo sem categoria escala mal para SEO e filtros. **Consequência:** entidade `categories` e FK em `products` na Fase 2; filtros mínimos no catálogo na mesma janela.
+
+---
+
+## Decisões de implementação MVP (Fase 2) — alinhamento DEC-14 / DEC-17 / DEC-20
+
+Registo **2026-04-17** para desbloquear implementação com políticas explícitas; detalhe normativo em [regras-negocio.md](../normativos/regras-negocio.md).
+
+| Decisão | Política MVP acordada |
+|---------|------------------------|
+| **DEC-14** | Sem integração automática WhatsApp ↔ sistema: **transições de status manuais e flexíveis** entre os oito valores (saltos livres), com histórico obrigatório; `entregue` e `cancelado` tratados como **terminais** no fluxo normal. **Evolução:** matriz de transições restrita (fluxo feliz + cancelamento regulado) quando existir orquestração ou integração — ver **RN-058** e **RN-059**. |
+| **DEC-17** | **Primeira baixa física** na passagem do pedido a **`confirmado`**; ordenação de lotes FEFO/FIFO com desempate explícito; **reversão** de baixas ao cancelar pedido que já tinha consumido stock — ver **RN-071** e **RN-072**. |
+| **DEC-20** | Categorias **planas** por loja, `slug` único por `store_id`, `products.category_id` **opcional**, filtros mínimos na API — ver **RN-034**. |
 
 ---
 

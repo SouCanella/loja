@@ -16,6 +16,8 @@
 - Modelo **`categories`** + produtos conforme **DEC-20**.
 - Serviços de estoque respeitam **DEC-17** ao consumir lotes (FEFO/FIFO físico).
 
+**Políticas MVP registadas (2026-04-17):** ver [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) secção *Decisões de implementação MVP (Fase 2)* e [regras-negocio.md](../normativos/regras-negocio.md) **RN-034**, **RN-058**, **RN-059**, **RN-071**, **RN-072**.
+
 ---
 
 ## 1. Objetivo
@@ -104,6 +106,7 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planejado` |
+| **Status** | `planejado` — **próximo passo de implementação** após Fase 1 |
 | **Data de conclusão** | — |
-| **Notas** | Preencher ao concluir. |
+| **Dependências** | Fase 1 concluída (auth, tenant, `stores`/`users`, Alembic base). |
+| **Notas** | **Gates antes de codar:** **DEC-14**, **DEC-17**, **DEC-20** — políticas MVP documentadas em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) (*Decisões de implementação MVP*) e RN citadas acima. Consultar [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md). Ao fechar a fase: preencher critérios de aceite na secção 3 e registrar em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |

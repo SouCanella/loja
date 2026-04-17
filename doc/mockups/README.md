@@ -14,7 +14,7 @@ Protótipos **estáticos e navegáveis** usados para alinhar interface, fluxos e
 Abra o ficheiro `.html` diretamente no navegador ou sirva a pasta com um servidor HTTP simples, por exemplo:
 
 ```bash
-cd doc/mockups && python -m http.server 8080
+cd doc/mockups && python3 -m http.server 8080
 ```
 
 Depois aceda a `http://localhost:8080/admin-painel-layout-sugestao.html` (ou o nome do ficheiro pretendido).
