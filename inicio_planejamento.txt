@@ -1,0 +1,3117 @@
+[Norma atual do repositório: documentação em doc/README.md e doc/documento_enterprise.md; especificação (RN/RF/RNF) em doc/normativos/; decisões e backlog em doc/projeto/ — este arquivo é insumo histórico de ideias.]
+inicio do planejamento
+1)Estou pensando em um sistema que possa servir para mais de uma loja, controlado por login Ex: Fulano dono da loja XPTO, vai ser o administrador do site da loja dele e do controle de estoque, clientes, etc, dele. Caso o Ciclano se cadastre como logista, ele vai controlar as coisas apenas da loja dele. Os clientes vão se cadastrar apenas na loja que acessar. no site da loja o cliente vai ver os produtos disponíveis, estoque, e conseguir fazer o pedido, inicialmente atraves do Wapp cadastrado pelo logista. Deve existir uma aba ou algum lugar contendo o catalogo da loja. Vou enviar um PDF modelo do catalogo. sobre a parte do logista, deve ser configuravel para subir a logo e imagens da loja, imagem de fundo opcional, cores da loja, tudo de forma intuitiva textos exibidos na loja tbm devem ser cadastrados pelo admin da loja na parte do logista. Deve existir tbm uma visão de clientes cadastrados, podendo permitir cadastro de cliente direto pelo admin da loja. Deve existir tbm uma gestão de pedidos, que inicialmente devem ser feitos pela loja enviando msg para o wapp cadastrado. posterirmente podemos integrar com emissão de pedido fisico na maquina, pagamentos, etc... será permitido inserir pedidos manualmente na gestão de pedido. Na parte de gestão de estoque, deve exisitr o crud de produto final, e tambem o cadastro de receita contendo e consumindo do estoque das receitas. deve existir tbm a parte de precificação, apos cadastro dos produtos, quantidades gastas nas receitas, e quantidade gerada. custos com embalagens etc... Graficos pertinentes para visualização de gastos e lucros, e pode sugerir mais coisas pertinentes para esse sistema. a ideia é concluir esse planejamento para passar instruções para o cursor. deve conter teste unitarios maior que 90% Teste de integração, toda fase realizada deve ser documentada
+
+observação 2
+2)tecnologias, melhores praticas, docker, makefile
+vamos planejar tbm toda arquitetura. 
+
+observação 3
+2) No cadastro de insumos, como opcional cadastrar a data de validade e permitir cadastrar mesmo insumo com valor diferente, isso vai ajudar a montar corretamente a precificação dos produtos e o lucro, acompanhar histório dos preços de cada item, etc...
+
+observação 4
+3) Na receita como opcional e para caucular Custos indiretos de fabricação assim como tempo para produzir nno modulo de precificação, os fatores que fizerem sentido devem ser possiveis alterar manualmente, como margem desejada, preço final, os custos indiretos podem ser cadastrados, informados pelo admin da loja. uma calculadora pratica pode existir como opção para ele utilizar e ver os custos conforme valores informados Em modulo financeira, mostrar tbm o valor total de perdas Comparações entre meses anteriores e o mesmo mes ou semana dos anos anteriores, caso tenha mais de uma ano de registros, ex, coparar Pascoas, Dias da Maes, etc..
+
+
+Observação 5
+4) Como o dono da loja quem vai configurar a propria loja, todo admin deve conter toltips explicativos explicando cada configuração e o que faz. quais calculos vão ser feitos com aquele valor onde aquele valor vai ser utilizado A loja deve ser pensada para mobile first, assim como o admin, para que depois possa evoluir ser tbm um aplicativo.
+
+
+Planejamentos:
+
+
+======Planejamento 1
+Visão do produto
+Objetivo
+
+Criar uma plataforma web onde:
+
+cada lojista administra apenas a própria loja
+cada cliente acessa apenas a loja onde se cadastrou
+o sistema suporta múltiplas lojas no mesmo produto
+cada loja tem identidade visual própria
+o lojista consegue vender, controlar estoque, cadastrar receitas, formar preço e acompanhar resultados
+Proposta de valor
+
+O sistema deve servir para lojas de:
+
+sacolé gourmet
+pipoca gourmet
+doces
+bolos
+sobremesas
+produtos artesanais em geral
+
+Ou seja, o sistema deve nascer com foco em alimentos caseiros, mas com estrutura genérica o suficiente para atender outros segmentos depois.
+
+Conceito principal do sistema
+Modelo de negócio
+
+O sistema será multi-tenant por loja.
+
+Na prática:
+
+Fulano cria a loja XPTO
+ele gerencia apenas a loja XPTO
+Ciclano cria a loja Delícias da Vila
+ele gerencia apenas a loja dele
+os dados não se misturam
+o cliente final vê apenas a loja que acessou
+Estrutura de acesso
+
+Teremos 3 perfis principais:
+
+1. Super Admin da plataforma
+
+Perfil interno do sistema, usado por você no futuro.
+
+Responsabilidades:
+
+gerenciar lojistas
+acompanhar lojas cadastradas
+ativar/desativar lojas
+ver métricas gerais da plataforma
+eventualmente controlar plano, assinatura e suporte
+2. Admin da loja / Lojista
+
+Dono ou gestor da loja.
+
+Responsabilidades:
+
+configurar a loja
+cadastrar produtos
+cadastrar estoque
+cadastrar receitas
+cadastrar clientes
+registrar pedidos
+ver relatórios
+configurar WhatsApp
+personalizar identidade visual
+3. Cliente final
+
+Pessoa que acessa a loja online.
+
+Responsabilidades:
+
+se cadastrar
+consultar catálogo
+ver disponibilidade
+montar pedido
+enviar pedido via WhatsApp
+acompanhar dados básicos do próprio cadastro
+Módulos do sistema
+1. Módulo de autenticação e acesso
+Requisitos
+login por e-mail e senha
+recuperação de senha
+controle por perfil
+cada usuário vinculado a uma loja
+isolamento total dos dados por loja
+Regras
+lojista só enxerga dados da própria loja
+cliente só pertence a uma loja
+um cliente não deve “vazar” para outra loja
+usuários da plataforma ficam separados dos usuários das lojas
+Sugestão futura
+subdomínio por loja
+Exemplo:
+xpto.sistema.com
+deliciasdavila.sistema.com
+
+Ou, inicialmente:
+
+sistema.com/loja/xpto
+
+Esse segundo formato é mais simples para começar.
+
+2. Módulo de configuração da loja
+
+Esse é um dos mais importantes, porque dá ao lojista a sensação de que “a loja é dele”.
+
+O lojista deve conseguir cadastrar:
+nome da loja
+slogan
+descrição
+logo
+banner principal
+imagem de fundo opcional
+cores principais da marca
+WhatsApp da loja
+endereço
+horários de funcionamento
+texto institucional
+mensagem de pedido padrão
+links de redes sociais
+Customizações visuais
+cor primária
+cor secundária
+cor de destaque
+logo clara/escura opcional
+imagem de capa
+imagem de fundo opcional em seções específicas
+textos editáveis da home
+Regras
+visual deve ser simples de configurar
+com pré-visualização
+com fallback automático caso o lojista não envie imagem
+Boa prática
+
+Criar um “tema base” com componentes padronizados, e deixar o lojista alterar:
+
+cores
+textos
+imagens
+logo
+
+Sem deixar ele quebrar o layout. Liberdade com cerca elétrica. Elegante e seguro.
+
+3. Módulo de catálogo / vitrine da loja
+
+Essa é a parte pública para o cliente.
+
+Deve conter
+página inicial da loja
+catálogo de produtos
+filtros por categoria
+destaques
+produtos disponíveis
+produtos sem estoque marcados adequadamente
+detalhes do produto
+botão para pedir via WhatsApp
+Informações dos produtos
+nome
+descrição
+categoria
+preço
+imagem
+disponibilidade
+unidade de venda
+peso/volume opcional
+variações opcionais
+observações
+Regras
+produto sem estoque pode:
+sumir do catálogo
+aparecer como indisponível
+Isso deve ser configurável por loja.
+Sugestão
+
+Adicionar status:
+
+disponível
+sob encomenda
+indisponível
+4. Módulo de clientes
+Funcionalidades
+cadastro pelo cliente na loja
+cadastro manual pelo admin da loja
+edição de cliente
+listagem de clientes
+busca por nome, telefone, e-mail
+histórico de pedidos do cliente
+observações internas
+Campos sugeridos
+nome
+telefone
+WhatsApp
+e-mail
+data de nascimento opcional
+endereço principal
+complemento
+bairro
+cidade
+CEP
+referência
+observações
+Extras pertinentes
+marcar cliente como VIP
+permitir tags:
+cliente frequente
+atacado
+revendedor
+inadimplente
+aniversário do mês
+
+Isso ajuda muito em promoções futuras.
+
+5. Módulo de pedidos
+
+Inicialmente o pedido será finalizado via WhatsApp, mas o sistema já deve registrar a intenção de compra.
+
+Fluxo inicial ideal
+cliente acessa a loja
+adiciona itens ao carrinho
+informa dados básicos
+clica em finalizar
+sistema monta mensagem pronta para WhatsApp
+cliente é redirecionado ao WhatsApp da loja
+pedido fica registrado como “aguardando confirmação”
+Gestão pelo lojista
+listar pedidos
+filtrar por status
+cadastrar pedido manual
+editar pedido
+cancelar pedido
+marcar como concluído
+registrar forma de entrega
+registrar retirada
+Status sugeridos
+rascunho
+aguardando confirmação
+confirmado
+em produção
+pronto
+saiu para entrega
+entregue
+cancelado
+Pedido manual
+
+Muito importante para operação real.
+
+O lojista deve conseguir:
+
+selecionar cliente
+adicionar produtos
+alterar quantidades
+aplicar desconto
+informar observação
+registrar origem:
+balcão
+WhatsApp
+Instagram
+telefone
+manual
+6. Módulo de estoque
+
+Aqui mora a diferença entre “site bonito” e “sistema que salva a operação”.
+
+O ideal é separar estoques.
+
+Tipos de estoque
+a) Estoque de insumos
+
+Exemplos:
+
+leite condensado
+leite
+açúcar
+chocolate
+milho de pipoca
+embalagens
+saquinhos
+adesivos
+gás
+manteiga
+b) Estoque de produto final
+
+Exemplos:
+
+sacolé gourmet de ninho
+pipoca gourmet de chocolate
+brigadeiro gourmet
+Funcionalidades
+CRUD de insumos
+CRUD de produtos finais
+movimentação de estoque
+entrada manual
+ajuste manual
+consumo por receita
+baixa por venda
+alerta de estoque baixo
+Campos de insumo
+nome
+categoria
+unidade de medida
+quantidade atual
+quantidade mínima
+custo unitário
+fornecedor opcional
+observação
+Campos de produto final
+nome
+categoria
+unidade
+preço de venda
+estoque atual
+estoque mínimo
+ativo/inativo
+Regras importantes
+venda pode baixar estoque do produto final
+produção pode consumir insumos e gerar produtos finais
+ajustes devem ficar auditados
+embalagens também devem poder ser controladas como insumo
+7. Módulo de receitas / produção
+
+Esse módulo é ouro para sacolé, pipoca, doces e qualquer produto artesanal.
+
+Objetivo
+
+Cadastrar receitas que consomem insumos e geram uma quantidade final de produto.
+
+Exemplo
+
+Receita: Sacolé Gourmet de Ninho
+
+Consome:
+
+1 leite condensado
+500 ml leite
+100 g leite em pó
+20 embalagens
+
+Gera:
+
+20 unidades de sacolé de ninho
+Funcionalidades
+CRUD de receitas
+vincular receita a um produto final
+definir rendimento
+definir ingredientes e quantidades
+registrar produção
+baixar insumos automaticamente
+aumentar estoque do produto final automaticamente
+Regras
+não pode produzir sem estoque suficiente de insumos
+produção deve gerar histórico
+permitir desperdício/perda opcional
+permitir receita ativa/inativa
+Extra muito útil
+
+Ficha técnica por produto:
+
+ingredientes
+custo total da receita
+custo por unidade
+rendimento
+margem sugerida
+8. Módulo de precificação
+
+Aqui o sistema deixa de ser “cadastro” e vira ferramenta de gestão.
+
+O módulo deve considerar
+custo dos insumos
+custo da receita
+rendimento
+custo por unidade
+custo de embalagem
+custo operacional rateado
+margem desejada
+preço sugerido
+Custos que devem ser suportados
+embalagem
+adesivo
+colher
+laço
+gás
+energia
+água
+frete
+mão de obra
+taxa de marketplace futura
+perdas
+Modelos de custo
+Custo direto
+
+Ingrediente e embalagem
+
+Custo indireto rateado
+energia
+gás
+aluguel
+internet
+mão de obra
+Cálculos importantes
+custo total da receita
+custo unitário
+preço sugerido com margem
+lucro bruto por item
+margem percentual
+markup
+Recurso útil
+
+Permitir que o lojista escolha:
+
+markup
+margem desejada
+arredondamento comercial
+Exemplo: sugerir R$ 11,90 em vez de R$ 11,83
+9. Módulo financeiro básico
+
+Mesmo que no início o foco seja pedidos por WhatsApp, já vale preparar a base.
+
+Funcionalidades iniciais
+visão de faturamento
+custo estimado vendido
+lucro bruto
+ticket médio
+total de pedidos por período
+produtos mais vendidos
+Futuro
+fluxo de caixa
+contas a pagar
+contas a receber
+conciliação
+integração com pagamento
+10. Módulo de dashboard e gráficos
+
+Você mencionou gráficos, e sim, faz total sentido.
+
+Dashboard do lojista
+
+Indicadores:
+
+pedidos hoje
+faturamento hoje
+pedidos no mês
+faturamento no mês
+lucro bruto estimado
+produtos com estoque baixo
+clientes novos
+produtos mais vendidos
+Gráficos sugeridos
+vendas por dia
+vendas por mês
+lucro estimado por período
+consumo de insumos
+produtos mais vendidos
+produtos com maior margem
+produtos com maior volume
+estoque crítico
+clientes recorrentes x novos
+Análises inteligentes
+produto com maior margem e baixa saída
+produto com alta saída e baixa margem
+produto mais lucrativo
+insumo mais consumido
+sazonalidade de vendas
+
+Esses relatórios ajudam a loja a decidir o que empurrar, o que tirar e o que reajustar.
+
+Regras de negócio centrais
+Multi-tenant
+toda entidade deve ter vínculo com store_id
+toda consulta deve respeitar a loja do usuário autenticado
+nunca permitir acesso cruzado entre lojas
+Estoque
+produção consome insumos
+venda baixa produto final
+ajuste manual gera histórico
+estoque não pode ficar negativo sem regra explícita
+Receita
+receita precisa ter rendimento
+receita deve usar unidade compatível
+cada produção deve gerar rastreabilidade
+Pedido
+pedido pode ser criado por cliente ou manualmente pelo lojista
+pedido deve registrar origem
+pedido deve ter histórico de status
+Cliente
+cliente pertence a uma loja
+histórico deve ser por loja
+Estrutura sugerida de módulos do produto
+Área pública
+Home da loja
+Catálogo
+Produto
+Carrinho
+Cadastro/Login cliente
+Finalização via WhatsApp
+Sobre a loja
+Contato
+Área do lojista
+Dashboard
+Configurações da loja
+Produtos
+Categorias
+Estoque
+Insumos
+Receitas
+Produção
+Precificação
+Clientes
+Pedidos
+Relatórios
+Usuários da loja
+Área da plataforma
+gestão de lojas
+gestão de lojistas
+visão global
+suporte
+planos futuros
+Modelagem inicial de entidades
+
+Aqui está a espinha dorsal.
+
+Entidades principais
+User
+Role
+Store
+StoreTheme
+StoreContent
+Customer
+Address
+Category
+Product
+ProductImage
+InventoryItem
+Recipe
+RecipeItem
+ProductionOrder
+ProductionOrderItem
+Order
+OrderItem
+OrderStatusHistory
+PricingRule
+OperationalCost
+StockMovement
+AuditLog
+Relações importantes
+Store tem muitos Users
+Store tem muitos Customers
+Store tem muitos Products
+Store tem muitos InventoryItems
+Product pode ter uma Recipe
+Recipe tem muitos RecipeItems
+ProductionOrder gera entrada em produto final e saída de insumos
+Order pertence a uma loja e opcionalmente a um cliente
+OrderItem consome estoque de produto final
+Arquitetura sugerida
+
+Como você vai passar isso para o Cursor, vale já pensar numa estrutura limpa.
+
+Sugestão de stack
+
+Como planejamento, eu recomendaria algo moderno e sustentável.
+
+Frontend
+Next.js
+TypeScript
+Tailwind
+componentização forte
+formulários com validação
+Backend
+
+Opção A:
+
+Next.js full-stack com API routes / server actions
+
+Opção B:
+
+Front separado + backend em NestJS
+
+Opção C:
+
+Front separado + backend Python FastAPI
+
+Como você já transita bem em Python, FastAPI seria uma escolha muito forte se quiser backend desacoplado e testável.
+Se quiser velocidade visual e entrega mais direta, Next.js full-stack pode ser um atalho inteligente.
+
+Banco
+PostgreSQL
+Armazenamento de imagens
+Supabase Storage
+ou
+S3 compatível
+Autenticação
+JWT + controle por tenant
+ou
+auth provider como Supabase/Auth.js
+Estratégia recomendada de construção
+
+Eu não começaria fazendo tudo de uma vez. O caminho mais saudável é por fases.
+
+Fase 1 — Fundação
+autenticação
+multi-tenant
+cadastro de loja
+tema da loja
+catálogo público
+cadastro de produtos
+estoque básico
+clientes
+pedidos via WhatsApp
+Fase 2 — Operação real
+insumos
+receitas
+produção
+baixa automática de estoque
+precificação
+dashboard inicial
+Fase 3 — Gestão avançada
+relatórios mais completos
+pedidos manuais avançados
+histórico detalhado
+custos operacionais
+análises financeiras
+Fase 4 — Expansão
+impressão de pedido
+pagamentos
+entrega
+cupons
+promoções
+domínio próprio
+integração com WhatsApp oficial
+multiusuário por loja
+assinatura/plano
+Requisitos não funcionais
+Segurança
+isolamento por loja
+autorização por perfil
+logs de ações críticas
+senhas seguras
+proteção contra acesso indevido
+Performance
+catálogo rápido
+imagens otimizadas
+filtros eficientes
+consultas indexadas por loja
+Escalabilidade
+arquitetura preparada para múltiplas lojas
+storage separado da aplicação
+banco com índices por tenant
+Usabilidade
+painel intuitivo
+cadastro visual simplificado
+fluxo de pedido fácil
+mobile first no catálogo
+Auditoria
+registrar alterações críticas:
+estoque
+pedido
+preço
+produção
+Estratégia de testes
+
+Você pediu algo importante: teste unitário acima de 90%, integração e documentação por fase.
+
+Perfeito. Isso precisa nascer junto, não como remendo.
+
+Meta de qualidade
+cobertura unitária mínima: 90%+
+testes de integração para fluxos críticos
+documentação funcional e técnica por fase
+critérios de aceite definidos antes da implementação
+Testes unitários
+
+Cobrir principalmente:
+
+cálculo de preço
+cálculo de custo por receita
+cálculo de rendimento
+baixa de estoque
+regras de status de pedido
+permissões por perfil
+validações de tenant
+Testes de integração
+
+Fluxos críticos:
+
+lojista cria loja
+lojista cadastra produto
+lojista cadastra insumo
+lojista cadastra receita
+lojista registra produção
+estoque de insumo baixa
+estoque de produto final sobe
+cliente cria pedido
+pedido gera mensagem de WhatsApp
+pedido manual funciona
+usuários de uma loja não acessam dados de outra
+Testes E2E futuros
+navegação da loja pública
+fluxo de compra
+login do lojista
+criação de pedidos
+configuração de tema
+Estratégia de documentação
+
+Isso aqui vai te ajudar muito com o Cursor.
+
+Toda fase deve ter
+objetivo da fase
+escopo funcional
+regras de negócio
+telas envolvidas
+entidades afetadas
+endpoints ou ações
+critérios de aceite
+cenários de teste
+riscos e observações
+Tipos de documentação
+1. Documentação funcional
+
+Explica o que o sistema faz.
+
+2. Documentação técnica
+
+Explica como foi construído.
+
+3. Documentação de testes
+
+Explica o que foi validado.
+
+4. Documentação visual
+
+HTMLs/protótipos para guiar front.
+
+Sugestões importantes que agregam valor
+
+Além do que você já pensou, eu incluiria estas ideias:
+
+1. Categorias e destaques
+categorias de produtos
+produto em destaque
+produto novo
+produto mais vendido
+2. Agenda de produção
+produção planejada por dia
+previsão de estoque
+3. Promoções
+combos
+desconto por quantidade
+produto promocional
+4. Controle de disponibilidade por dia
+
+Exemplo:
+
+pipoca gourmet só aos fins de semana
+doce sob encomenda
+produto indisponível em certos horários
+5. Observações por item
+
+Exemplo:
+
+sem granulado
+com adicional
+embalagem especial
+6. Histórico de alteração de preço
+
+Muito bom para gestão.
+
+7. Métricas de recompra
+clientes que mais compram
+clientes inativos
+frequência média
+8. WhatsApp melhorado
+mensagem configurável
+template com nome do cliente
+lista de itens
+total estimado
+endereço
+observações
+Riscos que precisam ser evitados no planejamento
+1. Misturar estoque de insumo com produto final
+
+Isso costuma virar bagunça rápido.
+
+2. Fazer multi-tenant “meia boca”
+
+Toda tabela crítica precisa respeitar loja.
+
+3. Deixar precificação genérica demais
+
+Se não considerar embalagem e custo operacional, vira enfeite.
+
+4. Criar customização visual livre demais
+
+O lojista não pode desmontar o layout.
+
+5. Não registrar histórico
+
+Pedido, estoque e produção precisam de rastreabilidade.
+
+Estrutura sugerida para passar ao Cursor
+
+O ideal é não mandar tudo num prompt único gigante e torcer. Cursor não é médium.
+
+A melhor abordagem é quebrar em blocos.
+
+Ordem sugerida
+visão geral do produto
+modelagem de usuários e multi-tenant
+banco de dados inicial
+autenticação e autorização
+módulo de configuração da loja
+catálogo público
+clientes
+pedidos
+estoque
+receitas e produção
+precificação
+dashboard
+testes
+documentação
+HTMLs/protótipos visuais
+Proposta de roadmap prático
+Etapa 1 — Descoberta e especificação
+
+Entregar:
+
+visão do produto
+escopo do MVP
+entidades
+regras de negócio
+roadmap por fases
+Etapa 2 — Arquitetura
+
+Entregar:
+
+stack
+módulos
+estrutura de pastas
+banco inicial
+estratégia de auth
+estratégia multi-tenant
+Etapa 3 — Especificação funcional por módulo
+
+Entregar para cada módulo:
+
+objetivos
+regras
+telas
+campos
+fluxos
+critérios de aceite
+Etapa 4 — Protótipos HTML
+
+Entregar:
+
+home da loja
+catálogo
+painel lojista
+pedidos
+estoque
+receitas
+precificação
+dashboard
+Etapa 5 — Implementação guiada
+
+Entregar em ciclos com:
+
+código
+testes
+documentação
+checklist
+Minha recomendação objetiva para o MVP
+
+Se o objetivo é construir algo forte sem explodir escopo, eu faria o MVP assim:
+
+MVP 1
+autenticação
+multi-tenant
+cadastro da loja
+personalização básica
+catálogo público
+produtos
+clientes
+pedidos via WhatsApp
+pedidos manuais
+estoque de produto final
+dashboard básico
+MVP 2
+insumos
+receitas
+produção
+baixa automática
+precificação
+MVP 3
+relatórios avançados
+custos operacionais
+impressão
+pagamentos
+integrações
+Fechamento estratégico
+
+O sistema que você está imaginando não é só um site de vendas. Ele tem cara de:
+
+plataforma de gestão + catálogo + operação + inteligência comercial para pequenos lojistas.
+
+Isso é excelente porque:
+
+resolve dor real
+serve para mais de um nicho
+pode virar produto recorrente
+pode começar simples e crescer bem
+
+E o mais importante: a base precisa nascer com três pilares fortes:
+
+multi-tenant sólido
+estoque/receita bem modelados
+testes e documentação desde o início
+
+
+======Planejamento 2
+Para esse produto, eu planejaria a arquitetura como um SaaS multi-tenant modular, com foco em:
+
+clareza de domínio
+isolamento por loja
+facilidade de evolução
+boa testabilidade
+deploy simples com Docker
+operação confortável com Makefile
+
+A recomendação mais sólida, pensando no seu perfil, na necessidade de testes fortes e na evolução futura, é esta:
+
+Frontend: Next.js com App Router, que hoje é a base principal para apps web modernos com layouts, navegação e componentes server/client. O próprio Next.js suporta deploy como servidor Node.js ou container Docker.
+Backend: FastAPI, porque entrega API moderna, tipada, rápida e muito amigável para testes e organização de domínio em Python. A documentação oficial também trata Docker como caminho padrão de deploy em muitos cenários.
+Banco: PostgreSQL. Hoje a documentação oficial lista a série 18 como “Current”, e o projeto mantém suporte de cada major version por 5 anos.
+Containers: Docker + Docker Compose. A especificação atual do Compose é a recomendada, e o campo version no topo do arquivo passou a ser opcional no Compose Specification moderno.
+Decisão arquitetural recomendada
+
+Eu seguiria com:
+
+Frontend separado
+Next.js
+TypeScript
+Tailwind CSS
+consumo de API via backend FastAPI
+área pública da loja + painel do lojista + painel futuro da plataforma
+Backend separado
+FastAPI
+Python
+SQLAlchemy 2.x ou SQLModel
+Alembic para migrations
+Pydantic para schemas
+pytest para testes unitários e integração
+Banco
+PostgreSQL
+Armazenamento
+S3 compatível ou Supabase Storage para:
+logos
+banners
+imagens de produto
+imagens de fundo
+Infra local/dev
+Docker Compose
+Automação
+Makefile
+
+Por que eu escolheria frontend e backend separados
+
+Porque seu sistema já nasce com cara de produto sério, não só site institucional.
+
+Separar front e back traz vantagens importantes:
+
+Vantagens
+API reutilizável no futuro
+backend mais limpo para regras de estoque, receita, precificação e pedidos
+testes mais organizados
+frontend mais livre para evoluir
+possibilidade futura de app mobile consumir a mesma API
+multi-tenant e permissões mais fáceis de governar
+Desvantagem
+um pouco mais de estrutura no começo
+
+Mas, sinceramente, aqui vale muito. Seu domínio é rico. Misturar tudo cedo demais vira casamento com DR no segundo sprint.
+
+Arquitetura lógica do sistema
+1. Camadas principais
+Frontend
+
+Responsável por:
+
+renderização da loja pública
+painel do lojista
+formulários
+dashboards
+consumo da API
+controle de sessão do usuário
+API / Backend
+
+Responsável por:
+
+autenticação
+multi-tenant
+regras de negócio
+pedidos
+estoque
+receitas
+precificação
+relatórios
+auditoria
+Banco de dados
+
+Responsável por:
+
+persistência
+integridade relacional
+isolamento lógico por loja
+histórico operacional
+Object Storage
+
+Responsável por:
+
+imagens e arquivos
+Estratégia multi-tenant
+
+Aqui está um ponto crítico.
+
+Melhor abordagem para o seu caso
+
+Banco único + colunas store_id em praticamente todas as entidades de negócio
+
+Exemplo:
+
+products.store_id
+orders.store_id
+customers.store_id
+inventory_items.store_id
+Por que essa abordagem
+mais simples para MVP
+mais barata
+mais fácil de manter
+ideal para dezenas ou centenas de lojas
+permite evolução futura
+Regra de ouro
+
+Toda consulta de negócio deve passar por filtro de tenant.
+
+Exemplo conceitual:
+
+usuário autenticado pertence à loja 15
+toda consulta só enxerga store_id = 15
+Boas práticas
+middleware ou dependency para resolver tenant
+service layer sempre recebendo store_id
+testes automáticos específicos para evitar vazamento entre lojas
+Arquitetura de backend recomendada
+
+Eu sugiro organizar o FastAPI em domínios, não por bagunça horizontal infinita.
+
+Estrutura sugerida
+backend/
+  app/
+    main.py
+    core/
+      config.py
+      security.py
+      database.py
+      logging.py
+      exceptions.py
+      dependencies.py
+    modules/
+      auth/
+        router.py
+        service.py
+        repository.py
+        schemas.py
+        models.py
+      stores/
+        router.py
+        service.py
+        repository.py
+        schemas.py
+        models.py
+      customers/
+      products/
+      inventory/
+      recipes/
+      production/
+      pricing/
+      orders/
+      reports/
+      users/
+    shared/
+      enums.py
+      pagination.py
+      utils.py
+      audit.py
+    tests/
+      unit/
+      integration/
+Regra prática
+
+Cada módulo deve ter:
+
+router
+service
+repository
+schemas
+models
+Responsabilidade
+router: HTTP
+service: regra de negócio
+repository: acesso a dados
+schemas: entrada/saída
+models: ORM
+
+Isso dá disciplina e evita controller que faz tudo, sabe aquele clássico “Deus me livre, mas quem me dera entender esse arquivo”.
+
+Arquitetura de frontend recomendada
+Estrutura sugerida
+frontend/
+  src/
+    app/
+      (public)/
+        loja/
+          [slug]/
+            page.tsx
+            catalogo/
+            produto/
+            carrinho/
+      (admin)/
+        painel/
+          page.tsx
+          produtos/
+          estoque/
+          receitas/
+          pedidos/
+          clientes/
+          configuracoes/
+          relatorios/
+      (platform)/
+        admin/
+    components/
+      ui/
+      layout/
+      forms/
+      charts/
+      store/
+      admin/
+    lib/
+      api.ts
+      auth.ts
+      formatters.ts
+      validations.ts
+    hooks/
+    types/
+    tests/
+Separação visual
+
+Eu dividiria o front em 3 contextos:
+
+Área pública
+vitrine da loja
+catálogo
+pedido
+Área do lojista
+gestão da loja
+Área da plataforma
+super admin
+Estratégia de autenticação
+Recomendada
+access token JWT curto
+refresh token
+controle de roles
+tenant resolvido no backend a partir do usuário autenticado
+Perfis
+platform_admin
+store_admin
+store_manager futuro
+customer
+Regras
+cliente acessa apenas a própria loja
+admin da loja administra apenas sua loja
+platform admin pode ver todas
+Alternativa
+
+Usar Auth.js / NextAuth no front e FastAPI como API autenticada.
+Funciona, mas para o seu caso eu prefiro manter a autoridade principal no backend.
+
+Banco de dados: estrutura conceitual
+Núcleos principais
+Identidade e tenant
+users
+roles
+stores
+store_settings
+store_theme
+Comercial
+customers
+customer_addresses
+categories
+products
+product_images
+Operação
+inventory_items
+stock_movements
+recipes
+recipe_items
+production_orders
+production_order_items
+Venda
+orders
+order_items
+order_status_history
+Financeiro e precificação
+operational_costs
+pricing_simulations
+product_cost_snapshots
+Auditoria
+audit_logs
+Padrões arquiteturais e melhores práticas
+1. Domain-first
+
+Primeiro o domínio, depois a tela.
+
+A regra de preço não pode morar só no frontend.
+A regra de estoque não pode depender só do clique do usuário.
+
+2. Service layer forte
+
+Tudo que for regra importante entra em serviço:
+
+gerar preço
+consumir estoque
+produzir receita
+mudar status de pedido
+3. Repository layer discreta
+
+Repository não decide negócio.
+Ele busca e grava.
+
+4. DTOs/schemas separados do ORM
+
+Não devolver model do banco cru na API.
+
+5. Idempotência em ações críticas
+
+Exemplo:
+
+produção
+baixa de estoque
+mudança de status sensível
+6. Auditoria
+
+Registrar:
+
+quem alterou
+quando alterou
+antes/depois
+entidade afetada
+7. Soft delete quando fizer sentido
+
+Para:
+
+produtos
+clientes
+receitas
+
+Evita sumiço mágico de dado importante.
+
+8. Migrations sempre versionadas
+
+Nada de “editei a tabela aqui rapidinho”.
+Esse “rapidinho” costuma custar uma madrugada e um café triste.
+
+Estratégia Docker
+Ambiente local com Docker Compose
+
+Você pode ter algo como:
+
+frontend
+backend
+db
+adminer ou pgadmin opcional
+mailpit opcional para e-mails em dev
+Exemplo conceitual
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+
+  db:
+    image: postgres:18
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+Boas práticas com Docker
+imagens pequenas
+multi-stage build
+.dockerignore
+usuário não-root quando possível
+healthcheck
+variáveis via .env
+volume persistente para banco
+serviços opcionais separados por override
+Compose moderno
+
+A documentação atual do Docker recomenda o Compose Specification atual; o formato moderno torna o topo version opcional.
+
+Dockerfile: boas práticas
+Backend FastAPI
+base em Python slim
+instalar dependências primeiro
+copiar requirements/lock antes do código
+depois copiar o app
+rodar com uvicorn/gunicorn conforme ambiente
+Frontend Next.js
+build em estágio separado
+imagem final só com artefatos necessários
+evitar mandar node_modules local para a imagem
+Makefile recomendado
+
+Makefile aqui é excelente para padronizar comandos e não depender da memória afetiva do terminal.
+
+Alvos recomendados
+install
+up
+down
+restart
+logs
+ps
+backend-shell
+frontend-shell
+db-shell
+test
+test-unit
+test-integration
+lint
+format
+migrate
+makemigrations
+seed
+clean
+Exemplo conceitual
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down
+
+logs:
+	docker compose logs -f
+
+test:
+	docker compose exec backend pytest
+
+lint:
+	docker compose exec backend ruff check .
+	docker compose exec frontend npm run lint
+
+format:
+	docker compose exec backend ruff format .
+	docker compose exec frontend npm run format
+
+migrate:
+	docker compose exec backend alembic upgrade head
+Benefícios
+onboarding mais fácil
+comandos padronizados
+menos erro humano
+CI mais previsível
+Qualidade de código e padrões
+Backend Python
+
+Eu usaria:
+
+pytest
+pytest-cov
+ruff
+mypy em partes críticas
+factory_boy ou factories próprias
+alembic
+Frontend
+TypeScript
+ESLint
+Prettier
+Vitest ou Jest
+Testing Library
+Playwright para E2E no futuro
+Convenções
+nomes consistentes
+funções pequenas
+services sem acoplamento com HTTP
+sem lógica de negócio no componente React
+validação tanto no front quanto no back
+Estratégia de testes > 90%
+
+Como você quer cobertura alta, a arquitetura precisa favorecer isso.
+
+Backend
+
+Prioridade de testes unitários:
+
+pricing service
+recipe service
+production service
+stock movement service
+order service
+tenant guard
+permission checks
+Testes de integração
+login
+criação de loja
+CRUD de produto
+produção consumindo insumos
+pedido gerando registro correto
+proteção entre tenants
+Frontend
+render de páginas críticas
+formulários
+estados de erro
+integração com API mocked
+Meta prática
+backend: 90%+
+frontend: cobertura boa nas áreas críticas, sem fetiche de 100% em componente visual simples
+Observabilidade e operação
+
+Mesmo em MVP, vale preparar:
+
+Logs
+logs estruturados
+nível por ambiente
+request id
+user id
+store id
+Métricas futuras
+pedidos por dia
+tempo de resposta
+falhas por módulo
+Tratamento de erro
+respostas padronizadas
+mensagens amigáveis no front
+logs ricos no back
+Ambientes recomendados
+Local
+
+Docker Compose
+
+Homologação
+backend container
+frontend container
+Postgres gerenciado se possível
+Produção
+
+Opções:
+
+frontend: Vercel ou container
+backend: Railway, Render, VPS, Fly.io, ECS, etc.
+banco: Neon, Supabase Postgres, Render Postgres, RDS, etc.
+
+Se quiser manter arquitetura mais uniforme, dá para dockerizar tudo.
+Se quiser velocidade e simplicidade, front separado em plataforma própria e back/banco em outro lugar costuma funcionar muito bem.
+
+Segurança desde o início
+Regras mínimas
+hash de senha com algoritmo seguro
+rate limit em login
+JWT seguro
+CORS bem definido
+validação de upload
+autorização por role e tenant
+secrets fora do repositório
+backup de banco
+Uploads
+validar tipo
+validar tamanho
+nomear arquivos com UUID
+não confiar em nome original do arquivo
+Roadmap arquitetural recomendado
+Fase A — Arquitetura base
+monorepo ou multi-repo definido
+Docker
+Compose
+Makefile
+banco
+autenticação
+multi-tenant
+base do front
+Fase B — Domínio comercial
+stores
+themes
+products
+categories
+customers
+orders
+Fase C — Operação
+inventory
+stock movements
+recipes
+production
+Fase D — Gestão
+pricing
+dashboard
+relatórios
+auditoria
+Fase E — Evolução
+impressão
+pagamentos
+integração com WhatsApp
+promoções
+plano por assinatura
+Minha recomendação objetiva de stack
+
+Eu fecharia assim:
+
+Stack principal
+Frontend: Next.js + TypeScript + Tailwind
+Backend: FastAPI + SQLAlchemy + Alembic + Pydantic
+Banco: PostgreSQL
+Infra local: Docker Compose
+Automação: Makefile
+Testes backend: pytest + pytest-cov + factories
+Testes frontend: Testing Library + Vitest
+Lint/format backend: Ruff
+Lint/format frontend: ESLint + Prettier
+Storage: S3 compatível ou Supabase Storage
+Motivo
+
+Essa combinação te dá:
+
+velocidade
+qualidade
+boa testabilidade
+arquitetura limpa
+espaço para crescer
+
+
+====Planejamento 3
+Ajuste importante no planejamento
+Em vez de apenas “cadastro de insumo”
+Você deve separar em dois conceitos:
+1. Insumo mestre
+É o cadastro base do item.
+Exemplos:
+
+
+Leite condensado
+
+
+Leite integral
+
+
+Chocolate em pó
+
+
+Embalagem 150 ml
+
+
+Adesivo redondo
+
+
+Milho de pipoca
+
+
+Açúcar
+
+
+Esse cadastro define:
+
+
+nome
+
+
+categoria
+
+
+unidade de medida
+
+
+descrição
+
+
+estoque mínimo
+
+
+ativo/inativo
+
+
+controla validade? sim/não
+
+
+observações
+
+
+2. Entradas/lotes do insumo
+Aqui entram as compras reais daquele insumo.
+Exemplo para “Leite condensado”:
+
+
+lote 1: 10 unidades a R$ 6,50 cada, validade 2026-06-10
+
+
+lote 2: 24 unidades a R$ 7,20 cada, validade 2026-08-01
+
+
+lote 3: 12 unidades a R$ 6,89 cada, sem validade informada
+
+
+Esse nível deve guardar:
+
+
+insumo vinculado
+
+
+quantidade comprada
+
+
+unidade
+
+
+valor unitário
+
+
+valor total
+
+
+fornecedor opcional
+
+
+data da compra
+
+
+data de validade opcional
+
+
+número do lote opcional
+
+
+observações
+
+
+quantidade restante daquele lote
+
+
+
+Por que isso é importante
+1. Mesmo insumo com preços diferentes
+Isso resolve exatamente o que você mencionou.
+O mesmo item pode ser comprado várias vezes com valores diferentes:
+
+
+mercado A
+
+
+atacado
+
+
+promoção
+
+
+fornecedor novo
+
+
+inflação batendo sem pedir licença
+
+
+Se você guardar só “um preço atual”, perde:
+
+
+histórico
+
+
+média real
+
+
+custo correto
+
+
+análise de margem ao longo do tempo
+
+
+2. Precificação mais confiável
+A precificação pode usar estratégias diferentes:
+opção A — último custo
+Usa o valor do lote mais recente
+opção B — custo médio ponderado
+Usa a média ponderada dos lotes em estoque
+opção C — FIFO
+Usa primeiro os lotes mais antigos
+Para o seu sistema, eu recomendaria começar com:
+
+
+estoque operacional por lote
+
+
+precificação por custo médio ponderado
+
+
+e deixar preparado para futura opção de FIFO
+
+
+Assim você ganha equilíbrio entre simplicidade e precisão.
+3. Controle de validade
+Muito útil para:
+
+
+leite
+
+
+creme de leite
+
+
+recheios
+
+
+coberturas
+
+
+embalagens com cola ou materiais específicos
+
+
+ingredientes perecíveis
+
+
+Isso permite:
+
+
+alertas de vencimento próximo
+
+
+priorização de consumo
+
+
+redução de perdas
+
+
+histórico de desperdício
+
+
+
+Como isso muda a arquitetura funcional
+Novo módulo ou submódulo
+Dentro de estoque, você passa a ter:
+Cadastro de insumos
+Cadastro base
+Entradas de insumos
+Compras/lotes
+Movimentações de insumos
+Entradas, consumo, ajuste, perda, descarte
+Histórico de preço
+Derivado dos lotes/entradas
+
+Modelagem recomendada
+Tabela inventory_items
+Cadastro mestre do insumo.
+Campos sugeridos:
+
+
+id
+
+
+store_id
+
+
+name
+
+
+category
+
+
+unit_of_measure
+
+
+description
+
+
+minimum_stock
+
+
+tracks_expiration_date
+
+
+active
+
+
+created_at
+
+
+updated_at
+
+
+Tabela inventory_batches
+Representa os lotes/entradas daquele insumo.
+Campos sugeridos:
+
+
+id
+
+
+store_id
+
+
+inventory_item_id
+
+
+batch_code opcional
+
+
+supplier_name opcional
+
+
+purchase_date
+
+
+expiration_date opcional
+
+
+quantity_received
+
+
+quantity_available
+
+
+unit_cost
+
+
+total_cost
+
+
+notes
+
+
+created_at
+
+
+Tabela stock_movements
+Histórico de movimentação.
+Campos sugeridos:
+
+
+id
+
+
+store_id
+
+
+item_type (insumo / produto_final)
+
+
+item_id
+
+
+batch_id opcional
+
+
+movement_type (entrada, consumo, ajuste, perda, descarte, venda, producao)
+
+
+quantity
+
+
+unit_cost_snapshot opcional
+
+
+reason
+
+
+reference_type opcional
+
+
+reference_id opcional
+
+
+created_by
+
+
+created_at
+
+
+
+Regras de negócio importantes
+Regra 1
+O cadastro do insumo não deve ter apenas um preço fixo principal como fonte única da verdade.
+Pode até existir um campo de apoio como:
+
+
+custo de referência
+
+
+último custo calculado
+
+
+custo médio atual
+
+
+Mas o valor real deve vir do histórico de entradas/lotes.
+Regra 2
+A data de validade deve ser opcional por lote, não só por insumo.
+Porque:
+
+
+um lote pode vencer
+
+
+outro pode não ter validade informada
+
+
+o mesmo insumo pode ser comprado em momentos diferentes
+
+
+Regra 3
+O consumo da receita deve considerar lote
+Mesmo que internamente isso seja simplificado no início, o ideal é o sistema já nascer preparado para consumir por lote.
+Estratégia recomendada
+Consumir primeiro:
+
+
+lotes com vencimento mais próximo
+
+
+depois os mais antigos
+
+
+Isso é melhor do que simplesmente baixar do total geral.
+Regra 4
+A precificação deve usar regra configurável
+Por loja, no futuro, pode existir a escolha:
+
+
+usar último custo
+
+
+usar custo médio
+
+
+usar FIFO
+
+
+Para o MVP:
+
+
+usar custo médio ponderado
+
+
+
+Impacto no módulo de precificação
+Agora a precificação fica mais forte.
+Exemplo
+Leite condensado teve entradas:
+
+
+10 x R$ 6,00
+
+
+20 x R$ 7,00
+
+
+Custo médio:
+
+
+(10×6 + 20×7) / 30 = R$ 6,67
+
+
+Se a receita usa 2 unidades:
+
+
+custo do item na receita = R$ 13,34
+
+
+Muito melhor do que:
+
+
+chutar o valor antigo
+
+
+sobrescrever o preço
+
+
+perder histórico
+
+
+
+Impacto no lucro e relatórios
+Com essa modelagem, você consegue depois mostrar:
+Relatórios muito úteis
+
+
+evolução do preço dos insumos
+
+
+insumos com maior aumento de custo
+
+
+impacto da alta de preço no produto final
+
+
+margem histórica por período
+
+
+perda por vencimento
+
+
+custo médio atual por insumo
+
+
+comparação entre fornecedores
+
+
+
+Ajuste no módulo de telas
+Tela de cadastro de insumo
+Deve conter:
+
+
+nome
+
+
+categoria
+
+
+unidade
+
+
+estoque mínimo
+
+
+controla validade? sim/não
+
+
+descrição
+
+
+ativo/inativo
+
+
+Tela de entrada/lote
+Deve conter:
+
+
+insumo
+
+
+data da compra
+
+
+quantidade
+
+
+valor unitário
+
+
+valor total automático
+
+
+fornecedor opcional
+
+
+lote opcional
+
+
+validade opcional
+
+
+observações
+
+
+Tela de histórico do insumo
+Deve mostrar:
+
+
+todas as entradas
+
+
+preço por compra
+
+
+saldo por lote
+
+
+validade
+
+
+consumo
+
+
+média de custo atual
+
+
+último preço
+
+
+alertas
+
+
+
+Minha recomendação prática para o planejamento oficial
+No documento do sistema, eu substituiria a ideia simples de “cadastro de insumo com preço” por esta definição:
+Definição correta
+“O sistema deve permitir o cadastro de insumos em nível mestre e o registro de múltiplas entradas/lotes para o mesmo insumo, com quantidades, custos unitários diferentes e data de validade opcional por lote, preservando histórico de preços, cálculo de custo médio e rastreabilidade de consumo para precificação, produção e análise de lucro.”
+Isso está muito mais profissional e muito mais aderente à operação real.
+
+Decisão recomendada para o projeto
+Eu fecharia assim:
+Para insumos
+
+
+cadastro mestre separado
+
+
+entradas por lote
+
+
+validade opcional por lote
+
+
+múltiplos preços permitidos
+
+
+histórico obrigatório
+
+
+custo médio calculado
+
+
+consumo preparado para lote
+
+
+Para precificação
+
+
+usar custo médio ponderado no MVP
+
+
+deixar arquitetura pronta para FIFO no futuro
+
+
+
+Esse ponto vale muito a pena entrar como requisito oficial de arquitetura e negócio. Ele eleva o sistema de “controle básico” para “gestão com inteligência operacional”.
+No próximo passo, eu posso consolidar tudo o que já definimos em um Planejamento Funcional + Arquitetura v1, já incluindo:
+
+
+módulos
+
+
+regras de negócio
+
+
+modelagem inicial
+
+
+stack
+
+
+Docker
+
+
+Makefile
+
+
+testes
+
+
+esse modelo novo de insumos por lote e validade.
+
+
+=====Planejamento 4
+1. Ajuste no módulo de receitas
+
+A receita não deve servir só para dizer “o que vai dentro”.
+Ela também deve permitir, de forma opcional, considerar:
+
+custos indiretos de fabricação
+tempo de produção
+observações operacionais
+O que entra na receita
+Estrutura base
+produto final vinculado
+nome da receita
+rendimento
+unidade de rendimento
+ingredientes/insumos
+quantidade usada de cada item
+Campos opcionais novos
+tempo estimado de produção
+unidade de tempo
+custo indireto adicional da receita
+observação de processo
+percentual de perda esperado opcional
+Exemplo prático
+
+Receita: Pipoca Gourmet de Chocolate
+
+milho: 500 g
+açúcar: 300 g
+chocolate: 200 g
+embalagem: 20 un
+rendimento: 20 pacotes
+tempo estimado: 1h20
+custo indireto adicional: R$ 8,00
+perda esperada: 3%
+Por que isso é importante
+
+Porque o custo real de produção não é só ingrediente.
+
+Tem receita que:
+
+demora mais
+usa mais gás
+exige mais manipulação
+tem desperdício maior
+precisa de refrigeração
+exige embalagem mais complexa
+
+Então a receita precisa aceitar isso, mesmo que opcionalmente.
+
+2. Custos indiretos de fabricação
+
+Aqui vale separar em dois níveis.
+
+Nível A — custos indiretos globais da loja
+
+Cadastrados pelo admin da loja.
+
+Exemplos:
+
+energia
+gás
+água
+internet
+aluguel
+mão de obra
+transporte
+limpeza
+manutenção
+
+Esses custos podem ser:
+
+mensais
+semanais
+diários
+por produção
+por receita
+Nível B — custo indireto adicional por receita
+
+Para casos específicos.
+
+Exemplos:
+
+receita que usa mais gás
+receita mais demorada
+embalagem térmica especial
+produção com taxa extra de desperdício
+Estrutura recomendada
+
+O sistema deve permitir:
+
+cadastrar custos indiretos gerais
+definir forma de rateio
+opcionalmente adicionar custo indireto específico por receita
+3. Tempo de produção na receita
+
+Excelente ponto.
+
+O sistema deve permitir informar:
+
+tempo estimado de produção
+unidade de tempo
+quantidade de pessoas envolvidas opcional
+custo de mão de obra opcional
+Isso abre espaço para:
+calcular custo por hora
+estimar capacidade produtiva
+comparar produtos mais rentáveis vs mais demorados
+saber o que “vende bem mas toma o dia inteiro”
+Exemplo
+
+Sacolé gourmet:
+
+tempo: 2h
+1 pessoa
+custo hora definido pela loja: R$ 18/h
+
+Custo de mão de obra estimado:
+
+2 x 18 = R$ 36,00
+
+Esse valor pode entrar:
+
+automaticamente no custo da receita
+ou
+apenas como cálculo auxiliar
+Recomendação
+
+No MVP, eu faria isso como:
+
+tempo de produção opcional
+custo/hora configurável na loja
+cálculo automático opcional de mão de obra estimada
+4. Ajuste no módulo de precificação
+
+Aqui você trouxe um ponto essencial:
+o sistema deve calcular, mas também permitir intervenção manual inteligente.
+
+Isso é certo. Na vida real o preço não é só fórmula.
+
+Às vezes o lojista quer:
+
+manter preço psicológico
+baixar margem
+arredondar
+cobrir concorrência
+fazer promoção
+segurar preço mesmo com custo subindo
+O módulo de precificação deve ter dois modos
+Modo 1 — cálculo automático
+
+Com base em:
+
+custo dos insumos
+custo médio dos lotes
+embalagem
+custo indireto
+mão de obra estimada
+perdas
+margem desejada
+markup
+arredondamento
+Modo 2 — ajuste manual assistido
+
+O admin pode alterar:
+
+margem desejada
+preço final
+percentual de lucro alvo
+custo indireto complementar
+arredondamento
+desconto promocional
+custo operacional extra
+
+O sistema recalcula os demais indicadores em tempo real.
+
+Exemplo
+
+O sistema sugere:
+
+preço ideal: R$ 12,34
+
+O lojista ajusta para:
+
+R$ 12,90
+ou
+R$ 11,99
+
+O sistema deve mostrar:
+
+lucro bruto estimado
+margem real
+percentual aplicado
+diferença para o preço sugerido
+5. Calculadora prática no módulo de precificação
+
+Isso é excelente e agrega muito valor.
+
+A calculadora deve funcionar como simulador
+
+Sem precisar alterar imediatamente o cadastro oficial do produto.
+
+O lojista pode informar:
+custo do insumo
+embalagem
+custo indireto
+quantidade produzida
+margem desejada
+preço final desejado
+perda estimada
+mão de obra
+frete médio
+taxa futura
+E a calculadora mostra:
+custo total
+custo unitário
+preço ideal
+lucro por unidade
+margem percentual
+markup
+ponto de equilíbrio simplificado opcional
+Benefício
+
+Ajuda o lojista a:
+
+testar cenários
+comparar preços
+decidir promoções
+estudar novo produto antes de cadastrar
+Recomendação
+
+Criar 2 experiências:
+
+precificação oficial do produto
+calculadora livre / simulador
+6. Custos indiretos cadastrados pelo admin da loja
+
+Isso precisa virar um módulo próprio ou submódulo forte.
+
+Cadastro de custo indireto
+
+Campos sugeridos:
+
+nome
+categoria
+valor
+periodicidade
+tipo de rateio
+ativo/inativo
+observação
+Categorias possíveis
+energia
+gás
+água
+aluguel
+internet
+mão de obra
+transporte
+manutenção
+limpeza
+embalagem secundária
+custo administrativo
+Formas de rateio possíveis no futuro
+por mês
+por semana
+por dia
+por lote produzido
+por receita
+por unidade produzida
+manual
+Para o MVP
+
+Eu começaria com:
+
+cadastro do custo indireto
+periodicidade
+rateio manual ou mensal simplificado
+7. Ajuste no módulo financeiro: mostrar perdas
+
+Perfeito. Isso é muito importante.
+
+O sistema não deve mostrar só venda e lucro.
+Tem que mostrar também o que foi perdido.
+
+Tipos de perda que o sistema pode controlar
+perda por vencimento
+perda por quebra
+perda por erro de produção
+perda por ajuste manual
+perda por descarte
+perda por produto danificado
+Indicadores no financeiro
+valor total de perdas no período
+quantidade total perdida
+perda por categoria
+perda por insumo
+perda por produto final
+impacto das perdas no lucro
+Exemplo de painel
+faturamento bruto
+custo estimado vendido
+lucro bruto
+perdas do período
+lucro ajustado após perdas
+
+Isso dá uma visão muito mais honesta do negócio.
+
+8. Comparações entre períodos
+
+Esse ponto é ótimo e deve virar parte do módulo analítico.
+
+Comparações que fazem sentido
+Comparação mês contra mês anterior
+
+Exemplo:
+
+abril vs março
+Comparação ano contra ano do mesmo mês
+
+Exemplo:
+
+abril/2026 vs abril/2025
+Comparação semana equivalente de anos anteriores
+
+Exemplo:
+
+semana da Páscoa atual vs semana da Páscoa anterior
+Comparação de datas comemorativas
+
+Exemplo:
+
+Páscoa 2026 vs Páscoa 2025
+Dia das Mães 2026 vs Dia das Mães 2025
+Natal 2026 vs Natal 2025
+Indicadores comparáveis
+faturamento
+lucro
+perdas
+ticket médio
+pedidos
+itens vendidos
+produto campeão
+custo médio de produção
+margem média
+9. Como tratar datas sazonais
+
+Aqui tem um detalhe importante: comparar só por dia do calendário nem sempre basta.
+
+Exemplo:
+
+Páscoa muda de data
+Dia das Mães depende do calendário
+Natal é fixo
+festas locais podem variar
+Recomendação de arquitetura
+
+Criar no futuro uma entidade de eventos sazonais / datas comerciais.
+
+Exemplo:
+
+Páscoa
+Dia das Mães
+Dia dos Namorados
+Festa Junina
+Natal
+Ano Novo
+
+E permitir:
+
+cadastrar período do evento
+marcar vendas relacionadas àquele período
+gerar comparativos históricos por evento
+MVP
+
+No MVP, basta ter:
+
+comparação por mês
+comparação por ano
+comparação por intervalo de datas
+Evolução
+
+Depois incluir calendário comercial e sazonal.
+
+10. Ajuste no dashboard financeiro
+
+Com esses novos pontos, o dashboard financeiro pode mostrar:
+
+Indicadores principais
+faturamento do período
+custo dos produtos vendidos
+lucro bruto
+perdas totais
+margem média
+ticket médio
+quantidade de pedidos
+Blocos comparativos
+variação vs mês anterior
+variação vs mesmo mês do ano passado
+variação vs período equivalente
+Gráficos sugeridos
+faturamento por mês
+lucro por mês
+perdas por mês
+comparação ano a ano
+sazonalidade de vendas
+custos indiretos por período
+11. Ajuste na modelagem
+
+Esses requisitos pedem algumas entidades ou campos novos.
+
+Novos campos na receita
+estimated_production_time
+production_time_unit
+indirect_cost_override
+expected_loss_percent
+labor_cost_mode opcional
+Nova entidade: indirect_costs
+
+Campos sugeridos:
+
+id
+store_id
+name
+category
+amount
+frequency
+allocation_type
+active
+notes
+created_at
+Nova entidade: loss_records ou aproveitar stock_movements
+
+Você pode registrar perdas diretamente em movimentações, desde que tenha:
+
+tipo = perda
+motivo
+valor estimado
+item
+lote
+data
+Nova entidade opcional futura: seasonal_events
+id
+store_id opcional ou global
+name
+start_date
+end_date
+type
+active
+12. Regras de negócio consolidadas
+Receita
+pode ter custo indireto opcional
+pode ter tempo de produção opcional
+pode ter perda esperada opcional
+Precificação
+cálculo automático assistido
+parâmetros editáveis manualmente
+sistema recalcula indicadores sempre
+preço final pode ser ajustado manualmente pelo admin
+Financeiro
+deve mostrar perdas
+deve permitir comparações históricas
+deve destacar variações entre períodos
+Custos indiretos
+devem ser cadastráveis pelo admin da loja
+devem entrar no cálculo quando aplicável
+devem permitir rateio configurável
+13. Como eu escreveria isso no planejamento oficial
+Receita
+
+“O sistema deve permitir cadastrar receitas com rendimento, insumos, tempo estimado de produção opcional, percentual de perda esperado opcional e custos indiretos específicos opcionais, para compor com maior precisão o custo de fabricação.”
+
+Precificação
+
+“O módulo de precificação deve calcular o custo e sugerir preços automaticamente, mas permitir ajuste manual de parâmetros relevantes pelo administrador da loja, incluindo margem desejada, preço final, custos indiretos complementares e demais fatores econômicos pertinentes. Deve existir também uma calculadora/simulador para análise de cenários.”
+
+Financeiro
+
+“O módulo financeiro deve apresentar, além de faturamento e lucro, o valor total de perdas do período e permitir comparações com períodos anteriores, incluindo mês anterior, mesmo mês do ano anterior, mesma semana do ano anterior e, quando houver histórico suficiente, comparações sazonais de datas comerciais relevantes.”
+
+14. Recomendação prática de implementação por fases
+Entrar no MVP já
+tempo de produção opcional na receita
+custo indireto opcional na receita
+cadastro de custos indiretos da loja
+precificação com cálculo + ajuste manual
+simulador de preço
+financeiro mostrando perdas
+comparativo mês anterior e ano anterior
+Deixar para fase 2
+eventos sazonais configuráveis
+comparações por Páscoa, Natal, Dia das Mães com inteligência própria
+rateios mais sofisticados
+custo de mão de obra mais avançado
+ponto de equilíbrio detalhado
+
+Agora o sistema já está com cara de produto bem pensado mesmo.
+
+O próximo passo mais inteligente é eu consolidar tudo o que definimos até aqui em um documento mestre de planejamento e arquitetura, já organizado em seções como:
+
+visão do produto
+módulos
+regras de negócio
+arquitetura
+banco
+testes
+Docker
+Makefile
+roadmap
+
+
+====Planejamento 5
+Se o próprio dono da loja vai configurar muita coisa, o painel admin não pode ser só funcional. Ele precisa ser autoexplicativo. Senão o sistema vira “poderoso”, mas o lojista trava no terceiro campo e volta pro caderninho. O caderno, aliás, não tem UX, mas é difícil de quebrar.
+
+1. Tooltips e ajuda contextual devem ser requisito oficial
+
+Isso deve entrar como regra de produto, não como detalhe de interface.
+
+Diretriz
+
+Todo campo relevante do admin deve ter algum nível de ajuda contextual, principalmente quando:
+
+afeta cálculo
+afeta preço
+afeta estoque
+afeta lucro
+afeta aparência da loja
+afeta comportamento de pedido
+afeta visibilidade de produto
+Tipos de ajuda recomendados
+Tooltip curto
+
+Explica rapidamente:
+
+o que é o campo
+quando usar
+se é obrigatório ou opcional
+
+Exemplo:
+Margem desejada
+“Percentual de lucro desejado sobre o custo do produto. Esse valor ajuda o sistema a sugerir um preço de venda.”
+
+Texto auxiliar abaixo do campo
+
+Melhor para campos mais importantes.
+
+Exemplo:
+Custo indireto mensal
+“Esse valor pode ser usado no cálculo de custo real dos produtos, conforme a forma de rateio configurada.”
+
+Link “saiba mais”
+
+Para abrir um modal ou drawer com explicação completa.
+
+Resumo dinâmico do impacto
+
+Esse é o ouro.
+
+O sistema pode mostrar algo como:
+
+“Esse valor será usado na precificação”
+“Esse valor impacta o lucro estimado”
+“Esse valor entra no custo da receita”
+“Esse valor não será aplicado automaticamente enquanto o rateio estiver desativado”
+
+Isso dá confiança ao lojista.
+
+2. O admin deve explicar: o que é, onde usa e o que calcula
+
+Você matou a charada.
+
+Todo campo sensível deveria responder 3 perguntas:
+
+A. O que é isso?
+
+Definição simples.
+
+B. Onde isso será usado?
+
+Exemplo:
+
+precificação
+custo da receita
+dashboard financeiro
+cálculo de lucro
+relatório de perdas
+C. O que o sistema calcula com isso?
+
+Exemplo:
+
+custo médio
+preço sugerido
+margem real
+lucro bruto
+custo unitário
+3. Padrão oficial para campos sensíveis
+
+Eu recomendaria padronizar assim:
+
+Estrutura visual
+Label do campo
+ícone de ajuda
+descrição curta
+indicador de impacto
+exemplo opcional
+feedback em tempo real quando aplicável
+Exemplo prático
+Campo: Margem desejada
+
+Tooltip
+“Percentual de retorno esperado sobre o custo do produto.”
+
+Usado em
+
+precificação automática
+simulador de preço
+
+Impacta
+
+preço sugerido
+lucro estimado
+margem final
+
+Exemplo
+“Se o custo unitário for R$ 8,00 e a margem desejada for 50%, o sistema poderá sugerir um preço superior ao custo com base nessa meta.”
+
+4. Campos que obrigatoriamente devem ter tooltip/ajuda
+Configuração da loja
+cores
+imagem de fundo
+mensagem do WhatsApp
+comportamento de produto sem estoque
+horário de funcionamento
+textos da home
+Estoque
+estoque mínimo
+unidade de medida
+validade
+lote
+custo unitário
+custo médio
+Receita
+rendimento
+perda esperada
+custo indireto da receita
+tempo de produção
+custo de mão de obra
+Precificação
+margem desejada
+markup
+custo indireto
+arredondamento
+preço final manual
+simulador
+Financeiro
+perdas
+lucro bruto
+custo estimado vendido
+comparativo histórico
+5. Isso também impacta a arquitetura
+
+Esses textos não devem ficar jogados hardcoded em 200 componentes.
+
+Recomendação
+
+Criar uma camada/configuração de metadados de ajuda para campos.
+
+Exemplo conceitual:
+
+identificador do campo
+título
+descrição curta
+descrição longa
+módulo
+onde é usado
+cálculos impactados
+exemplo
+
+Assim você consegue:
+
+padronizar
+manter
+reaproveitar
+até futuramente internacionalizar
+6. Mobile first para loja e admin
+
+Sim. Isso deve ser requisito obrigatório desde o começo.
+
+E eu diria mais: não só mobile first, mas mobile-operational first.
+
+Porque o lojista real muitas vezes vai usar:
+
+celular no balcão
+celular na produção
+celular no mercado
+celular respondendo cliente
+celular conferindo estoque
+
+Então o admin não pode ser uma planilha espremida no telefone.
+
+O que significa mobile first na prática
+Loja pública
+catálogo excelente no celular
+imagens leves
+botão de WhatsApp sempre fácil
+carrinho simples
+cadastro rápido
+leitura boa
+carregamento rápido
+Admin
+dashboard responsivo de verdade
+cadastro de produto confortável no celular
+gestão de pedido fácil por touch
+ações rápidas
+navegação clara
+formulários divididos por etapas quando necessário
+7. Diretrizes de UX mobile-first
+Para a loja pública
+navegação por cards
+CTA destacado
+catálogo com scroll fluido
+filtros em drawer/modal
+checkout simples
+carrinho fixo ou facilmente acessível
+Para o admin
+bottom navigation ou menu colapsável em mobile
+listas com ações rápidas
+formulários em seções
+componentes grandes o suficiente para toque
+tabelas transformadas em cards no celular
+gráficos simplificados em telas pequenas
+Muito importante
+
+Evitar depender demais de:
+
+hover
+tabela horizontal gigante
+modais minúsculos
+grids densos demais
+
+No mobile, isso vira castigo.
+
+8. Pensar hoje para virar app depois
+
+Sim, e isso reforça ainda mais a decisão de arquitetura.
+
+Se a ideia é evoluir depois para app, então desde já vale preparar:
+
+Backend desacoplado
+
+API forte e bem definida
+
+Frontend organizado por design system
+
+Componentes reutilizáveis
+
+Regras de negócio no backend
+
+Não no front
+
+Autenticação consistente
+
+Preparada para cliente web e app
+
+Uploads e mídia independentes do front
+
+Storage separado
+
+9. Monolito ou microsserviços?
+
+Para esse caso: monolito modular.
+
+Sem dúvida, minha indicação é essa.
+
+O que eu recomendo
+
+Um sistema com:
+
+frontend separado
+backend único
+banco único
+código organizado por domínios
+
+Ou seja:
+
+não microsserviços
+não “um arquivo gigante”
+sim um monolito bem modularizado
+10. Por que não microsserviços agora
+
+Microsserviços fazem sentido quando há:
+
+times diferentes por domínio
+escala muito alta
+necessidades muito distintas de deploy
+alta complexidade operacional já justificada
+
+Hoje, para esse produto, microsserviços trariam mais custo do que benefício.
+
+Problemas que você compraria cedo demais
+deploy mais complexo
+autenticação distribuída
+observabilidade mais difícil
+comunicação entre serviços
+versionamento de contratos
+mais Dockerfiles
+mais pipelines
+mais chance de falha
+desenvolvimento mais lento
+
+Você acabaria criando uma cidade para resolver a logística de uma padaria que ainda está escolhendo a cor da placa.
+
+11. Por que monolito modular é a melhor escolha
+Benefícios
+mais rápido para construir
+mais simples para testar
+mais barato para subir
+mais fácil de manter
+mais fácil de debugar
+mais fácil de evoluir
+E ainda permite crescer
+
+Se for bem organizado, no futuro você pode extrair módulos específicos, se realmente fizer sentido.
+
+Exemplo futuro:
+
+serviço de notificações
+serviço de relatórios pesados
+serviço de arquivos/imagens
+serviço de pagamentos
+
+Mas só quando houver motivo real.
+
+12. Como deve ser esse monolito
+
+Não é monolito bagunçado.
+É monolito modular com fronteiras claras.
+
+Módulos sugeridos
+auth
+stores
+customers
+products
+inventory
+recipes
+production
+pricing
+orders
+finance
+reports
+admin_config
+audit
+Regra
+
+Cada módulo com:
+
+router
+service
+repository
+schemas
+models
+
+Assim você ganha:
+
+organização
+legibilidade
+isolamento lógico
+testes melhores
+13. Melhor desenho geral para você
+Recomendação final
+Frontend
+Next.js
+TypeScript
+Tailwind
+mobile first
+Backend
+FastAPI
+monolito modular
+API REST bem organizada
+Banco
+PostgreSQL
+Infra
+Docker
+Docker Compose
+Makefile
+Arquitetura
+multi-tenant por store_id
+regras de negócio centralizadas no backend
+design system com foco mobile
+tooltips e ajuda contextual como parte oficial da UX
+14. Regra oficial que eu adicionaria ao planejamento
+Sobre o admin
+
+“O painel administrativo deve ser autoexplicativo e conter ajuda contextual nos campos relevantes, especialmente aqueles que impactem cálculos, relatórios, precificação, estoque, lucro, comportamento da loja ou experiência do cliente. Sempre que possível, o sistema deve informar de forma clara onde aquele valor será utilizado e quais cálculos serão afetados.”
+
+Sobre UX
+
+“A loja pública e o painel administrativo devem ser concebidos com abordagem mobile first, garantindo navegação eficiente em smartphones e baseando a arquitetura de frontend em componentes que facilitem futura evolução para aplicativo.”
+
+Sobre arquitetura
+
+“O sistema deve ser construído inicialmente como um monolito modular, com separação clara por domínios de negócio, evitando a complexidade operacional de microsserviços no estágio inicial, mas preservando fronteiras internas que permitam extrações futuras caso necessário.”
+
+15. Minha recomendação objetiva
+
+Hoje eu fecharia assim:
+
+arquitetura: monolito modular
+estratégia: API central + frontend separado
+UX: mobile first para loja e admin
+admin: ajuda contextual obrigatória em campos críticos
+visão futura: preparar estrutura para virar app sem reescrever regra de negócio

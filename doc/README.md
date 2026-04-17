@@ -2,34 +2,54 @@
 
 Índice da pasta `doc/`.
 
+## Estrutura
+
+| Pasta / arquivo | Conteúdo |
+|-----------------|----------|
+| **[documento_enterprise.md](documento_enterprise.md)** | Visão canônica (arquitetura, domínio, MVP, roadmap) — permanece na raiz de `doc/` |
+| **[normativos/](normativos/)** | Regras de negócio (`RN-*`), requisitos funcionais/não funcionais (`RF-*`, `RNF-*`), matriz RN → testes |
+| **[projeto/](projeto/)** | Decisões **DEC-***, backlog, rastreabilidade com `inicio_planejamento.txt`, proposta legada |
+| **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
+| **[execucao/](execucao/)** | Changelog de marcos |
+
+## Ordem de leitura sugerida
+
+1. **[documento_enterprise.md](documento_enterprise.md)** — visão única: arquitetura, stack, domínio resumido, MVP, roadmap por fases.
+2. **[normativos/regras-negocio.md](normativos/regras-negocio.md)** — invariantes e regras por área (`RN-*`).
+3. **[normativos/requisitos-funcionais.md](normativos/requisitos-funcionais.md)** — o que o sistema deve fazer (`RF-*`).
+4. **[normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md)** — segurança, performance, testes, etc. (`RNF-*`).
+5. **[normativos/matriz-rn-testes.md](normativos/matriz-rn-testes.md)** — opcional: rastreabilidade **RN → caso de teste** (evolução; **RNF-QA-06**).
+6. **[projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md)** — decisões **DEC-01 … DEC-20**, **ADR leve** por DEC e **gates por fase**.
+7. **[projeto/rastreabilidade-fontes.md](projeto/rastreabilidade-fontes.md)** — ligação entre [inicio_planejamento.txt](../inicio_planejamento.txt) e os documentos normativos.
+8. **[fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md)** — Fases 0–4 e equivalência com MVPs do planejamento em texto.
+
+## Checklist pré-desenvolvimento
+
+Antes de **iniciar a implementação de uma fase**, confira os **gates** em [projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md) e o bloco **«Documentação normativa»** + **«Gates antes de implementar esta fase»** no arquivo [fases/fase-0X-*.md](fases/) correspondente (ex.: Fase 1 exige **DEC-16**, **DEC-18**, **DEC-19** aplicados ao desenho).
+
 ## Fonte de verdade
 
 | Documento | Papel |
 |-----------|--------|
-| **[documento_enterprise.md](documento_enterprise.md)** | **Canônico:** visão de produto, princípios, arquitetura, stack, multi-tenant, domínio (loja, admin, estoque, receitas, precificação, pedidos/concorrência), financeiro, UX, FieldHelp, RBAC, API, erros, infra, testes, MVP, backlog enterprise, CI/CD, roadmap |
-| [proposta.md](../proposta.md) (raiz) | Atalho que aponta para `documento_enterprise.md` — não duplicar edições aqui |
-| [proposta_plataforma_loja.md](proposta_plataforma_loja.md) | Substituído; mantido só para links legados → use `documento_enterprise.md` |
+| **[documento_enterprise.md](documento_enterprise.md)** | **Canônico** para visão de produto, arquitetura, stack, multi-tenant, domínio resumido, API, UX, MVP, backlog enterprise de alto nível |
+| [normativos/regras-negocio.md](normativos/regras-negocio.md), [normativos/requisitos-funcionais.md](normativos/requisitos-funcionais.md), [normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md) | **Normativos** para especificação detalhada e testes |
+| [inicio_planejamento.txt](../inicio_planejamento.txt) | **Material bruto** de ideias; a norma evolui nos `.md` acima |
+| [proposta.md](../proposta.md) (raiz) | Atalho para `documento_enterprise.md` |
+| [projeto/proposta_plataforma_loja.md](projeto/proposta_plataforma_loja.md) | Substituído; use `documento_enterprise.md` |
 
 ## Roadmap e planejamento por fase
 
 | Documento | Descrição |
 |-----------|------------|
-| [fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md) | **Índice mestre** do roadmap (Fases 0 a 4), MVP vs fases, dependências |
+| [fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md) | **Índice mestre** do roadmap (Fases 0 a 4), MVP vs fases, equivalências com o texto de planejamento |
 
-O planejamento **detalhado** de cada fase (objetivos, escopo, critérios de aceite, riscos, estado de execução) está em [fases/](fases/): [fase-00-kickoff.md](fases/fase-00-kickoff.md), [fase-01-fundacao.md](fases/fase-01-fundacao.md), [fase-02-operacao.md](fases/fase-02-operacao.md), [fase-03-gestao.md](fases/fase-03-gestao.md), [fase-04-escala.md](fases/fase-04-escala.md). **Atualize-os** quando o escopo mudar ou ao concluir um marco.
+O planejamento **detalhado** de cada fase está em [fases/](fases/).
 
-## Outros documentos
+## Backlog e execução
 
 | Documento | Descrição |
 |-----------|------------|
-| [backlog.md](backlog.md) | Pendências enterprise, débitos técnicos e itens fora do escopo fechado |
-
-O que não estiver completo numa fase permanece referenciado em [backlog.md](backlog.md).
-
-## Execução (opcional)
-
-| Arquivo | Uso |
-|---------|-----|
+| [projeto/backlog.md](projeto/backlog.md) | Backlog enterprise (BE-*), MVP, débitos técnicos, **ideias de produto** (IP-*) |
 | [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md) | Notas datadas por sprint ou marco |
 
 ## Testes e relatórios HTML

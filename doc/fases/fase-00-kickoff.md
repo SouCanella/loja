@@ -3,6 +3,18 @@
 **Referência:** [documento_enterprise.md](../documento_enterprise.md)  
 **Roadmap mestre:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) (fases 0 a 4)
 
+## Documentação normativa (leitura para esta fase)
+
+- [regras-negocio.md](../normativos/regras-negocio.md)
+- [requisitos-funcionais.md](../normativos/requisitos-funcionais.md)
+- [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md)
+- [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) — gates por fase
+
+### Gates antes de implementar esta fase
+
+- Repositório e `doc/` coerentes com o planejamento; convenções de branch e qualidade (testes/relatórios HTML) definidas.
+- Não é necessário ter implementado autenticação completa nem pedidos (isso é Fase 1+).
+
 ---
 
 ## Parte A — Planejamento (referência fixa)
@@ -47,7 +59,7 @@ Os documentos abaixo descrevem **todo o roadmap** (entregáveis, critérios de a
 
 ### Definição de pronto (Fase 0 — execução)
 
-- [ ] `doc/README.md`, `doc/backlog.md` e este arquivo coerentes com o repositório.
+- [ ] `doc/README.md`, `d../projeto/backlog.md` e este arquivo coerentes com o repositório.
 - [ ] Esqueleto `frontend/` e `backend/` com serviços subindo via Docker Compose.
 - [ ] Makefile na raiz com `up`, `down`, `test`, `migrate`, `lint` (migrate/lint podem ser mínimos até Alembic/ESLint plenos).
 - [ ] Pelo menos um teste smoke por camada (backend e frontend).

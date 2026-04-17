@@ -5,6 +5,16 @@
 > **Fonte canônica:** este arquivo consolida a *Proposta V4* (produto, requisitos e engenharia) com modelagem, infra e roadmap do repositório.  
 > **Atalho na raiz:** [proposta.md](../proposta.md) aponta para cá — edite preferencialmente este documento para evitar divergência.
 
+**Documentação complementar (detalhamento e rastreabilidade):**
+
+- [normativos/regras-negocio.md](normativos/regras-negocio.md) — invariantes por domínio (`RN-*`)
+- [normativos/requisitos-funcionais.md](normativos/requisitos-funcionais.md) — requisitos funcionais (`RF-*`), alinhados ao planejamento em [inicio_planejamento.txt](../inicio_planejamento.txt)
+- [normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md) — RNF (`RNF-*`)
+- [projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md) — decisões **DEC-01 … DEC-20** e gates por fase
+- [projeto/rastreabilidade-fontes.md](projeto/rastreabilidade-fontes.md) — mapa do `.txt` → estes documentos
+
+**Atores:** **Super Admin** (`platform_admin`): **DEC-15** — fora do MVP núcleo; candidato à Fase 4. **Sessão:** access + refresh **DEC-16**. **Vitrine:** rota **`/loja/[slug]`** **DEC-19**. **Custo / baixa de lote:** **DEC-09** (média ponderada para custo) e **DEC-17** (FEFO/FIFO físico).
+
 **Última revisão documental:** 2026-04-17
 
 ---
@@ -151,7 +161,8 @@ Detalhamento e novos campos (reservas, auditoria) evoluem com as fases; ver [fas
 ### Pedidos
 
 - Criação manual
-- Gestão por status: **criado → enviado → confirmado → produção → concluído → cancelado**
+- Gestão por status com **oito estados canônicos** (**DEC-14**; detalhe em [normativos/regras-negocio.md](normativos/regras-negocio.md)):  
+  `rascunho` → `aguardando_confirmacao` → `confirmado` → `em_producao` → `pronto` → `saiu_entrega` → `entregue`; `cancelado` conforme política.
 - Evolução: pagamento integrado e impressão
 
 ---
@@ -169,7 +180,8 @@ Detalhamento e novos campos (reservas, auditoria) evoluem com as fases; ver [fas
 ### Regras
 
 - Quantidade **nunca negativa**
-- Método de custo configurável: **FIFO**, **média ponderada**, **último custo**
+- **Custo para precificação (MVP):** **média ponderada** por insumo (**DEC-09**); FIFO e último custo como evolução configurável
+- **Consumo físico de lotes:** **DEC-17** — FEFO quando houver validade; senão FIFO por data de entrada; transacional
 
 ---
 
@@ -210,10 +222,11 @@ Detalhamento e novos campos (reservas, auditoria) evoluem com as fases; ver [fas
 ### Idempotência
 
 - `idempotency_key` por criação de pedido (evitar duplicidade em retries)
+- **Produção (Fase 3):** operações que disparam baixa de insumos e entrada de produto acabado (ex.: `POST /api/v1/production`) devem ser idempotentes — ver [normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md) **RNF-Arq-02b**
 
 ### Status
 
-- Alinhar à máquina de estados em §8 (Admin — pedidos)
+- Alinhar a **DEC-14** e [normativos/regras-negocio.md](normativos/regras-negocio.md) RN-Pedidos
 
 ---
 
@@ -285,6 +298,7 @@ Tipos: tooltip; texto auxiliar; “saiba mais”; impacto dinâmico.
 
 - **Versionamento:** prefixos `/api/v1/`, `/api/v2/`, …
 - **Envelope de resposta padrão:** `{ "success", "data", "errors" }`
+- **Contrato OpenAPI:** o FastAPI deve expor especificação **OpenAPI 3** gerada automaticamente (`/openapi.json` ou equivalente), mantida versionada com a API na **Fase 1** em diante — uso: cliente TS, testes de contrato e paralelismo front/back (ver [normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md) RNF-DevEx-08).
 
 ### Exemplos de endpoints (referência)
 
@@ -324,6 +338,8 @@ Custo → margem → preço sugerido → ajuste manual
 
 Serviços: `frontend`, `backend`, `postgres`
 
+**PostgreSQL — reprodutibilidade:** pinar a imagem major em todo `docker-compose` do repositório (ex.: **`postgres:16-alpine`**). Subir major (ex.: 18) só após testes de compatibilidade e migração Alembic. Documentar alteração no changelog técnico.
+
 ### Makefile (raiz)
 
 Comandos típicos: `up`, `down`, `test`, `migrate`, `lint`
@@ -346,6 +362,7 @@ Comandos típicos: `up`, `down`, `test`, `migrate`, `lint`
 - **Meta de cobertura:** ≥ 90% — aplicar de forma progressiva por fase
 - Documentação de testes obrigatória onde o time definir
 - HTMLs de referência para UI quando adotados no projeto
+- **Rastreabilidade RN → testes:** matriz evolutiva em [normativos/matriz-rn-testes.md](normativos/matriz-rn-testes.md) (preencher por fase conforme casos forem implementados)
 
 ---
 
@@ -363,6 +380,8 @@ Inclui:
 ---
 
 ## §23 Backlog enterprise e evolução
+
+Lista operacional e ideias: [projeto/backlog.md](projeto/backlog.md).
 
 Itens típicos fora do núcleo MVP (priorizar no roadmap):
 
