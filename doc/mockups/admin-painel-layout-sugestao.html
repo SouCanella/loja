@@ -361,6 +361,85 @@
     .chart-meta strong { color: var(--adm-ink); font-weight: 600; }
     .chart-meta code { font-size: 0.85em; background: #eef2ff; padding: 1px 5px; border-radius: 4px; }
 
+    /* —— Imagens de produto (cadastro) —— */
+    .img-drop {
+      border: 2px dashed var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 18px 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #fafbfc 0%, #f8fafc 100%);
+      margin-bottom: 12px;
+    }
+    .img-drop__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+    .img-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 10px;
+    }
+    .img-tile {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid var(--adm-border);
+      background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
+      display: grid;
+      place-items: center;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--adm-muted);
+      text-align: center;
+      padding: 6px;
+      line-height: 1.25;
+    }
+    .img-tile--cover {
+      outline: 2px solid var(--adm-accent);
+      outline-offset: 2px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+    .img-tile__badge {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--adm-accent);
+      color: #fff;
+    }
+
+    /* —— Miniatura na listagem de produtos —— */
+    .catalog-img-cell {
+      width: 1%;
+      white-space: nowrap;
+      vertical-align: middle;
+      padding: 8px 10px 8px 12px !important;
+    }
+    .catalog-thumb-wrap {
+      display: block;
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--adm-border);
+      background: #f1f5f9;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+    .catalog-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     /* —— CRUD layout —— */
     .crud-split {
       display: grid;
@@ -777,35 +856,131 @@
           <div class="page-head">
             <div class="breadcrumb">Painel / Produtos</div>
             <h1>Produtos &amp; catálogo</h1>
-            <p>Gestão de itens, preço, disponibilidade, categorias (<strong>RF-CA-08</strong>), destaques (<strong>RF-CA-11</strong>), status (<strong>RF-CA-05</strong>).</p>
+            <p>Gestão de itens, preço, disponibilidade, categorias (<strong>RF-CA-08</strong>), destaques (<strong>RF-CA-11</strong>), status (<strong>RF-CA-05</strong>), imagens otimizadas (<strong>RF-CA-03</strong>). A listagem mostra só a miniatura; o ficheiro de alta resolução serve o <strong>detalhe do produto</strong> na vitrine (mesma origem, variantes geradas).</p>
           </div>
-          <div class="card">
-            <div class="card__head"><span>Listagem</span><button type="button" class="btn btn--primary">+ Novo produto</button></div>
-            <div class="card__body table-wrap">
-              <table class="data">
-                <thead>
-                  <tr>
-                    <th>Nome</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Destaque</th><th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Brigadeiro gourmet</td><td>Doces</td><td>R$ 32,00</td><td><span class="pill pill--ok">Disponível</span></td><td>Em destaque</td>
-                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
-                  </tr>
-                  <tr>
-                    <td>Bolo de pote limão</td><td>Doces</td><td>R$ 22,00</td><td><span class="pill pill--warn">Sob encomenda</span></td><td>—</td>
-                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
-                  </tr>
-                  <tr>
-                    <td>Cupcake red velvet</td><td>Doces</td><td>R$ 14,00</td><td><span class="pill pill--muted">Indisponível</span></td><td>—</td>
-                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="crud-split crud-split--2">
+            <div class="card">
+              <div class="card__head">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0">
+                  <span>Listagem</span>
+                  <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda fotos na grelha">i</button><span class="tip-box" role="tooltip">A coluna <strong>Foto</strong> usa uma variante pequena (thumb) gerada a partir do mesmo upload que alimenta a página de detalhe na vitrine — evita confundir «boa foto» com o tamanho exibido na tabela (<strong>RF-CA-03</strong>).</span></span>
+                </div>
+                <button type="button" class="btn btn--primary">+ Novo produto</button>
+              </div>
+              <div class="card__body table-wrap">
+                <table class="data">
+                  <thead>
+                    <tr>
+                      <th>Foto</th><th>Nome</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Destaque</th><th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="catalog-img-cell">
+                        <span class="catalog-thumb-wrap">
+                          <img class="catalog-thumb" src="https://picsum.photos/seed/loja-doces-brig/256/256" srcset="https://picsum.photos/seed/loja-doces-brig/256/256 1x, https://picsum.photos/seed/loja-doces-brig/384/384 2x" width="128" height="128" loading="lazy" alt="Brigadeiro gourmet" />
+                        </span>
+                      </td>
+                      <td>Brigadeiro gourmet</td><td>Doces</td><td>R$ 32,00</td><td><span class="pill pill--ok">Disponível</span></td><td>Em destaque</td>
+                      <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                    </tr>
+                    <tr>
+                      <td class="catalog-img-cell">
+                        <span class="catalog-thumb-wrap">
+                          <img class="catalog-thumb" src="https://picsum.photos/seed/loja-doces-bolo/256/256" srcset="https://picsum.photos/seed/loja-doces-bolo/256/256 1x, https://picsum.photos/seed/loja-doces-bolo/384/384 2x" width="128" height="128" loading="lazy" alt="Bolo de pote limão" />
+                        </span>
+                      </td>
+                      <td>Bolo de pote limão</td><td>Doces</td><td>R$ 22,00</td><td><span class="pill pill--warn">Sob encomenda</span></td><td>—</td>
+                      <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                    </tr>
+                    <tr>
+                      <td class="catalog-img-cell">
+                        <span class="catalog-thumb-wrap">
+                          <img class="catalog-thumb" src="https://picsum.photos/seed/loja-doces-cupcake/256/256" srcset="https://picsum.photos/seed/loja-doces-cupcake/256/256 1x, https://picsum.photos/seed/loja-doces-cupcake/384/384 2x" width="128" height="128" loading="lazy" alt="Cupcake red velvet" />
+                        </span>
+                      </td>
+                      <td>Cupcake red velvet</td><td>Doces</td><td>R$ 14,00</td><td><span class="pill pill--muted">Indisponível</span></td><td>—</td>
+                      <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card__body" style="padding-top:0;border-top:1px solid var(--adm-border);font-size:0.72rem;color:var(--adm-muted)">
+                <strong style="color:var(--adm-ink)">Resolução:</strong> miniatura na grelha ≈ 64×64 CSS (imagem carregada 256–384 px para ecrãs retina). O <strong>original</strong> guardado (ex. ≥ 1200 px no maior lado) alimenta o hero / zoom na vitrine — <strong>RF-CA-03</strong>.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card__head">
+                <span>Produto (criar / editar)</span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Formulário típico ao clicar em Novo ou Editar. Imagens são processadas no servidor (redimensionamento WebP/JPEG, CDN) — <strong>RF-CA-03</strong>.</span></span>
+              </div>
+              <div class="card__body">
+                <div class="form-section-title">Dados principais</div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="prodNome">Nome</label>
+                    <input type="text" id="prodNome" placeholder="Ex.: Brigadeiro gourmet" value="Brigadeiro gourmet" />
+                  </div>
+                  <div>
+                    <label class="field" for="prodCat">Categoria — <strong>RF-CA-08</strong></label>
+                    <select id="prodCat"><option>Doces</option><option>Sacolés</option><option>Salgados</option></select>
+                  </div>
+                  <div>
+                    <label class="field" for="prodPreco">Preço</label>
+                    <input type="text" id="prodPreco" value="R$ 32,00" />
+                  </div>
+                  <div>
+                    <label class="field" for="prodStatus">Status — <strong>RF-CA-05</strong></label>
+                    <select id="prodStatus"><option>Disponível</option><option>Sob encomenda</option><option>Indisponível</option></select>
+                  </div>
+                </div>
+
+                <div class="form-section-title">Imagens do produto — <strong>RF-CA-03</strong></div>
+                <p class="hint" style="margin-top:0">Importação de ficheiros ou arrastar para a zona abaixo; a vitrine usa a imagem marcada como <strong>capa</strong> no card do catálogo e a <strong>mesma origem</strong> em maior resolução na página «ver detalhes».</p>
+                <p class="hint"><strong>Recomendado:</strong> fotos com <strong>≥ 1200 px</strong> no maior lado (ou equivalente em MP) para ficarem nítidas em zoom e no hero do detalhe; o painel e a listagem usam só variantes redimensionadas.</p>
+                <label class="field" for="prodImagens">Ficheiros
+                  <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda imagens">i</button><span class="tip-box" role="tooltip">Formatos típicos: JPEG, PNG, WebP. O upload armazena o master em boa resolução; o backend gera thumbs para admin/listagem e ficheiros maiores/WebP para vitrine e detalhe (<strong>RF-CA-03</strong>).</span></span>
+                </label>
+                <div class="img-drop" aria-label="Zona de importação de imagens (simulado)">
+                  <input type="file" id="prodImagens" class="sr-only" accept="image/jpeg,image/png,image/webp" multiple />
+                  <div class="img-drop__actions">
+                    <label for="prodImagens" class="btn btn--primary">Escolher imagens…</label>
+                    <button type="button" class="btn btn--secondary">Colar URL (futuro)</button>
+                  </div>
+                  <p class="hint" style="margin-top:10px;margin-bottom:0">Arrastar e largar aqui (mock) · múltiplas imagens · ordem editável na implementação</p>
+                </div>
+                <p class="hint"><strong>Ordem e capa:</strong> a primeira imagem ou a marcada como «Principal» torna-se capa; reordenar altera o carrossel na página de detalhe.</p>
+                <div class="img-gallery" aria-label="Pré-visualização simulada">
+                  <div class="img-tile img-tile--cover"><span class="img-tile__badge">Capa</span>thumb 1</div>
+                  <div class="img-tile">thumb 2</div>
+                  <div class="img-tile">thumb 3</div>
+                  <div class="img-tile" style="border-style:dashed;opacity:0.75">+ adicionar</div>
+                </div>
+                <div class="crud-actions" style="margin-top:14px">
+                  <button type="button" class="btn btn--secondary">Remover selecionada</button>
+                  <button type="button" class="btn btn--secondary">Definir como capa</button>
+                </div>
+
+                <div class="form-section-title">Opcional — <strong>RF-CA-06</strong></div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="prodPeso">Peso / volume (opcional)</label>
+                    <input type="text" id="prodPeso" placeholder="ex.: 200 g" />
+                  </div>
+                  <div>
+                    <label class="field" for="prodDest">Destaque — <strong>RF-CA-11</strong></label>
+                    <select id="prodDest"><option>—</option><option>Em destaque</option><option>Novidade</option><option>Mais vendido</option></select>
+                  </div>
+                </div>
+                <div class="crud-actions" style="margin-top:8px">
+                  <button type="button" class="btn btn--primary">Salvar produto (simulado)</button>
+                  <button type="button" class="btn btn--secondary">Cancelar</button>
+                </div>
+              </div>
             </div>
           </div>
-          <p class="hint">Variações e peso/volume — <strong>RF-CA-06</strong> (campos no formulário de edição, não mostrados aqui).</p>
+          <p class="hint">Variações de SKU — <strong>RF-CA-06</strong> — podem ficar num segundo passo ou secção colapsável na implementação.</p>
         </section>
 
         <section class="panel" id="panel-categorias" data-panel-id="categorias" hidden>
