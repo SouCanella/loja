@@ -163,6 +163,8 @@ Funcionalidade **opcional**; **inativa no padrão inicial** (RF-CF-07). Isolamen
 | **Financeiro** | KPIs mês; faturamento × lucro mensal; donut de custos; consumo de insumos (valor) | RF-FI-01, RF-FI-02, RF-FI-03, RF-FI-05 | Pedidos e CMV; custos e perdas; movimentações de estoque a custo médio |
 | **Relatórios** | Pareto receita; margem % por categoria; matriz margem × volume | RF-RL-01, RF-FI-01, RF-FI-06 | Agregados por SKU e categoria; quadrantes por mediana |
 
+**Catálogo (lado admin):** o mockup do painel inclui listagem com coluna de foto, formulário com importação de imagens e notas de resolução para o detalhe na vitrine — ver [doc/mockups/README.md](../mockups/README.md); requisito **RF-CA-03** (imagens otimizadas).
+
 ---
 
 ## RF-Relatórios e inteligência
