@@ -177,7 +177,7 @@ Funcionalidade **opcional**; **inativa no padrão inicial** (RF-CF-07). Isolamen
 
 | ID | Requisito | Pri | Ref. origem |
 |----|-----------|-----|-------------|
-| RF-AR-01 | Frontend: rotas públicas `loja/[slug]`, admin `painel`, platform `admin` | E | P2 |
+| RF-AR-01 | Frontend: rotas públicas `loja/[slug]`, admin `painel`, platform `admin` | E | P2; [mockup admin](../mockups/admin-painel-layout-sugestao.html) |
 | RF-AR-02 | Backend: módulos alinhados a `documento_enterprise` §3 | M | P2 |
 
 ---

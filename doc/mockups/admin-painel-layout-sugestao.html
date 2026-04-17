@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Painel da loja — mockup admin (navegável)</title>
+  <!--
+    Cobertura normativa (doc/normativos/requisitos-funcionais.md + documento_enterprise §8–§16):
+    RF-AU*, RF-CF-01…09, RF-CA-04/08/11 (lado admin), RF-AV-04, RF-CL*, RF-PE*, RF-ES*, RF-RE*, RF-PR*, RF-FI*, RF-RL-01, RF-AJ-01, RF-AR-01 (rota painel).
+    RF-PL* (Super Admin): secção marcada como fora do MVP (DEC-15).
+    DEC-14: estados de pedido na UI. DEC-10 / RF-AJ-01: tooltips «i» (clique + hover desktop) em dashboard, operações, inteligência e financeiro.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --adm-bg: #f1f5f9;
+      --adm-surface: #ffffff;
+      --adm-ink: #0f172a;
+      --adm-muted: #64748b;
+      --adm-sidebar: #0f172a;
+      --adm-sidebar-text: #e2e8f0;
+      --adm-accent: #4f46e5;
+      --adm-accent-soft: #eef2ff;
+      --adm-border: #e2e8f0;
+      --adm-danger: #dc2626;
+      --adm-success: #059669;
+      --adm-radius: 12px;
+      --adm-max: 1200px;
+      --sidebar-w: 260px;
+      --top-h: 56px;
+      --z-nav: 100;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--adm-ink);
+      background: var(--adm-bg);
+      min-height: 100dvh;
+    }
+    a { color: var(--adm-accent); }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); border: 0;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      position: sticky; top: 0; z-index: 90;
+      height: var(--top-h);
+      background: var(--adm-surface);
+      border-bottom: 1px solid var(--adm-border);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 12px 0 8px;
+    }
+    .topbar__burger {
+      display: none;
+      width: 44px; height: 44px; border: none; border-radius: 10px;
+      background: var(--adm-bg); cursor: pointer;
+    }
+    @media (max-width: 900px) {
+      .topbar__burger { display: grid; place-items: center; }
+    }
+    .topbar__title {
+      font-weight: 700; font-size: 1rem;
+      flex: 1; min-width: 0;
+    }
+    .topbar__title small { display: block; font-weight: 500; font-size: 0.72rem; color: var(--adm-muted); }
+    .topbar__actions { display: flex; align-items: center; gap: 8px; }
+
+    /* —— Shell —— */
+    .shell { display: flex; min-height: calc(100dvh - var(--top-h)); }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--adm-sidebar);
+      color: var(--adm-sidebar-text);
+      padding: 12px 0 24px;
+      position: sticky; top: var(--top-h); align-self: flex-start;
+      max-height: calc(100dvh - var(--top-h));
+      overflow-y: auto;
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed; left: 0; top: var(--top-h); bottom: 0; z-index: var(--z-nav);
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        box-shadow: 8px 0 32px rgba(0,0,0,0.15);
+      }
+      .sidebar.is-open { transform: translateX(0); }
+    }
+    .sidebar__overlay {
+      display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 99;
+    }
+    @media (max-width: 900px) {
+      .sidebar__overlay.is-visible { display: block; }
+    }
+    .nav-group { padding: 8px 12px 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55; }
+    .nav-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; margin: 2px 8px; border-radius: 10px;
+      color: inherit; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.08); }
+    .nav-link.is-active { background: rgba(99,102,241,0.35); color: #fff; }
+    .nav-link--disabled { opacity: 0.45; pointer-events: none; }
+    .nav-badge { margin-left: auto; font-size: 0.62rem; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.12); }
+
+    .main {
+      flex: 1; min-width: 0;
+      padding: 20px 20px 48px;
+      max-width: var(--adm-max);
+    }
+
+    .panel { display: none; animation: fadeIn 0.2s ease; }
+    .panel.is-visible { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .page-head { margin-bottom: 20px; }
+    .page-head h1 { margin: 0 0 6px; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+    .page-head p { margin: 0; font-size: 0.88rem; color: var(--adm-muted); max-width: 70ch; }
+    .breadcrumb { font-size: 0.78rem; color: var(--adm-muted); margin-bottom: 8px; }
+
+    .grid-kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi {
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 14px 16px;
+    }
+    .kpi__label { font-size: 0.72rem; font-weight: 600; color: var(--adm-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi__value { font-size: 1.35rem; font-weight: 700; margin-top: 4px; }
+
+    .card {
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .card__head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--adm-border);
+      font-weight: 700; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .card__body { padding: 16px; }
+
+    .form-row { display: grid; gap: 14px; margin-bottom: 14px; }
+    @media (min-width: 640px) {
+      .form-row--2 { grid-template-columns: 1fr 1fr; }
+      .form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    label.field {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px;
+      font-size: 0.78rem; font-weight: 600; color: var(--adm-muted); margin-bottom: 4px;
+    }
+    label.field .field-help {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; margin-left: 4px; border-radius: 999px;
+      background: var(--adm-accent-soft); color: var(--adm-accent); font-size: 0.65rem; font-weight: 800; cursor: help;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="url"], input[type="password"],
+    select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid var(--adm-border); font: inherit; background: #fff;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .hint { font-size: 0.72rem; color: var(--adm-muted); margin-top: 4px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 16px; border-radius: 10px; border: none; font: inherit; font-weight: 600;
+      cursor: pointer; font-size: 0.88rem;
+    }
+    .btn--primary { background: var(--adm-accent); color: #fff; }
+    .btn--secondary { background: var(--adm-bg); color: var(--adm-ink); border: 1px solid var(--adm-border); }
+    .btn--danger { background: #fee2e2; color: var(--adm-danger); }
+
+    .table-wrap { overflow-x: auto; }
+    table.data { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    table.data th, table.data td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--adm-border); }
+    table.data th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--adm-muted); background: #f8fafc; }
+
+    .pill {
+      display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600;
+    }
+    .pill--ok { background: #d1fae5; color: var(--adm-success); }
+    .pill--warn { background: #fef3c7; color: #b45309; }
+    .pill--muted { background: #f1f5f9; color: var(--adm-muted); }
+
+    .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tabs button {
+      padding: 8px 14px; border-radius: 999px; border: 1px solid var(--adm-border);
+      background: var(--adm-surface); font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    }
+    .tabs button.is-on { background: var(--adm-ink); color: #fff; border-color: var(--adm-ink); }
+
+    .stack-cards { display: flex; flex-direction: column; gap: 10px; }
+    .order-card {
+      border: 1px solid var(--adm-border); border-radius: var(--adm-radius); padding: 12px 14px;
+      background: var(--adm-surface);
+    }
+    .order-card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+
+    details.acc { border: 1px solid var(--adm-border); border-radius: var(--adm-radius); margin-bottom: 10px; background: var(--adm-surface); }
+    details.acc > summary {
+      padding: 12px 16px; font-weight: 700; cursor: pointer; list-style: none;
+    }
+    details.acc > summary::-webkit-details-marker { display: none; }
+    details.acc .acc__body { padding: 0 16px 16px; border-top: 1px solid var(--adm-border); }
+
+    .login-screen {
+      min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+      background: linear-gradient(160deg, #e0e7ff, #f8fafc);
+    }
+    .login-card {
+      width: 100%; max-width: 400px;
+      background: var(--adm-surface); border-radius: 16px; padding: 28px;
+      box-shadow: 0 16px 48px rgba(15,23,42,0.12);
+    }
+    .login-card h1 { margin: 0 0 8px; font-size: 1.25rem; }
+    .login-card p { margin: 0 0 20px; font-size: 0.88rem; color: var(--adm-muted); }
+
+    /* Mesmo padrão do app: sem esta regra o login cobre o painel após «Entrar (simular)» */
+    .login-screen.hidden { display: none; }
+
+    .app-root.hidden { display: none; }
+
+    /* —— FieldHelp / tooltips (RF-AJ-01, DEC-10) —— */
+    .tip-wrap { position: relative; display: inline-flex; vertical-align: middle; margin-left: 4px; }
+    .tip-trigger {
+      width: 20px; height: 20px; border-radius: 999px; border: none; padding: 0;
+      background: var(--adm-accent-soft); color: var(--adm-accent);
+      font-size: 0.68rem; font-weight: 800; cursor: help; line-height: 1; flex-shrink: 0;
+    }
+    .tip-trigger:focus-visible { outline: 2px solid var(--adm-accent); outline-offset: 2px; }
+    .tip-box {
+      display: none; position: absolute; z-index: 200; left: 0; bottom: calc(100% + 8px);
+      width: min(340px, 88vw);
+      padding: 10px 12px; background: var(--adm-ink); color: #e2e8f0;
+      font-size: 0.78rem; font-weight: 500; line-height: 1.45; border-radius: 10px;
+      box-shadow: 0 12px 40px rgba(15,23,42,0.25);
+    }
+    .tip-box::after {
+      content: ""; position: absolute; top: 100%; left: 14px;
+      border: 8px solid transparent; border-top-color: var(--adm-ink);
+    }
+    .tip-wrap.is-open .tip-box { display: block; }
+    @media (hover: hover) and (pointer: fine) {
+      .tip-wrap:hover .tip-box { display: block; }
+    }
+    /* —— Gráficos simulados (SVG) —— */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .chart-card {
+      background: var(--adm-surface);
+      border: 1px solid var(--adm-border);
+      border-radius: var(--adm-radius);
+      padding: 14px 16px 14px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+    .chart-card__head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .chart-card__title { font-weight: 700; font-size: 0.88rem; margin: 0; }
+    .chart-card__sub { font-size: 0.72rem; color: var(--adm-muted); margin: 2px 0 0; }
+    .chart-plot-wrap {
+      background: linear-gradient(180deg, #fafbfc 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 4px 4px 0;
+      overflow: hidden;
+    }
+    .chart-svg { width: 100%; height: auto; display: block; }
+    .chart-svg text { font-family: "DM Sans", system-ui, sans-serif; }
+    .chart-svg .ch-axis { fill: #64748b; font-size: 10px; font-weight: 500; }
+    .chart-svg .ch-title { fill: #0f172a; font-size: 11px; font-weight: 700; }
+    .chart-svg .ch-grid { stroke: #e2e8f0; stroke-width: 1; }
+    .chart-svg .ch-grid-minor { stroke: #f1f5f9; stroke-width: 1; }
+    .chart-svg .ch-bar { filter: drop-shadow(0 1px 2px rgba(15,23,42,0.06)); }
+    .chart-legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid var(--adm-border); font-size: 0.72rem; color: var(--adm-muted);
+    }
+    .chart-legend span::before {
+      content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px;
+      vertical-align: -1px;
+    }
+    .chart-legend .lg-receita::before { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .chart-legend .lg-meta::before { background: #94a3b8; }
+    .chart-legend .lg-lucro::before { background: linear-gradient(135deg, #10b981, #059669); }
+
+    /* —— CRUD layout —— */
+    .crud-split {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 960px) {
+      .crud-split--2 { grid-template-columns: 1fr 1.05fr; align-items: start; }
+    }
+    .crud-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .crud-actions .btn { padding: 8px 14px; font-size: 0.82rem; }
+    .form-section-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--adm-muted); margin: 16px 0 8px;
+    }
+    .form-section-title:first-child { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#main">Pular para o conteúdo</a>
+
+  <!-- RF-AU-01 / RF-AU-02: tela de login (mock) -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <h1>Entrar no painel</h1>
+      <p>Staff da loja — e-mail e senha (JWT access + refresh <strong>DEC-16</strong>).</p>
+      <div class="form-row">
+        <div>
+          <label class="field" for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="username" placeholder="voce@loja.com" />
+        </div>
+        <div>
+          <label class="field" for="loginPass">Senha</label>
+          <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••" />
+        </div>
+      </div>
+      <p class="hint" style="margin-bottom:12px"><a href="#">Esqueci minha senha</a> (recuperação <strong>RF-AU-02</strong>)</p>
+      <button type="button" class="btn btn--primary" style="width:100%" id="btnFakeLogin">Entrar (simular)</button>
+      <p class="hint" style="margin-top:16px;text-align:center">Papel: <strong>Admin</strong> / Operador / Leitura — <strong>RF-AU-04</strong> · tenant <code>store_id</code></p>
+    </div>
+  </div>
+
+  <div class="app-root hidden" id="appRoot">
+    <header class="topbar">
+      <button type="button" class="topbar__burger" id="btnSidebar" aria-label="Abrir menu">☰</button>
+      <div class="topbar__title">
+        Painel
+        <small id="topbarContext">Doçura da Vila · <span data-slug>/painel</span> · <strong>RF-AR-01</strong></small>
+      </div>
+      <div class="topbar__actions">
+        <button type="button" class="btn btn--secondary" id="btnOpenStore">Ver vitrine</button>
+        <button type="button" class="btn btn--secondary" id="btnLogout">Sair</button>
+      </div>
+    </header>
+
+    <div class="sidebar__overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <div class="shell">
+      <nav class="sidebar" id="sidebar" aria-label="Módulos do painel">
+        <div class="nav-group">Visão geral</div>
+        <a class="nav-link" href="#dashboard" data-panel="dashboard">Dashboard</a>
+
+        <div class="nav-group">Loja &amp; vitrine</div>
+        <a class="nav-link" href="#config-loja" data-panel="config-loja">Configuração da loja</a>
+        <a class="nav-link" href="#catalogo" data-panel="catalogo">Produtos &amp; catálogo</a>
+        <a class="nav-link" href="#categorias" data-panel="categorias">Categorias</a>
+
+        <div class="nav-group">Vendas</div>
+        <a class="nav-link" href="#pedidos" data-panel="pedidos">Pedidos</a>
+        <a class="nav-link" href="#clientes" data-panel="clientes">Clientes</a>
+
+        <div class="nav-group">Operação</div>
+        <a class="nav-link" href="#estoque" data-panel="estoque">Estoque</a>
+        <a class="nav-link" href="#receitas" data-panel="receitas">Receitas</a>
+        <a class="nav-link" href="#producao" data-panel="producao">Produção</a>
+
+        <div class="nav-group">Inteligência</div>
+        <a class="nav-link" href="#precificacao" data-panel="precificacao">Precificação</a>
+        <a class="nav-link" href="#financeiro" data-panel="financeiro">Financeiro</a>
+        <a class="nav-link" href="#relatorios" data-panel="relatorios">Relatórios</a>
+
+        <div class="nav-group">Qualidade</div>
+        <a class="nav-link" href="#avaliacoes" data-panel="avaliacoes">Avaliações</a>
+
+        <div class="nav-group">Conta</div>
+        <a class="nav-link" href="#perfil" data-panel="perfil">Perfil &amp; segurança</a>
+
+        <div class="nav-group">Plataforma</div>
+        <a class="nav-link" href="#plataforma" data-panel="plataforma" title="Escopo fora do MVP núcleo (DEC-15) — mock informativo">Super Admin <span class="nav-badge">DEC-15</span></a>
+      </nav>
+
+      <main class="main" id="main">
+        <!-- Dashboard RF-FI-04 / FI-01 -->
+        <section class="panel" id="panel-dashboard" data-panel-id="dashboard" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Dashboard</div>
+            <h1>Dashboard</h1>
+            <p>Indicadores operacionais e financeiros — <strong>RF-FI-04</strong>, <strong>RF-FI-01</strong>.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda sobre o dashboard">i</button><span class="tip-box" role="tooltip">Consolidado do período: pedidos da loja, estoque crítico e aquisição de clientes. No app real, filtros por data e drill-down para pedidos e produtos (<strong>RF-FI-04</strong>).</span></span>
+            </p>
+          </div>
+          <div class="grid-kpi">
+            <div class="kpi">
+              <div class="kpi__label">Pedidos hoje <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Contagem de pedidos com data de criação = hoje (timezone da loja).</span></span></div>
+              <div class="kpi__value">12</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Pedidos no mês <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Mês civil corrente; inclui todos os status exceto cancelado, conforme política de relatório.</span></span></div>
+              <div class="kpi__value">186</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Estoque baixo <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Itens abaixo do mínimo configurado — <strong>RF-ES-06</strong>.</span></span></div>
+              <div class="kpi__value">3</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Clientes novos (mês) <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Primeiro cadastro ou primeiro pedido no período, conforme regra de negócio.</span></span></div>
+              <div class="kpi__value">24</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Ticket médio <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Receita líquida dos pedidos ÷ quantidade de pedidos no período (<strong>RF-FI-01</strong>).</span></span></div>
+              <div class="kpi__value">R$ 42</div>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Faturamento diário (últimos 30 dias)</p>
+                  <p class="chart-card__sub">Eixo Y em R$ · média móvel 7 dias tracejada · <strong>RF-FI-01</strong></p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Mesmo tipo de gráfico que bibliotecas como Chart.js ou Recharts exibem: área + linha, eixo temporal e escala automática. Dados agregados por dia no fuso da loja.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 198" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="chDashArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.45"/>
+                      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.02"/>
+                    </linearGradient>
+                    <filter id="chDashGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-opacity="0.12"/>
+                    </filter>
+                  </defs>
+                  <text class="ch-title" x="8" y="18">Receita confirmada / dia</text>
+                  <!-- Eixo Y -->
+                  <text class="ch-axis" x="8" y="52" text-anchor="start">R$ 1,6k</text>
+                  <text class="ch-axis" x="8" y="82" text-anchor="start">1,2k</text>
+                  <text class="ch-axis" x="8" y="112" text-anchor="start">800</text>
+                  <text class="ch-axis" x="8" y="142" text-anchor="start">400</text>
+                  <text class="ch-axis" x="8" y="168" text-anchor="start">0</text>
+                  <line class="ch-grid" x1="52" y1="44" x2="460" y2="44"/>
+                  <line class="ch-grid-minor" x1="52" y1="74" x2="460" y2="74"/>
+                  <line class="ch-grid-minor" x1="52" y1="104" x2="460" y2="104"/>
+                  <line class="ch-grid-minor" x1="52" y1="134" x2="460" y2="134"/>
+                  <line class="ch-grid" x1="52" y1="164" x2="460" y2="164"/>
+                  <line class="ch-grid" x1="52" y1="44" x2="52" y2="164" stroke="#cbd5e1"/>
+                  <line class="ch-grid" x1="52" y1="164" x2="460" y2="164" stroke="#94a3b8"/>
+                  <!-- Área + linha principal (valores plausíveis R$ 400–1.450) -->
+                  <path fill="url(#chDashArea)" d="M52,164 L52,118 L76,108 L100,112 L124,96 L148,102 L172,88 L196,92 L220,78 L244,82 L268,74 L292,68 L316,72 L340,58 L364,62 L388,54 L412,58 L436,52 L460,48 L460,164 Z"/>
+                  <polyline fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#chDashGlow)"
+                    points="52,118 76,108 100,112 124,96 148,102 172,88 196,92 220,78 244,82 268,74 292,68 316,72 340,58 364,62 388,54 412,58 436,52 460,48"/>
+                  <!-- Média móvel 7d -->
+                  <polyline fill="none" stroke="#94a3b8" stroke-width="1.75" stroke-dasharray="5 4" stroke-linecap="round"
+                    points="52,122 88,114 124,100 160,94 196,86 232,80 268,76 304,70 340,66 376,62 412,58 448,54"/>
+                  <!-- Pontos finais -->
+                  <circle cx="460" cy="48" r="4" fill="#fff" stroke="#4f46e5" stroke-width="2"/>
+                  <!-- Eixo X -->
+                  <text class="ch-axis" x="52" y="182" text-anchor="middle">1</text>
+                  <text class="ch-axis" x="136" y="182" text-anchor="middle">8</text>
+                  <text class="ch-axis" x="220" y="182" text-anchor="middle">15</text>
+                  <text class="ch-axis" x="304" y="182" text-anchor="middle">22</text>
+                  <text class="ch-axis" x="420" y="182" text-anchor="middle">30 (dias)</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-receita">Faturamento (R$)</span><span class="lg-meta">Média 7 dias</span><span style="margin-left:auto;font-size:0.68rem;color:#94a3b8">Média período: <strong style="color:#475569">R$ 892</strong> · Pico: <strong style="color:#475569">R$ 1.248</strong></span></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Volume de pedidos por status</p>
+                  <p class="chart-card__sub">Mês atual · contagem absoluta · <strong>DEC-14</strong></p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Equivalente a um gráfico de colunas do Metabase ou Power BI: categorias no eixo X, escala comum no Y. Identifica gargalos (ex.: fila em produção).</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="chBarG" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#4f46e5"/>
+                    </linearGradient>
+                  </defs>
+                  <text class="ch-title" x="8" y="18">Quantidade de pedidos</text>
+                  <text class="ch-axis" x="8" y="48" text-anchor="start">50</text>
+                  <text class="ch-axis" x="8" y="88" text-anchor="start">25</text>
+                  <text class="ch-axis" x="8" y="128" text-anchor="start">0</text>
+                  <line class="ch-grid" x1="36" y1="40" x2="468" y2="40"/>
+                  <line class="ch-grid-minor" x1="36" y1="80" x2="468" y2="80"/>
+                  <line class="ch-grid" x1="36" y1="120" x2="468" y2="120"/>
+                  <line class="ch-grid" x1="36" y1="120" x2="36" y2="124" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="36" y1="124" x2="468" y2="124" stroke="#94a3b8"/>
+                  <!-- barras: escala máx. 50 → altura máx. 100px; base y=124; valores 14,22,38,24,18,12,32 -->
+                  <rect class="ch-bar" x="44" y="96" width="44" height="28" rx="5" fill="url(#chBarG)"/>
+                  <rect class="ch-bar" x="100" y="80" width="44" height="44" rx="5" fill="url(#chBarG)"/>
+                  <rect class="ch-bar" x="156" y="48" width="44" height="76" rx="5" fill="#4f46e5"/>
+                  <rect class="ch-bar" x="212" y="76" width="44" height="48" rx="5" fill="url(#chBarG)"/>
+                  <rect class="ch-bar" x="268" y="88" width="44" height="36" rx="5" fill="url(#chBarG)"/>
+                  <rect class="ch-bar" x="324" y="100" width="44" height="24" rx="5" fill="#c7d2fe"/>
+                  <rect class="ch-bar" x="380" y="60" width="44" height="64" rx="5" fill="url(#chBarG)"/>
+                  <text class="ch-axis" x="66" y="91" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">14</text>
+                  <text class="ch-axis" x="122" y="75" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">22</text>
+                  <text class="ch-axis" x="178" y="43" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">38</text>
+                  <text class="ch-axis" x="234" y="71" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">24</text>
+                  <text class="ch-axis" x="290" y="83" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">18</text>
+                  <text class="ch-axis" x="346" y="95" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">12</text>
+                  <text class="ch-axis" x="402" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#312e81">32</text>
+                  <text class="ch-axis" x="66" y="142" text-anchor="middle" font-size="8">aguard.</text>
+                  <text class="ch-axis" x="122" y="142" text-anchor="middle" font-size="8">confirm.</text>
+                  <text class="ch-axis" x="178" y="142" text-anchor="middle" font-size="8">produção</text>
+                  <text class="ch-axis" x="234" y="142" text-anchor="middle" font-size="8">pronto</text>
+                  <text class="ch-axis" x="290" y="142" text-anchor="middle" font-size="8">saiu ent.</text>
+                  <text class="ch-axis" x="346" y="142" text-anchor="middle" font-size="8">entregue</text>
+                  <text class="ch-axis" x="402" y="142" text-anchor="middle" font-size="8">cancel.</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-receita">Pedidos no mês</span><span style="font-size:0.68rem;color:#94a3b8">Total simulado: <strong style="color:#475569">160</strong> pedidos</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">Atalhos</div>
+            <div class="card__body">
+              <button type="button" class="btn btn--secondary" data-go="pedidos">Abrir pedidos</button>
+              <button type="button" class="btn btn--secondary" data-go="catalogo">Editar catálogo</button>
+              <button type="button" class="btn btn--secondary" data-go="config-loja">Configurar loja</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-CF-01 … RF-CF-09 + políticas vitrine -->
+        <section class="panel" id="panel-config-loja" data-panel-id="config-loja" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Configuração da loja</div>
+            <h1>Configuração da loja</h1>
+            <p>Identidade, contato, tema, vitrine e políticas — requisitos <strong>RF-CF-01</strong> a <strong>RF-CF-09</strong>.</p>
+          </div>
+
+          <details class="acc" open>
+            <summary>Identidade e mídia — RF-CF-01</summary>
+            <div class="acc__body">
+              <div class="form-row form-row--2">
+                <div>
+                  <label class="field" for="storeName">Nome da loja <span class="field-help" title="FieldHelp RF-AJ-01">?</span></label>
+                  <input type="text" id="storeName" value="Doçura da Vila" />
+                </div>
+                <div>
+                  <label class="field" for="storeSlug">Slug (URL) — <strong>DEC-19</strong></label>
+                  <input type="text" id="storeSlug" value="docura-da-vila" />
+                  <p class="hint">Vitrine pública: <code>/loja/[slug]</code></p>
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label class="field" for="slogan">Slogan</label>
+                  <input type="text" id="slogan" value="Produtos artesanais" />
+                </div>
+              </div>
+              <div class="form-row">
+                <label class="field" for="desc">Descrição</label>
+                <textarea id="desc">Texto curto para SEO e sobre a loja.</textarea>
+              </div>
+              <div class="form-row form-row--3">
+                <div><label class="field">Logo</label><button type="button" class="btn btn--secondary">Enviar imagem</button><p class="hint">Fallback automático se vazio — <strong>RF-CF-05</strong></p></div>
+                <div><label class="field">Banner principal</label><button type="button" class="btn btn--secondary">Enviar imagem</button></div>
+                <div><label class="field">Imagem de fundo (opcional)</label><button type="button" class="btn btn--secondary">Enviar imagem</button></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary>Cores e tema — RF-CF-02 / RF-CF-05</summary>
+            <div class="acc__body">
+              <div class="form-row form-row--3">
+                <div><label class="field">Cor primária</label><input type="text" value="#b8452e" /></div>
+                <div><label class="field">Cor secundária</label><input type="text" value="#5c4d42" /></div>
+                <div><label class="field">Cor de destaque</label><input type="text" value="#128c7e" /></div>
+              </div>
+              <div class="form-row form-row--2">
+                <div><label class="field">Logo clara / escura (opcional)</label><button type="button" class="btn btn--secondary">Alternar variantes</button></div>
+                <div><label class="field">Pré-visualização da vitrine</label><button type="button" class="btn btn--primary">Abrir preview</button><p class="hint"><strong>RF-CF-05</strong></p></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary>Contato e institucional — RF-CF-03</summary>
+            <div class="acc__body">
+              <div class="form-row form-row--2">
+                <div><label class="field">WhatsApp (E.164)</label><input type="tel" value="5511999990000" /></div>
+                <div><label class="field">Endereço</label><input type="text" value="Rua Exemplo, 123 — São Paulo" /></div>
+              </div>
+              <div class="form-row">
+                <label class="field">Horários de funcionamento</label>
+                <textarea>Seg–Sex 9h–18h · Sáb 9h–13h</textarea>
+              </div>
+              <div class="form-row">
+                <label class="field">Texto institucional (página sobre)</label>
+                <textarea>História da loja…</textarea>
+              </div>
+              <div class="form-row">
+                <label class="field">Mensagem padrão de pedido (base) — <strong>RF-CF-06</strong></label>
+                <textarea>Olá! Segue meu pedido pela loja online…</textarea>
+                <p class="hint">Template enriquecido com nome, itens e total na vitrine.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary>Redes sociais — RF-CF-04</summary>
+            <div class="acc__body">
+              <table class="data">
+                <thead><tr><th>Rede</th><th>URL</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td>Instagram</td><td><input type="url" value="https://instagram.com/…" style="max-width:280px" /></td><td><button type="button" class="btn btn--secondary">Remover</button></td></tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn--secondary">+ Adicionar link</button>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary>Vitrine e catálogo — RF-CF-07 / RF-CF-08 / RF-CA-04 / RF-CA-11</summary>
+            <div class="acc__body">
+              <div class="form-row form-row--2">
+                <div>
+                  <label class="field">Avaliações de produtos — <strong>RF-CF-07</strong></label>
+                  <select><option>Desligado (padrão)</option><option>Ligado (moderação obrigatória)</option></select>
+                </div>
+                <div>
+                  <label class="field">Layout padrão da vitrine — <strong>RF-CF-08</strong></label>
+                  <select><option>Grade (cards)</option><option>Lista em linhas</option></select>
+                </div>
+              </div>
+              <div class="form-row form-row--2">
+                <div>
+                  <label class="field">Produto sem estoque — <strong>RF-CA-04</strong></label>
+                  <select><option>Ocultar do catálogo</option><option>Mostrar como indisponível</option></select>
+                </div>
+                <div>
+                  <label class="field">Rótulos de destaque permitidos — <strong>RF-CA-11</strong></label>
+                  <input type="text" value="Em destaque, Novidade, Mais vendido" />
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary>Modos de recebimento — RF-CF-09</summary>
+            <div class="acc__body">
+              <p class="hint" style="margin-top:0">Quais opções aparecem no checkout da vitrine (<strong>RF-PE-08</strong>).</p>
+              <label><input type="checkbox" checked /> Retirada na loja</label><br />
+              <label><input type="checkbox" checked /> Entrega pela loja</label><br />
+              <label><input type="checkbox" checked /> Uber Entregas (combinar via WhatsApp)</label><br />
+              <label><input type="checkbox" checked /> 99 Entregas (combinar via WhatsApp)</label>
+            </div>
+          </details>
+
+          <button type="button" class="btn btn--primary">Salvar alterações (simulado)</button>
+        </section>
+
+        <!-- Catálogo admin -->
+        <section class="panel" id="panel-catalogo" data-panel-id="catalogo" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Produtos</div>
+            <h1>Produtos &amp; catálogo</h1>
+            <p>Gestão de itens, preço, disponibilidade, categorias (<strong>RF-CA-08</strong>), destaques (<strong>RF-CA-11</strong>), status (<strong>RF-CA-05</strong>).</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><span>Listagem</span><button type="button" class="btn btn--primary">+ Novo produto</button></div>
+            <div class="card__body table-wrap">
+              <table class="data">
+                <thead>
+                  <tr>
+                    <th>Nome</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Destaque</th><th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Brigadeiro gourmet</td><td>Doces</td><td>R$ 32,00</td><td><span class="pill pill--ok">Disponível</span></td><td>Em destaque</td>
+                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                  </tr>
+                  <tr>
+                    <td>Bolo de pote limão</td><td>Doces</td><td>R$ 22,00</td><td><span class="pill pill--warn">Sob encomenda</span></td><td>—</td>
+                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                  </tr>
+                  <tr>
+                    <td>Cupcake red velvet</td><td>Doces</td><td>R$ 14,00</td><td><span class="pill pill--muted">Indisponível</span></td><td>—</td>
+                    <td><button type="button" class="btn btn--secondary">Editar</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p class="hint">Variações e peso/volume — <strong>RF-CA-06</strong> (campos no formulário de edição, não mostrados aqui).</p>
+        </section>
+
+        <section class="panel" id="panel-categorias" data-panel-id="categorias" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Categorias</div>
+            <h1>Categorias</h1>
+            <p>Entidade <code>categories</code> + FK em produtos — <strong>DEC-20</strong>, <strong>RF-CA-08</strong>.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><span>Categorias da loja</span><button type="button" class="btn btn--primary">+ Nova</button></div>
+            <div class="card__body table-wrap">
+              <table class="data">
+                <thead><tr><th>Nome</th><th>Ordem</th><th>Produtos</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td>Doces</td><td>1</td><td>12</td><td><button type="button" class="btn btn--secondary">Editar</button></td></tr>
+                  <tr><td>Sacolés</td><td>2</td><td>4</td><td><button type="button" class="btn btn--secondary">Editar</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-AV-04 -->
+        <section class="panel" id="panel-avaliacoes" data-panel-id="avaliacoes" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Avaliações</div>
+            <h1>Moderação de avaliações</h1>
+            <p><strong>RF-AV-04</strong> · Comentários pendentes não são públicos (<strong>RF-AV-03</strong>). Funcionalidade global desligável em <strong>RF-CF-07</strong>.</p>
+          </div>
+          <div class="card">
+            <div class="card__head">Pendentes</div>
+            <div class="card__body table-wrap">
+              <table class="data">
+                <thead><tr><th>Produto</th><th>Nota</th><th>Comentário</th><th>Data</th><th>Ações</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Brigadeiro gourmet</td><td>5</td><td>“Melhor da região!”</td><td>16/04/2026</td>
+                    <td><button type="button" class="btn btn--primary" style="padding:6px 10px;font-size:0.8rem">Aprovar</button>
+                        <button type="button" class="btn btn--danger" style="padding:6px 10px;font-size:0.8rem">Rejeitar</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-CL — CRUD -->
+        <section class="panel" id="panel-clientes" data-panel-id="clientes" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Clientes</div>
+            <h1>Clientes</h1>
+            <p><strong>RF-CL-01</strong> a <strong>RF-CL-04</strong> — listagem, busca, criar/editar/excluir, tags e observações internas.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Cliente pertence a <strong>uma loja</strong> (<strong>RN-004</strong>). Exclusão pode ser bloqueada se houver pedidos vinculados — definir política na implementação.</span></span>
+            </p>
+          </div>
+
+          <div class="crud-split crud-split--2">
+            <div class="card">
+              <div class="card__head">
+                <span>Listagem</span>
+                <div class="crud-actions">
+                  <input type="search" placeholder="Buscar nome, tel, e-mail…" style="max-width:200px;padding:8px 10px;border-radius:8px;border:1px solid var(--adm-border)" aria-label="Buscar clientes" />
+                </div>
+              </div>
+              <div class="card__body table-wrap" style="padding:0">
+                <table class="data">
+                  <thead>
+                    <tr><th>Nome</th><th>WhatsApp</th><th>Tags</th><th style="min-width:120px">Ações</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Maria Silva</td>
+                      <td>(11) 98888-0000</td>
+                      <td><span class="pill pill--ok">VIP</span></td>
+                      <td class="crud-actions">
+                        <button type="button" class="btn btn--secondary">Ver</button>
+                        <button type="button" class="btn btn--secondary">Editar</button>
+                        <button type="button" class="btn btn--danger">Excluir</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>João Souza</td>
+                      <td>(11) 97777-1111</td>
+                      <td>—</td>
+                      <td class="crud-actions">
+                        <button type="button" class="btn btn--secondary">Ver</button>
+                        <button type="button" class="btn btn--secondary">Editar</button>
+                        <button type="button" class="btn btn--danger">Excluir</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card__body" style="padding-top:0;border-top:1px solid var(--adm-border)">
+                <button type="button" class="btn btn--primary">+ Novo cliente</button>
+                <p class="hint" style="margin-top:10px;margin-bottom:0"><strong>RF-CL-03</strong>: na ficha completa — histórico de pedidos e observações internas (não visíveis ao cliente).</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card__head">
+                <span>Formulário (criar / editar)</span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda campos">i</button><span class="tip-box" role="tooltip">Campos alinhados a <strong>RF-CL-02</strong>. Endereço usado em entregas e mensagens WhatsApp quando aplicável.</span></span>
+              </div>
+              <div class="card__body">
+                <div class="form-section-title">Dados principais</div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="cNome">Nome completo <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Identificação em pedidos e relatórios.</span></span></label>
+                    <input type="text" id="cNome" placeholder="Nome do cliente" />
+                  </div>
+                  <div>
+                    <label class="field" for="cNasc">Nascimento (opcional)</label>
+                    <input type="text" id="cNasc" placeholder="DD/MM/AAAA" />
+                  </div>
+                </div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="cTel">Telefone</label>
+                    <input type="tel" id="cTel" placeholder="(11) 99999-0000" />
+                  </div>
+                  <div>
+                    <label class="field" for="cWa">WhatsApp <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Pode coincidir com telefone; usado na vitrine e pedidos.</span></span></label>
+                    <input type="tel" id="cWa" placeholder="(11) 99999-0000" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="field" for="cEmail">E-mail</label>
+                  <input type="email" id="cEmail" placeholder="email@exemplo.com" />
+                </div>
+                <div class="form-section-title">Endereço</div>
+                <div class="form-row form-row--2">
+                  <div style="grid-column:1/-1">
+                    <label class="field" for="cLogra">Logradouro / número</label>
+                    <input type="text" id="cLogra" placeholder="Rua, número" />
+                  </div>
+                  <div>
+                    <label class="field" for="cComp">Complemento</label>
+                    <input type="text" id="cComp" placeholder="Apto, bloco…" />
+                  </div>
+                  <div>
+                    <label class="field" for="cBairro">Bairro</label>
+                    <input type="text" id="cBairro" />
+                  </div>
+                  <div>
+                    <label class="field" for="cCidade">Cidade</label>
+                    <input type="text" id="cCidade" />
+                  </div>
+                  <div>
+                    <label class="field" for="cCep">CEP</label>
+                    <input type="text" id="cCep" placeholder="00000-000" />
+                  </div>
+                  <div>
+                    <label class="field" for="cRef">Referência</label>
+                    <input type="text" id="cRef" placeholder="Perto de…" />
+                  </div>
+                </div>
+                <div class="form-section-title">Operação — <strong>RF-CL-04</strong></div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="cTags">Tags</label>
+                    <select id="cTags" multiple size="3" style="min-height:72px">
+                      <option>VIP</option>
+                      <option>Atacado</option>
+                      <option>Revendedor</option>
+                      <option>Inadimplente</option>
+                    </select>
+                    <p class="hint">Múltipla seleção · aniversariantes do mês em campanhas futuras.</p>
+                  </div>
+                  <div>
+                    <label class="field" for="cObs">Observações internas</label>
+                    <textarea id="cObs" placeholder="Visível só para staff…"></textarea>
+                  </div>
+                </div>
+                <div class="crud-actions" style="margin-top:8px">
+                  <button type="button" class="btn btn--primary">Salvar cliente</button>
+                  <button type="button" class="btn btn--secondary">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-PE — CRUD · DEC-14 -->
+        <section class="panel" id="panel-pedidos" data-panel-id="pedidos" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Pedidos</div>
+            <h1>Pedidos</h1>
+            <p><strong>RF-PE-03</strong> listar/filtrar · <strong>RF-PE-04</strong> pedido manual · máquina de estados <strong>DEC-14</strong>.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Transições válidas e histórico em <strong>RN-Pedidos</strong>. Reserva de estoque e <code>idempotency_key</code> — <strong>RF-PE-06</strong>.</span></span>
+            </p>
+          </div>
+          <div class="tabs" role="tablist">
+            <button type="button" class="is-on">Todos</button>
+            <button type="button">Hoje</button>
+            <button type="button">A confirmar</button>
+          </div>
+
+          <div class="crud-split crud-split--2">
+            <div class="card">
+              <div class="card__head"><span>Pedidos recentes</span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Clique em editar para alterar status, itens (se política permitir) ou cancelar conforme regras.</span></span>
+              </div>
+              <div class="card__body table-wrap" style="padding:0">
+                <table class="data">
+                  <thead>
+                    <tr><th>ID</th><th>Cliente</th><th>Total</th><th>Status</th><th></th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#1042</td>
+                      <td>João Souza</td>
+                      <td>R$ 86,00</td>
+                      <td><span class="pill pill--warn">aguardando_confirmacao</span></td>
+                      <td class="crud-actions">
+                        <button type="button" class="btn btn--secondary">Ver</button>
+                        <button type="button" class="btn btn--secondary">Editar</button>
+                        <button type="button" class="btn btn--danger">Cancelar</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#1041</td>
+                      <td>Maria Silva</td>
+                      <td>R$ 120,00</td>
+                      <td><span class="pill pill--ok">entregue</span></td>
+                      <td class="crud-actions">
+                        <button type="button" class="btn btn--secondary">Ver</button>
+                        <button type="button" class="btn btn--secondary">Editar</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card__head"><span>Novo / editar pedido manual</span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>RF-PE-04</strong>: cliente, itens, quantidades, desconto, observação, origem (balcão, telefone, etc.). Desconto e totais recalculados no servidor.</span></span>
+              </div>
+              <div class="card__body">
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="pCliente">Cliente <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Busca em clientes cadastrados ou criação rápida.</span></span></label>
+                    <select id="pCliente"><option>João Souza</option><option>Maria Silva</option><option>+ Novo…</option></select>
+                  </div>
+                  <div>
+                    <label class="field" for="pOrigem">Origem</label>
+                    <select id="pOrigem"><option>manual_balcao</option><option>telefone</option><option>whatsapp_direto</option></select>
+                  </div>
+                </div>
+                <div class="form-section-title">Itens</div>
+                <div class="table-wrap">
+                  <table class="data">
+                    <thead><tr><th>Produto</th><th>Qtd</th><th>Preço un.</th><th>Subtotal</th><th></th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>Brigadeiro gourmet</td>
+                        <td><input type="number" value="2" min="1" style="width:56px;padding:6px" /></td>
+                        <td>R$ 32,00</td>
+                        <td>R$ 64,00</td>
+                        <td><button type="button" class="btn btn--danger" style="padding:4px 8px;font-size:0.75rem">Remover</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button type="button" class="btn btn--secondary" style="margin-top:8px">+ Adicionar item</button>
+                <div class="form-row form-row--2" style="margin-top:14px">
+                  <div>
+                    <label class="field" for="pDesc">Desconto (R$ ou %)</label>
+                    <input type="text" id="pDesc" placeholder="0" />
+                  </div>
+                  <div>
+                    <label class="field" for="pObs">Observação do pedido</label>
+                    <input type="text" id="pObs" placeholder="Embalagem para presente…" />
+                  </div>
+                </div>
+                <div class="form-row form-row--2">
+                  <div>
+                    <label class="field" for="pStatus">Status — <strong>DEC-14</strong> <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Somente transições permitidas pela política; histórico imutável (<strong>RN-053</strong>).</span></span></label>
+                    <select id="pStatus">
+                      <option>rascunho</option>
+                      <option selected>aguardando_confirmacao</option>
+                      <option>confirmado</option>
+                      <option>em_producao</option>
+                      <option>pronto</option>
+                      <option>saiu_entrega</option>
+                      <option>entregue</option>
+                      <option>cancelado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="field" for="pIdem">idempotency_key <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Evita duplicar pedido em retry de rede — <strong>RF-PE-06</strong>.</span></span></label>
+                    <input type="text" id="pIdem" placeholder="uuid (opcional)" />
+                  </div>
+                </div>
+                <p class="hint"><strong>Total simulado:</strong> R$ 64,00 &nbsp;·&nbsp; <strong>RF-PE-05</strong> registrar entrega/retirada em etapas futuras.</p>
+                <div class="crud-actions">
+                  <button type="button" class="btn btn--primary">Salvar pedido</button>
+                  <button type="button" class="btn btn--secondary">Novo rascunho</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-ES — CRUD por aba -->
+        <section class="panel" id="panel-estoque" data-panel-id="estoque" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Estoque</div>
+            <h1>Estoque</h1>
+            <p><strong>RF-ES-01</strong> a <strong>RF-ES-06</strong> · lotes <strong>DEC-17</strong> · custo médio precificação <strong>DEC-09</strong>.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Saldo nunca negativo (<strong>RN-Estoque</strong>). Movimentações devem ser auditáveis; produção e venda consomem lotes conforme política FEFO/FIFO.</span></span>
+            </p>
+          </div>
+          <div class="tabs" id="estoqueTabs">
+            <button type="button" class="is-on" data-tab="insumos">Insumos</button>
+            <button type="button" data-tab="finais">Produtos finais</button>
+            <button type="button" data-tab="mov">Movimentações</button>
+            <button type="button" data-tab="lotes">Lotes</button>
+          </div>
+          <div id="estoquePane-insumos">
+            <div class="crud-split crud-split--2">
+              <div class="card">
+                <div class="card__head"><span>Insumos (cadastro mestre) — <strong>RF-ES-01</strong></span>
+                  <button type="button" class="btn btn--primary" style="padding:8px 12px;font-size:0.82rem">+ Novo insumo</button>
+                </div>
+                <div class="card__body table-wrap" style="padding:0">
+                  <table class="data">
+                    <thead><tr><th>Nome</th><th>Unid.</th><th>Saldo</th><th>Mín.</th><th>Validade</th><th></th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>Chocolate 54%</td><td>kg</td><td>4,2</td><td>1</td><td>—</td>
+                        <td class="crud-actions"><button type="button" class="btn btn--secondary">Editar</button><button type="button" class="btn btn--danger">Excluir</button></td>
+                      </tr>
+                      <tr>
+                        <td>Leite condensado</td><td>L</td><td>8</td><td>2</td><td>—</td>
+                        <td class="crud-actions"><button type="button" class="btn btn--secondary">Editar</button><button type="button" class="btn btn--danger">Excluir</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head"><span>Formulário insumo</span>
+                  <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Unidade e mínimo definem alertas (<strong>RF-ES-06</strong>). Controle de validade no cadastro de lotes.</span></span>
+                </div>
+                <div class="card__body">
+                  <div class="form-row form-row--2">
+                    <div><label class="field">Nome</label><input type="text" placeholder="Ex.: Chocolate 54%" /></div>
+                    <div><label class="field">Unidade</label><select><option>kg</option><option>g</option><option>L</option><option>un</option></select></div>
+                  </div>
+                  <div class="form-row form-row--2">
+                    <div><label class="field">Estoque mínimo</label><input type="number" step="0.01" placeholder="1" /></div>
+                    <div><label class="field">Controla validade <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Se sim, entradas exigem lote com data em <strong>RF-ES-02</strong>.</span></span></label><select><option>Não</option><option>Sim</option></select></div>
+                  </div>
+                  <button type="button" class="btn btn--primary">Salvar insumo</button>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:12px">
+              <div class="card__head"><span>Entrada de lote — <strong>RF-ES-02</strong></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Quantidade, custo unitário, fornecedor, datas e código de lote opcional. Atualiza custo médio (<strong>DEC-09</strong>).</span></span>
+              </div>
+              <div class="card__body">
+                <div class="form-row form-row--2">
+                  <div><label class="field">Insumo</label><select><option>Chocolate 54%</option></select></div>
+                  <div><label class="field">Quantidade</label><input type="number" step="0.01" value="5" /></div>
+                  <div><label class="field">Custo total (R$)</label><input type="text" placeholder="0,00" /></div>
+                  <div><label class="field">Data entrada</label><input type="text" placeholder="DD/MM/AAAA" /></div>
+                </div>
+                <button type="button" class="btn btn--secondary">Registrar entrada</button>
+              </div>
+            </div>
+          </div>
+          <div id="estoquePane-finais" hidden>
+            <div class="crud-split crud-split--2">
+              <div class="card">
+                <div class="card__head"><span>Produtos finais — <strong>RF-ES-04</strong></span>
+                  <button type="button" class="btn btn--primary" style="padding:8px 12px;font-size:0.82rem">+ Novo produto final</button>
+                </div>
+                <div class="card__body table-wrap" style="padding:0">
+                  <table class="data">
+                    <thead><tr><th>Produto</th><th>Saldo</th><th>Mín.</th><th></th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>Brigadeiro caixa 12</td><td>18</td><td>5</td>
+                        <td class="crud-actions"><button type="button" class="btn btn--secondary">Editar</button><button type="button" class="btn btn--danger">Excluir</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head"><span>Formulário produto final</span>
+                  <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Vinculado ao catálogo de venda; saldo alimentado por produção e baixado por vendas.</span></span>
+                </div>
+                <div class="card__body">
+                  <div class="form-row"><label class="field">Nome</label><input type="text" value="Brigadeiro caixa 12" /></div>
+                  <div class="form-row form-row--2">
+                    <div><label class="field">Saldo atual</label><input type="number" value="18" readonly /></div>
+                    <div><label class="field">Estoque mínimo</label><input type="number" value="5" /></div>
+                  </div>
+                  <button type="button" class="btn btn--primary">Salvar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="estoquePane-mov" hidden>
+            <div class="card">
+              <div class="card__head"><span>Nova movimentação — <strong>RF-ES-05</strong></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Tipos: entrada manual, ajuste (inventário), consumo por receita, baixa por venda, perda. Cada tipo dispara regras de lote (<strong>DEC-17</strong>).</span></span>
+              </div>
+              <div class="card__body">
+                <div class="form-row form-row--2">
+                  <div><label class="field">Tipo</label>
+                    <select><option>entrada_manual</option><option>ajuste</option><option>consumo_receita</option><option>baixa_venda</option><option>perda</option></select>
+                  </div>
+                  <div><label class="field">Item (insumo ou produto final)</label><select><option>Chocolate 54%</option><option>Brigadeiro caixa</option></select></div>
+                  <div><label class="field">Quantidade (+ ou −)</label><input type="text" placeholder="-0,5" /></div>
+                  <div><label class="field">Motivo / referência</label><input type="text" placeholder="Pedido #1042, ajuste contagem…" /></div>
+                </div>
+                <button type="button" class="btn btn--primary">Registrar movimentação</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card__head">Histórico recente (simulado)</div>
+              <div class="card__body table-wrap">
+                <table class="data">
+                  <thead><tr><th>Data</th><th>Tipo</th><th>Item</th><th>Qtd</th><th>Saldo após</th></tr></thead>
+                  <tbody>
+                    <tr><td>17/04 14:02</td><td>baixa_venda</td><td>Brigadeiro caixa</td><td>-2</td><td>18</td></tr>
+                    <tr><td>16/04 09:00</td><td>entrada_manual</td><td>Chocolate</td><td>+5 kg</td><td>4,2</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div id="estoquePane-lotes" hidden>
+            <div class="card">
+              <div class="card__head"><span>Lotes em estoque — <strong>RF-ES-02</strong> / <strong>RF-ES-03</strong></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Consumo físico respeita validade (FEFO) ou FIFO por data de entrada — <strong>DEC-17</strong>.</span></span>
+              </div>
+              <div class="card__body table-wrap">
+                <table class="data">
+                  <thead><tr><th>Lote</th><th>Insumo</th><th>Qtd</th><th>Custo / un.</th><th>Validade</th><th></th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td>L-2026-014</td><td>Chocolate 54%</td><td>2,0 kg</td><td>R$ 28,40</td><td>12/2026</td>
+                      <td class="crud-actions"><button type="button" class="btn btn--secondary">Detalhe</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-RE -->
+        <section class="panel" id="panel-receitas" data-panel-id="receitas" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Receitas</div>
+            <h1>Receitas</h1>
+            <p><strong>RF-RE-01</strong> a <strong>RF-RE-04</strong> · ingredientes, rendimento, tempo, perda %, custo indireto opcional.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">A receita liga insumos ao produto final; o custo da receita alimenta precificação e pode incluir rateio de indiretos (<strong>RF-RE-03</strong>).</span></span>
+            </p>
+          </div>
+          <div class="card">
+            <div class="card__head">
+              <span>Receitas cadastradas (CRUD)</span>
+              <div class="crud-actions">
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>RF-RE-04</strong>: visão de custo/unidade e margem sugerida; valores orientativos até fechamento de período.</span></span>
+                <button type="button" class="btn btn--primary" style="padding:8px 12px;font-size:0.82rem">+ Nova receita</button>
+              </div>
+            </div>
+            <div class="card__body table-wrap" style="padding:0">
+              <table class="data">
+                <thead><tr><th>Produto final</th><th>Rendimento</th><th>Custo/unid. (visão)</th><th></th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Brigadeiro (caixa 12)</td><td>1 caixa / lote</td><td>R$ 14,20</td>
+                    <td class="crud-actions"><button type="button" class="btn btn--secondary">Editar</button><button type="button" class="btn btn--danger">Excluir</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-producao" data-panel-id="producao" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Produção</div>
+            <h1>Produção</h1>
+            <p><strong>RF-RE-02</strong> — executar produção: baixa insumos (lotes), entrada produto acabado · idempotência <strong>RNF-Arq-02b</strong>.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Transação única: consome lotes (<strong>DEC-17</strong>), gera unidades de produto final. Retry seguro com mesma <code>idempotency_key</code>.</span></span>
+            </p>
+          </div>
+          <div class="card">
+            <div class="card__body">
+              <label class="field" for="prodReceita">Receita <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Define lista de ingredientes e rendimento esperado.</span></span></label>
+              <select id="prodReceita"><option>Brigadeiro gourmet — caixa 12</option></select>
+              <div class="form-row form-row--2" style="margin-top:12px">
+                <div><label class="field" for="prodQtd">Quantidade de lotes <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Multiplica rendimento da receita; insumos consumidos proporcionalmente.</span></span></label><input type="number" id="prodQtd" value="2" /></div>
+                <div><label class="field" for="prodIdem">idempotency_key <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Evita duplicar produção em reenvio de requisição.</span></span></label><input type="text" id="prodIdem" placeholder="uuid (opcional)" /></div>
+              </div>
+              <button type="button" class="btn btn--primary" style="margin-top:12px">Registrar produção (simulado)</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-PR -->
+        <section class="panel" id="panel-precificacao" data-panel-id="precificacao" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Precificação</div>
+            <h1>Precificação</h1>
+            <p><strong>RF-PR-01</strong> a <strong>RF-PR-05</strong> · simulador sem gravar — <strong>RF-PR-03</strong> · custos indiretos — <strong>RF-PR-04</strong>.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Fórmula referência enterprise §11: custo total × (1+margem). Custo de insumos vem da <strong>média ponderada</strong> (<strong>DEC-09</strong>), não confundir com ordem de baixa física (<strong>DEC-17</strong>).</span></span>
+            </p>
+          </div>
+          <div class="card">
+            <div class="card__head">
+              <span>Calculadora (produto)</span>
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>RF-PR-02</strong>: modo automático + ajuste manual com indicadores em tempo real. <strong>RF-PR-05</strong>: arredondamento comercial e histórico de preço.</span></span>
+            </div>
+            <div class="card__body">
+              <div class="form-row form-row--2">
+                <div><label class="field">Custo insumos <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Derivado da receita e custo médio dos lotes.</span></span></label><input type="text" value="R$ 18,00" /></div>
+                <div><label class="field">Embalagem</label><input type="text" value="R$ 2,00" /></div>
+                <div><label class="field">Mão de obra rateada <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Rateio por tempo, unidade ou receita — configurável (<strong>RF-PR-04</strong>).</span></span></label><input type="text" value="R$ 4,00" /></div>
+                <div><label class="field">Indiretos rateados</label><input type="text" value="R$ 3,00" /></div>
+                <div><label class="field">Margem % <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Markup sobre custo total; diferente de margem sobre preço de venda — documentar no FieldHelp real.</span></span></label><input type="text" value="45" /></div>
+                <div><label class="field">Preço sugerido</label><input type="text" readonly value="R$ 39,10" /></div>
+              </div>
+              <button type="button" class="btn btn--secondary">Simular sem salvar — <strong>RF-PR-03</strong></button>
+              <button type="button" class="btn btn--primary">Aplicar preço oficial</button>
+            </div>
+          </div>
+          <div class="chart-card" style="margin-top:16px">
+            <div class="chart-card__head">
+              <div>
+                <p class="chart-card__title">Composição do preço de venda (100%)</p>
+                <p class="chart-card__sub">Barras empilhadas horizontais · típico de análise de custeio · <strong>RF-PR-01</strong></p>
+              </div>
+            </div>
+            <div class="chart-plot-wrap">
+              <svg class="chart-svg" viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="chPr1" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#6366f1"/>
+                  </linearGradient>
+                  <linearGradient id="chPr2" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#a5b4fc"/>
+                  </linearGradient>
+                </defs>
+                <text class="ch-title" x="8" y="18">Preço sugerido R$ 39,10 · custo total R$ 27,00</text>
+                <text class="ch-axis" x="8" y="42" font-size="10">Estrutura do preço</text>
+                <line class="ch-grid" x1="8" y1="88" x2="472" y2="88" stroke="#cbd5e1"/>
+                <!-- 100% = 400px desde x=56 → insumos 46%, ops 28%, emb 6%, margem 20% -->
+                <rect x="56" y="52" width="184" height="32" rx="6" fill="url(#chPr1)"/>
+                <rect x="240" y="52" width="112" height="32" rx="6" fill="url(#chPr2)"/>
+                <rect x="352" y="52" width="24" height="32" rx="6" fill="#e2e8f0"/>
+                <rect x="376" y="52" width="80" height="32" rx="6" fill="#34d399"/>
+                <text x="68" y="72" fill="#fff" font-size="11" font-weight="700">Insumos 46% · R$ 18,00</text>
+                <text x="248" y="72" fill="#1e293b" font-size="10" font-weight="600">MO+ind. 23% · R$ 9,00</text>
+                <text x="358" y="72" fill="#475569" font-size="9" font-weight="600">Emb. 5%</text>
+                <text x="384" y="72" fill="#fff" font-size="10" font-weight="700">Margem 26%</text>
+                <text class="ch-axis" x="56" y="104" font-size="9" fill="#94a3b8">0%</text>
+                <text class="ch-axis" x="256" y="104" text-anchor="middle" font-size="9" fill="#94a3b8">50%</text>
+                <text class="ch-axis" x="456" y="104" text-anchor="end" font-size="9" fill="#94a3b8">100% do preço</text>
+              </svg>
+            </div>
+            <div class="chart-legend"><span class="lg-receita">Custo direto (insumos)</span><span class="lg-meta">Operacional rateado</span><span style="color:#64748b"><span style="display:inline-block;width:10px;height:10px;background:#e2e8f0;border-radius:2px;margin-right:6px;vertical-align:-1px"></span>Embalagem</span><span class="lg-lucro">Margem de contribuição</span></div>
+          </div>
+        </section>
+
+        <!-- RF-FI -->
+        <section class="panel" id="panel-financeiro" data-panel-id="financeiro" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Financeiro</div>
+            <h1>Financeiro</h1>
+            <p><strong>RF-FI-01</strong> a <strong>RF-FI-06</strong> · perdas, comparativos, gráficos.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Faturamento e lucro derivados de pedidos e custos registrados. <strong>RF-FI-02</strong>: lucro após perdas (movimentações de perda, validade). <strong>RF-FI-03</strong>: comparar períodos e eventos sazonais.</span></span>
+            </p>
+          </div>
+          <div class="grid-kpi">
+            <div class="kpi">
+              <div class="kpi__label">Faturamento (mês) <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Soma dos pedidos no período conforme regra (ex.: após confirmação ou entrega).</span></span></div>
+              <div class="kpi__value">R$ 18k</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Lucro bruto <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Receita − CMV (custo das mercadorias vendidas), usando custos médios e receitas.</span></span></div>
+              <div class="kpi__value">R$ 6,2k</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Perdas <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Perdas operacionais e ajustes; reduzem lucro ajustado (<strong>RF-FI-02</strong>).</span></span></div>
+              <div class="kpi__value">R$ 340</div>
+            </div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Faturamento vs lucro bruto (mensal)</p>
+                  <p class="chart-card__sub">Combo colunas + linha · eixo único R$ · <strong>RF-FI-03</strong></p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Padrão de BI: séries distintas com eixos alinhados ou eixo Y duplo. Aqui, barras = faturamento (R$ mil); linha = lucro bruto no mesmo período.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="chFiBar" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#6366f1"/>
+                    </linearGradient>
+                  </defs>
+                  <text class="ch-title" x="8" y="18">Valores em R$ mil · Y1: receita · linha: lucro bruto</text>
+                  <text class="ch-axis" x="8" y="48">20k</text>
+                  <text class="ch-axis" x="8" y="88">15k</text>
+                  <text class="ch-axis" x="8" y="128">10k</text>
+                  <text class="ch-axis" x="8" y="168">5k</text>
+                  <text class="ch-axis" x="8" y="188">0</text>
+                  <line class="ch-grid" x1="40" y1="44" x2="460" y2="44"/>
+                  <line class="ch-grid-minor" x1="40" y1="84" x2="460" y2="84"/>
+                  <line class="ch-grid-minor" x1="40" y1="124" x2="460" y2="124"/>
+                  <line class="ch-grid-minor" x1="40" y1="164" x2="460" y2="164"/>
+                  <line class="ch-grid" x1="40" y1="184" x2="460" y2="184" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="40" y1="44" x2="40" y2="184" stroke="#cbd5e1"/>
+                  <!-- Faturamento k: 14.2, 15.8, 13.1, 18.6, 17.2, 18.4 → max 20k escala 140px -->
+                  <rect x="52" y="85" width="48" height="99" rx="6" fill="url(#chFiBar)" opacity="0.95"/>
+                  <rect x="112" y="77" width="48" height="107" rx="6" fill="url(#chFiBar)" opacity="0.95"/>
+                  <rect x="172" y="98" width="48" height="86" rx="6" fill="url(#chFiBar)" opacity="0.95"/>
+                  <rect x="232" y="54" width="48" height="130" rx="6" fill="#4f46e5"/>
+                  <rect x="292" y="63" width="48" height="121" rx="6" fill="url(#chFiBar)" opacity="0.95"/>
+                  <rect x="352" y="59" width="48" height="125" rx="6" fill="url(#chFiBar)" opacity="0.95"/>
+                  <!-- Lucro k: 4.2,5.1,3.8,6.2,5.5,6.2 → mesma escala 20k para comparabilidade -->
+                  <polyline fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                    points="76,135 136,128 196,142 256,115 316,123 376,116"/>
+                  <circle cx="76" cy="135" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <circle cx="136" cy="128" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <circle cx="196" cy="142" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <circle cx="256" cy="115" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <circle cx="316" cy="123" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <circle cx="376" cy="116" r="4" fill="#fff" stroke="#059669" stroke-width="2"/>
+                  <text class="ch-axis" x="76" y="200" text-anchor="middle" font-size="10">Jan</text>
+                  <text class="ch-axis" x="136" y="200" text-anchor="middle" font-size="10">Fev</text>
+                  <text class="ch-axis" x="196" y="200" text-anchor="middle" font-size="10">Mar</text>
+                  <text class="ch-axis" x="256" y="200" text-anchor="middle" font-size="10">Abr</text>
+                  <text class="ch-axis" x="316" y="200" text-anchor="middle" font-size="10">Mai</text>
+                  <text class="ch-axis" x="376" y="200" text-anchor="middle" font-size="10">Jun</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-receita">Faturamento (R$ mil)</span><span class="lg-lucro">Lucro bruto (R$ mil)</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">Margem média no período: <strong>~34%</strong></span></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Estrutura de custo do mês</p>
+                  <p class="chart-card__sub">Donut · participação sobre custo total · <strong>RF-FI-02</strong></p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Equivalente a gráfico de rosca no Looker/Tableau: CMV (matéria-prima vendida), despesas operacionais alocadas e perdas. Centro com KPI total.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <filter id="chDonSh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/></filter>
+                  </defs>
+                  <!-- C = 2π*52 ≈ 326.73 → 52%=170, 35%=114, 13%=43 -->
+                  <circle cx="140" cy="100" r="52" fill="none" stroke="#e2e8f0" stroke-width="26"/>
+                  <circle cx="140" cy="100" r="52" fill="none" stroke="#4f46e5" stroke-width="26" stroke-dasharray="170 327" stroke-linecap="butt" transform="rotate(-90 140 100)" filter="url(#chDonSh)"/>
+                  <circle cx="140" cy="100" r="52" fill="none" stroke="#10b981" stroke-width="26" stroke-dasharray="114 327" stroke-dashoffset="-170" transform="rotate(-90 140 100)"/>
+                  <circle cx="140" cy="100" r="52" fill="none" stroke="#f59e0b" stroke-width="26" stroke-dasharray="43 327" stroke-dashoffset="-284" transform="rotate(-90 140 100)"/>
+                  <circle cx="140" cy="100" r="34" fill="#fff" stroke="#f1f5f9" stroke-width="1"/>
+                  <text x="140" y="92" text-anchor="middle" font-size="20" font-weight="800" fill="#0f172a">R$ 11,2k</text>
+                  <text x="140" y="112" text-anchor="middle" font-size="9" fill="#64748b">custos totais</text>
+                  <text class="ch-axis" x="220" y="56" font-size="10" font-weight="600" fill="#4f46e5">CMV 52%</text>
+                  <text class="ch-axis" x="220" y="76" font-size="10" font-weight="600" fill="#10b981">Operacional 35%</text>
+                  <text class="ch-axis" x="220" y="96" font-size="10" font-weight="600" fill="#d97706">Perdas 13%</text>
+                  <text class="ch-axis" x="220" y="124" font-size="9" fill="#94a3b8" style="font-style:italic">Soma = 100% dos custos</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-receita">CMV (custo mercadoria)</span><span class="lg-lucro">Despesas operacionais</span><span style="color:#d97706"><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:6px;vertical-align:-1px"></span>Perdas / ajustes</span></div>
+            </div>
+          </div>
+          <p class="hint"><strong>RF-FI-06</strong> — matriz “alta margem / baixa saída” e similares pode ser uma vista adicional no relatório inteligente.</p>
+        </section>
+
+        <!-- RF-RL-01 -->
+        <section class="panel" id="panel-relatorios" data-panel-id="relatorios" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Relatórios</div>
+            <h1>Relatórios</h1>
+            <p><strong>RF-RL-01</strong> — enterprise §14.
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Relatórios consomem os mesmos agregados do financeiro e estoque; exportação CSV/PDF é evolução comum.</span></span>
+            </p>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Top produtos por receita</p>
+                  <p class="chart-card__sub">Barras horizontais · participação no faturamento do período · <strong>RF-FI-06</strong></p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Eixo 0–100% (ou R$); rótulos à esquerda, percentual ou valor no fim da barra. No produto, drill-down abre detalhe do SKU.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <text class="ch-title" x="8" y="16">% da receita total (soma = 100% entre os exibidos)</text>
+                  <text class="ch-axis" x="8" y="44">100%</text>
+                  <text class="ch-axis" x="8" y="84">75%</text>
+                  <text class="ch-axis" x="8" y="124">50%</text>
+                  <text class="ch-axis" x="8" y="164">25%</text>
+                  <text class="ch-axis" x="8" y="184">0%</text>
+                  <line class="ch-grid" x1="40" y1="40" x2="440" y2="40"/>
+                  <line class="ch-grid-minor" x1="40" y1="80" x2="440" y2="80"/>
+                  <line class="ch-grid-minor" x1="40" y1="120" x2="440" y2="120"/>
+                  <line class="ch-grid-minor" x1="40" y1="160" x2="440" y2="160"/>
+                  <line class="ch-grid" x1="40" y1="176" x2="440" y2="176" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="40" y1="40" x2="40" y2="176" stroke="#cbd5e1"/>
+                  <!-- 400px span: 32%→128, 21%→84, 15%→60, 9%→36 -->
+                  <text class="ch-axis" x="42" y="58" font-size="10" fill="#334155">Brigadeiro caixa 24un</text>
+                  <rect x="40" y="62" width="128" height="16" rx="4" fill="#4f46e5"/>
+                  <text class="ch-axis" x="174" y="74" font-size="9" font-weight="700" fill="#312e81">32%</text>
+                  <text class="ch-axis" x="42" y="98" font-size="10" fill="#334155">Sacolé mix 10un</text>
+                  <rect x="40" y="102" width="84" height="16" rx="4" fill="#818cf8"/>
+                  <text class="ch-axis" x="130" y="114" font-size="9" font-weight="700" fill="#312e81">21%</text>
+                  <text class="ch-axis" x="42" y="138" font-size="10" fill="#334155">Bolo pote 200ml</text>
+                  <rect x="40" y="142" width="60" height="16" rx="4" fill="#a5b4fc"/>
+                  <text class="ch-axis" x="106" y="154" font-size="9" font-weight="700" fill="#312e81">15%</text>
+                  <text class="ch-axis" x="42" y="178" font-size="10" fill="#334155">Demais SKUs (agregado)</text>
+                  <rect x="40" y="182" width="36" height="16" rx="4" fill="#c7d2fe"/>
+                  <text class="ch-axis" x="82" y="194" font-size="9" font-weight="700" fill="#475569">9%</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span style="font-size:0.7rem;color:#64748b">Ordenação padrão: maior receita primeiro; alternativa: maior margem absoluta (R$).</span></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Margem % por categoria</p>
+                  <p class="chart-card__sub">Colunas · margem bruta sobre receita da categoria · Y: 0–50%</p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Cruzamento típico para decisão de preço ou corte de produto; no BI, cores podem alertar abaixo de meta.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <text class="ch-title" x="8" y="18">Margem bruta % = (receita − CMV) / receita da categoria</text>
+                  <text class="ch-axis" x="8" y="48">50%</text>
+                  <text class="ch-axis" x="8" y="88">38%</text>
+                  <text class="ch-axis" x="8" y="128">25%</text>
+                  <text class="ch-axis" x="8" y="168">13%</text>
+                  <text class="ch-axis" x="8" y="188">0%</text>
+                  <line class="ch-grid" x1="40" y1="44" x2="440" y2="44"/>
+                  <line class="ch-grid-minor" x1="40" y1="84" x2="440" y2="84"/>
+                  <line class="ch-grid-minor" x1="40" y1="124" x2="440" y2="124"/>
+                  <line class="ch-grid-minor" x1="40" y1="164" x2="440" y2="164"/>
+                  <line class="ch-grid" x1="40" y1="184" x2="440" y2="184" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="40" y1="44" x2="40" y2="184" stroke="#cbd5e1"/>
+                  <!-- 50% max → 140px bar height from 184 up: 42%→118, 28%→78, 36%→101, 22%→62 -->
+                  <rect x="64" y="66" width="56" height="118" rx="6" fill="#34d399"/>
+                  <text class="ch-axis" x="92" y="59" text-anchor="middle" font-size="10" font-weight="700" fill="#065f46">42%</text>
+                  <rect x="152" y="106" width="56" height="78" rx="6" fill="#fbbf24"/>
+                  <text class="ch-axis" x="180" y="99" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">28%</text>
+                  <rect x="240" y="83" width="56" height="101" rx="6" fill="#10b981"/>
+                  <text class="ch-axis" x="268" y="76" text-anchor="middle" font-size="10" font-weight="700" fill="#065f46">36%</text>
+                  <rect x="328" y="122" width="56" height="62" rx="6" fill="#f87171"/>
+                  <text class="ch-axis" x="356" y="115" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">22%</text>
+                  <text class="ch-axis" x="92" y="200" text-anchor="middle" font-size="10">Doces</text>
+                  <text class="ch-axis" x="180" y="200" text-anchor="middle" font-size="10">Sacolés</text>
+                  <text class="ch-axis" x="268" y="200" text-anchor="middle" font-size="10">Salgados</text>
+                  <text class="ch-axis" x="356" y="200" text-anchor="middle" font-size="10">Kits</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-lucro">Margem bruta %</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">Sacolés e Kits merecem revisão de preço se meta for ≥ 32%.</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head">Relatórios disponíveis (lista)</div>
+            <div class="card__body">
+              <ul style="margin:0;padding-left:1.2rem">
+                <li>Vendas por produto / categoria</li>
+                <li>Margem por produto</li>
+                <li>Tendência de lucro</li>
+                <li>Análise de perdas</li>
+                <li>Consumo de insumos</li>
+              </ul>
+              <div class="crud-actions" style="margin-top:14px">
+                <button type="button" class="btn btn--primary">Exportar CSV (mock)</button>
+                <button type="button" class="btn btn--secondary">Agendar envio por e-mail (futuro)</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RF-AU perfil -->
+        <section class="panel" id="panel-perfil" data-panel-id="perfil" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Painel / Conta</div>
+            <h1>Perfil &amp; segurança</h1>
+            <p>Sessão <strong>RF-AU-05</strong> · alteração de senha <strong>RF-AU-02</strong>.</p>
+          </div>
+          <div class="card"><div class="card__body">
+            <div class="form-row form-row--2">
+              <div><label class="field">Nome</label><input type="text" value="Admin da Loja" /></div>
+              <div><label class="field">E-mail</label><input type="email" value="admin@loja.com" /></div>
+            </div>
+            <div class="form-row" style="max-width:320px">
+              <label class="field">Nova senha</label>
+              <input type="password" placeholder="••••••••" />
+            </div>
+            <button type="button" class="btn btn--primary">Atualizar</button>
+          </div></div>
+        </section>
+
+        <!-- RF-PL DEC-15 -->
+        <section class="panel" id="panel-plataforma" data-panel-id="plataforma" hidden>
+          <div class="page-head">
+            <div class="breadcrumb">Plataforma</div>
+            <h1>Super Admin</h1>
+            <p><strong>DEC-15</strong> — fora do MVP núcleo. <strong>RF-PL-01</strong> a <strong>RF-PL-04</strong> (lojas, métricas globais, planos, área <code>(platform) admin</code>).</p>
+          </div>
+          <div class="card"><div class="card__body">
+            <p>Esta área seria implementada em rota separada (ex.: <code>/platform/admin</code>) com papel <code>platform_admin</code>.</p>
+            <button type="button" class="btn btn--secondary" disabled>Listar lojas da plataforma</button>
+          </div></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var panels = {};
+  var panelIds = [];
+  document.querySelectorAll(".panel[data-panel-id]").forEach(function (el) {
+    var id = el.getAttribute("data-panel-id");
+    panels[id] = el;
+    panelIds.push(id);
+  });
+
+  function closeSidebar() {
+    var sb = document.getElementById("sidebar");
+    var ov = document.getElementById("sidebarOverlay");
+    if (sb) sb.classList.remove("is-open");
+    if (ov) ov.classList.remove("is-visible");
+  }
+
+  function showPanel(id) {
+    if (!panels[id]) id = "dashboard";
+    panelIds.forEach(function (pid) {
+      var el = panels[pid];
+      if (!el) return;
+      var on = pid === id;
+      el.hidden = !on;
+      el.classList.toggle("is-visible", on);
+    });
+    document.querySelectorAll(".nav-link[data-panel]").forEach(function (a) {
+      var p = a.getAttribute("data-panel");
+      a.classList.toggle("is-active", p === id);
+    });
+    if (window.location.hash !== "#" + id) {
+      if (history.replaceState) history.replaceState(null, "", "#" + id);
+      else location.hash = id;
+    }
+    closeSidebar();
+  }
+
+  function onHash() {
+    var h = (location.hash || "#dashboard").replace(/^#/, "");
+    if (h === "login") return;
+    if (!panels[h]) h = "dashboard";
+    showPanel(h);
+  }
+
+    document.querySelectorAll(".nav-link[data-panel]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var id = a.getAttribute("data-panel");
+      if (id) showPanel(id);
+    });
+  });
+
+  document.getElementById("btnSidebar").addEventListener("click", function () {
+    document.getElementById("sidebar").classList.toggle("is-open");
+    document.getElementById("sidebarOverlay").classList.toggle("is-visible");
+  });
+  document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
+
+  document.querySelectorAll("[data-go]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      showPanel(btn.getAttribute("data-go"));
+    });
+  });
+
+  document.getElementById("btnFakeLogin").addEventListener("click", function () {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appRoot").classList.remove("hidden");
+    if (!location.hash || location.hash === "#login") location.hash = "dashboard";
+    onHash();
+  });
+
+  document.getElementById("btnLogout").addEventListener("click", function () {
+    document.getElementById("appRoot").classList.add("hidden");
+    document.getElementById("loginScreen").classList.remove("hidden");
+    location.hash = "login";
+  });
+
+  document.getElementById("btnOpenStore").addEventListener("click", function () {
+    window.open("loja-vitrine-layout-sugestao.html", "_blank", "noopener,noreferrer");
+  });
+
+  window.addEventListener("hashchange", onHash);
+
+  /* Estoque tabs */
+  var tabBtns = document.querySelectorAll("#estoqueTabs button");
+  var panes = {
+    insumos: document.getElementById("estoquePane-insumos"),
+    finais: document.getElementById("estoquePane-finais"),
+    mov: document.getElementById("estoquePane-mov"),
+    lotes: document.getElementById("estoquePane-lotes"),
+  };
+  tabBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var t = b.getAttribute("data-tab");
+      tabBtns.forEach(function (x) { x.classList.toggle("is-on", x === b); });
+      Object.keys(panes).forEach(function (k) {
+        if (panes[k]) panes[k].hidden = k !== t;
+      });
+    });
+  });
+
+  /* FieldHelp: clique no «i» abre/fecha; clique fora fecha; Esc fecha — RF-AJ-01 */
+  document.querySelectorAll(".tip-trigger").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var wrap = btn.closest(".tip-wrap");
+      if (!wrap) return;
+      document.querySelectorAll(".tip-wrap.is-open").forEach(function (w) {
+        if (w !== wrap) w.classList.remove("is-open");
+      });
+      wrap.classList.toggle("is-open");
+    });
+  });
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest(".tip-wrap")) return;
+    document.querySelectorAll(".tip-wrap.is-open").forEach(function (w) {
+      w.classList.remove("is-open");
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".tip-wrap.is-open").forEach(function (w) {
+        w.classList.remove("is-open");
+      });
+    }
+  });
+
+  if (location.hash === "#login" || !location.hash) {
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("appRoot").classList.add("hidden");
+  } else {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appRoot").classList.remove("hidden");
+    onHash();
+  }
+})();
+  </script>
+</body>
+</html>
