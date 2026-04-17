@@ -4,7 +4,7 @@ Itens **não concluídos** ou **parcialmente** entregues. Alinhado ao **§23 —
 
 ## Legenda
 
-- **Estado:** `nao_iniciado` | `parcial` | `bloqueado`
+- **Estado:** `nao_iniciado` | `parcial` | `bloqueado` | `convertido` (promovido a requisito normativo)
 - **Origem:** enterprise | mvp | tecnico
 
 ---
@@ -52,7 +52,7 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 
 | ID | Ideia | Estado | Notas |
 |----|-------|--------|-------|
-| IP-01 | Categorias e produtos em destaque / “novo” / mais vendido | ideia | P1 sugestões |
+| IP-01 | Categorias e produtos em destaque / “novo” / mais vendido | convertido | Ver **RF-CA-11**; exemplo em [mockups/loja-vitrine-layout-sugestao.html](../mockups/loja-vitrine-layout-sugestao.html) |
 | IP-02 | Agenda de produção planejada por dia | ideia | P1 |
 | IP-03 | Promoções: combos, desconto por quantidade, produto promocional | ideia | P1 |
 | IP-04 | Disponibilidade por dia/horário (ex.: só fim de semana) | ideia | P1 |
@@ -60,6 +60,8 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | IP-06 | Métricas de recompra, clientes inativos, frequência | ideia | P1 |
 | IP-07 | WhatsApp: template rico (nome, itens, total, endereço) | ideia | P1 |
 | IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap |
+| IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |
+| IP-10 | Resposta pública do lojista a um comentário aprovado | ideia | Moderação RF-AV |
 
 Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/` e remover ou marcar como `convertido` aqui.
 

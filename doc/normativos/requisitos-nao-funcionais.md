@@ -17,6 +17,7 @@
 | RNF-SEC-06 | **Secrets** apenas em variáveis de ambiente; nunca no repositório | P2 |
 | RNF-SEC-07 | **Backup** de banco de dados (política por ambiente) | P2 |
 | RNF-SEC-08 | Uploads: validar tipo e tamanho; armazenar com **UUID**; não confiar no nome original | P2 |
+| RNF-SEC-09 | Com **avaliações ativas**: limitar taxa de submissão de comentários e validar entrada (anti-spam / abuso) por IP ou por cliente | E, RF-AV |
 
 ---
 
@@ -40,6 +41,7 @@
 | RNF-UX-02 | Tabelas largas viram cards em telas pequenas; formulários por etapas | P5 |
 | RNF-UX-03 | Painel intuitivo para não especialistas (pequenos lojistas) | P1 |
 | RNF-UX-04 | Mensagens de erro: simples para cliente final; detalhadas para admin (enterprise §18) | Enterprise |
+| RNF-UX-05 | Vista **lista em linhas** do catálogo: legível em mobile (alinhamento imagem/preço, áreas de toque adequadas); paridade de informação com a vista em grade | E, RN-027 |
 
 ---
 

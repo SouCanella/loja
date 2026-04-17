@@ -43,6 +43,9 @@ Escopo **DEC-15:** fora do MVP núcleo; implementação típica na Fase 4 ou bac
 | RF-CF-04 | Links de redes sociais | E | P1 |
 | RF-CF-05 | Pré-visualização de tema e fallbacks de imagem | E | P1 |
 | RF-CF-06 | Mensagem WhatsApp configurável (template enriquecido: nome cliente, itens, total) | E | P1 sugestões |
+| RF-CF-07 | **Avaliações por produto** (nota + comentário): funcionalidade **desligada no padrão inicial**; admin da loja pode **ativar** | E | §7–§8 |
+| RF-CF-08 | **Layout da vitrine:** **grade (cards)** ou **lista em linhas** (um produto abaixo do outro); configurável pelo admin; padrão sugerido: grade | E | §7 |
+| RF-CF-09 | Configurar quais **modos de recebimento** a vitrine oferece (ex.: retirada, entrega pela loja, **apps de entrega parceiros** como Uber Entregas / 99); labels e visibilidade por opção | E | [mockup vitrine](../mockups/loja-vitrine-layout-sugestao.html) |
 
 ---
 
@@ -51,13 +54,30 @@ Escopo **DEC-15:** fora do MVP núcleo; implementação típica na Fase 4 ou bac
 | ID | Requisito | Pri | Ref. origem |
 |----|-----------|-----|-------------|
 | RF-CA-01 | Home, catálogo, detalhe produto, carrinho | M | P1 §3 |
-| RF-CA-02 | Filtros (categoria, busca); destaques | M/E | P1 |
+| RF-CA-02 | Filtros (categoria, busca); **destaques** (ver RF-CA-11) | M/E | P1 |
 | RF-CA-03 | Indicar disponibilidade e preço; imagens otimizadas | M | P1 |
 | RF-CA-04 | Produto sem estoque: ocultar ou indisponível (config loja) | M | P1 |
 | RF-CA-05 | Status: disponível / sob encomenda / indisponível | E | P1 |
 | RF-CA-06 | Variações, peso/volume opcional | E | P1 |
 | RF-CA-07 | URL loja: **`/loja/[slug]`** no mesmo domínio (**DEC-19**); subdomínio evolução | M | DEC-19 |
 | RF-CA-08 | Entidade `categories` + FK em produtos; filtros no catálogo (**DEC-20**) | M | Fase 2 |
+| RF-CA-09 | Renderizar o catálogo conforme **layout** escolhido (**grade** ou **lista**); mesmos dados e CTAs em ambos | E | RF-CF-08 |
+| RF-CA-10 | **Avaliações** (média, número de reviews, trechos) só aparecem na vitrine se a loja tiver avaliações **ativas** | E | RF-AV |
+| RF-CA-11 | **Destaques:** admin pode marcar produtos com **rótulos** (ex.: “Em destaque”, “Novidade”, “Mais vendido” — conjunto configurável); vitrine pode exibir **secção** (ex.: carrossel ou faixa) e/ou **badge** no card | E | IP-01 → RF |
+
+---
+
+## RF-Avaliações e moderação (por loja)
+
+Funcionalidade **opcional**; **inativa no padrão inicial** (RF-CF-07). Isolamento por `store_id`.
+
+| ID | Requisito | Pri | Ref. |
+|----|-----------|-----|------|
+| RF-AV-01 | Enquanto avaliações estiverem **desativadas** (inclui o **padrão inicial**): sem envio, listagem nem UI de review na vitrine | E | RN-025 |
+| RF-AV-02 | Com avaliações **ativas**: cliente pode enviar **nota** (ex.: 1–5) e **comentário** por produto, conforme regra de autenticação definida na implementação | E | — |
+| RF-AV-03 | Submissões entram como **pendentes de moderação**; não são públicas até decisão do admin | E | RN-026 |
+| RF-AV-04 | **Admin** da loja: lista de pendentes; ações **aprovar** ou **rejeitar**; opcional motivo interno na rejeição | E | §8 |
+| RF-AV-05 | Na vitrine: exibir apenas comentários **aprovados**; opcional média agregada por produto | E | — |
 
 ---
 
@@ -83,6 +103,7 @@ Escopo **DEC-15:** fora do MVP núcleo; implementação típica na Fase 4 ou bac
 | RF-PE-05 | Registrar entrega/retirada | E | P1 |
 | RF-PE-06 | Reserva de estoque + timeout + idempotência | M | Enterprise §12 |
 | RF-PE-07 | Impressão pedido físico; pagamento integrado | E | P1 futuro |
+| RF-PE-08 | Checkout na vitrine: cliente escolhe **recebimento** entre opções habilitadas (**RF-CF-09**); para entrega via **app parceiro** sem integração API, **combinar** endereço, link do app, taxa e horário via **WhatsApp** na mensagem do pedido | E | RF-CF-09; mockup |
 
 ---
 

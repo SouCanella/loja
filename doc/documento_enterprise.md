@@ -117,9 +117,10 @@ Plataforma SaaS **multi-tenant** para gestão de lojas de produtos caseiros (sac
 
 | Entidade / tabela   | Campos relevantes (resumo) |
 |---------------------|----------------------------|
-| stores              | id, name, theme, config |
+| stores              | id, name, theme, **config** (ex.: `reviews_enabled` **false** no padrão inicial, `catalog_layout`: `grid` \| `list`) |
 | users               | id, store_id, role, email |
 | products            | id, store_id, name, price, active |
+| product_reviews     | id, store_id, product_id, customer_id, rating, texto do comentário, **status** de moderação (`pending` / `approved` / `rejected`), moderado_em, moderado_por (quando avaliações ativas) |
 | inventory_items     | id, store_id, name, unit |
 | inventory_batches   | id, item_id, quantity, unit_cost, expiration_date |
 | recipes             | id, product_id, yield, time_minutes |
@@ -135,6 +136,10 @@ Detalhamento e novos campos (reservas, auditoria) evoluem com as fases; ver [fas
 ## §7 Loja (cliente)
 
 - Catálogo com produtos e disponibilidade (estoque)
+- **Destaques** (rótulos e/ou secção), conforme **RF-CA-11**
+- **Layout do catálogo** configurável pelo admin da loja (opcional): **grade de cards** (padrão sugerido) **ou lista em linhas** (um produto abaixo do outro), mantendo a mesma informação em ambos (**RF-CF-08**, **RF-CA-09**)
+- **Modos de recebimento** na vitrine (retirada, entrega, apps parceiros, etc.) conforme configuração da loja (**RF-CF-09**, **RF-PE-08**)
+- **Avaliações por produto** (nota + comentário): **desligadas no padrão inicial**; quando a loja ativar, comentários passam por **moderação** antes de públicos (ver RF-AV, RN-025+)
 - Carrinho simples
 - Pedido via WhatsApp do lojista (link/comunicação)
 - Cadastro de cliente
@@ -152,7 +157,11 @@ Detalhamento e novos campos (reservas, auditoria) evoluem com as fases; ver [fas
 - Textos da loja
 - WhatsApp
 - Horário de funcionamento
+- **Opções de recebimento** visíveis na vitrine (retirada, entrega própria, parceiros de entrega, etc.) — **RF-CF-09**
 - Comportamento sem estoque: ocultar produto **ou** exibir sem permitir compra
+- **Avaliações por produto:** ligar/desligar (**estado inicial: desligado**); fila de **moderação** (aprovar / rejeitar comentários antes da vitrine)
+- **Layout da vitrine:** grade (cards) ou **lista em linhas** (opcional; escolha do admin)
+- **Destaques / rótulos** de produto (ex.: em destaque, novidade) — **RF-CA-11**
 
 ### Clientes
 

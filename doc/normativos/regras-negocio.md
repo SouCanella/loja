@@ -38,6 +38,9 @@
 | RN-022 | Se imagem opcional não for enviada, usar **fallback** do tema base. |
 | RN-023 | Comportamento para produto **sem estoque** é configurável: ocultar do catálogo **ou** exibir como indisponível (sem compra). |
 | RN-024 | Produto pode ter estados de disponibilidade: disponível, sob encomenda, indisponível (conforme modelagem de catálogo). |
+| RN-025 | **Avaliações por produto** só existem se a loja **ativar** explicitamente a funcionalidade; **no padrão inicial está desativada** (nada de review na vitrine até lá). |
+| RN-026 | Comentários de avaliação só ficam **visíveis ao público** após **aprovação** por utilizador autorizado da própria loja (moderação obrigatória quando avaliações estiverem ativas). |
+| RN-027 | **Layout da vitrine** (grade de cards vs **lista em linhas**) é **configuração da loja**; o conteúdo apresentado deve ser equivalente nos dois modos (preço, disponibilidade, CTA). |
 
 ---
 
@@ -48,6 +51,7 @@
 | RN-030 | Produto pertence a uma loja; preço e disponibilidade são por loja. |
 | RN-031 | **Categorias:** cada produto pode referenciar uma categoria da loja (`categories`); filtros no catálogo conforme **DEC-20**. Destaques e variações conforme RF. |
 | RN-032 | Histórico de alteração de preço é desejável para gestão (evolução). |
+| RN-033 | **Avaliações** (`product_reviews` ou equivalente) pertencem sempre à loja do produto; **nunca** misturar reviews entre tenants. |
 
 ---
 

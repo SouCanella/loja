@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (avaliações e layout vitrine)
+
+- **Produto:** avaliações por produto **desativadas no padrão inicial**, ativação e **moderação** (aprovar/rejeitar) pelo admin; **layout** catálogo grade vs **lista em linhas** — [requisitos-funcionais.md](../normativos/requisitos-funcionais.md) RF-CF-07/08, RF-CA-09/10, RF-AV; [regras-negocio.md](../normativos/regras-negocio.md) RN-025–027, RN-033; [documento_enterprise.md](../documento_enterprise.md) §6–§8; RNF-SEC-09, RNF-UX-05.
+
 ## 2026-04-17 (estrutura `doc/`)
 
 - **Reorganização:** pastas **[normativos/](../normativos/)** (regras de negócio, RF, RNF, matriz RN→testes) e **[projeto/](../projeto/)** (decisões DEC, backlog, rastreabilidade, proposta legada); `documento_enterprise.md` e `README.md` permanecem na raiz de `doc/`. Links internos e [proposta.md](../../proposta.md) atualizados.

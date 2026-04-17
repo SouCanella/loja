@@ -50,6 +50,7 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 ### 2.3 Frontend
 
 - Telas mobile-first: catálogo, detalhe, carrinho/checkout simplificado, lista de pedidos.
+- **Opcional (evolução):** layout de catálogo em **grade** ou **lista em linhas** conforme config da loja (**RF-CF-08**, **RN-027**); avaliações por produto **desligadas no padrão inicial** — se ativadas, incluir fluxo de moderação no admin (**RF-AV**). Se não couber neste marco, manter como item explícito no [backlog.md](../projeto/backlog.md).
 - Feedback visual em ações (§15).
 
 ---

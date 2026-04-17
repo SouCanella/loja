@@ -25,7 +25,7 @@ Este arquivo mapeia o material bruto [inicio_planejamento.txt](../../inicio_plan
 | Opções stack A/B/C → consolidação FastAPI+Next | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) decisões fechadas | |
 | RNFs segurança/performance/escala/usabilidade/auditoria | [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) | |
 | Testes unitários/integração/E2E futuro | RNF-QA | |
-| Ideias: categorias/destaques, agenda produção, promoções, disponibilidade por dia, métricas recompra, WhatsApp rico | [backlog.md](backlog.md) ideias IP-* | |
+| Ideias: categorias/destaques (**IP-01** → **RF-CA-11**), agenda produção, promoções, disponibilidade por dia, métricas recompra, WhatsApp rico | [backlog.md](backlog.md) ideias IP-*; [mockups/loja-vitrine-layout-sugestao.html](../mockups/loja-vitrine-layout-sugestao.html) | |
 | MVP 1/2/3 (txt) | [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) equivalências | |
 
 ## Planejamento 2 (≈ linhas 942–1576)
