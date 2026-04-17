@@ -154,6 +154,15 @@ Funcionalidade **opcional**; **inativa no padrão inicial** (RF-CF-07). Isolamen
 | RF-FI-05 | Gráficos: vendas, lucro, consumo insumos, margem, sazonalidade | E | P1 §10 |
 | RF-FI-06 | Análises: alta margem baixa saída, alta saída baixa margem | E | P1 |
 
+**Mapa do mockup admin (gráficos × RF × dados):** a página [admin-painel-layout-sugestao.html](../mockups/admin-painel-layout-sugestao.html) organiza as visualizações por secção numerada; cada bloco traz tags RF, texto «Dados / Cálculo» e tooltip (<strong>RF-AJ-01</strong>). Referência rápida:
+
+| Área do painel | Blocos | RF principal | Ideia de dados |
+|----------------|--------|--------------|----------------|
+| **Dashboard** | KPIs; faturamento diário + média 7d; pedidos por status | RF-FI-04, RF-FI-01, RF-FI-05; DEC-14 / RF-PE-03 | `orders`, `products`, `customers`; séries diárias de receita; contagem por `status` |
+| **Precificação** | Composição 100% do preço | RF-PR-01, RF-PR-02 | Custos de insumo, embalagem, MO, indiretos; preço sugerido |
+| **Financeiro** | KPIs mês; faturamento × lucro mensal; donut de custos; consumo de insumos (valor) | RF-FI-01, RF-FI-02, RF-FI-03, RF-FI-05 | Pedidos e CMV; custos e perdas; movimentações de estoque a custo médio |
+| **Relatórios** | Pareto receita; margem % por categoria; matriz margem × volume | RF-RL-01, RF-FI-01, RF-FI-06 | Agregados por SKU e categoria; quadrantes por mediana |
+
 ---
 
 ## RF-Relatórios e inteligência

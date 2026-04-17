@@ -9,6 +9,7 @@
     RF-AU*, RF-CF-01…09, RF-CA-04/08/11 (lado admin), RF-AV-04, RF-CL*, RF-PE*, RF-ES*, RF-RE*, RF-PR*, RF-FI*, RF-RL-01, RF-AJ-01, RF-AR-01 (rota painel).
     RF-PL* (Super Admin): secção marcada como fora do MVP (DEC-15).
     DEC-14: estados de pedido na UI. DEC-10 / RF-AJ-01: tooltips «i» (clique + hover desktop) em dashboard, operações, inteligência e financeiro.
+    Gráficos agrupados por secção (chart-section) com tags RF, bloco «Dados / Cálculo» e mapas em <details>; ver também doc/normativos/requisitos-funcionais.md (mapa mockup × RF).
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -309,6 +310,57 @@
     .chart-legend .lg-meta::before { background: #94a3b8; }
     .chart-legend .lg-lucro::before { background: linear-gradient(135deg, #10b981, #059669); }
 
+    /* —— Gráficos agrupados (mapa RF / dados) —— */
+    .chart-section { margin-bottom: 28px; }
+    .chart-section:last-child { margin-bottom: 0; }
+    .chart-section__head {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .chart-section__title {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--adm-ink);
+    }
+    .chart-section__desc {
+      margin: 6px 0 0;
+      font-size: 0.8rem;
+      color: var(--adm-muted);
+      max-width: 72ch;
+      line-height: 1.45;
+    }
+    .chart-rf-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .chart-rf-tags span {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: var(--adm-accent-soft);
+      color: var(--adm-accent);
+    }
+    .chart-meta {
+      font-size: 0.7rem;
+      color: var(--adm-muted);
+      line-height: 1.5;
+      margin: 0;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--adm-border);
+    }
+    .chart-meta strong { color: var(--adm-ink); font-weight: 600; }
+    .chart-meta code { font-size: 0.85em; background: #eef2ff; padding: 1px 5px; border-radius: 4px; }
+
     /* —— CRUD layout —— */
     .crud-split {
       display: grid;
@@ -409,6 +461,28 @@
               <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda sobre o dashboard">i</button><span class="tip-box" role="tooltip">Consolidado do período: pedidos da loja, estoque crítico e aquisição de clientes. No app real, filtros por data e drill-down para pedidos e produtos (<strong>RF-FI-04</strong>).</span></span>
             </p>
           </div>
+
+          <details class="acc" style="margin-bottom:20px">
+            <summary>Mapa rápido: esta página e os RFs</summary>
+            <div class="acc__body">
+              <table class="data" style="font-size:0.82rem">
+                <thead><tr><th>Bloco</th><th>RF principal</th><th>O que consome (dados)</th></tr></thead>
+                <tbody>
+                  <tr><td>§1 KPIs</td><td><strong>RF-FI-04</strong>, <strong>RF-FI-01</strong></td><td><code>orders</code> (data, status, total), <code>products</code> (estoque vs mínimo), <code>customers</code> (criação)</td></tr>
+                  <tr><td>§2 Faturamento diário</td><td><strong>RF-FI-01</strong>, <strong>RF-FI-05</strong></td><td>Soma de receita confirmada por dia; média móvel 7d sobre a série diária</td></tr>
+                  <tr><td>§3 Pedidos por status</td><td><strong>DEC-14</strong> / <strong>RF-PE-03</strong></td><td>Contagem de <code>orders</code> por <code>status</code> no mês</td></tr>
+                </tbody>
+              </table>
+              <p class="hint" style="margin:0">Comparativos mês/mês e análises de mix ficam em <strong>Financeiro</strong> e <strong>Relatórios</strong> (<strong>RF-FI-03</strong>, <strong>RF-RL-01</strong>).</p>
+            </div>
+          </details>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">1 · Indicadores do período (KPIs)</h2>
+              <p class="chart-section__desc">Números únicos para leitura em segundos; cada um deriva de agregações sobre pedidos, estoque e clientes no intervalo selecionado.</p>
+              <div class="chart-rf-tags"><span>RF-FI-04</span><span>RF-FI-01</span><span>RF-ES-06</span></div>
+            </div>
           <div class="grid-kpi">
             <div class="kpi">
               <div class="kpi__label">Pedidos hoje <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Contagem de pedidos com data de criação = hoje (timezone da loja).</span></span></div>
@@ -431,7 +505,14 @@
               <div class="kpi__value">R$ 42</div>
             </div>
           </div>
+          </div>
 
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">2 · Tendência de receita (sazonalidade diária)</h2>
+              <p class="chart-section__desc">Visualização temporal para detectar picos e quedas; a linha tracejada suaviza ruído do dia a dia.</p>
+              <div class="chart-rf-tags"><span>RF-FI-01</span><span>RF-FI-05</span></div>
+            </div>
           <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
@@ -439,7 +520,7 @@
                   <p class="chart-card__title">Faturamento diário (últimos 30 dias)</p>
                   <p class="chart-card__sub">Eixo Y em R$ · média móvel 7 dias tracejada · <strong>RF-FI-01</strong></p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Mesmo tipo de gráfico que bibliotecas como Chart.js ou Recharts exibem: área + linha, eixo temporal e escala automática. Dados agregados por dia no fuso da loja.</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> soma do <code>total</code> (ou subtotal) dos pedidos com status que contam como receita (ex.: confirmado em diante), agrupado por <code>date_trunc('day', created_at)</code> no fuso da loja. <strong>Média 7d:</strong> média aritmética dos últimos 7 pontos da série. <strong>RF-FI-05</strong> engloba este tipo de gráfico de vendas/sazonalidade.</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 480 198" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -484,14 +565,25 @@
                 </svg>
               </div>
               <div class="chart-legend"><span class="lg-receita">Faturamento (R$)</span><span class="lg-meta">Média 7 dias</span><span style="margin-left:auto;font-size:0.68rem;color:#94a3b8">Média período: <strong style="color:#475569">R$ 892</strong> · Pico: <strong style="color:#475569">R$ 1.248</strong></span></div>
+              <p class="chart-meta"><strong>Dados:</strong> fatos de pedido (<code>orders</code>) no intervalo; eixo X = dias 1–30. <strong>Cálculo:</strong> receita do dia = Σ valores dos pedidos elegíveis; escala Y normalizada ao máximo do período para plotagem.</p>
             </div>
+          </div>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">3 · Operação: pedidos por estado</h2>
+              <p class="chart-section__desc">Distribuição do volume do mês por status operacional; útil para ver gargalos (ex.: produção) e cancelamentos.</p>
+              <div class="chart-rf-tags"><span>DEC-14</span><span>RF-PE-03</span></div>
+            </div>
+          <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
                 <div>
                   <p class="chart-card__title">Volume de pedidos por status</p>
                   <p class="chart-card__sub">Mês atual · contagem absoluta · <strong>DEC-14</strong></p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Equivalente a um gráfico de colunas do Metabase ou Power BI: categorias no eixo X, escala comum no Y. Identifica gargalos (ex.: fila em produção).</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> <code>SELECT status, COUNT(*) FROM orders WHERE month = atual</code> (excluir rascunhos conforme regra). <strong>Uso:</strong> cada coluna = um valor do enum de status do pedido. Gargalo visual quando um estado concentra fila (ex.: produção).</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -534,7 +626,9 @@
                 </svg>
               </div>
               <div class="chart-legend"><span class="lg-receita">Pedidos no mês</span><span style="font-size:0.68rem;color:#94a3b8">Total simulado: <strong style="color:#475569">160</strong> pedidos</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> apenas <code>orders.status</code> no mês civil corrente. <strong>Cálculo:</strong> altura da barra proporcional à contagem; soma das barras pode ser &lt; total de pedidos se houver estados não exibidos no eixo.</p>
             </div>
+          </div>
           </div>
 
           <div class="card">
@@ -1248,12 +1342,19 @@
               <button type="button" class="btn btn--primary">Aplicar preço oficial</button>
             </div>
           </div>
-          <div class="chart-card" style="margin-top:16px">
+          <div class="chart-section" style="margin-top:16px">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">Visualização · composição do preço</h2>
+              <p class="chart-section__desc">Cada segmento é % do preço final e valor em R$; alinhado à calculadora acima (<strong>RF-PR-01</strong>).</p>
+              <div class="chart-rf-tags"><span>RF-PR-01</span><span>RF-PR-02</span></div>
+            </div>
+          <div class="chart-card">
             <div class="chart-card__head">
               <div>
                 <p class="chart-card__title">Composição do preço de venda (100%)</p>
                 <p class="chart-card__sub">Barras empilhadas horizontais · típico de análise de custeio · <strong>RF-PR-01</strong></p>
               </div>
+              <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> custos da calculadora (insumos, embalagem, MO, indiretos) e preço sugerido. <strong>Cálculo:</strong> %<sub>componente</sub> = custo<sub>k</sub> ÷ preço sugerido; soma dos custos + margem = 100% do preço (conforme modo de margem/markup em <strong>RF-PR-02</strong>).</span></span>
             </div>
             <div class="chart-plot-wrap">
               <svg class="chart-svg" viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1283,6 +1384,8 @@
               </svg>
             </div>
             <div class="chart-legend"><span class="lg-receita">Custo direto (insumos)</span><span class="lg-meta">Operacional rateado</span><span style="color:#64748b"><span style="display:inline-block;width:10px;height:10px;background:#e2e8f0;border-radius:2px;margin-right:6px;vertical-align:-1px"></span>Embalagem</span><span class="lg-lucro">Margem de contribuição</span></div>
+            <p class="chart-meta"><strong>Dados:</strong> mesmos campos numéricos do formulário de precificação (custo total = insumos + emb + MO + indiretos). <strong>Cálculo:</strong> cada faixa = componente ÷ preço sugerido; margem exibida como % restante após custos.</p>
+          </div>
           </div>
         </section>
 
@@ -1295,6 +1398,28 @@
               <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Faturamento e lucro derivados de pedidos e custos registrados. <strong>RF-FI-02</strong>: lucro após perdas (movimentações de perda, validade). <strong>RF-FI-03</strong>: comparar períodos e eventos sazonais.</span></span>
             </p>
           </div>
+
+          <details class="acc" style="margin-bottom:20px">
+            <summary>Mapa: gráficos desta página ↔ RF ↔ dados</summary>
+            <div class="acc__body">
+              <table class="data" style="font-size:0.82rem">
+                <thead><tr><th>Bloco</th><th>RF</th><th>Entradas (resumo)</th></tr></thead>
+                <tbody>
+                  <tr><td>§1 KPIs do mês</td><td><strong>RF-FI-01</strong>, <strong>RF-FI-02</strong></td><td>Totais de receita, CMV/lucro bruto, movimentações de perda</td></tr>
+                  <tr><td>§2 Faturamento × lucro (mensal)</td><td><strong>RF-FI-03</strong></td><td>Séries mensais: Σ receita, Σ (receita − CMV) por mês</td></tr>
+                  <tr><td>§3 Estrutura de custo</td><td><strong>RF-FI-02</strong></td><td>CMV + despesas alocadas + perdas no período</td></tr>
+                  <tr><td>§4 Consumo de insumos</td><td><strong>RF-FI-05</strong></td><td>Baixas de estoque por consumo/receita (valor a custo médio)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">1 · Resumo financeiro do período</h2>
+              <p class="chart-section__desc">Totais que alimentam os gráficos abaixo; perdas entram no lucro ajustado (<strong>RF-FI-02</strong>).</p>
+              <div class="chart-rf-tags"><span>RF-FI-01</span><span>RF-FI-02</span></div>
+            </div>
           <div class="grid-kpi">
             <div class="kpi">
               <div class="kpi__label">Faturamento (mês) <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Soma dos pedidos no período conforme regra (ex.: após confirmação ou entrega).</span></span></div>
@@ -1309,6 +1434,14 @@
               <div class="kpi__value">R$ 340</div>
             </div>
           </div>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">2 · Evolução: faturamento e lucro bruto</h2>
+              <p class="chart-section__desc">Comparativo mês a mês (<strong>RF-FI-03</strong>): mesma escala para barras e linha facilita ver margem implícita.</p>
+              <div class="chart-rf-tags"><span>RF-FI-03</span></div>
+            </div>
           <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
@@ -1316,7 +1449,7 @@
                   <p class="chart-card__title">Faturamento vs lucro bruto (mensal)</p>
                   <p class="chart-card__sub">Combo colunas + linha · eixo único R$ · <strong>RF-FI-03</strong></p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Padrão de BI: séries distintas com eixos alinhados ou eixo Y duplo. Aqui, barras = faturamento (R$ mil); linha = lucro bruto no mesmo período.</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> por mês, Σ receita de pedidos elegíveis; lucro bruto = Σ receita − Σ CMV (custo dos itens vendidos no mês, via receita ou tabela de preço de custo). <strong>Uso:</strong> barras = receita (R$ mil); linha = lucro bruto no mesmo eixo.</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1362,14 +1495,25 @@
                 </svg>
               </div>
               <div class="chart-legend"><span class="lg-receita">Faturamento (R$ mil)</span><span class="lg-lucro">Lucro bruto (R$ mil)</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">Margem média no período: <strong>~34%</strong></span></div>
+              <p class="chart-meta"><strong>Dados:</strong> agregação mensal a partir de <code>order_items</code> × custo unitário (CMV) e totais de pedido. <strong>Cálculo:</strong> faturamento<sub>mês</sub> = Σ receita; lucro bruto<sub>mês</sub> = faturamento − CMV; margem % ≈ lucro ÷ faturamento.</p>
             </div>
+          </div>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">3 · Composição de custos do mês</h2>
+              <p class="chart-section__desc">Participação de cada grande grupo no total de custos reconhecidos no período (útil para <strong>RF-FI-02</strong>).</p>
+              <div class="chart-rf-tags"><span>RF-FI-02</span></div>
+            </div>
+          <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
                 <div>
                   <p class="chart-card__title">Estrutura de custo do mês</p>
                   <p class="chart-card__sub">Donut · participação sobre custo total · <strong>RF-FI-02</strong></p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Equivalente a gráfico de rosca no Looker/Tableau: CMV (matéria-prima vendida), despesas operacionais alocadas e perdas. Centro com KPI total.</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> CMV (custo das mercadorias vendidas no período); despesas operacionais rateadas ou lançadas na competência; perdas via <code>stock_movements</code> tipo perda/ajuste. <strong>Cálculo:</strong> cada fatia = componente ÷ (CMV + OPEX alocado + perdas); centro = soma em R$.</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1391,9 +1535,56 @@
                 </svg>
               </div>
               <div class="chart-legend"><span class="lg-receita">CMV (custo mercadoria)</span><span class="lg-lucro">Despesas operacionais</span><span style="color:#d97706"><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:6px;vertical-align:-1px"></span>Perdas / ajustes</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> lançamentos contábeis/operacionais do mês. <strong>Cálculo:</strong> %<sub>i</sub> = custo<sub>i</sub> ÷ Σ custos; total central = Σ custos.</p>
             </div>
           </div>
-          <p class="hint"><strong>RF-FI-06</strong> — matriz “alta margem / baixa saída” e similares pode ser uma vista adicional no relatório inteligente.</p>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">4 · Consumo de insumos (valor a custo médio)</h2>
+              <p class="chart-section__desc">Quanto “saiu” de matéria-prima em R$, via baixas ligadas a vendas/receitas (<strong>RF-FI-05</strong> — consumo para operação).</p>
+              <div class="chart-rf-tags"><span>RF-FI-05</span><span>RF-ES-05</span></div>
+            </div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Top insumos — valor consumido no mês</p>
+                  <p class="chart-card__sub">Barras horizontais · R$ · custo médio ponderado (DEC-09)</p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> movimentações de saída (<code>stock_movements</code> tipo consumo por receita/venda) × custo unitário médio do lote. <strong>Uso:</strong> priorizar negociação com fornecedor nos itens que mais pesam em R$.</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 168" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <text class="ch-title" x="8" y="16">Escala 0–R$ 4,5 mil · maior barra = maior consumo em valor</text>
+                  <text class="ch-axis" x="8" y="40">4,5k</text>
+                  <text class="ch-axis" x="8" y="72">3k</text>
+                  <text class="ch-axis" x="8" y="104">1,5k</text>
+                  <text class="ch-axis" x="8" y="136">0</text>
+                  <line class="ch-grid" x1="40" y1="36" x2="440" y2="36"/>
+                  <line class="ch-grid-minor" x1="40" y1="68" x2="440" y2="68"/>
+                  <line class="ch-grid-minor" x1="40" y1="100" x2="440" y2="100"/>
+                  <line class="ch-grid" x1="40" y1="132" x2="440" y2="132" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="40" y1="36" x2="40" y2="132" stroke="#cbd5e1"/>
+                  <text class="ch-axis" x="42" y="54" font-size="10" fill="#334155">Chocolate 50%</text>
+                  <rect x="40" y="58" width="360" height="14" rx="4" fill="#6366f1"/>
+                  <text class="ch-axis" x="408" y="69" font-size="9" font-weight="700" fill="#312e81">R$ 4,1k</text>
+                  <text class="ch-axis" x="42" y="86" font-size="10" fill="#334155">Leite condensado</text>
+                  <rect x="40" y="90" width="260" height="14" rx="4" fill="#818cf8"/>
+                  <text class="ch-axis" x="308" y="101" font-size="9" font-weight="700" fill="#312e81">R$ 2,9k</text>
+                  <text class="ch-axis" x="42" y="118" font-size="10" fill="#334155">Embalagens PET</text>
+                  <rect x="40" y="122" width="180" height="14" rx="4" fill="#a5b4fc"/>
+                  <text class="ch-axis" x="228" y="133" font-size="9" font-weight="700" fill="#312e81">R$ 2,0k</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-receita">Consumo valorado</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">Não é compra no mês — é <strong>baixa</strong> por produção/venda.</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> saídas de insumos vinculadas a produção ou venda no período; custo = qtd × custo médio do item. <strong>Cálculo:</strong> ranking por Σ valor; útil para curva ABC de insumos.</p>
+            </div>
+          </div>
+          </div>
+
+          <p class="hint"><strong>RF-FI-06</strong> — matriz margem × volume está em <strong>Relatórios</strong> (§3).</p>
         </section>
 
         <!-- RF-RL-01 -->
@@ -1405,14 +1596,35 @@
               <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Relatórios consomem os mesmos agregados do financeiro e estoque; exportação CSV/PDF é evolução comum.</span></span>
             </p>
           </div>
+
+          <details class="acc" style="margin-bottom:20px">
+            <summary>Mapa: relatórios visuais ↔ RF ↔ dados</summary>
+            <div class="acc__body">
+              <table class="data" style="font-size:0.82rem">
+                <thead><tr><th>Bloco</th><th>RF</th><th>Entradas (resumo)</th></tr></thead>
+                <tbody>
+                  <tr><td>§1 Pareto / participação na receita</td><td><strong>RF-RL-01</strong>, <strong>RF-FI-04</strong></td><td>Receita por SKU no período; % = receita<sub>SKU</sub> ÷ receita total exibida</td></tr>
+                  <tr><td>§2 Margem por categoria</td><td><strong>RF-RL-01</strong>, <strong>RF-FI-01</strong></td><td>Receita e CMV agregados por <code>category_id</code></td></tr>
+                  <tr><td>§3 Matriz margem × volume</td><td><strong>RF-FI-06</strong></td><td>Por SKU: margem % (eixo Y) vs participação em unidades ou receita (eixo X)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">1 · Participação na receita (ranking)</h2>
+              <p class="chart-section__desc">Pareto simplificado: onde está concentrado o faturamento do período.</p>
+              <div class="chart-rf-tags"><span>RF-RL-01</span><span>RF-FI-04</span></div>
+            </div>
           <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
                 <div>
                   <p class="chart-card__title">Top produtos por receita</p>
-                  <p class="chart-card__sub">Barras horizontais · participação no faturamento do período · <strong>RF-FI-06</strong></p>
+                  <p class="chart-card__sub">Barras horizontais · participação no faturamento do período</p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Eixo 0–100% (ou R$); rótulos à esquerda, percentual ou valor no fim da barra. No produto, drill-down abre detalhe do SKU.</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> Σ receita por <code>product_id</code> nos pedidos do período. <strong>Cálculo:</strong> %<sub>i</sub> = receita<sub>i</sub> ÷ Σ receita dos SKUs listados (normalmente top N + “demais”). Eixo 0–100%.</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1444,14 +1656,25 @@
                 </svg>
               </div>
               <div class="chart-legend"><span style="font-size:0.7rem;color:#64748b">Ordenação padrão: maior receita primeiro; alternativa: maior margem absoluta (R$).</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> fatos de linha de pedido com preço e descontos; filtro por intervalo de datas. <strong>Cálculo:</strong> participação = receita do SKU ÷ receita total do conjunto exibido.</p>
             </div>
+          </div>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">2 · Margem bruta por categoria</h2>
+              <p class="chart-section__desc">Compara categorias com a mesma métrica: margem sobre a própria receita da categoria.</p>
+              <div class="chart-rf-tags"><span>RF-RL-01</span><span>RF-FI-01</span></div>
+            </div>
+          <div class="chart-grid">
             <div class="chart-card">
               <div class="chart-card__head">
                 <div>
                   <p class="chart-card__title">Margem % por categoria</p>
                   <p class="chart-card__sub">Colunas · margem bruta sobre receita da categoria · Y: 0–50%</p>
                 </div>
-                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip">Cruzamento típico para decisão de preço ou corte de produto; no BI, cores podem alertar abaixo de meta.</span></span>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> agregação por <code>category_id</code>: receita = Σ vendas; CMV = Σ custo dos itens vendidos. <strong>Cálculo:</strong> margem % = (receita − CMV) ÷ receita da categoria.</span></span>
               </div>
               <div class="chart-plot-wrap">
                 <svg class="chart-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1483,8 +1706,58 @@
                 </svg>
               </div>
               <div class="chart-legend"><span class="lg-lucro">Margem bruta %</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">Sacolés e Kits merecem revisão de preço se meta for ≥ 32%.</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> mesmo período do §1; junção produto → categoria. <strong>Cálculo:</strong> uma coluna por categoria; cor pode seguir regra (ex.: vermelho se &lt; meta global).</p>
             </div>
           </div>
+          </div>
+
+          <div class="chart-section">
+            <div class="chart-section__head">
+              <h2 class="chart-section__title">3 · Matriz estratégica: margem × volume (SKU)</h2>
+              <p class="chart-section__desc">Classifica produtos em quadrantes (<strong>RF-FI-06</strong>): ex. alta saída / baixa margem exige ação de preço; alta margem / baixa saída exige marketing ou revisão de mix.</p>
+              <div class="chart-rf-tags"><span>RF-FI-06</span></div>
+            </div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-card__head">
+                <div>
+                  <p class="chart-card__title">Dispersão: participação em unidades × margem %</p>
+                  <p class="chart-card__sub">Eixo X = share de unidades no período · Eixo Y = margem bruta % · exemplos ilustrativos</p>
+                </div>
+                <span class="tip-wrap"><button type="button" class="tip-trigger" aria-label="Ajuda">i</button><span class="tip-box" role="tooltip"><strong>Fonte:</strong> por SKU, unidades vendidas e margem % = (receita − CMV) ÷ receita. <strong>Eixo X:</strong> unidades<sub>SKU</sub> ÷ Σ unidades (top produtos) ou índice 0–100. <strong>Uso:</strong> quadrantes guiam decisão (preço, promo, corte de SKU).</span></span>
+              </div>
+              <div class="chart-plot-wrap">
+                <svg class="chart-svg" viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <text class="ch-title" x="8" y="18">Quadrantes · linhas = medianas do conjunto exibido (mock)</text>
+                  <text class="ch-axis" x="8" y="48" font-size="9">50% margem</text>
+                  <text class="ch-axis" x="8" y="200" font-size="9">0%</text>
+                  <text class="ch-axis" x="240" y="248" text-anchor="middle" font-size="10">Participação em unidades (0–100)</text>
+                  <text class="ch-axis" x="14" y="130" text-anchor="middle" font-size="9" transform="rotate(-90 14 130)">Margem bruta %</text>
+                  <line class="ch-grid" x1="48" y1="48" x2="448" y2="48" stroke="#c7d2fe" stroke-dasharray="4 3"/>
+                  <line class="ch-grid" x1="248" y1="40" x2="248" y2="220" stroke="#c7d2fe" stroke-dasharray="4 3"/>
+                  <line class="ch-grid" x1="48" y1="220" x2="448" y2="220" stroke="#94a3b8"/>
+                  <line class="ch-grid" x1="48" y1="40" x2="48" y2="220" stroke="#cbd5e1"/>
+                  <line class="ch-grid" x1="448" y1="40" x2="448" y2="220" stroke="#cbd5e1"/>
+                  <text class="ch-axis" x="130" y="110" text-anchor="middle" font-size="9" fill="#64748b">Alta vol. / baixa margem</text>
+                  <text class="ch-axis" x="360" y="110" text-anchor="middle" font-size="9" fill="#64748b">Estrela</text>
+                  <text class="ch-axis" x="130" y="175" text-anchor="middle" font-size="9" fill="#64748b">Encalhe</text>
+                  <text class="ch-axis" x="360" y="175" text-anchor="middle" font-size="9" fill="#64748b">Nicho rentável</text>
+                  <circle cx="120" cy="195" r="14" fill="#f87171" opacity="0.85"/>
+                  <text x="120" y="199" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">Sacolé</text>
+                  <circle cx="360" cy="72" r="14" fill="#10b981" opacity="0.9"/>
+                  <text x="360" y="76" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">Brigadeiro</text>
+                  <circle cx="300" cy="188" r="12" fill="#fbbf24" opacity="0.95"/>
+                  <text x="300" y="192" text-anchor="middle" fill="#1e293b" font-size="7.5" font-weight="700">Bolo pote</text>
+                  <circle cx="90" cy="118" r="11" fill="#94a3b8" opacity="0.9"/>
+                  <text x="90" y="121" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">Kit festa</text>
+                </svg>
+              </div>
+              <div class="chart-legend"><span class="lg-lucro">SKU</span><span style="margin-left:auto;font-size:0.68rem;color:#64748b">No produto: clique abre ficha do item ou ação sugerida.</span></div>
+              <p class="chart-meta"><strong>Dados:</strong> vendas por SKU + custo (CMV) no período. <strong>Cálculo:</strong> posição X a partir de participação em volume; posição Y = margem %; medianas definem quadrantes.</p>
+            </div>
+          </div>
+          </div>
+
           <div class="card">
             <div class="card__head">Relatórios disponíveis (lista)</div>
             <div class="card__body">
