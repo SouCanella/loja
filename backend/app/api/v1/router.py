@@ -4,6 +4,7 @@ from app.api.v1.endpoints import (
     auth,
     categories,
     health,
+    inventory_items,
     me,
     orders,
     production,
@@ -20,6 +21,7 @@ api_router.include_router(auth.router)
 api_router.include_router(me.router)
 api_router.include_router(categories.router, prefix="/categories")
 api_router.include_router(products.router, prefix="/products")
+api_router.include_router(inventory_items.router, prefix="/inventory-items")
 api_router.include_router(orders.router, prefix="/orders")
 api_router.include_router(recipes.router, prefix="/recipes")
 api_router.include_router(production.router, prefix="/production")

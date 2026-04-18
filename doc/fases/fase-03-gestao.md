@@ -97,9 +97,9 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): marcar MVP como co
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `em progresso` — **backend** (receitas, produção, relatório) implementado na `main`; UI painel / precificação visual — evolução. |
+| **Status** | `em progresso` — **backend** + **painel Next** (receitas, produzir lote, relatório + CSV); insumos só via produtos ou `GET /inventory-items`. |
 | **Data de conclusão** | — |
-| **Notas** | Migração `20260417_0003`; rotas em [README.md](../../README.md); serviços `production_service`, `pricing`. Frontend Fase 3 não iniciado. |
+| **Notas** | Migração `20260417_0003`; rotas em [README.md](../../README.md); `/me` com `store_slug` para atalho à vitrine. |
 
 ---
 

@@ -415,6 +415,36 @@
         }
       }
     },
+    "/api/v1/inventory-items": {
+      "get": {
+        "tags": [
+          "inventory-items"
+        ],
+        "summary": "List Inventory Items",
+        "operationId": "list_inventory_items_api_v1_inventory_items_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryItemListOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Inventory Items Api V1 Inventory Items Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/orders": {
       "get": {
         "tags": [
@@ -1339,6 +1369,30 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "InventoryItemListOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "unit"
+        ],
+        "title": "InventoryItemListOut"
+      },
       "InventorySeed": {
         "properties": {
           "unit": {
@@ -2234,6 +2288,14 @@
             "format": "uuid",
             "title": "Store Id"
           },
+          "store_slug": {
+            "type": "string",
+            "title": "Store Slug"
+          },
+          "store_name": {
+            "type": "string",
+            "title": "Store Name"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -2246,6 +2308,8 @@
           "email",
           "role",
           "store_id",
+          "store_slug",
+          "store_name",
           "created_at"
         ],
         "title": "UserMeResponse"
