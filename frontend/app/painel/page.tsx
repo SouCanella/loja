@@ -58,6 +58,15 @@ export default function PainelHomePage() {
           <ul className="mt-8 grid gap-3 sm:grid-cols-2">
             <li>
               <Link
+                href="/painel/pedidos"
+                className="block rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
+              >
+                <span className="font-semibold text-slate-900">Pedidos</span>
+                <p className="mt-1 text-xs text-slate-500">Listar e atualizar estado dos pedidos</p>
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/painel/receitas"
                 className="block rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
               >

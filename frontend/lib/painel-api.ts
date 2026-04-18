@@ -51,3 +51,32 @@ export function formatBRL(value: string | number): string {
   if (Number.isNaN(n)) return "—";
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
+
+/** Estados canónicos (DEC-14) — ordem do fluxo operacional. */
+export const ORDER_STATUS_VALUES = [
+  "rascunho",
+  "aguardando_confirmacao",
+  "confirmado",
+  "em_producao",
+  "pronto",
+  "saiu_entrega",
+  "entregue",
+  "cancelado",
+] as const;
+
+export type OrderStatusValue = (typeof ORDER_STATUS_VALUES)[number];
+
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  rascunho: "Rascunho",
+  aguardando_confirmacao: "Aguardando confirmação",
+  confirmado: "Confirmado",
+  em_producao: "Em produção",
+  pronto: "Pronto",
+  saiu_entrega: "Saiu para entrega",
+  entregue: "Entregue",
+  cancelado: "Cancelado",
+};
+
+export function orderStatusLabel(status: string): string {
+  return ORDER_STATUS_LABELS[status] ?? status;
+}

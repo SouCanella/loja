@@ -1505,6 +1505,11 @@
             "type": "boolean",
             "title": "Stock Committed"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/OrderItemOut"
@@ -1520,6 +1525,7 @@
           "status",
           "customer_note",
           "stock_committed",
+          "created_at",
           "items"
         ],
         "title": "OrderDetailOut"
@@ -1613,6 +1619,11 @@
           "stock_committed": {
             "type": "boolean",
             "title": "Stock Committed"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           }
         },
         "type": "object",
@@ -1621,7 +1632,8 @@
           "store_id",
           "status",
           "customer_note",
-          "stock_committed"
+          "stock_committed",
+          "created_at"
         ],
         "title": "OrderOut"
       },

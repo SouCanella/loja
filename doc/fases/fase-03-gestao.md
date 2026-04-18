@@ -118,7 +118,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 ### 9.1 Próximos incrementos (backlog / não bloqueantes)
 
-- **Painel — pedidos:** listagem e gestão de estados (API Fase 2 já existe).
+- **Painel — pedidos:** ~~listagem e gestão de estados~~ — entregue (`/painel/pedidos`, detalhe com `PATCH …/status`); filtros e atalhos WhatsApp podem evoluir.
 - **Insumos:** `POST`/`PATCH` em `inventory_items` ou fluxo dedicado + UI mínima (além do `GET` actual).
 - **Margem configurável** por loja ou receita (substituir percentagem fixa na UI).
 - Endpoint opcional de **preço sugerido** explícito ou sincronização com `products.price`.
@@ -156,6 +156,8 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | GET | `/inventory-items` | Lista `id`, `name`, `unit` dos insumos da loja (para formulários de receita). |
 | GET | `/me` | Resposta inclui `store_slug` e `store_name` (atalho à vitrine no painel). |
 
+**Pedidos (API Fase 2, usados no painel):** `GET` / `POST` `/orders`, `GET` `/orders/{order_id}`, `PATCH` `/orders/{order_id}/status`. O `GET` lista inclui **`created_at`** em cada `OrderOut`.
+
 ### 10.4 Testes automatizados
 
 - `backend/tests/test_phase3_production.py` — produção, idempotência, validações relevantes.
@@ -165,11 +167,13 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | Rota | Ficheiro | Função |
 |------|----------|--------|
 | `/painel` | `frontend/app/painel/page.tsx` | Resumo, dados de `/me`, link para `/loja/{store_slug}`. |
+| `/painel/pedidos` | `frontend/app/painel/pedidos/page.tsx` | Lista `GET /orders` (com `created_at`); link para detalhe. |
+| `/painel/pedidos/[id]` | `frontend/app/painel/pedidos/[id]/page.tsx` | Itens + total; `PATCH /orders/{id}/status`; nomes de produto via `GET /products`. |
 | `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo estimado, sugestão de preço indicativa, **Produzir lote** (`POST /production` + `Idempotency-Key`). |
 | `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita com dropdown de insumos (`GET /inventory-items`). |
 | `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /reports/financial` por intervalo; botão **Descarregar CSV** (gerado no browser). |
-| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Receitas / Relatório / Sessão. |
-| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, token em `localStorage`, `formatBRL`, erros tipados. |
+| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Relatório / Sessão. |
+| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, token em `localStorage`, `formatBRL`, `orderStatusLabel` / `ORDER_STATUS_VALUES`, erros tipados. |
 
 ### 10.6 Documentação de contrato e raiz do repositório
 

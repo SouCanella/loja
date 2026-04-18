@@ -1,5 +1,6 @@
 """Pedidos."""
 
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -33,6 +34,7 @@ class OrderOut(BaseModel):
     status: OrderStatus
     customer_note: str | None
     stock_committed: bool
+    created_at: datetime
 
     model_config = {"from_attributes": True}
 

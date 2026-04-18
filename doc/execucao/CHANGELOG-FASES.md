@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Painel — pedidos)
+
+- **Next.js:** `/painel/pedidos`, `/painel/pedidos/[id]` — lista `GET /orders`, detalhe, itens com nomes via `GET /products`, alteração de estado `PATCH /orders/{id}/status` (confirmação ao cancelar).
+- **API:** `OrderOut` inclui `created_at` para ordenação e exibição na lista.
+
 ## 2026-04-17 (Painel — receitas, produção, relatório + CSV)
 
 - **API:** `GET /api/v1/inventory-items` (lista insumos para formulários); `GET /api/v1/me` com `store_slug` e `store_name` (link à vitrine).

@@ -10,6 +10,9 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
             Painel
           </Link>
           <nav className="flex flex-wrap gap-3 text-sm font-medium text-slate-600">
+            <Link href="/painel/pedidos" className="hover:text-slate-900">
+              Pedidos
+            </Link>
             <Link href="/painel/receitas" className="hover:text-slate-900">
               Receitas
             </Link>
