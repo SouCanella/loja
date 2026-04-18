@@ -1,0 +1,46 @@
+# CI mínimo: lint + testes backend + lint + build frontend (RNF-DevEx-02/03/04).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Ruff
+        run: ruff check app tests
+      - name: Pytest + cobertura serviços
+        run: pytest tests/ -q --cov=app/services --cov-fail-under=88
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Instalar dependências
+        run: npm ci
+      - name: ESLint
+        run: npm run lint
+      - name: Build
+        run: npm run build

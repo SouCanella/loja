@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Testes serviço + CI GitHub Actions)
+
+- **Pytest:** `test_services_order_flow.py`, `test_services_pricing.py`, `test_me_vitrine_whatsapp.py`; total **25** casos; cobertura **`app/services`** ~90% (gate **≥88%**).
+- **CI:** `.github/workflows/ci.yml` — Ruff, pytest com `--cov=app/services --cov-fail-under=88`, frontend `npm ci` + lint + build.
+
 ## 2026-04-17 (Documentação — qualidade e conformidade com normas)
 
 - **Novo:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md) — checklist **RNF-***, cobertura pytest, lacunas (envelope API, E2E, FieldHelp, refresh), próximos passos.

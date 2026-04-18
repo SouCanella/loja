@@ -79,7 +79,7 @@ Atualizar esta tabela ao fechar cada fase.
 
 | ID | Item | Estado | Origem |
 |----|------|--------|--------|
-| DT-01 | CI/CD (pipeline Git, build Docker, deploy) | nao_iniciado | [documento_enterprise.md](../documento_enterprise.md) §24 |
+| DT-01 | CI/CD (pipeline Git, build Docker, deploy) | parcial | GitHub Actions: lint + pytest (cobertura `app/services`) + frontend lint/build — ver [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml); deploy Docker pendente |
 | DT-02 | Observabilidade (métricas/dashboards além de logs MVP) | nao_iniciado | §20 / §4 |
 | DT-03 | Cobertura de testes ≥ 90% | parcial | §21 — meta progressiva; ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
 

@@ -5,15 +5,17 @@
 
 ---
 
-## 1. Verificações automáticas (gate local)
+## 1. Verificações automáticas (gate local e CI)
 
 | Verificação | Comando / resultado | Notas |
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes integração backend | `pytest tests/ -q` — **9** testes | Fluxos: auth, tenant, pedidos, stock, fase 3 produção/relatório. |
-| Cobertura (referência) | `pytest --cov=app` | Total módulo `app` ~**86%** (varia com linhas tocadas); meta **RNF-QA-01** é **≥ 90% na camada de serviço**, *progressiva*. Serviços: `pricing` ~90%, `stock` ~90%, `order_flow` ~84%, `production_service` ~86%. |
+| Testes backend | `pytest tests/ -q` — **25** testes | Inclui unitários de `order_flow` e `pricing`, integração existente, `GET /me` + WhatsApp. |
+| Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=88` | **~90%** agregado em `app/services` (**RNF-QA-01** progressivo). Gate mínimo **88%** no CI (`.github/workflows/ci.yml`). |
+| Cobertura global `app` (referência) | `pytest --cov=app` | Total ~86%+ conforme restantes módulos. |
 | Contrato HTTP | `make openapi-export` → [doc/api/openapi.json](../api/openapi.json) | **RNF-DevEx-08**. |
+| **CI (GitHub Actions)** | Workflow `CI` em push/PR para `main` | Backend: Ruff + pytest com cobertura serviços ≥88%. Frontend: `npm ci`, lint, build. |
 
 ---
 
@@ -37,7 +39,7 @@
 
 | Referência | Situação | Recomendação |
 |------------|----------|--------------|
-| **RNF-QA-01** 90% serviço | Ainda não atingido de forma uniforme (alguns ramos em `order_flow`, `production_service`, endpoints sem teste directo). | Aumentar testes de serviço e casos de borda; opcional gate `--cov-fail-under` por pacote `app/services`. |
+| **RNF-QA-01** 90% serviço | Pacote `app/services` ~**90%** com gate CI ≥**88%**; `production_service` ainda ~86% (ramos de erro). | Reforçar testes de produção / falhas de stock. |
 | **RNF-QA-02** fluxos críticos | Cobertos em pytest; **painel Next** sem testes automatizados de UI nas últimas features. | Vitest/Testing Library para `lib/painel-api.ts` e componentes críticos; evolução. |
 | **RNF-QA-03** E2E | Não há Playwright/Cypress no repositório. | Backlog / Fase 4. |
 | **RNF-QA-06** matriz RN → testes | [matriz-rn-testes.md](../normativos/matriz-rn-testes.md) existe; não está 100% preenchida para cada RN novo. | Actualizar ao fechar marcos. |
@@ -57,17 +59,19 @@
 | `tests/test_phase2_orders.py` | Pedidos, stock, cancelamento |
 | `tests/test_public_vitrine.py` | Catálogo público |
 | `tests/test_phase3_production.py` | Receitas, produção idempotente, relatório financeiro |
-
-Não há ficheiro dedicado só a `GET /me` com `vitrine_whatsapp`; a funcionalidade é coberta indirectamente pelo fluxo de loja e pelo schema partilhado.
+| `tests/test_services_order_flow.py` | `is_transition_allowed_mvp`, `needs_stock_commit` (parametrizado) |
+| `tests/test_services_pricing.py` | `weighted_average_unit_cost`, `estimate_recipe_unit_cost` |
+| `tests/test_me_vitrine_whatsapp.py` | `GET /me` com `vitrine_whatsapp` após `stores.theme` |
+| `tests/test_smoke.py` | Smoke API |
 
 ---
 
 ## 5. Próximos passos sugeridos (prioridade)
 
-1. **Qualidade:** subir cobertura em `app/services/` e ramos de `me.py` / pedidos; testes unitários para `draftOrderWhatsAppMessage` / `whatsAppUrl` no frontend (opcional).  
+1. **Qualidade:** cobertura em `production_service` (ramos de erro); testes Vitest para `painel-api.ts` no frontend; **RNF-QA-03** E2E quando estável.  
 2. **Produto (backlog):** CRUD de insumos “puros”; margem configurável nas receitas; métricas extra no relatório.  
-3. **Plataforma:** CI com `make lint` + `pytest` + build Next; **RNF-QA-03** E2E quando o fluxo estabilizar.  
-4. **Conformidade forte:** envelope API apenas se houver consenso de versão (**DEC-06**); refresh token (**DEC-16**); rate limit em auth.
+3. **Plataforma:** CI já inclui lint + pytest (serviços ≥88%) + build Next; alargar a `pytest` com cobertura global ou relatório HTML em PR se necessário.  
+4. **Conformidade forte:** envelope API (**DEC-06**); refresh token (**DEC-16**); rate limit em auth.
 
 ---
 

@@ -56,6 +56,7 @@ Comandos `make`: ver saída de `make help` (inclui `openapi-export`, `migrate`, 
 | `backend/` | FastAPI, Alembic, testes pytest, `scripts/export_openapi.py` |
 | `frontend/` | Next.js 14 (App Router), Tailwind, Vitest |
 | `doc/` | Normativos, fases, mockups, **api/** (OpenAPI) |
+| `.github/workflows/` | **CI** (Ruff + pytest com cobertura `app/services` ≥88% + frontend lint/build) |
 
 ## Convenções de branch
 
