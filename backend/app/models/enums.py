@@ -39,3 +39,5 @@ class StockMovementType(str, enum.Enum):
     sale_reversal = "sale_reversal"
     adjustment = "adjustment"
     initial_in = "initial_in"
+    production_out = "production_out"
+    production_in = "production_in"

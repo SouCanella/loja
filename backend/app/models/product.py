@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from app.models.category import Category
     from app.models.inventory import InventoryItem
     from app.models.order import OrderItem
+    from app.models.recipe import Recipe
     from app.models.store import Store
 
 
@@ -59,3 +60,6 @@ class Product(Base):
         "InventoryItem", back_populates="product", uselist=False
     )
     order_items: Mapped[list["OrderItem"]] = relationship("OrderItem", back_populates="product")
+    recipe: Mapped["Recipe | None"] = relationship(
+        "Recipe", back_populates="product", uselist=False
+    )

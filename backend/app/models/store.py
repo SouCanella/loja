@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from app.models.inventory import InventoryItem
     from app.models.order import Order
     from app.models.product import Product
+    from app.models.production_run import ProductionRun
+    from app.models.recipe import Recipe
     from app.models.user import User
 
 
@@ -41,4 +43,10 @@ class Store(Base):
         "Order",
         back_populates="store",
         cascade="all, delete-orphan",
+    )
+    recipes: Mapped[list["Recipe"]] = relationship(
+        "Recipe", back_populates="store", cascade="all, delete-orphan"
+    )
+    production_runs: Mapped[list["ProductionRun"]] = relationship(
+        "ProductionRun", back_populates="store", cascade="all, delete-orphan"
     )

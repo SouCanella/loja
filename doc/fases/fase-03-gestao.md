@@ -50,12 +50,12 @@ Planejado:
 
 ## 3. Critérios de aceite
 
-- [ ] Cadastro de receitas vinculado a produto e insumos com quantidades.
-- [ ] Execução de produção atualiza estoque de forma consistente (transacional) e **idempotente** em `POST …/production` (ou rota equivalente), alinhado a **RNF-Arq-02b**.
-- [ ] Precificação: cálculo de sugestão a partir de custos; persistência de preço ajustável.
-- [ ] Endpoint de relatório financeiro com conjunto mínimo de métricas acordado na implementação.
-- [ ] Testes de integração dos fluxos produção + relatório; HTML conforme padrão do projeto.
-- [ ] Documentação e backlog atualizados.
+- [x] Cadastro de receitas vinculado a produto e insumos com quantidades — `GET/POST /api/v1/recipes`, `GET/PATCH /api/v1/recipes/{id}` (uma receita por produto por loja).
+- [x] Execução de produção transacional; **idempotência** `Idempotency-Key` em `POST /api/v1/production` (**RNF-Arq-02b**); movimentos `production_out` / `production_in`; baixa insumos **DEC-17**.
+- [x] Custo do lote acabado = custo total insumos / rendimento (**DEC-09**); estimativa `estimated_unit_cost` em receita (média ponderada lotes); `products.price` continua editável.
+- [x] `GET /api/v1/reports/financial` — receita pedidos (excl. rascunho/cancelado), contagens, custo insumos de produção no período.
+- [x] Testes de integração `test_phase3_production.py`; relatório HTML de testes — opcional.
+- [x] Documentação e changelog atualizados neste marco.
 
 ---
 
@@ -97,9 +97,9 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): marcar MVP como co
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `próximo marco de implementação` (após encerramento documental da Fase 2 — 2026-04-17). |
+| **Status** | `em progresso` — **backend** (receitas, produção, relatório) implementado na `main`; UI painel / precificação visual — evolução. |
 | **Data de conclusão** | — |
-| **Notas** | Gates do §0: insumos/lotes e pedidos estáveis na `main`; política de baixa **DEC-17** já usada nas vendas — produção deve reutilizar a mesma política em transações. **RNF-Arq-02b:** desenhar `POST /api/v1/production` (ou rota equivalente) com idempotência desde o primeiro merge. Ver **§9**. |
+| **Notas** | Migração `20260417_0003`; rotas em [README.md](../../README.md); serviços `production_service`, `pricing`. Frontend Fase 3 não iniciado. |
 
 ---
 
@@ -114,4 +114,10 @@ Ordem sugerida para a primeira iteração (ajustar ao desenho fino dos schemas):
 5. **Motor de precificação** (média ponderada DEC-09) e persistência opcional de “preço sugerido” vs `products.price`.
 6. **`GET /api/v1/reports/financial`** com agregações mínimas acordadas (período, receita/custo/margem).
 7. **Testes** de integração (produção feliz, retry idempotente, falha de stock insuficiente).
-8. **OpenAPI** + entrada em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md).
+8. **OpenAPI** + entrada em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — feito para o backend inicial.
+
+### 9.1 Próximos incrementos sugeridos
+
+- UI no **painel** para cadastrar receitas e disparar produção.
+- Relatório financeiro com export CSV ou mais métricas (margem por produto).
+- Endpoint dedicado de **sugestão de preço** ou sincronização automática opcional com `products.price`.

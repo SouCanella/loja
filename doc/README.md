@@ -40,7 +40,7 @@
 | Fase 0 — Kickoff | Concluída (ver [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md)) |
 | Fase 1 — Fundação | Concluída e documentada em [fases/fase-01-fundacao.md](fases/fase-01-fundacao.md) |
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
-| **Fase 3 — Gestão** | **Próximo passo** de implementação: [fases/fase-03-gestao.md](fases/fase-03-gestao.md) |
+| **Fase 3 — Gestão** | **Em progresso** (backend receitas/produção/relatório): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) |
 
 ## Checklist pré-desenvolvimento
 

@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Fase 3 — receitas, produção idempotente, relatório financeiro)
+
+- **Migração:** `20260417_0003` — `recipes`, `recipe_items`, `production_runs`; `stock_movements.production_run_id`; tipos de movimento `production_out`, `production_in`.
+- **API:** CRUD receitas (1 por produto/loja); `POST /production` com **Idempotency-Key**; `GET /reports/financial` (receita pedidos, custo produção); `ProductOut` inclui `inventory_item_id`.
+- **Regras:** baixa insumos **DEC-17** (FEFO); custo unitário acabado = custo total / rendimento (**DEC-09**); estimativa de custo em `GET /recipes` via média ponderada dos lotes.
+- **Testes:** `test_phase3_production.py`.
+
 ## 2026-04-17 (Encerramento documental Fase 2 → handoff Fase 3)
 
 - **Fase 2:** inventário consolidado em [fase-02-operacao.md](../fases/fase-02-operacao.md) **§10**; estado da execução actualizado (§8); pendências não bloqueantes em §10.4 e [backlog.md](../projeto/backlog.md).

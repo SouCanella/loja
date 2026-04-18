@@ -12,6 +12,7 @@ from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.models.product import Product
+    from app.models.recipe import RecipeItem
     from app.models.store import Store
 
 
@@ -30,6 +31,9 @@ class InventoryItem(Base):
         "InventoryBatch", back_populates="item", cascade="all, delete-orphan"
     )
     product: Mapped["Product | None"] = relationship("Product", back_populates="inventory_item")
+    recipe_lines: Mapped[list["RecipeItem"]] = relationship(
+        "RecipeItem", back_populates="inventory_item"
+    )
 
 
 class InventoryBatch(Base):

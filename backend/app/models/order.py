@@ -24,6 +24,7 @@ from app.models.enums import OrderStatus, StockMovementType
 
 if TYPE_CHECKING:
     from app.models.product import Product
+    from app.models.production_run import ProductionRun
     from app.models.store import Store
 
 
@@ -132,4 +133,14 @@ class StockMovement(Base):
     order_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("orders.id", ondelete="SET NULL"), nullable=True, index=True
     )
+    production_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("production_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    production_run: Mapped["ProductionRun | None"] = relationship(
+        "ProductionRun", back_populates="stock_movements"
+    )

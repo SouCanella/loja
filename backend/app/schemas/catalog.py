@@ -38,6 +38,7 @@ class ProductCreate(BaseModel):
 class ProductOut(BaseModel):
     id: UUID
     store_id: UUID
+    inventory_item_id: UUID
     category_id: UUID | None
     name: str
     description: str | None

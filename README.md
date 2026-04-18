@@ -23,6 +23,7 @@ Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O
 - API: `GET http://localhost:8000/health` (compat. Fase 0), `GET http://localhost:8000/api/v1/health`
 - Auth (Fase 1): `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/me` (Bearer)
 - Operação (Fase 2 — backend): categorias e produtos `GET/POST /api/v1/categories`, `DELETE /api/v1/categories/{id}`, `GET/POST /api/v1/products`, `GET /api/v1/products/{id}`; pedidos `GET/POST /api/v1/orders`, `GET /api/v1/orders/{id}`, `PATCH /api/v1/orders/{id}/status` (`Idempotency-Key` opcional no POST); vitrine pública `GET /api/v1/public/stores/{store_slug}`, `GET .../categories`, `GET .../products`, `GET .../products/{product_id}`
+- Gestão (Fase 3 — backend): receitas `GET/POST /api/v1/recipes`, `GET/PATCH /api/v1/recipes/{id}`; produção `POST /api/v1/production` (`Idempotency-Key` recomendado); relatório `GET /api/v1/reports/financial?date_from=&date_to=`
 - Frontend: `http://localhost:3000` — `/loja/[slug]` vitrine (catálogo, grade/lista, carrinho local, checkout → WhatsApp), `/loja/[slug]/p/[id]` detalhe; `/login`, `/painel` (lista de pedidos no painel — evolução). **WhatsApp na vitrine:** campo JSON `stores.theme` → `{"vitrine": {"whatsapp": "+5511999990000", "tagline": "…", "logo_emoji": "🍰", "social_networks": [{"label": "Instagram", "url": "https://…", "icon": "instagram"}]}}` (ajuste via API/SQL até haver edição no painel).
 - OpenAPI: esquema em [`doc/api/openapi.json`](doc/api/openapi.json) (offline; regenerar com `make openapi-export`); com API no ar: `http://localhost:8000/openapi.json` e UI ReDoc em `http://localhost:8000/redoc`
 
@@ -41,7 +42,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | Roadmap Fases 0–4 | [`doc/fases/PLANO-ROADMAP-FASES.md`](doc/fases/PLANO-ROADMAP-FASES.md) |
 | Fase 1 (fechada) | [`doc/fases/fase-01-fundacao.md`](doc/fases/fase-01-fundacao.md) |
 | Fase 2 (fechada — inventário §10) | [`doc/fases/fase-02-operacao.md`](doc/fases/fase-02-operacao.md) |
-| **Fase 3 (próximo — receitas, produção, precificação)** | [`doc/fases/fase-03-gestao.md`](doc/fases/fase-03-gestao.md) |
+| **Fase 3 (em progresso — backend receitas/produção/relatório)** | [`doc/fases/fase-03-gestao.md`](doc/fases/fase-03-gestao.md) |
 | OpenAPI offline + ReDoc | [`doc/api/README.md`](doc/api/README.md) |
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
 
