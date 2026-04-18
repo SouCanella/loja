@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Documentação — qualidade e conformidade com normas)
+
+- **Novo:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md) — checklist **RNF-***, cobertura pytest, lacunas (envelope API, E2E, FieldHelp, refresh), próximos passos.
+- **Fase 3:** [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10.8** com ligação a esse ficheiro.
+
 ## 2026-04-17 (Painel — pedidos: filtros, novo pedido, WhatsApp)
 
 - **Next.js:** `/painel/pedidos` — filtro por estado (contagens); `/painel/pedidos/novo` — `POST /orders` com linhas e `Idempotency-Key`; detalhe — botão WhatsApp com texto de rascunho (`draftOrderWhatsAppMessage`).

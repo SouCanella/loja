@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-17 — ADR leve **DEC-01 … DEC-20**; Fase 3 inventariada em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**. **Painel pedidos:** listagem, criação manual, estados (**DEC-14**), `GET /me` com `vitrine_whatsapp` para atalho **wa.me** coerente com tema da vitrine (**DEC-19**).
+**Última actualização:** 2026-04-17 — ADR leve **DEC-01 … DEC-20**; Fase 3 em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**. **Painel pedidos** (lista, novo pedido, estados, WhatsApp). **Conformidade RNF:** ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md) (inclui nota sobre envelope **DEC-06** vs implementação actual da API).
 
 ---
 

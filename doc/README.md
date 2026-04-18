@@ -8,7 +8,7 @@
 |-----------------|----------|
 | **[documento_enterprise.md](documento_enterprise.md)** | Visão canônica (arquitetura, domínio, MVP, roadmap) — permanece na raiz de `doc/` |
 | **[normativos/](normativos/)** | Regras de negócio (`RN-*`), requisitos funcionais/não funcionais (`RF-*`, `RNF-*`), matriz RN → testes |
-| **[projeto/](projeto/)** | Decisões **DEC-***, backlog, rastreabilidade com `inicio_planejamento.txt`, proposta legada |
+| **[projeto/](projeto/)** | Decisões **DEC-***, backlog, [qualidade-e-conformidade.md](projeto/qualidade-e-conformidade.md) (auditoria vs RNF), rastreabilidade com `inicio_planejamento.txt`, proposta legada |
 | **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
 | **[execucao/](execucao/)** | Changelog de marcos |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |

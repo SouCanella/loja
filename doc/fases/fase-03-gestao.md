@@ -185,3 +185,8 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 - Aplicar migrações antes de usar receitas em ambiente real: `make migrate` (serviços no ar; `DATABASE_URL` em `.env`).
 - Variáveis: ver [`.env.example`](../../.env.example) (`NEXT_PUBLIC_API_URL`, etc.).
+
+### 10.8 Qualidade e conformidade com normas
+
+- Auditoria face a **RNF-*** (testes, idempotência, DevEx) e desvios conhecidos (envelope API, FieldHelp, E2E): [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
+- **Resumo:** `make lint` e `pytest` devem estar verdes; cobertura global `app` ~86% (referência); meta de **90% na camada de serviço** ainda **progressiva** (**RNF-QA-01**).

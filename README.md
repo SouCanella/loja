@@ -45,6 +45,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | **Fase 3 (concluída — receitas, produção, relatório + painel)** | [`doc/fases/fase-03-gestao.md`](doc/fases/fase-03-gestao.md) **§10** (inventário) |
 | OpenAPI offline + ReDoc | [`doc/api/README.md`](doc/api/README.md) |
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
+| Qualidade vs normas (RNF, testes) | [`doc/projeto/qualidade-e-conformidade.md`](doc/projeto/qualidade-e-conformidade.md) |
 
 Comandos `make`: ver saída de `make help` (inclui `openapi-export`, `migrate`, `lint`, etc.).
 

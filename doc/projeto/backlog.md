@@ -12,6 +12,7 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | **Fase 1** (Postgres, Alembic, JWT, multi-tenant, OpenAPI estático, auth `/api/v1`, vitrine/painel stub) | [fase-01-fundacao.md](../fases/fase-01-fundacao.md) secção **10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md); [doc/api/README.md](../api/README.md) |
 | **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3** (receitas, produção idempotente, relatório financeiro, painel Next, `GET /inventory-items`, `/me` com slug) | [fase-03-gestao.md](../fases/fase-03-gestao.md) **§8–§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
+| **Qualidade / RNF** (auditoria vs normas, cobertura, lacunas) | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
 | Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
 | Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |
@@ -80,7 +81,7 @@ Atualizar esta tabela ao fechar cada fase.
 |----|------|--------|--------|
 | DT-01 | CI/CD (pipeline Git, build Docker, deploy) | nao_iniciado | [documento_enterprise.md](../documento_enterprise.md) §24 |
 | DT-02 | Observabilidade (métricas/dashboards além de logs MVP) | nao_iniciado | §20 / §4 |
-| DT-03 | Cobertura de testes ≥ 90% | parcial | §21 — meta progressiva |
+| DT-03 | Cobertura de testes ≥ 90% | parcial | §21 — meta progressiva; ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
 
 ## Ideias de produto (origem `inicio_planejamento.txt`)
 
