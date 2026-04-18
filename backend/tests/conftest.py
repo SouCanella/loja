@@ -11,6 +11,7 @@ from sqlalchemy.pool import StaticPool
 
 os.environ.setdefault("JWT_SECRET", "test-secret-key-for-pytest")
 
+import app.models  # noqa: E402, F401 — regista metadados para create_all
 from app.db.base import Base  # noqa: E402
 from app.db.session import get_db  # noqa: E402
 from app.main import app  # noqa: E402

@@ -10,6 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.category import Category
+    from app.models.inventory import InventoryItem
+    from app.models.order import Order
+    from app.models.product import Product
     from app.models.user import User
 
 
@@ -24,3 +28,17 @@ class Store(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     users: Mapped[list["User"]] = relationship("User", back_populates="store")
+    categories: Mapped[list["Category"]] = relationship(
+        "Category", back_populates="store", cascade="all, delete-orphan"
+    )
+    products: Mapped[list["Product"]] = relationship(
+        "Product", back_populates="store", cascade="all, delete-orphan"
+    )
+    inventory_items: Mapped[list["InventoryItem"]] = relationship(
+        "InventoryItem", back_populates="store", cascade="all, delete-orphan"
+    )
+    orders: Mapped[list["Order"]] = relationship(
+        "Order",
+        back_populates="store",
+        cascade="all, delete-orphan",
+    )

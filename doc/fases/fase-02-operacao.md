@@ -59,12 +59,13 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 ## 3. Critérios de aceite
 
-- [ ] CRUD ou leitura gestão de produtos isolado por loja.
-- [ ] Pedido criado com itens; impossível acessar pedido de outra loja.
-- [ ] Se reserva/idempotência forem escopo desta fase: transações cobrindo lock/reserva/timeout (§12); caso contrário, documentar limitação e item no [backlog.md](../projeto/backlog.md).
-- [ ] Estoque reflete movimentações básicas (venda/baixa) sem quebrar invariantes (quantidade não negativa — §9).
-- [ ] Testes de integração dos fluxos principais; relatórios HTML atualizados.
-- [ ] Documentação de fase e backlog atualizados.
+- [x] CRUD ou leitura gestão de produtos isolado por loja — **API** (`/categories`, `/products`); **frontend** vitrine/painel ainda por implementar.
+- [x] Pedido criado com itens; impossível acessar pedido de outra loja — **API** + testes de isolamento.
+- [ ] Reserva de estoque + timeout (§12) — **fora do escopo MVP atual**; `Idempotency-Key` em `POST /orders` (unicidade por loja). Ver [backlog.md](../projeto/backlog.md).
+- [x] Estoque reflete movimentações básicas (baixa **DEC-17** ao **confirmar**, reversão ao **cancelar**; FEFO com `expiration_date` null por último).
+- [x] Testes de integração dos fluxos principais (`test_phase2_orders.py`).
+- [ ] Relatórios HTML de testes — opcional; `make test` na raiz.
+- [x] Documentação de fase e changelog (execução) atualizados neste marco; backlog se alterações de escopo.
 
 ---
 
@@ -106,7 +107,7 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planejado` — **próximo passo de implementação** após Fase 1 |
-| **Data de conclusão** | — |
+| **Status** | `em progresso` — **backend** (catálogo, pedidos, estoque **DEC-14/17/20**) implementado; **frontend** (vitrine, carrinho, pedidos) pendente. |
+| **Data de conclusão** | — (fase aberta até UI e critérios restantes) |
 | **Dependências** | Fase 1 concluída (auth, tenant, `stores`/`users`, Alembic base). |
-| **Notas** | **Gates antes de codar:** **DEC-14**, **DEC-17**, **DEC-20** — políticas MVP documentadas em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) (*Decisões de implementação MVP*) e RN citadas acima. Consultar [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md). Ao fechar a fase: preencher critérios de aceite na secção 3 e registrar em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |
+| **Notas** | Migração `20260417_0002`; rotas em [README.md](../../README.md) na raiz; OpenAPI em [doc/api/openapi.json](../api/openapi.json). Reserva pessimista / timeout: backlog. Ao fechar a fase: rever secção 3 e [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |

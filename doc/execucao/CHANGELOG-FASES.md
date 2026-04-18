@@ -2,6 +2,15 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Fase 2 — backend catálogo, pedidos, estoque)
+
+- **Migração:** `20260417_0002` — `categories`, `products`, `inventory_items`, `inventory_batches`, `orders`, `order_items`, `order_status_history`, `order_stock_allocations`, `stock_movements`; enum pedido alinhado a **DEC-14**; `idempotency_key` único por loja em `orders`.
+- **API (Bearer, tenant por token):** `GET/POST /api/v1/categories`, `DELETE /api/v1/categories/{id}`; `GET/POST /api/v1/products`, `GET /api/v1/products/{id}`; `GET/POST /api/v1/orders`, `GET /api/v1/orders/{id}`, `PATCH /api/v1/orders/{id}/status` (header opcional `Idempotency-Key` no POST pedidos).
+- **Público (sem auth):** `GET /api/v1/public/stores/{store_slug}/products`.
+- **Serviços:** baixa FEFO ao passar para **confirmado**; estorno ao **cancelar** após confirmado; histórico de estado.
+- **Testes:** `backend/tests/test_phase2_orders.py` (fluxo confirmar/cancelar, stock insuficiente, isolamento).
+- **Pendente nesta fase:** UI Next (catálogo/carrinho/pedidos); reserva+timeout e envelope API global são backlog/evolução.
+
 ## 2026-04-17 (DEC-14 / DEC-17 / DEC-20 — políticas MVP para implementação)
 
 - **Decisões de produto:** transições de pedido **manuais e flexíveis** no MVP (sem integração WApp automática); baixa de estoque em **`confirmado`** com reversão ao **cancelar**; categorias **planas** + FK opcional — registado em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) e em [regras-negocio.md](../normativos/regras-negocio.md) (**RN-034**, **RN-058**, **RN-059**, **RN-071**, **RN-072**).

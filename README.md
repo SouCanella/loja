@@ -22,7 +22,8 @@ Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O
 
 - API: `GET http://localhost:8000/health` (compat. Fase 0), `GET http://localhost:8000/api/v1/health`
 - Auth (Fase 1): `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/me` (Bearer)
-- Frontend: `http://localhost:3000` — rotas `/loja/[slug]`, `/login`, `/painel`
+- Operação (Fase 2 — backend): categorias e produtos `GET/POST /api/v1/categories`, `DELETE /api/v1/categories/{id}`, `GET/POST /api/v1/products`, `GET /api/v1/products/{id}`; pedidos `GET/POST /api/v1/orders`, `GET /api/v1/orders/{id}`, `PATCH /api/v1/orders/{id}/status` (`Idempotency-Key` opcional no POST); vitrine pública `GET /api/v1/public/stores/{store_slug}/products`
+- Frontend: `http://localhost:3000` — rotas `/loja/[slug]`, `/login`, `/painel` (UI catálogo/pedidos Fase 2 em evolução)
 - OpenAPI: esquema em [`doc/api/openapi.json`](doc/api/openapi.json) (offline; regenerar com `make openapi-export`); com API no ar: `http://localhost:8000/openapi.json` e UI ReDoc em `http://localhost:8000/redoc`
 
 Variáveis: ver [`.env.example`](.env.example) (`DATABASE_URL` com `postgresql+psycopg`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
@@ -39,7 +40,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | Visão de produto e arquitetura | [`doc/documento_enterprise.md`](doc/documento_enterprise.md) |
 | Roadmap Fases 0–4 | [`doc/fases/PLANO-ROADMAP-FASES.md`](doc/fases/PLANO-ROADMAP-FASES.md) |
 | Fase 1 (fechada) | [`doc/fases/fase-01-fundacao.md`](doc/fases/fase-01-fundacao.md) |
-| **Fase 2 (próximo passo)** | [`doc/fases/fase-02-operacao.md`](doc/fases/fase-02-operacao.md) |
+| **Fase 2 (em progresso — backend feito)** | [`doc/fases/fase-02-operacao.md`](doc/fases/fase-02-operacao.md) |
 | OpenAPI offline + ReDoc | [`doc/api/README.md`](doc/api/README.md) |
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
 
