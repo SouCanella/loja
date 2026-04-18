@@ -10,7 +10,7 @@
 | **[normativos/](normativos/)** | Regras de negócio (`RN-*`), requisitos funcionais/não funcionais (`RF-*`, `RNF-*`), matriz RN → testes |
 | **[projeto/](projeto/)** | Decisões **DEC-***, backlog, [qualidade-e-conformidade.md](projeto/qualidade-e-conformidade.md) (auditoria vs RNF), rastreabilidade com `inicio_planejamento.txt`, proposta legada |
 | **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
-| **[execucao/](execucao/)** | Changelog de marcos |
+| **[execucao/](execucao/)** | Changelog de marcos; [TESTES-E-CI.md](execucao/TESTES-E-CI.md) (hub pytest / Vitest / Playwright / CI) |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
 | **[api/](api/)** | Contrato **OpenAPI 3** versionado (`openapi.json`), UI **ReDoc** offline (`index.html`); **RNF-DevEx-08** — ver **[api/README.md](api/README.md)** |
 | **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — Fases **0–3** documentadas; inventário Fase 3 em [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§10** |
@@ -22,9 +22,10 @@
 3. **[normativos/requisitos-funcionais.md](normativos/requisitos-funcionais.md)** — o que o sistema deve fazer (`RF-*`).
 4. **[normativos/requisitos-nao-funcionais.md](normativos/requisitos-nao-funcionais.md)** — segurança, performance, testes, etc. (`RNF-*`).
 5. **[normativos/matriz-rn-testes.md](normativos/matriz-rn-testes.md)** — opcional: rastreabilidade **RN → caso de teste** (evolução; **RNF-QA-06**).
-6. **[projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md)** — decisões **DEC-01 … DEC-20**, **ADR leve** por DEC e **gates por fase**.
-7. **[projeto/rastreabilidade-fontes.md](projeto/rastreabilidade-fontes.md)** — ligação entre [inicio_planejamento.txt](../inicio_planejamento.txt) e os documentos normativos.
-8. **[fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md)** — Fases 0–4 e equivalência com MVPs do planejamento em texto.
+6. **[execucao/TESTES-E-CI.md](execucao/TESTES-E-CI.md)** — pytest, Vitest, Playwright e GitHub Actions (complementa [qualidade-e-conformidade.md](projeto/qualidade-e-conformidade.md)).
+7. **[projeto/decisoes-e-pendencias.md](projeto/decisoes-e-pendencias.md)** — decisões **DEC-01 … DEC-20**, **ADR leve** por DEC e **gates por fase**.
+8. **[projeto/rastreabilidade-fontes.md](projeto/rastreabilidade-fontes.md)** — ligação entre [inicio_planejamento.txt](../inicio_planejamento.txt) e os documentos normativos.
+9. **[fases/PLANO-ROADMAP-FASES.md](fases/PLANO-ROADMAP-FASES.md)** — Fases 0–4 e equivalência com MVPs do planejamento em texto.
 
 ## Contrato HTTP (OpenAPI 3)
 

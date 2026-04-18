@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-17 — ADR leve **DEC-01 … DEC-20**; Fase 3 em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**. **Painel pedidos** (lista, novo pedido, estados, WhatsApp). **Conformidade RNF:** ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md) (inclui nota sobre envelope **DEC-06** vs implementação actual da API).
+**Última actualização:** 2026-04-18 — ADR leve **DEC-01 … DEC-20**; Fase 3 em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**. **Testes e CI** documentados em [TESTES-E-CI.md](../execucao/TESTES-E-CI.md); conformidade **RNF** em [qualidade-e-conformidade.md](qualidade-e-conformidade.md) (envelope **DEC-06** vs API actual).
 
 ---
 

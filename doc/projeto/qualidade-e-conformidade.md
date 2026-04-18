@@ -1,7 +1,7 @@
 # Qualidade e conformidade com a documentação normativa
 
 **Propósito:** registar o estado da implementação face às propostas de [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md), [documento_enterprise.md](../documento_enterprise.md) e [decisoes-e-pendencias.md](decisoes-e-pendencias.md).  
-**Última auditoria:** 2026-04-17 — código e ferramentas da raiz do repositório.
+**Última auditoria:** 2026-04-18 — alinhado a [TESTES-E-CI.md](../execucao/TESTES-E-CI.md) (hub de comandos e pastas).
 
 ---
 
@@ -83,3 +83,14 @@
 - Inventário funcional Fase 3: [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**.  
 - Marcos: [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md).  
 - Débitos gerais: [backlog.md](backlog.md).
+
+---
+
+## 7. Inventário frontend (testes)
+
+| Tipo | Localização | Comando |
+|------|-------------|---------|
+| Vitest | `frontend/__tests__/**/*.test.ts` | `cd frontend && npm run test` |
+| Playwright | `frontend/e2e/*.spec.ts`, `frontend/playwright.config.ts` | `cd frontend && npm run test:e2e` |
+
+Detalhe: [TESTES-E-CI.md](../execucao/TESTES-E-CI.md) **§3–4**.

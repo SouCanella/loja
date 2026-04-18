@@ -46,6 +46,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | OpenAPI offline + ReDoc | [`doc/api/README.md`](doc/api/README.md) |
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
 | Qualidade vs normas (RNF, testes) | [`doc/projeto/qualidade-e-conformidade.md`](doc/projeto/qualidade-e-conformidade.md) |
+| Testes e CI (comandos, pastas, GitHub Actions) | [`doc/execucao/TESTES-E-CI.md`](doc/execucao/TESTES-E-CI.md) |
 
 Comandos `make`: ver saída de `make help` (inclui `openapi-export`, `migrate`, `lint`, etc.). **Testes:** `make test` (pytest + Vitest). **E2E:** `npx playwright install chromium` uma vez; no `frontend/`, `npm run test:e2e` (sobe `next dev`) ou após `npm run build` usar `CI=true PW_SERVER_ONLY=1 npm run test:e2e` — detalhes em [`frontend/e2e/README.md`](frontend/e2e/README.md).
 

@@ -13,6 +13,7 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3** (receitas, produção idempotente, relatório financeiro, painel Next, `GET /inventory-items`, `/me` com slug) | [fase-03-gestao.md](../fases/fase-03-gestao.md) **§8–§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Qualidade / RNF** (auditoria vs normas, cobertura, lacunas) | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
+| **Testes e CI** (pytest, Vitest, Playwright, GitHub Actions) | [TESTES-E-CI.md](../execucao/TESTES-E-CI.md) |
 | Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
 | Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |

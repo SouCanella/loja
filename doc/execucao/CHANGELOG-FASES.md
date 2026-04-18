@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-18 (Documentação — hub TESTES-E-CI)
+
+- **Novo:** [TESTES-E-CI.md](TESTES-E-CI.md) — visão única (pytest, Vitest, Playwright, `.github/workflows/ci.yml`, artefactos ignorados).
+- **Índices:** [doc/README.md](../README.md), [README.md](../../README.md), [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md) §7, [fase-03-gestao.md](../fases/fase-03-gestao.md) §10.8, [backlog.md](../projeto/backlog.md).
+
 ## 2026-04-18 (Produção serviço, Vitest painel-api, E2E Playwright)
 
 - **Pytest:** `test_services_production.py` — stock insuficiente, validações `execute_production`; cobertura `app/services` ~94%, CI **≥90%**.
