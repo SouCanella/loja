@@ -13,7 +13,7 @@
 | **[execucao/](execucao/)** | Changelog de marcos |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
 | **[api/](api/)** | Contrato **OpenAPI 3** versionado (`openapi.json`), UI **ReDoc** offline (`index.html`); **RNF-DevEx-08** — ver **[api/README.md](api/README.md)** |
-| **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — Fases **0–2** documentadas; **Fase 3** em [fases/fase-03-gestao.md](fases/fase-03-gestao.md) |
+| **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — Fases **0–3** documentadas; inventário Fase 3 em [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§10** |
 
 ## Ordem de leitura sugerida
 
@@ -40,7 +40,7 @@
 | Fase 0 — Kickoff | Concluída (ver [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md)) |
 | Fase 1 — Fundação | Concluída e documentada em [fases/fase-01-fundacao.md](fases/fase-01-fundacao.md) |
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
-| **Fase 3 — Gestão** | **Em progresso** (backend receitas/produção/relatório): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) |
+| **Fase 3 — Gestão** | **Concluída** (API + painel receitas/produção/relatório CSV): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§8–§10** |
 
 ## Checklist pré-desenvolvimento
 

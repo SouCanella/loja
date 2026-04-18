@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última atualização:** 2026-04-17 — ADR leve para **DEC-01 … DEC-20**; melhorias não bloqueantes (OpenAPI, pin Postgres, idempotência produção, matriz RN→testes) incorporadas à documentação normativa. **Secção «Decisões de implementação MVP (Fase 2)»** com políticas DEC-14/17/20 para codificação.
+**Última atualização:** 2026-04-17 — ADR leve para **DEC-01 … DEC-20**; melhorias não bloqueantes (OpenAPI, pin Postgres, idempotência produção, matriz RN→testes) incorporadas à documentação normativa. **Secção «Decisões de implementação MVP (Fase 2)»** com políticas DEC-14/17/20 para codificação. **Fase 3 (gestão):** entregáveis e rotas HTTP inventariados em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**; produção idempotente alinhada a **RNF-Arq-02b** e **DEC-09** / **DEC-17**.
 
 ---
 

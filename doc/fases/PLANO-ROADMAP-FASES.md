@@ -1,9 +1,9 @@
 # Planejamento completo do roadmap (Fases 0 a 4)
 
 **Referência:** [documento_enterprise.md](../documento_enterprise.md), [regras-negocio.md](../normativos/regras-negocio.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md)  
-**Última atualização do planejamento:** 2026-04-17 (estado implementação: Fase 2 encerrada; ver [fase-02-operacao.md](fase-02-operacao.md) §10)  
+**Última atualização do planejamento:** 2026-04-17 (Fase 3 encerrada no MVP; ver [fase-03-gestao.md](fase-03-gestao.md) §8–§10)  
 
-**Estado actual (implementação):** Fases **0**, **1** e **2** concluídas e documentadas ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 2 em [fase-02-operacao.md](fase-02-operacao.md) **§10**. **Próximo passo:** [fase-03-gestao.md](fase-03-gestao.md) (receitas, produção idempotente, precificação, relatório financeiro).
+**Estado actual (implementação):** Fases **0**, **1**, **2** e **3** concluídas no âmbito planeado ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo sugerido:** [fase-04-escala.md](fase-04-escala.md) e itens em [backlog.md](../projeto/backlog.md) (pedidos no painel, CRUD insumos, margem configurável, CI).
 
 Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o MVP. Cada fase tem documento próprio com detalhamento (entregáveis, critérios de aceite, riscos). **Volte aqui** ao ajustar escopo ou datas; depois sincronize o arquivo da fase afetada e o [backlog.md](../projeto/backlog.md).
 

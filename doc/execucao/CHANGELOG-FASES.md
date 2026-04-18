@@ -4,8 +4,9 @@ Registro opcional de marcos por data.
 
 ## 2026-04-17 (Painel — receitas, produção, relatório + CSV)
 
-- **API:** `GET /api/v1/inventory-items`; `GET /api/v1/me` com `store_slug` e `store_name`.
-- **Next.js:** `/painel` com navegação; `/painel/receitas` (Produzir lote com `Idempotency-Key`); `/painel/receitas/nova`; `/painel/relatorio` com intervalo de datas e export CSV; `lib/painel-api.ts`.
+- **API:** `GET /api/v1/inventory-items` (lista insumos para formulários); `GET /api/v1/me` com `store_slug` e `store_name` (link à vitrine).
+- **Next.js:** `/painel` (resumo + atalho `/loja/{slug}`); `/painel/receitas` (lista, custo estimado, **Produzir lote** → `POST /production` + header `Idempotency-Key`); `/painel/receitas/nova`; `/painel/relatorio` (`GET /reports/financial` + **CSV** gerado no cliente); `frontend/lib/painel-api.ts`.
+- **Documentação:** inventário completo em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**.
 
 ## 2026-04-17 (Fase 3 — receitas, produção idempotente, relatório financeiro)
 

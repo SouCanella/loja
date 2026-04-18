@@ -73,7 +73,7 @@ Planejado:
 | Precificação simples | Sim |
 | Relatório financeiro básico | Sim (`GET /api/v1/reports/financial`) |
 
-Após esta fase, revisar [backlog.md](../projeto/backlog.md): marcar MVP como completo ou listar gaps.
+Após esta fase, revisar [backlog.md](../projeto/backlog.md): MVP-05/MVP-06 mantidos como **parcial** (UI e margem indicativa; ver tabela e §9.1).
 
 ---
 
@@ -97,27 +97,86 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): marcar MVP como co
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `em progresso` — **backend** + **painel Next** (receitas, produzir lote, relatório + CSV); insumos só via produtos ou `GET /inventory-items`. |
-| **Data de conclusão** | — |
-| **Notas** | Migração `20260417_0003`; rotas em [README.md](../../README.md); `/me` com `store_slug` para atalho à vitrine. |
+| **Status** | `concluída` (MVP Fase 3 — **API** receitas/produção/relatório + **painel Next** para receitas, produção e relatório com CSV). |
+| **Data de conclusão** | 2026-04-17 |
+| **Notas** | Migração `20260417_0003`; contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). Insumos “puros” (sem produto de venda): listagem via `GET /inventory-items`; criação continua a depender de produto com inventário ou evolução futura de API. Margem sugerida na UI (~30%) é **indicativa**, não persistida. |
 
 ---
 
-## 9. Próximo passo imediato (kickoff técnico sugerido)
+## 9. Kickoff técnico (iteração 1) — concluído
 
-Ordem sugerida para a primeira iteração (ajustar ao desenho fino dos schemas):
+A sequência planejada na redacção inicial desta fase foi implementada:
 
-1. **Modelagem** `recipes` e `recipe_items` (FK a `products` e `inventory_items`), migração Alembic.
-2. **Tipos de movimento** em `stock_movements` (ou extensão de `StockMovementType`) para consumo de produção e entrada de acabado.
-3. **Serviço** de execução de receita: uma transação que baixa insumos (DEC-17) e credita produto final / lote.
-4. **Endpoint** `POST /api/v1/production` com corpo idempotente (header `Idempotency-Key` ou campo único por loja) — alinhar a **RNF-Arq-02b**.
-5. **Motor de precificação** (média ponderada DEC-09) e persistência opcional de “preço sugerido” vs `products.price`.
-6. **`GET /api/v1/reports/financial`** com agregações mínimas acordadas (período, receita/custo/margem).
-7. **Testes** de integração (produção feliz, retry idempotente, falha de stock insuficiente).
-8. **OpenAPI** + entrada em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — feito para o backend inicial.
+1. Modelagem `recipes`, `recipe_items`, `production_runs`; migração Alembic `20260417_0003_phase3_recipes_production.py`.
+2. Tipos de movimento `production_out` e `production_in`; `stock_movements.production_run_id`.
+3. Serviço `execute_production` — transação com baixa FEFO (**DEC-17**) e entrada de acabado; custo unitário (**DEC-09**).
+4. `POST /api/v1/production` com header **`Idempotency-Key`** (**RNF-Arq-02b**).
+5. Estimativa `estimated_unit_cost` em receitas via `app/services/pricing.py` (média ponderada).
+6. `GET /api/v1/reports/financial?date_from=&date_to=` — receita de pedidos, custo de insumos em produção, contagens.
+7. Testes `backend/tests/test_phase3_production.py`.
+8. OpenAPI exportado e entrada no [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md).
 
-### 9.1 Próximos incrementos sugeridos
+### 9.1 Próximos incrementos (backlog / não bloqueantes)
 
-- UI no **painel** para cadastrar receitas e disparar produção.
-- Relatório financeiro com export CSV ou mais métricas (margem por produto).
-- Endpoint dedicado de **sugestão de preço** ou sincronização automática opcional com `products.price`.
+- **Painel — pedidos:** listagem e gestão de estados (API Fase 2 já existe).
+- **Insumos:** `POST`/`PATCH` em `inventory_items` ou fluxo dedicado + UI mínima (além do `GET` actual).
+- **Margem configurável** por loja ou receita (substituir percentagem fixa na UI).
+- Endpoint opcional de **preço sugerido** explícito ou sincronização com `products.price`.
+- Relatório: mais métricas (ex.: margem por produto) além do CSV já disponível no cliente.
+
+---
+
+## 10. Inventário do que foi entregue (referência única)
+
+### 10.1 Persistência e migração
+
+- **Ficheiro:** `backend/alembic/versions/20260417_0003_phase3_recipes_production.py`.
+- **Tabelas / alterações:** `recipes`, `recipe_items`, `production_runs`; coluna `stock_movements.production_run_id`; enum de tipos de movimento alargado.
+
+### 10.2 Backend — módulos principais
+
+| Área | Localização (indicativa) |
+|------|---------------------------|
+| Modelos | `backend/app/models/recipe.py`, `production_run.py`; `StockMovement` / enum em `order.py`, `enums.py` (tipos `production_*`, FK `production_run_id`) |
+| Schemas Fase 3 | `backend/app/schemas/phase3.py`; `backend/app/schemas/inventory_items.py`; `UserMeResponse` em `backend/app/schemas/user.py` |
+| Serviços | `backend/app/services/production_service.py`, `backend/app/services/pricing.py` |
+| Rotas | `backend/app/api/v1/endpoints/recipes.py`, `production.py`, `reports_financial.py`, `inventory_items.py`, `me.py` |
+| Registo no router | `backend/app/api/v1/router.py` |
+
+### 10.3 Endpoints HTTP (prefixo `/api/v1`, autenticação Bearer salvo indicação)
+
+| Método | Caminho | Notas |
+|--------|---------|--------|
+| GET | `/recipes` | Lista receitas da loja; inclui `estimated_unit_cost`. |
+| POST | `/recipes` | Cria receita (uma por produto por loja). |
+| GET | `/recipes/{recipe_id}` | Detalhe. |
+| PATCH | `/recipes/{recipe_id}` | Actualiza receita e linhas. |
+| POST | `/production` | Corpo: receita, quantidade produzida; header **`Idempotency-Key`** recomendado. |
+| GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). |
+| GET | `/inventory-items` | Lista `id`, `name`, `unit` dos insumos da loja (para formulários de receita). |
+| GET | `/me` | Resposta inclui `store_slug` e `store_name` (atalho à vitrine no painel). |
+
+### 10.4 Testes automatizados
+
+- `backend/tests/test_phase3_production.py` — produção, idempotência, validações relevantes.
+
+### 10.5 Frontend (Next.js — App Router)
+
+| Rota | Ficheiro | Função |
+|------|----------|--------|
+| `/painel` | `frontend/app/painel/page.tsx` | Resumo, dados de `/me`, link para `/loja/{store_slug}`. |
+| `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo estimado, sugestão de preço indicativa, **Produzir lote** (`POST /production` + `Idempotency-Key`). |
+| `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita com dropdown de insumos (`GET /inventory-items`). |
+| `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /reports/financial` por intervalo; botão **Descarregar CSV** (gerado no browser). |
+| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Receitas / Relatório / Sessão. |
+| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, token em `localStorage`, `formatBRL`, erros tipados. |
+
+### 10.6 Documentação de contrato e raiz do repositório
+
+- **OpenAPI:** [`doc/api/openapi.json`](../api/openapi.json) (regenerar com `make openapi-export` após alterações na API).
+- **README raiz:** [`README.md`](../../README.md) — comandos `make`, URLs locais, lista resumida de rotas e páginas do painel.
+
+### 10.7 Operação
+
+- Aplicar migrações antes de usar receitas em ambiente real: `make migrate` (serviços no ar; `DATABASE_URL` em `.env`).
+- Variáveis: ver [`.env.example`](../../.env.example) (`NEXT_PUBLIC_API_URL`, etc.).

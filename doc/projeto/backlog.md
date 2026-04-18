@@ -11,7 +11,8 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | **Fase 0** (monorepo, Docker, Makefile, smoke tests, `README` raiz) | [fase-00-kickoff.md](../fases/fase-00-kickoff.md) **Parte C** (entregue + pendências P1–P5) e **Parte B** (status concluído) |
 | **Fase 1** (Postgres, Alembic, JWT, multi-tenant, OpenAPI estático, auth `/api/v1`, vitrine/painel stub) | [fase-01-fundacao.md](../fases/fase-01-fundacao.md) secção **10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md); [doc/api/README.md](../api/README.md) |
 | **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
-| Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — entradas *Fase 0* e *Fase 1* |
+| **Fase 3** (receitas, produção idempotente, relatório financeiro, painel Next, `GET /inventory-items`, `/me` com slug) | [fase-03-gestao.md](../fases/fase-03-gestao.md) **§8–§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
+| Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
 | Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |
 
@@ -68,8 +69,8 @@ Escopo MVP: autenticação, catálogo, pedidos, estoque básico, receitas, preci
 | MVP-02 | Catálogo | parcial | Vitrine `/loja/[slug]`; imagens S3 e destaques RF-CA-11 — evolução |
 | MVP-03 | Pedidos | parcial | API + fluxo status/stock Fase 2; **UI** — pendente |
 | MVP-04 | Estoque básico | parcial | Lotes + baixa/reversão na API; leitura/ajuste dedicados e UI — ver [fase-02 §9](../fases/fase-02-operacao.md) |
-| MVP-05 | Receitas | parcial | Fase 3 |
-| MVP-06 | Precificação simples | parcial | Fase 3 |
+| MVP-05 | Receitas | parcial | API + painel (criar/listar/produzir); evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md) |
+| MVP-06 | Precificação simples | parcial | Custo estimado na API + sugestão indicativa no painel; **margem fixa na UI** — configurável em backlog |
 
 Atualizar esta tabela ao fechar cada fase.
 
