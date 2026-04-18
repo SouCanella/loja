@@ -40,7 +40,8 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | Visão de produto e arquitetura | [`doc/documento_enterprise.md`](doc/documento_enterprise.md) |
 | Roadmap Fases 0–4 | [`doc/fases/PLANO-ROADMAP-FASES.md`](doc/fases/PLANO-ROADMAP-FASES.md) |
 | Fase 1 (fechada) | [`doc/fases/fase-01-fundacao.md`](doc/fases/fase-01-fundacao.md) |
-| **Fase 2 (em progresso — vitrine + API; painel pedidos)** | [`doc/fases/fase-02-operacao.md`](doc/fases/fase-02-operacao.md) |
+| Fase 2 (fechada — inventário §10) | [`doc/fases/fase-02-operacao.md`](doc/fases/fase-02-operacao.md) |
+| **Fase 3 (próximo — receitas, produção, precificação)** | [`doc/fases/fase-03-gestao.md`](doc/fases/fase-03-gestao.md) |
 | OpenAPI offline + ReDoc | [`doc/api/README.md`](doc/api/README.md) |
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
 

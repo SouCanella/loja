@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Encerramento documental Fase 2 → handoff Fase 3)
+
+- **Fase 2:** inventário consolidado em [fase-02-operacao.md](../fases/fase-02-operacao.md) **§10**; estado da execução actualizado (§8); pendências não bloqueantes em §10.4 e [backlog.md](../projeto/backlog.md).
+- **Roadmap:** [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) e [README.md](../README.md) — próximo marco **Fase 3** ([fase-03-gestao.md](../fases/fase-03-gestao.md)); kickoff técnico sugerido na **§9** desse ficheiro.
+
 ## 2026-04-17 (Fase 2 — vitrine Next alinhada ao mockup)
 
 - **API pública:** `GET /api/v1/public/stores/{slug}` (nome, `theme.vitrine`: emoji, WhatsApp, redes); `GET .../categories`; `GET .../products/{product_id}`; produtos com `category_*` para filtros na vitrine.

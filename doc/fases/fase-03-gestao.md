@@ -61,7 +61,7 @@ Planejado:
 
 ## 4. Dependências
 
-- **Fase 2** concluída (produtos, estoque, pedidos).
+- **Fase 2** concluída nos entregáveis necessários: modelos e API de produtos, insumos/lotes, pedidos e movimentos de stock; vitrine pública. Ver [fase-02-operacao.md](fase-02-operacao.md) **§10** (inventário) e **§10.4** (o que ficou em backlog).
 
 ---
 
@@ -97,6 +97,21 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): marcar MVP como co
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planejado` |
+| **Status** | `próximo marco de implementação` (após encerramento documental da Fase 2 — 2026-04-17). |
 | **Data de conclusão** | — |
-| **Notas** | Preencher ao concluir. |
+| **Notas** | Gates do §0: insumos/lotes e pedidos estáveis na `main`; política de baixa **DEC-17** já usada nas vendas — produção deve reutilizar a mesma política em transações. **RNF-Arq-02b:** desenhar `POST /api/v1/production` (ou rota equivalente) com idempotência desde o primeiro merge. Ver **§9**. |
+
+---
+
+## 9. Próximo passo imediato (kickoff técnico sugerido)
+
+Ordem sugerida para a primeira iteração (ajustar ao desenho fino dos schemas):
+
+1. **Modelagem** `recipes` e `recipe_items` (FK a `products` e `inventory_items`), migração Alembic.
+2. **Tipos de movimento** em `stock_movements` (ou extensão de `StockMovementType`) para consumo de produção e entrada de acabado.
+3. **Serviço** de execução de receita: uma transação que baixa insumos (DEC-17) e credita produto final / lote.
+4. **Endpoint** `POST /api/v1/production` com corpo idempotente (header `Idempotency-Key` ou campo único por loja) — alinhar a **RNF-Arq-02b**.
+5. **Motor de precificação** (média ponderada DEC-09) e persistência opcional de “preço sugerido” vs `products.price`.
+6. **`GET /api/v1/reports/financial`** com agregações mínimas acordadas (período, receita/custo/margem).
+7. **Testes** de integração (produção feliz, retry idempotente, falha de stock insuficiente).
+8. **OpenAPI** + entrada em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md).

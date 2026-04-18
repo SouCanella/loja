@@ -10,7 +10,7 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 |---------|----------------|
 | **Fase 0** (monorepo, Docker, Makefile, smoke tests, `README` raiz) | [fase-00-kickoff.md](../fases/fase-00-kickoff.md) **Parte C** (entregue + pendências P1–P5) e **Parte B** (status concluído) |
 | **Fase 1** (Postgres, Alembic, JWT, multi-tenant, OpenAPI estático, auth `/api/v1`, vitrine/painel stub) | [fase-01-fundacao.md](../fases/fase-01-fundacao.md) secção **10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md); [doc/api/README.md](../api/README.md) |
-| **Fase 2** (backend: catálogo, pedidos, estoque DEC-14/17/20; UI ainda por fazer) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8** e **9** (aderência); [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
+| **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — entradas *Fase 0* e *Fase 1* |
 | Índice `doc/` | [README.md](../README.md) — linha sobre `README.md` na raiz e testes |
 | Norma de testes HTML | [README.md](../README.md) secção *Testes e relatórios HTML* |

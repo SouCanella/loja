@@ -107,16 +107,16 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `em progresso` — **backend** + **vitrine Next** (catálogo, carrinho, WhatsApp); **painel** com lista/gestão de pedidos na UI ainda por priorizar. |
-| **Data de conclusão** | — (fase aberta até UI e critérios restantes) |
+| **Status** | `concluída (marco operação)` — **backend** catálogo/pedidos/stock + **vitrine** Next; **ressalvas** em §10.4 e secção 3 (itens opcionais / backlog). |
+| **Data de conclusão** | 2026-04-17 (documentação de encerramento e inventário §10). |
 | **Dependências** | Fase 1 concluída (auth, tenant, `stores`/`users`, Alembic base). |
-| **Notas** | Migração `20260417_0002`; rotas em [README.md](../../README.md) na raiz; OpenAPI em [doc/api/openapi.json](../api/openapi.json). Reserva pessimista / timeout: backlog. Ao fechar a fase: rever secção 3 e [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |
+| **Notas** | Inventário técnico em **§10**. Próximo marco implementação: [fase-03-gestao.md](fase-03-gestao.md). |
 
 ---
 
 ## 9. Registo de execução e aderência (planejado × realizado)
 
-**Última revisão:** 2026-04-17. Compara o planejamento deste ficheiro e as decisões em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) com o código na `main` (mensagem de commit `feat(phase-2): catálogo, pedidos e estoque`).
+**Última revisão:** 2026-04-17 (§10 inventário e encerramento). Compara o planejamento deste ficheiro e as decisões em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) com o código na `main` (commits `feat(phase-2)`, `feat(vitrine)`, `docs(phase-2)`).
 
 ### 9.1 Gates DEC-14 / DEC-17 / DEC-20 (checklist pré-Fase 2)
 
@@ -159,5 +159,46 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 ### 9.5 Síntese
 
 - **Normas DEC-14 / DEC-17 / DEC-20 e RN citadas para a Fase 2:** o backend entregue está **aderente** às políticas MVP acordadas.
-- **Desvios conscientes:** envelope **DEC-06**, leitura/ajuste explícito de inventário, reserva pessimista, UI vitrine/painel — registados acima e/ou no [backlog.md](../projeto/backlog.md).
-- **Próximo passo de aderência plena ao capítulo §2 da fase:** **painel** (pedidos/stock) na UI, APIs de inventário se necessário, envelope **DEC-06** se priorizado.
+- **Desvios conscientes:** envelope **DEC-06**, leitura/ajuste explícito de inventário, reserva pessimista §12, **painel** (lista/gestão de pedidos na UI) — registados acima e no [backlog.md](../projeto/backlog.md). **Vitrine** pública e carrinho/WhatsApp foram entregues (ver §10).
+- **Próximo marco de produto:** [fase-03-gestao.md](fase-03-gestao.md) — receitas, produção idempotente, precificação e relatório financeiro mínimo.
+
+---
+
+## 10. Inventário consolidado de entregas (encerramento documental)
+
+**Data de registo:** 2026-04-17. Resume o que existe na `main` para esta fase; commits de referência usam prefixos `feat(phase-2)`, `docs(phase-2)`, `feat(vitrine)`.
+
+### 10.1 Backend
+
+| Área | Conteúdo |
+|------|----------|
+| **Migração** | `backend/alembic/versions/20260417_0002_phase2_catalog_orders_stock.py` — `categories`, `products`, `inventory_items`, `inventory_batches`, `orders`, `order_items`, `order_status_history`, `order_stock_allocations`, `stock_movements`. |
+| **Modelos** | `app/models/enums.py`, `category.py`, `product.py`, `inventory.py`, `order.py`; relações em `store.py`. |
+| **Serviços** | `app/services/stock.py` (baixa FEFO/FIFO, reversão); `app/services/order_flow.py` (transições DEC-14, `needs_stock_commit`). |
+| **API autenticada** | `GET/POST /api/v1/categories`, `DELETE /categories/{id}`; `GET/POST /api/v1/products`, `GET /products/{id}`; `GET/POST /api/v1/orders`, `GET /orders/{id}`, `PATCH /orders/{id}/status`; `Idempotency-Key` opcional em `POST /orders`. |
+| **API pública (vitrine)** | `GET /api/v1/public/stores/{slug}` (`theme.vitrine`: emoji, WhatsApp, redes); `GET .../categories`; `GET .../products` (com `category_slug`); `GET .../products/{product_id}`; produtos com `category_slug` / `category_name` para filtros. |
+| **Testes** | `backend/tests/test_phase2_orders.py`, `test_public_vitrine.py` (+ conftest com modelos Alembic). |
+
+### 10.2 Frontend (Next.js 14)
+
+| Área | Conteúdo |
+|------|----------|
+| **Rotas** | `/loja/[slug]` — catálogo (busca, filtros, grade \| lista, rail de sugestões, carrinho `localStorage`, sheet checkout, link **WhatsApp**); `/loja/[slug]/p/[productId]` — detalhe e atalho para o cardápio. |
+| **Componentes / libs** | `components/vitrine/CatalogView.tsx`, `ProductDetail.tsx`; `lib/vitrine/cart-context.tsx`, `server-fetch.ts`, `types.ts`, `whatsapp.ts`, `product-emoji.ts`. |
+| **Tema** | Cores e sombras alinhadas ao mockup `doc/mockups/loja-vitrine-layout-sugestao.html` (`tailwind` `loja-*`, `max-w-vitrine`). |
+
+### 10.3 Documentação e contrato
+
+| Artefacto | Local |
+|-----------|--------|
+| OpenAPI | `doc/api/openapi.json` (regenerar com `make openapi-export`). |
+| Execução | `doc/execucao/CHANGELOG-FASES.md` (entradas Fase 2 / vitrine). |
+| Raiz | `README.md` — rotas API e nota `stores.theme.vitrine` para WhatsApp. |
+
+### 10.4 Pendências explícitas (não bloqueiam início da Fase 3)
+
+- UI do **painel** para listar/alterar pedidos (API já existe).
+- **Reserva de stock + timeout** §12; **envelope DEC-06** em todas as rotas.
+- **GET /inventory** ou ajustes manuais de estoque dedicados.
+- **RF-CA-11** (fitas destaque / imagens) — sem campos na API; **MA-03** storage.
+- Relatórios **HTML** de testes (critério opcional §3).
