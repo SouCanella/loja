@@ -34,6 +34,8 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 
 **Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
+**Cobertura alargada de rotas e auth:** `test_coverage_gaps.py` (JWT, refresh, rate limit, receitas, vitrine, v2). Referência global: `pytest --cov=app` ~**97%** — [qualidade-e-conformidade §1](../projeto/qualidade-e-conformidade.md#1-verificações-automáticas-gate-local-e-ci).
+
 ## 3. Frontend unitário (Vitest)
 
 | Item | Valor |

@@ -2,7 +2,7 @@
 
 **Propósito:** definir o que é obrigatório ao **adicionar ou alterar rotas** REST: documentação OpenAPI, testes de contrato e cobertura mínima de erros e validação.
 
-**Última actualização:** 2026-04-19.
+**Última actualização:** 2026-04-19 (2).
 
 ---
 
@@ -47,6 +47,9 @@ Não é necessário duplicar testes de **lógica de negócio** já cobertos em `
 | Rotas públicas | `test_http_contracts_public.py` |
 | v2 / envelope | `test_http_contracts_v2.py` |
 | Registo rápido de loja para testes | `contract_helpers.py`, fixtures em `conftest.py` |
+| Cobertura alargada (erros de domínio, JWT, v2) | `test_coverage_gaps.py` |
+
+**Referência de cobertura:** `cd backend && pytest tests/ --cov=app` — alvo de referência no repositório ~**97%** em `app` (ver [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md)).
 
 ---
 

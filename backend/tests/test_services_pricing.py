@@ -97,3 +97,47 @@ def test_estimate_recipe_unit_cost(db_session: Session) -> None:
     unit = estimate_recipe_unit_cost(db_session, recipe)
     # (5 kg * 2 R$/kg) / 10 unidades = 1 R$/un
     assert unit == Decimal("1")
+
+
+def test_estimate_recipe_unit_cost_zero_yield_returns_zero(db_session: Session) -> None:
+    sid = uuid.uuid4()
+    db_session.add(Store(id=sid, name="Z", slug=f"z-{sid.hex[:8]}"))
+    flour = InventoryItem(id=uuid.uuid4(), store_id=sid, name="F", unit="kg")
+    db_session.add(flour)
+    db_session.add(
+        InventoryBatch(
+            id=uuid.uuid4(),
+            item_id=flour.id,
+            quantity_available=Decimal("1"),
+            unit_cost=Decimal("1"),
+        )
+    )
+    prod_item = InventoryItem(id=uuid.uuid4(), store_id=sid, name="P", unit="un")
+    db_session.add(prod_item)
+    product = Product(
+        id=uuid.uuid4(),
+        store_id=sid,
+        inventory_item_id=prod_item.id,
+        name="P",
+        price=Decimal("1"),
+        active=True,
+    )
+    db_session.add(product)
+    recipe = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=product.id,
+        yield_quantity=Decimal("0"),
+        time_minutes=None,
+    )
+    db_session.add(recipe)
+    db_session.add(
+        RecipeItem(
+            id=uuid.uuid4(),
+            recipe_id=recipe.id,
+            inventory_item_id=flour.id,
+            quantity=Decimal("1"),
+        )
+    )
+    db_session.commit()
+    assert estimate_recipe_unit_cost(db_session, recipe) == Decimal("0")

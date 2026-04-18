@@ -1,7 +1,7 @@
 # Qualidade e conformidade com a documentação normativa
 
 **Propósito:** registar o estado da implementação face às propostas de [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md), [documento_enterprise.md](../documento_enterprise.md) e [decisoes-e-pendencias.md](decisoes-e-pendencias.md).  
-**Última auditoria:** 2026-04-19 (2) — relatório por produto + `/api/v2` envelope piloto.
+**Última auditoria:** 2026-04-19 (3) — cobertura global `app` ~**97%** + `test_coverage_gaps.py`.
 
 ---
 
@@ -11,11 +11,11 @@
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes backend | `pytest tests/ -q` — **81** testes | Inclui `test_http_contracts_*.py` (contrato HTTP), `test_api_v2_envelope.py`, fluxos de domínio e serviços. |
+| Testes backend | `pytest tests/ -q` — **119** testes | Contratos HTTP (`test_http_contracts_*`), lacunas de rotas/JWT (`test_coverage_gaps.py`), `test_api_v2_envelope.py`, fluxos de domínio e `test_services_*`. |
 | Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~94%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
 | Testes frontend | `npm run test` (Vitest) | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` com `fetch` / `localStorage` mock. |
 | E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
-| Cobertura global `app` (referência) | `pytest --cov=app` | Total ~86%+ conforme restantes módulos. |
+| Cobertura global `app` (referência) | `pytest --cov=app` | Total ~**97%** (referência 2026-04); restam sobretudo ramos raros (`IntegrityError` em produção, `init_db`, ramos defensivos em `stock` / `me`). |
 | Contrato HTTP | `make openapi-export` → [doc/api/openapi.json](../api/openapi.json) | **RNF-DevEx-08**. |
 | **CI (GitHub Actions)** | Workflow `CI` em push/PR para `main` | Backend: Ruff + pytest serviços ≥90%. Frontend: lint, Vitest, build, Playwright (`PW_SERVER_ONLY`). |
 
@@ -52,6 +52,7 @@
 | **DEC-10** FieldHelp | Ajuda contextual não está em todos os campos do painel (receitas, pedidos, etc.). | Incrementar por área conforme prioridade UX. |
 | **RNF-SEC-03 / DEC-16** cookie httpOnly | Refresh entregue em JSON + `localStorage` no cliente; cookie httpOnly **não** aplicado. | Evolução de segurança quando houver mesmo domínio API+front ou proxy BFF. |
 | **RNF-Ops-01** logs estruturados | MVP sem request id obrigatório em todos os caminhos. | Fase 4 / observabilidade. |
+| Cobertura `app` ~3% residual | Ramos difíceis de reproduzir sem corrida ou hacks (`POST /production` `IntegrityError` concorrente; `GET /me` com utilizador inconsistente; `init_db` / `get_db` fora do `TestClient`). | Aceite como risco baixo; reavaliar se a API ganhar mais complexidade. |
 
 ---
 
@@ -63,8 +64,8 @@
 | `tests/test_phase2_orders.py` | Pedidos, stock, cancelamento |
 | `tests/test_public_vitrine.py` | Catálogo público |
 | `tests/test_phase3_production.py` | Receitas, produção idempotente, relatório financeiro |
-| `tests/test_services_order_flow.py` | `is_transition_allowed_mvp`, `needs_stock_commit` (parametrizado) |
-| `tests/test_services_pricing.py` | `weighted_average_unit_cost`, `estimate_recipe_unit_cost` |
+| `tests/test_services_order_flow.py` | `is_transition_allowed_mvp`, `needs_stock_commit` (parametrizado), `apply_status_change` transição inválida |
+| `tests/test_services_pricing.py` | `weighted_average_unit_cost`, `estimate_recipe_unit_cost`, rendimento zero |
 | `tests/test_me_vitrine_whatsapp.py` | `GET /me` com `vitrine_whatsapp` após `stores.theme` |
 | `tests/test_services_production.py` | FEFO multi-lote, receita apagada, stock insuficiente, validações `execute_production` |
 | `tests/test_inventory_items_crud.py` | CRUD `/inventory-items`, delete bloqueado |
@@ -75,6 +76,7 @@
 | `tests/test_http_contracts_validation_bodies.py` | 422/404 em PATCH/POST/GET autenticados |
 | `tests/test_http_contracts_public.py` | Vitrine pública — slug inexistente 404 |
 | `tests/test_http_contracts_v2.py` | Envelope v2 — refresh e registo incompleto 422 |
+| `tests/test_coverage_gaps.py` | JWT/deps, rate limit, receitas/produtos/categorias, pedidos, produção, público, auth v2, refresh, inventário |
 
 Política de novas rotas: [criterios-testes-http-api.md](../execucao/criterios-testes-http-api.md).
 
