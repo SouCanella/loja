@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-18 (Produção serviço, Vitest painel-api, E2E Playwright)
+
+- **Pytest:** `test_services_production.py` — stock insuficiente, validações `execute_production`; cobertura `app/services` ~94%, CI **≥90%**.
+- **Vitest:** `__tests__/painel-api.test.ts`; `vitest.config` com alias `@/`.
+- **Playwright:** `e2e/smoke.spec.ts`, `playwright.config.ts` (standalone + `PW_SERVER_ONLY`); CI frontend alargado.
+
 ## 2026-04-17 (Testes serviço + CI GitHub Actions)
 
 - **Pytest:** `test_services_order_flow.py`, `test_services_pricing.py`, `test_me_vitrine_whatsapp.py`; total **25** casos; cobertura **`app/services`** ~90% (gate **≥88%**).

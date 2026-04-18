@@ -1,4 +1,4 @@
-# CI mínimo: lint + testes backend + lint + build frontend (RNF-DevEx-02/03/04).
+# CI: backend (Ruff, pytest serviços) + frontend (lint, Vitest, build, Playwright E2E).
 name: CI
 
 on:
@@ -24,7 +24,7 @@ jobs:
       - name: Ruff
         run: ruff check app tests
       - name: Pytest + cobertura serviços
-        run: pytest tests/ -q --cov=app/services --cov-fail-under=88
+        run: pytest tests/ -q --cov=app/services --cov-fail-under=90
 
   frontend:
     runs-on: ubuntu-latest
@@ -42,5 +42,13 @@ jobs:
         run: npm ci
       - name: ESLint
         run: npm run lint
-      - name: Build
+      - name: Vitest
+        run: npm run test
+      - name: Build (Next standalone)
         run: npm run build
+      - name: Playwright (Chromium)
+        run: npx playwright install --with-deps chromium
+      - name: E2E smoke
+        run: npm run test:e2e
+        env:
+          PW_SERVER_ONLY: "1"

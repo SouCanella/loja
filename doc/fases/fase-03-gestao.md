@@ -189,4 +189,4 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 ### 10.8 Qualidade e conformidade com normas
 
 - Auditoria face a **RNF-*** (testes, idempotência, DevEx) e desvios conhecidos (envelope API, FieldHelp, E2E): [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
-- **Resumo:** `make lint` e `pytest` (**25+** casos) verdes; pacote **`app/services`** ~**90%** com gate CI ≥88%; cobertura global `app` ver relatório `pytest --cov=app` (**RNF-QA-01** progressivo). Workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+- **Resumo:** `make lint`, `pytest` (**32+** casos), `npm run test` (Vitest), `npm run test:e2e` (Playwright smoke); pacote **`app/services`** ~**94%** com gate CI ≥**90%**. Workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).

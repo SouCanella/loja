@@ -33,6 +33,7 @@ backend/htmlcov/
 backend/reports/
 frontend/coverage/
 frontend/playwright-report/
+frontend/test-results/
 
 # IDEs
 .idea/
