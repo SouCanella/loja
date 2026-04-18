@@ -6,10 +6,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   apiPainelJson,
+  draftOrderWhatsAppMessage,
   formatBRL,
   ORDER_STATUS_VALUES,
   orderStatusLabel,
   PainelApiError,
+  whatsAppUrl,
 } from "@/lib/painel-api";
 
 type OrderDetail = {
@@ -31,12 +33,18 @@ type ProductRow = {
   name: string;
 };
 
+type Me = {
+  store_name: string;
+  vitrine_whatsapp: string | null;
+};
+
 export default function PainelPedidoDetalhePage() {
   const params = useParams();
   const id = typeof params.id === "string" ? params.id : "";
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [products, setProducts] = useState<ProductRow[] | null>(null);
+  const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<string | null>(null);
@@ -47,10 +55,12 @@ export default function PainelPedidoDetalhePage() {
     void Promise.all([
       apiPainelJson<OrderDetail>(`/api/v1/orders/${id}`),
       apiPainelJson<ProductRow[]>("/api/v1/products"),
+      apiPainelJson<Me>("/api/v1/me"),
     ])
-      .then(([o, plist]) => {
+      .then(([o, plist, profile]) => {
         setOrder(o);
         setProducts(plist);
+        setMe(profile);
         setPendingStatus(o.status);
       })
       .catch((e: unknown) => {
@@ -82,6 +92,25 @@ export default function PainelPedidoDetalhePage() {
     if (!order) return 0;
     return order.items.reduce((acc, it) => acc + lineTotal(it.quantity, it.unit_price), 0);
   }, [order]);
+
+  const whatsAppHref = useMemo(() => {
+    if (!order || !me?.vitrine_whatsapp) return null;
+    const lines = order.items.map((it) => ({
+      productName: nameByProductId.get(it.product_id) ?? "Produto",
+      qtyLabel: String(Number.parseFloat(it.quantity)),
+      lineTotal: formatBRL(lineTotal(it.quantity, it.unit_price)),
+    }));
+    const text = draftOrderWhatsAppMessage({
+      storeName: me.store_name,
+      orderIdShort: order.id.slice(0, 8),
+      orderIdFull: order.id,
+      statusLabel: orderStatusLabel(order.status),
+      lines,
+      total: formatBRL(orderTotal),
+      customerNote: order.customer_note,
+    });
+    return whatsAppUrl(me.vitrine_whatsapp, text);
+  }, [order, me, nameByProductId, orderTotal]);
 
   async function applyStatus(next: string) {
     if (!order || next === order.status) return;
@@ -186,6 +215,27 @@ export default function PainelPedidoDetalhePage() {
               <p className="mt-4 text-sm text-slate-700">
                 <span className="font-medium text-slate-900">Nota do cliente: </span>
                 {order.customer_note}
+              </p>
+            ) : null}
+            {whatsAppHref ? (
+              <p className="mt-4">
+                <a
+                  href={whatsAppHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+                >
+                  WhatsApp — partilhar resumo do pedido
+                </a>
+                <span className="mt-1 block text-xs text-slate-500">
+                  Usa o número configurado em <code className="rounded bg-slate-100 px-1">theme.vitrine.whatsapp</code> da loja.
+                  Abre o WhatsApp Web ou a app com uma mensagem de rascunho (pode editar antes de enviar).
+                </span>
+              </p>
+            ) : me && !me.vitrine_whatsapp ? (
+              <p className="mt-4 text-xs text-slate-500">
+                Para atalho WhatsApp, defina o telefone da vitrine em{" "}
+                <code className="rounded bg-slate-100 px-1">stores.theme</code> (ver README).
               </p>
             ) : null}
           </section>

@@ -16,5 +16,7 @@ class UserMeResponse(BaseModel):
     store_slug: str
     store_name: str
     created_at: datetime
+    # `stores.theme.vitrine.whatsapp` — usado no painel (atalho para cliente)
+    vitrine_whatsapp: str | None = None
 
     model_config = {"from_attributes": True}

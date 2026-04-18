@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Painel — pedidos: filtros, novo pedido, WhatsApp)
+
+- **Next.js:** `/painel/pedidos` — filtro por estado (contagens); `/painel/pedidos/novo` — `POST /orders` com linhas e `Idempotency-Key`; detalhe — botão WhatsApp com texto de rascunho (`draftOrderWhatsAppMessage`).
+- **API:** `GET /me` inclui **`vitrine_whatsapp`** (derivado de `stores.theme.vitrine.whatsapp`, alinhado à vitrine pública).
+
 ## 2026-04-17 (Painel — pedidos)
 
 - **Next.js:** `/painel/pedidos`, `/painel/pedidos/[id]` — lista `GET /orders`, detalhe, itens com nomes via `GET /products`, alteração de estado `PATCH /orders/{id}/status` (confirmação ao cancelar).

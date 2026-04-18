@@ -80,3 +80,39 @@ const ORDER_STATUS_LABELS: Record<string, string> = {
 export function orderStatusLabel(status: string): string {
   return ORDER_STATUS_LABELS[status] ?? status;
 }
+
+/** Digits only — `wa.me/{digits}` */
+export function whatsappDigits(raw: string): string {
+  return raw.replace(/\D/g, "");
+}
+
+/** Abre conversa WhatsApp com texto (UTF-8). Requer pelo menos um dígito no telefone. */
+export function whatsAppUrl(phone: string, text: string): string | null {
+  const d = whatsappDigits(phone);
+  if (!d) return null;
+  const u = new URL(`https://wa.me/${d}`);
+  u.searchParams.set("text", text);
+  return u.toString();
+}
+
+/** Rascunho de mensagem para contactar o cliente (lojista edita antes de enviar). */
+export function draftOrderWhatsAppMessage(opts: {
+  storeName: string;
+  orderIdShort: string;
+  orderIdFull: string;
+  statusLabel: string;
+  lines: { productName: string; qtyLabel: string; lineTotal: string }[];
+  total: string;
+  customerNote: string | null;
+}): string {
+  const head = `*${opts.storeName}*\nPedido #${opts.orderIdShort}\nEstado: ${opts.statusLabel}\n`;
+  const body = opts.lines
+    .map((l) => `• ${l.productName} — ${l.qtyLabel} → ${l.lineTotal}`)
+    .join("\n");
+  const tailParts = [`\n*Total:* ${opts.total}`];
+  if (opts.customerNote) {
+    tailParts.push(`\n_Nota:_ ${opts.customerNote}`);
+  }
+  tailParts.push(`\n\n_Ref.:_ ${opts.orderIdFull}`);
+  return head + (body ? `\n${body}` : "\n(sem itens)") + tailParts.join("");
+}

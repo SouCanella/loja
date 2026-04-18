@@ -118,7 +118,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 ### 9.1 Próximos incrementos (backlog / não bloqueantes)
 
-- **Painel — pedidos:** ~~listagem e gestão de estados~~ — entregue (`/painel/pedidos`, detalhe com `PATCH …/status`); filtros e atalhos WhatsApp podem evoluir.
+- **Painel — pedidos:** entregue — lista com **filtro por estado**, **`/painel/pedidos/novo`** (`POST /orders` + `Idempotency-Key`), detalhe com **`PATCH …/status`**, atalho **WhatsApp** (`wa.me` com rascunho) quando `GET /me` expõe `vitrine_whatsapp` (tema da loja). Evoluções possíveis: notificações, impressão, múltiplos números.
 - **Insumos:** `POST`/`PATCH` em `inventory_items` ou fluxo dedicado + UI mínima (além do `GET` actual).
 - **Margem configurável** por loja ou receita (substituir percentagem fixa na UI).
 - Endpoint opcional de **preço sugerido** explícito ou sincronização com `products.price`.
@@ -154,7 +154,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | POST | `/production` | Corpo: receita, quantidade produzida; header **`Idempotency-Key`** recomendado. |
 | GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). |
 | GET | `/inventory-items` | Lista `id`, `name`, `unit` dos insumos da loja (para formulários de receita). |
-| GET | `/me` | Resposta inclui `store_slug` e `store_name` (atalho à vitrine no painel). |
+| GET | `/me` | `store_slug`, `store_name`, **`vitrine_whatsapp`** (opcional, de `theme.vitrine.whatsapp`). |
 
 **Pedidos (API Fase 2, usados no painel):** `GET` / `POST` `/orders`, `GET` `/orders/{order_id}`, `PATCH` `/orders/{order_id}/status`. O `GET` lista inclui **`created_at`** em cada `OrderOut`.
 
@@ -167,13 +167,14 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | Rota | Ficheiro | Função |
 |------|----------|--------|
 | `/painel` | `frontend/app/painel/page.tsx` | Resumo, dados de `/me`, link para `/loja/{store_slug}`. |
-| `/painel/pedidos` | `frontend/app/painel/pedidos/page.tsx` | Lista `GET /orders` (com `created_at`); link para detalhe. |
-| `/painel/pedidos/[id]` | `frontend/app/painel/pedidos/[id]/page.tsx` | Itens + total; `PATCH /orders/{id}/status`; nomes de produto via `GET /products`. |
+| `/painel/pedidos` | `frontend/app/painel/pedidos/page.tsx` | Lista `GET /orders`; **filtro por estado**; botão **Novo pedido**. |
+| `/painel/pedidos/novo` | `frontend/app/painel/pedidos/novo/page.tsx` | `POST /orders` (linhas de produto + nota); `Idempotency-Key`; redirecciona ao detalhe. |
+| `/painel/pedidos/[id]` | `frontend/app/painel/pedidos/[id]/page.tsx` | Itens + total; `PATCH /orders/{id}/status`; produtos via `GET /products`; **WhatsApp** se `/me.vitrine_whatsapp` existir (`draftOrderWhatsAppMessage`, `whatsAppUrl`). |
 | `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo estimado, sugestão de preço indicativa, **Produzir lote** (`POST /production` + `Idempotency-Key`). |
 | `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita com dropdown de insumos (`GET /inventory-items`). |
 | `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /reports/financial` por intervalo; botão **Descarregar CSV** (gerado no browser). |
 | Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Relatório / Sessão. |
-| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, token em `localStorage`, `formatBRL`, `orderStatusLabel` / `ORDER_STATUS_VALUES`, erros tipados. |
+| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, `formatBRL`, `orderStatusLabel`, `ORDER_STATUS_VALUES`, `whatsappDigits`, `whatsAppUrl`, `draftOrderWhatsAppMessage`, erros tipados. |
 
 ### 10.6 Documentação de contrato e raiz do repositório
 

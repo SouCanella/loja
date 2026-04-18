@@ -11,6 +11,7 @@ type Me = {
   store_id: string;
   store_slug: string;
   store_name: string;
+  vitrine_whatsapp?: string | null;
 };
 
 export default function PainelHomePage() {
