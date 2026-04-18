@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Painel — receitas, produção, relatório + CSV)
+
+- **API:** `GET /api/v1/inventory-items`; `GET /api/v1/me` com `store_slug` e `store_name`.
+- **Next.js:** `/painel` com navegação; `/painel/receitas` (Produzir lote com `Idempotency-Key`); `/painel/receitas/nova`; `/painel/relatorio` com intervalo de datas e export CSV; `lib/painel-api.ts`.
+
 ## 2026-04-17 (Fase 3 — receitas, produção idempotente, relatório financeiro)
 
 - **Migração:** `20260417_0003` — `recipes`, `recipe_items`, `production_runs`; `stock_movements.production_run_id`; tipos de movimento `production_out`, `production_in`.
