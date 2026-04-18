@@ -65,7 +65,7 @@ Escopo MVP: autenticação, catálogo, pedidos, estoque básico, receitas, preci
 | ID | Requisito | Estado | Dependência |
 |----|-----------|--------|-------------|
 | MVP-01 | Autenticação (JWT) | parcial | Fase 1 (access token); refresh token — backlog / DEC-16 |
-| MVP-02 | Catálogo | parcial | API + modelo Fase 2; **UI** vitrine/painel — pendente |
+| MVP-02 | Catálogo | parcial | Vitrine `/loja/[slug]`; imagens S3 e destaques RF-CA-11 — evolução |
 | MVP-03 | Pedidos | parcial | API + fluxo status/stock Fase 2; **UI** — pendente |
 | MVP-04 | Estoque básico | parcial | Lotes + baixa/reversão na API; leitura/ajuste dedicados e UI — ver [fase-02 §9](../fases/fase-02-operacao.md) |
 | MVP-05 | Receitas | parcial | Fase 3 |

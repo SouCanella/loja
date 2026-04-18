@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Fase 2 — vitrine Next alinhada ao mockup)
+
+- **API pública:** `GET /api/v1/public/stores/{slug}` (nome, `theme.vitrine`: emoji, WhatsApp, redes); `GET .../categories`; `GET .../products/{product_id}`; produtos com `category_*` para filtros na vitrine.
+- **Frontend:** `/loja/[slug]` — sticky bar, hero, busca, filtros por categoria, grade|lista (RF-CF-08), rail de sugestões, carrinho em `localStorage`, sheet de checkout e link **wa.me**; `/loja/[slug]/p/[id]` detalhe; tema de cores `loja-*` (mockup). Tipografia: pilha sistema + Georgia (sem `next/font` em build offline).
+- **Testes:** `test_public_vitrine.py` cobre fluxo público.
+
 ## 2026-04-17 (Fase 2 — backend catálogo, pedidos, estoque)
 
 - **Migração:** `20260417_0002` — `categories`, `products`, `inventory_items`, `inventory_batches`, `orders`, `order_items`, `order_status_history`, `order_stock_allocations`, `stock_movements`; enum pedido alinhado a **DEC-14**; `idempotency_key` único por loja em `orders`.

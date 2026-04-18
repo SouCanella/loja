@@ -613,6 +613,146 @@
         }
       }
     },
+    "/api/v1/public/stores/{store_slug}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public Get Store",
+        "operationId": "public_get_store_api_v1_public_stores__store_slug__get",
+        "parameters": [
+          {
+            "name": "store_slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Store Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorePublicOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/stores/{store_slug}/categories": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public List Categories",
+        "operationId": "public_list_categories_api_v1_public_stores__store_slug__categories_get",
+        "parameters": [
+          {
+            "name": "store_slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Store Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryPublicOut"
+                  },
+                  "title": "Response Public List Categories Api V1 Public Stores  Store Slug  Categories Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/stores/{store_slug}/products/{product_id}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public Get Product",
+        "operationId": "public_get_product_api_v1_public_stores__store_slug__products__product_id__get",
+        "parameters": [
+          {
+            "name": "store_slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Store Slug"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductPublicOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/public/stores/{store_slug}/products": {
       "get": {
         "tags": [
@@ -805,6 +945,30 @@
           "slug"
         ],
         "title": "CategoryOut"
+      },
+      "CategoryPublicOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "title": "CategoryPublicOut"
       },
       "HTTPValidationError": {
         "properties": {
@@ -1220,6 +1384,40 @@
             "type": "string",
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Price"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "category_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Slug"
+          },
+          "category_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Name"
           }
         },
         "type": "object",
@@ -1295,6 +1493,81 @@
           "user_id"
         ],
         "title": "RegisterResponse"
+      },
+      "SocialNetworkLink": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "default": ""
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon",
+            "default": "link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "SocialNetworkLink"
+      },
+      "StorePublicOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "tagline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tagline"
+          },
+          "logo_emoji": {
+            "type": "string",
+            "title": "Logo Emoji",
+            "default": "🍰"
+          },
+          "whatsapp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Whatsapp"
+          },
+          "social_networks": {
+            "items": {
+              "$ref": "#/components/schemas/SocialNetworkLink"
+            },
+            "type": "array",
+            "title": "Social Networks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "title": "StorePublicOut"
       },
       "TokenResponse": {
         "properties": {

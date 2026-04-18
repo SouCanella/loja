@@ -1,17 +1,31 @@
-type Props = {
-  params: { slug: string };
-};
+import { CatalogView } from "@/components/vitrine/CatalogView";
+import {
+  fetchCategoriesPublic,
+  fetchProductsPublic,
+  fetchStorePublic,
+} from "@/lib/vitrine/server-fetch";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-export default function LojaVitrinePage({ params }: Props) {
-  return (
-    <main className="mx-auto flex min-h-screen max-w-lg flex-col px-4 py-10">
-      <h1 className="text-2xl font-semibold text-slate-900">Loja</h1>
-      <p className="mt-2 text-slate-600">
-        Vitrine pública — slug: <span className="font-mono text-slate-800">{params.slug}</span>
-      </p>
-      <p className="mt-4 text-sm text-slate-500">
-        Fase 1 · conteúdo da loja (catálogo) nas fases seguintes.
-      </p>
-    </main>
-  );
+type Props = { params: { slug: string } };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const store = await fetchStorePublic(params.slug);
+  if (!store) return { title: "Loja" };
+  return {
+    title: `${store.name} — Vitrine`,
+    description: store.tagline ?? `Pedidos em ${store.name}`,
+  };
+}
+
+export default async function LojaVitrinePage({ params }: Props) {
+  const store = await fetchStorePublic(params.slug);
+  if (!store) notFound();
+
+  const [categories, products] = await Promise.all([
+    fetchCategoriesPublic(params.slug),
+    fetchProductsPublic(params.slug),
+  ]);
+
+  return <CatalogView store={store} categories={categories} products={products} />;
 }

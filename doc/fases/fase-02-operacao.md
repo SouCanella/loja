@@ -59,7 +59,7 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 ## 3. Critérios de aceite
 
-- [x] CRUD ou leitura gestão de produtos isolado por loja — **API** (`/categories`, `/products`); **frontend** vitrine/painel ainda por implementar.
+- [x] CRUD ou leitura gestão de produtos isolado por loja — **API** (`/categories`, `/products`); **vitrine** `/loja/[slug]` + detalhe; **painel** gestão de pedidos na UI — evolução.
 - [x] Pedido criado com itens; impossível acessar pedido de outra loja — **API** + testes de isolamento.
 - [ ] Reserva de estoque + timeout (§12) — **fora do escopo MVP atual**; `Idempotency-Key` em `POST /orders` (unicidade por loja). Ver [backlog.md](../projeto/backlog.md).
 - [x] Estoque reflete movimentações básicas (baixa **DEC-17** ao **confirmar**, reversão ao **cancelar**; FEFO com `expiration_date` null por último).
@@ -107,7 +107,7 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `em progresso` — **backend** (catálogo, pedidos, estoque **DEC-14/17/20**) implementado; **frontend** (vitrine, carrinho, pedidos) pendente. |
+| **Status** | `em progresso` — **backend** + **vitrine Next** (catálogo, carrinho, WhatsApp); **painel** com lista/gestão de pedidos na UI ainda por priorizar. |
 | **Data de conclusão** | — (fase aberta até UI e critérios restantes) |
 | **Dependências** | Fase 1 concluída (auth, tenant, `stores`/`users`, Alembic base). |
 | **Notas** | Migração `20260417_0002`; rotas em [README.md](../../README.md) na raiz; OpenAPI em [doc/api/openapi.json](../api/openapi.json). Reserva pessimista / timeout: backlog. Ao fechar a fase: rever secção 3 e [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |
@@ -151,7 +151,8 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 | Entrega | Aderência |
 |---------|-----------|
-| Catálogo, detalhe, carrinho, lista de pedidos (mobile-first) | **Pendente** — não há UI Fase 2 além dos stubs herdados da Fase 1. |
+| Catálogo, detalhe, carrinho (mobile-first), alinhado ao mockup `doc/mockups/loja-vitrine-layout-sugestao.html` | **Vitrine** — `/loja/[slug]`, `/loja/[slug]/p/[id]`; tema de cores e layout grade/lista; carrinho em `localStorage`; finalização via **WhatsApp** (`store.theme.vitrine.whatsapp`). **Destaques RF-CA-11** (fitas) e imagens reais: não modelados na API — emojis como placeholder. |
+| Lista de pedidos (cliente / staff no painel) | **Parcial** — pedidos na API; **UI painel** ainda stub. |
 | Relatórios HTML de testes (critério opcional) | **Opcional** — `make test` (pytest + Vitest) sem relatório HTML obrigatório. |
 | Reserva + timeout §12 | **Fora do escopo** explícito do MVP atual; documentado como backlog (secção 3). |
 
@@ -159,4 +160,4 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 
 - **Normas DEC-14 / DEC-17 / DEC-20 e RN citadas para a Fase 2:** o backend entregue está **aderente** às políticas MVP acordadas.
 - **Desvios conscientes:** envelope **DEC-06**, leitura/ajuste explícito de inventário, reserva pessimista, UI vitrine/painel — registados acima e/ou no [backlog.md](../projeto/backlog.md).
-- **Próximo passo de aderência plena ao capítulo §2 da fase:** completar **frontend** §2.3 e, se priorizado, APIs de inventário e envelope comum.
+- **Próximo passo de aderência plena ao capítulo §2 da fase:** **painel** (pedidos/stock) na UI, APIs de inventário se necessário, envelope **DEC-06** se priorizado.
