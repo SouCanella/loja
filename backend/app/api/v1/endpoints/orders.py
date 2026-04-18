@@ -11,6 +11,7 @@ from app.models.product import Product
 from app.models.user import User
 from app.schemas.orders import OrderCreate, OrderDetailOut, OrderOut, OrderStatusPatch
 from app.services.order_flow import apply_status_change
+from app.services.order_queries import list_orders_for_store
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -23,12 +24,7 @@ def list_orders(
     db: Annotated[Session, Depends(get_db)],
     current: Annotated[User, Depends(get_current_user)],
 ) -> list[Order]:
-    q = (
-        select(Order)
-        .where(Order.store_id == current.store_id)
-        .order_by(Order.created_at.desc())
-    )
-    return list(db.scalars(q))
+    return list_orders_for_store(db, current.store_id)
 
 
 @router.post("", response_model=OrderDetailOut, status_code=status.HTTP_201_CREATED)

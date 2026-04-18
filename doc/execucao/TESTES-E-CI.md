@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-18.
+**Última actualização:** 2026-04-19.
 
 ---
 
@@ -13,6 +13,7 @@
 | Comando | O quê corre |
 |---------|-------------|
 | `make test` | `pytest` em `backend/tests/` + `npm run test` (Vitest) em `frontend/`. |
+| `make dev` | Postgres (Docker) + `uvicorn --reload` + `next dev` — ver [`scripts/dev-local.sh`](../../scripts/dev-local.sh); requer `.env` com `DATABASE_URL` para `localhost:5433` (ou `POSTGRES_HOST_PORT`). |
 | `make lint` | Ruff (`backend/app`, `backend/tests`) + ESLint (`frontend/`). |
 | `make test-report` | Pytest com relatório HTML + cobertura `app`; frontend `test:coverage`. |
 
@@ -44,12 +45,14 @@ Comando: `cd frontend && npm run test` (ou `npm run test:coverage`).
 | Config | `frontend/playwright.config.ts` |
 | Testes | `frontend/e2e/*.spec.ts` |
 | Documentação de uso | [`frontend/e2e/README.md`](../../frontend/e2e/README.md) |
-| Smoke actual | Página `/login` (sem dependência da API em execução para o HTML) |
+| Smoke | `smoke.spec.ts` — `/login` (HTML apenas). |
+| Opcional (API + credenciais) | `login-painel.spec.ts` — preenche login e verifica `/painel`; **omitido** se `E2E_EMAIL` / `E2E_PASSWORD` não estiverem definidos. |
 
 Variáveis úteis:
 
 - **`PW_SERVER_ONLY=1`** — não volta a fazer `build`; sobe só `node .next/standalone/server.js` (usar depois de `npm run build`, ex. no CI).
 - **`PW_REUSE_SERVER=1`** — não arranca `webServer`; espera servidor já a correr em `http://127.0.0.1:3000`.
+- **`E2E_EMAIL`**, **`E2E_PASSWORD`** — utilizador real (ou de staging) para o teste de login no painel; a API deve estar acessível em `NEXT_PUBLIC_API_URL`.
 
 Primeira instalação dos browsers: `cd frontend && npx playwright install chromium`.
 

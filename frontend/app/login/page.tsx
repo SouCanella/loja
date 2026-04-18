@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 
 import { getApiBaseUrl } from "@/lib/api";
+import { setSessionTokens } from "@/lib/painel-api";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,10 @@ export default function LoginPage() {
         return;
       }
       if (typeof data.access_token === "string") {
-        localStorage.setItem("access_token", data.access_token);
+        setSessionTokens(
+          data.access_token,
+          typeof data.refresh_token === "string" ? data.refresh_token : null,
+        );
         setMessage("Sessão iniciada. Pode abrir o painel.");
       }
     } catch {

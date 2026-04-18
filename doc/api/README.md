@@ -27,3 +27,8 @@ Abrir no navegador: `http://127.0.0.1:8766/` (ficheiro `index.html` + `openapi.j
 
 - Esquema JSON: `GET http://localhost:8000/openapi.json`
 - UI ReDoc: `http://localhost:8000/redoc` (Swagger UI `/docs` está desativado no código)
+
+## Versões `/api/v1` e `/api/v2`
+
+- **`/api/v1`** — resposta JSON directa dos schemas (painel Next.js).
+- **`/api/v2`** — envelope **DEC-06** `{ success, data, errors }`; lista de rotas e política em [execucao/api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).

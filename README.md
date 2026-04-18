@@ -13,7 +13,8 @@ SaaS multi-tenant para gestão de lojas caseiras. Documentação canónica em [`
 ```bash
 cp .env.example .env
 make test             # cria backend/.venv se necessário (PEP 668); pytest + vitest
-make up             # Postgres + API (porta 8000) + frontend (porta 3000)
+make up             # Postgres + API (porta 8000) + frontend (porta 3000) — Docker
+make dev            # só Postgres em Docker + API (uvicorn --reload) + Next (dev) — ideal para editar código e testar páginas
 make migrate        # aplica Alembic no Postgres (com serviços no ar; DATABASE_URL em .env)
 make openapi-export # regenera doc/api/openapi.json (contrato OpenAPI offline)
 ```
@@ -21,10 +22,11 @@ make openapi-export # regenera doc/api/openapi.json (contrato OpenAPI offline)
 Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O alvo `make backend-venv` (ou qualquer alvo que dependa dele) instala dependências Python em `backend/.venv`.
 
 - API: `GET http://localhost:8000/health` (compat. Fase 0), `GET http://localhost:8000/api/v1/health`
-- Auth (Fase 1): `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/me` (Bearer)
+- Auth (Fase 1 + evolução): `POST /api/v1/auth/register`, `POST /api/v1/auth/login` (devolve `refresh_token`), `POST /api/v1/auth/refresh`, `GET /api/v1/me` (Bearer); `PATCH /api/v1/me/store-pricing` (margem % da loja)
 - Operação (Fase 2 — backend): categorias e produtos `GET/POST /api/v1/categories`, `DELETE /api/v1/categories/{id}`, `GET/POST /api/v1/products`, `GET /api/v1/products/{id}`; pedidos `GET/POST /api/v1/orders`, `GET /api/v1/orders/{id}`, `PATCH /api/v1/orders/{id}/status` (`Idempotency-Key` opcional no POST); vitrine pública `GET /api/v1/public/stores/{store_slug}`, `GET .../categories`, `GET .../products`, `GET .../products/{product_id}`
-- Gestão (Fase 3): receitas, produção e relatório como acima; **`GET /api/v1/inventory-items`** (insumos para o painel); **`GET /api/v1/me`** inclui `store_slug`, `store_name` e **`vitrine_whatsapp`** (de `stores.theme.vitrine.whatsapp`, para atalho WhatsApp no detalhe do pedido)
-- Frontend: `http://localhost:3000` — `/loja/[slug]` vitrine; `/painel` (resumo, link vitrine), `/painel/pedidos` (lista com **filtro por estado**, `/painel/pedidos/novo` **POST /orders** com `Idempotency-Key`, detalhe com estado + **WhatsApp** com rascunho do pedido se o telefone estiver configurado), `/painel/receitas`, `/painel/receitas/nova`, `/painel/relatorio`; `/login`. **WhatsApp (vitrine):** em `stores.theme` use `{"vitrine": {"whatsapp": "+5511…"}}` (ou ajuste via SQL) — o painel lê o mesmo campo via `/me`.
+- Gestão (Fase 3): receitas (margem e preço sugerido na API), produção, relatório (**`GET /api/v1/reports/financial`** com totais + **por produto**); **`/api/v1/inventory-items`** (CRUD de insumos); **`GET /api/v1/me`** inclui `store_slug`, `store_name`, **`vitrine_whatsapp`**, **`store_target_margin_percent`**
+- Contrato **DEC-06 (piloto):** prefixo **`/api/v2`** — `GET /api/v2/health`, `GET /api/v2/reports/financial` (Bearer) com corpo `{ "success", "data", "errors" }`; erros 401/422 no mesmo formato
+- Frontend: `http://localhost:3000` — `/loja/[slug]` vitrine; `/painel`, `/painel/pedidos` (lista, novo, detalhe + WhatsApp), `/painel/receitas`, `/painel/receitas/nova`, **`/painel/insumos`**, **`/painel/definicoes`**, `/painel/relatorio`; `/login`. Tema WhatsApp: `stores.theme` → `{"vitrine": {"whatsapp": "+5511…"}}` — lido via `/me`.
 - OpenAPI: esquema em [`doc/api/openapi.json`](doc/api/openapi.json) (offline; regenerar com `make openapi-export`); com API no ar: `http://localhost:8000/openapi.json` e UI ReDoc em `http://localhost:8000/redoc`
 
 Variáveis: ver [`.env.example`](.env.example) (`DATABASE_URL` com `postgresql+psycopg`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
@@ -47,6 +49,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | Marcos datados | [`doc/execucao/CHANGELOG-FASES.md`](doc/execucao/CHANGELOG-FASES.md) |
 | Qualidade vs normas (RNF, testes) | [`doc/projeto/qualidade-e-conformidade.md`](doc/projeto/qualidade-e-conformidade.md) |
 | Testes e CI (comandos, pastas, GitHub Actions) | [`doc/execucao/TESTES-E-CI.md`](doc/execucao/TESTES-E-CI.md) |
+| API v1 vs v2 (DEC-06, deprecação) | [`doc/execucao/api-v1-v2-deprecacao.md`](doc/execucao/api-v1-v2-deprecacao.md) |
 
 Comandos `make`: ver saída de `make help` (inclui `openapi-export`, `migrate`, `lint`, etc.). **Testes:** `make test` (pytest + Vitest). **E2E:** `npx playwright install chromium` uma vez; no `frontend/`, `npm run test:e2e` (sobe `next dev`) ou após `npm run build` usar `CI=true PW_SERVER_ONLY=1 npm run test:e2e` — detalhes em [`frontend/e2e/README.md`](frontend/e2e/README.md).
 

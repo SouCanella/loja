@@ -1,6 +1,7 @@
 """Testes — produção: baixa FEFO e validações de execute_production."""
 
 import uuid
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
@@ -29,6 +30,50 @@ def test_consume_insufficient_stock_raises(db_session: Session) -> None:
     run_id = uuid.uuid4()
     with pytest.raises(ValueError, match="estoque insuficiente"):
         consume_ingredient_fefo(db_session, sid, item.id, Decimal("5"), run_id)
+
+
+def test_consume_fefo_stops_when_need_satisfied_across_batches(db_session: Session) -> None:
+    """Cobre o ramo `if remaining <= 0: break` no loop FEFO."""
+    sid = uuid.uuid4()
+    db_session.add(Store(id=sid, name="L", slug=f"fefo-{sid.hex[:8]}"))
+    item = InventoryItem(id=uuid.uuid4(), store_id=sid, name="Farinha", unit="kg")
+    db_session.add(item)
+    t0 = datetime.now(UTC)
+    db_session.add_all(
+        [
+            InventoryBatch(
+                id=uuid.uuid4(),
+                item_id=item.id,
+                quantity_available=Decimal("3"),
+                unit_cost=Decimal("2"),
+                received_at=t0,
+            ),
+            InventoryBatch(
+                id=uuid.uuid4(),
+                item_id=item.id,
+                quantity_available=Decimal("10"),
+                unit_cost=Decimal("5"),
+                received_at=t0 + timedelta(seconds=1),
+            ),
+            InventoryBatch(
+                id=uuid.uuid4(),
+                item_id=item.id,
+                quantity_available=Decimal("100"),
+                unit_cost=Decimal("9"),
+                received_at=t0 + timedelta(seconds=2),
+            ),
+        ]
+    )
+    db_session.commit()
+    run_id = uuid.uuid4()
+    cost = consume_ingredient_fefo(db_session, sid, item.id, Decimal("5"), run_id)
+    # 3*2 + 2*5 = 6 + 10 = 16 (terceiro lote não é tocado)
+    assert cost == Decimal("16")
+    db_session.refresh(item)
+    batches = sorted(item.batches, key=lambda b: b.received_at or datetime.min.replace(tzinfo=UTC))
+    assert batches[0].quantity_available == Decimal("0")
+    assert batches[1].quantity_available == Decimal("8")
+    assert batches[2].quantity_available == Decimal("100")
 
 
 def test_consume_wrong_store_item_raises(db_session: Session) -> None:
@@ -231,3 +276,53 @@ def test_execute_production_product_wrong_store_raises(db_session: Session) -> N
 
     with pytest.raises(ValueError, match="produto inválido"):
         execute_production(db_session, store_id=s1, recipe=recipe, idempotency_key=None)
+
+
+def test_execute_production_raises_when_recipe_deleted(db_session: Session) -> None:
+    """Receita removida entre o objeto em memória e o reload por id."""
+    sid = uuid.uuid4()
+    db_session.add(Store(id=sid, name="Del", slug=f"del-{sid.hex[:8]}"))
+    flour = InventoryItem(id=uuid.uuid4(), store_id=sid, name="F", unit="kg")
+    fin = InventoryItem(id=uuid.uuid4(), store_id=sid, name="Bolo", unit="un")
+    db_session.add_all([flour, fin])
+    prod = Product(
+        id=uuid.uuid4(),
+        store_id=sid,
+        inventory_item_id=fin.id,
+        name="Bolo",
+        price=Decimal("10"),
+        active=True,
+    )
+    db_session.add(prod)
+    recipe = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=prod.id,
+        yield_quantity=Decimal("1"),
+        time_minutes=None,
+    )
+    db_session.add(recipe)
+    db_session.add(
+        RecipeItem(
+            id=uuid.uuid4(),
+            recipe_id=recipe.id,
+            inventory_item_id=flour.id,
+            quantity=Decimal("1"),
+        )
+    )
+    db_session.add(
+        InventoryBatch(
+            id=uuid.uuid4(),
+            item_id=flour.id,
+            quantity_available=Decimal("10"),
+            unit_cost=Decimal("1"),
+        )
+    )
+    db_session.commit()
+
+    recipe_ref = recipe
+    db_session.delete(recipe)
+    db_session.commit()
+
+    with pytest.raises(ValueError, match="receita não encontrada"):
+        execute_production(db_session, store_id=sid, recipe=recipe_ref, idempotency_key=None)

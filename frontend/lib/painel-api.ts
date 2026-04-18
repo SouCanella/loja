@@ -1,8 +1,43 @@
 import { getApiBaseUrl } from "@/lib/api";
 
+const REFRESH_KEY = "refresh_token";
+
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("access_token");
+}
+
+export function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(REFRESH_KEY);
+}
+
+export function setSessionTokens(access: string, refresh?: string | null) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("access_token", access);
+  if (refresh) {
+    localStorage.setItem(REFRESH_KEY, refresh);
+  }
+}
+
+async function refreshAccessToken(): Promise<string | null> {
+  const rt = getRefreshToken();
+  if (!rt) return null;
+  const url = `${getApiBaseUrl()}/api/v1/auth/refresh`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: rt }),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    access_token?: string;
+    refresh_token?: string | null;
+  };
+  if (!res.ok || typeof data.access_token !== "string") {
+    return null;
+  }
+  setSessionTokens(data.access_token, data.refresh_token ?? rt);
+  return data.access_token;
 }
 
 export class PainelApiError extends Error {
@@ -20,19 +55,27 @@ export async function apiPainelJson<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
-  const token = getAccessToken();
+  let token = getAccessToken();
   if (!token) {
     throw new PainelApiError("Faça login para continuar.", 401);
   }
   const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      ...(init?.body ? { "Content-Type": "application/json" } : {}),
-      ...init?.headers,
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const doFetch = (bearer: string) =>
+    fetch(url, {
+      ...init,
+      headers: {
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+        ...init?.headers,
+        Authorization: `Bearer ${bearer}`,
+      },
+    });
+  let res = await doFetch(token);
+  if (res.status === 401 && getRefreshToken()) {
+    const next = await refreshAccessToken();
+    if (next) {
+      res = await doFetch(next);
+    }
+  }
   const data = (await res.json().catch(() => ({}))) as { detail?: unknown };
   if (!res.ok) {
     const msg =

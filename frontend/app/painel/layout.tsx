@@ -16,6 +16,12 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
             <Link href="/painel/receitas" className="hover:text-slate-900">
               Receitas
             </Link>
+            <Link href="/painel/insumos" className="hover:text-slate-900">
+              Insumos
+            </Link>
+            <Link href="/painel/definicoes" className="hover:text-slate-900">
+              Definições
+            </Link>
             <Link href="/painel/relatorio" className="hover:text-slate-900">
               Relatório
             </Link>

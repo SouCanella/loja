@@ -2,6 +2,25 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-19 (v2 alargado: auth, pedidos, insumos; `make dev`; doc deprecação)
+
+- **`/api/v2`:** `auth/register`, `auth/login`, `auth/refresh`, `GET /orders`, `GET /inventory-items` (envelope); serviços `auth_session`, `order_queries`, `inventory_queries`.
+- **`make dev`:** [`scripts/dev-local.sh`](../../scripts/dev-local.sh) — Postgres Docker + uvicorn reload + Next dev.
+- **Doc:** [api-v1-v2-deprecacao.md](api-v1-v2-deprecacao.md) (política v1/v2, COGS futuro).
+
+## 2026-04-19 (Relatório por produto + `/api/v2` envelope DEC-06)
+
+- **Relatório:** `GET /api/v1/reports/financial` — `period_margin_estimate`, `by_product[]` (receita, custo produção, margem, %); serviço `app/services/financial_report.py`; painel tabela + CSV alargado.
+- **API v2:** `GET /api/v2/health`, `GET /api/v2/reports/financial`; handlers globais para `HTTPException` e `RequestValidationError` em rotas `/api/v2`; schemas `app/schemas/envelope.py`.
+- **Testes:** `test_api_v2_envelope.py`; extensão `test_financial_report_orders_revenue` (**38** casos).
+
+## 2026-04-19 (Insumos CRUD, margem, auth refresh, documentação)
+
+- **API:** `POST/GET/PATCH/DELETE /inventory-items`; `GET/PATCH /me` com `store_target_margin_percent`; `PATCH /me/store-pricing`; `POST /auth/refresh`; `refresh_token` no login/registo; rate limit em `POST /auth/login`; receitas com `target_margin_percent`, `suggested_unit_price` (migração `20260418_0004`).
+- **Painel:** `/painel/insumos`, `/painel/definicoes`; receitas com margem da API; `painel-api` renova sessão após 401.
+- **Testes:** `test_inventory_items_crud.py`; extensões em `test_services_production.py`, `test_auth.py`; **35** casos pytest; E2E opcional `login-painel.spec.ts` (`E2E_EMAIL` / `E2E_PASSWORD`).
+- **Documentação:** [fase-03-gestao.md §9.1–9.2](../fases/fase-03-gestao.md), [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md), [TESTES-E-CI.md](TESTES-E-CI.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) (DEC-16 parcial).
+
 ## 2026-04-18 (Documentação — hub TESTES-E-CI)
 
 - **Novo:** [TESTES-E-CI.md](TESTES-E-CI.md) — visão única (pytest, Vitest, Playwright, `.github/workflows/ci.yml`, artefactos ignorados).

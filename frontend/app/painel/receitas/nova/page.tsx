@@ -11,7 +11,7 @@ type ProductOut = {
   inventory_item_id: string;
 };
 
-type InvItem = { id: string; name: string; unit: string };
+type InvItem = { id: string; name: string; unit: string; has_sale_product?: boolean };
 
 type Line = { inventory_item_id: string; quantity: string };
 
@@ -21,6 +21,7 @@ export default function NovaReceitaPage() {
   const [productId, setProductId] = useState("");
   const [yieldQty, setYieldQty] = useState("1");
   const [timeMin, setTimeMin] = useState("");
+  const [marginPct, setMarginPct] = useState("");
   const [lines, setLines] = useState<Line[]>([{ inventory_item_id: "", quantity: "1" }]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,14 +82,24 @@ export default function NovaReceitaPage() {
     }
     setLoading(true);
     try {
+      const payload: Record<string, unknown> = {
+        product_id: pid,
+        yield_quantity: yieldQty,
+        time_minutes: timeMin ? Number.parseInt(timeMin, 10) : null,
+        items,
+      };
+      if (marginPct.trim()) {
+        const m = Number.parseFloat(marginPct.replace(",", "."));
+        if (Number.isNaN(m) || m < 0 || m > 100) {
+          setError("Margem % inválida (0–100).");
+          setLoading(false);
+          return;
+        }
+        payload.target_margin_percent = String(m);
+      }
       await apiPainelJson("/api/v1/recipes", {
         method: "POST",
-        body: JSON.stringify({
-          product_id: pid,
-          yield_quantity: yieldQty,
-          time_minutes: timeMin ? Number.parseInt(timeMin, 10) : null,
-          items,
-        }),
+        body: JSON.stringify(payload),
       });
       window.location.href = "/painel/receitas";
     } catch (err: unknown) {
@@ -126,6 +137,23 @@ export default function NovaReceitaPage() {
               </option>
             ))}
           </select>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <div className="min-w-[8rem] flex-1">
+            <label className="block text-sm font-medium text-slate-700" htmlFor="marginR">
+              Margem % (opcional)
+            </label>
+            <input
+              id="marginR"
+              type="text"
+              inputMode="decimal"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+              value={marginPct}
+              onChange={(e) => setMarginPct(e.target.value)}
+              placeholder="herda da loja"
+            />
+            <p className="mt-1 text-xs text-slate-500">Se vazio, usa a margem em Definições.</p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="min-w-[8rem] flex-1">
@@ -178,7 +206,7 @@ export default function NovaReceitaPage() {
                   <option value="">— insumo —</option>
                   {inventory.map((inv) => (
                     <option key={inv.id} value={inv.id}>
-                      {inv.name} ({inv.unit})
+                      {`${inv.name} (${inv.unit}${inv.has_sale_product ? " · catálogo" : ""})`}
                     </option>
                   ))}
                 </select>

@@ -2,14 +2,17 @@
 
 from typing import Annotated
 
-from app.core.security import create_access_token, hash_password, verify_password
+from app.core.config import get_settings
+from app.core.login_rate_limit import register_login_attempt
 from app.db.session import get_db
-from app.models.store import Store
-from app.models.user import User, UserRole
-from app.schemas.auth import RegisterRequest, RegisterResponse, TokenResponse
-from fastapi import APIRouter, Depends, HTTPException, status
+from app.schemas.auth import RefreshRequest, RegisterRequest, RegisterResponse, TokenResponse
+from app.services.auth_session import (
+    login_with_credentials,
+    refresh_session_tokens,
+    register_store_and_admin,
+)
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -18,17 +21,8 @@ router = APIRouter(tags=["auth"])
 
 @router.post("/auth/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
 def register(body: RegisterRequest, db: Annotated[Session, Depends(get_db)]) -> RegisterResponse:
-    store = Store(name=body.store_name.strip(), slug=body.store_slug)
-    user = User(
-        store=store,
-        email=str(body.admin_email).lower().strip(),
-        password_hash=hash_password(body.password),
-        role=UserRole.store_admin,
-    )
-    db.add(store)
-    db.add(user)
     try:
-        db.commit()
+        return register_store_and_admin(db, body)
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(
@@ -36,44 +30,38 @@ def register(body: RegisterRequest, db: Annotated[Session, Depends(get_db)]) -> 
             detail="Email ou slug da loja já em uso",
         ) from exc
 
-    db.refresh(user)
-    db.refresh(store)
-    token = create_access_token(
-        subject=str(user.id),
-        extra={
-            "store_id": str(user.store_id),
-            "email": user.email,
-            "role": user.role.value,
-        },
-    )
-    return RegisterResponse(
-        access_token=token,
-        token_type="bearer",
-        store_id=store.id,
-        user_id=user.id,
-    )
-
 
 @router.post("/auth/login", response_model=TokenResponse)
 def login(
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
     form: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> TokenResponse:
     """OAuth2 password: campo `username` deve ser o email."""
+    settings = get_settings()
+    client_ip = request.client.host if request.client else "unknown"
+    register_login_attempt(
+        client_ip,
+        max_attempts=settings.login_rate_limit_max_attempts,
+        window_seconds=settings.login_rate_limit_window_seconds,
+    )
     email = form.username.strip().lower()
-    user = db.scalars(select(User).where(User.email == email)).first()
-    if user is None or not verify_password(form.password, user.password_hash):
+    tokens = login_with_credentials(db, email, form.password)
+    if tokens is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email ou palavra-passe incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    token = create_access_token(
-        subject=str(user.id),
-        extra={
-            "store_id": str(user.store_id),
-            "email": user.email,
-            "role": user.role.value,
-        },
-    )
-    return TokenResponse(access_token=token, token_type="bearer")
+    return tokens
+
+
+@router.post("/auth/refresh", response_model=TokenResponse)
+def refresh_session(body: RefreshRequest, db: Annotated[Session, Depends(get_db)]) -> TokenResponse:
+    tokens = refresh_session_tokens(db, body.refresh_token)
+    if tokens is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token inválido ou expirado",
+        )
+    return tokens

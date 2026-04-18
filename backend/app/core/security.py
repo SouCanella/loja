@@ -32,3 +32,31 @@ def create_access_token(
 def decode_access_token(token: str) -> dict[str, Any]:
     settings = get_settings()
     return jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+
+
+def create_refresh_token(
+    subject: str,
+    extra: dict[str, Any],
+    expires_delta: timedelta | None = None,
+) -> str:
+    settings = get_settings()
+    expire = datetime.now(UTC) + (
+        expires_delta
+        if expires_delta
+        else timedelta(days=settings.refresh_token_expire_days)
+    )
+    to_encode: dict[str, Any] = {
+        "exp": expire,
+        "sub": subject,
+        "token_use": "refresh",
+        **extra,
+    }
+    return jwt.encode(to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+
+
+def decode_refresh_token(token: str) -> dict[str, Any]:
+    settings = get_settings()
+    payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+    if payload.get("token_use") != "refresh":
+        raise ValueError("token não é refresh")
+    return payload

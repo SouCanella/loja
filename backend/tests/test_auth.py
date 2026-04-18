@@ -16,6 +16,7 @@ def test_register_login_me(client: TestClient) -> None:
     assert reg.status_code == 201
     body = reg.json()
     assert "access_token" in body
+    assert body.get("refresh_token")
     store_id = body["store_id"]
 
     login = client.post(
@@ -23,7 +24,9 @@ def test_register_login_me(client: TestClient) -> None:
         data={"username": "admin@example.com", "password": "senha-segura-1"},
     )
     assert login.status_code == 200
-    token = login.json()["access_token"]
+    login_body = login.json()
+    token = login_body["access_token"]
+    assert login_body.get("refresh_token")
 
     me = client.get("/api/v1/me", headers={"Authorization": f"Bearer {token}"})
     assert me.status_code == 200
@@ -31,6 +34,23 @@ def test_register_login_me(client: TestClient) -> None:
     assert data["email"] == "admin@example.com"
     assert data["store_id"] == store_id
     assert data["role"] == "store_admin"
+    assert data.get("store_target_margin_percent") in ("30", 30)
+
+    refreshed = client.post(
+        "/api/v1/auth/refresh",
+        json={"refresh_token": login_body["refresh_token"]},
+    )
+    assert refreshed.status_code == 200
+    assert refreshed.json().get("access_token")
+    assert refreshed.json().get("refresh_token")
+
+    patch_margin = client.patch(
+        "/api/v1/me/store-pricing",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"target_margin_percent": "25"},
+    )
+    assert patch_margin.status_code == 200
+    assert patch_margin.json().get("store_target_margin_percent") in ("25", 25)
 
 
 def test_two_stores_isolated_users(client: TestClient) -> None:

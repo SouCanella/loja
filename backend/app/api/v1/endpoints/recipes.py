@@ -9,9 +9,14 @@ from app.db.session import get_db
 from app.models.inventory import InventoryItem
 from app.models.product import Product
 from app.models.recipe import Recipe, RecipeItem
+from app.models.store import Store
 from app.models.user import User
 from app.schemas.phase3 import RecipeCreate, RecipeItemOut, RecipeOut, RecipePatch
 from app.services.pricing import estimate_recipe_unit_cost
+from app.services.store_pricing import (
+    effective_recipe_margin_percent,
+    suggested_unit_price_from_cost,
+)
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -26,6 +31,10 @@ def _recipe_to_out(db: Session, r: Recipe) -> RecipeOut:
         est = estimate_recipe_unit_cost(db, r)
     except Exception:
         est = None
+    store = db.get(Store, r.store_id)
+    assert store is not None
+    eff = effective_recipe_margin_percent(store, r)
+    sug = suggested_unit_price_from_cost(est, eff)
     return RecipeOut(
         id=r.id,
         product_id=r.product_id,
@@ -33,6 +42,9 @@ def _recipe_to_out(db: Session, r: Recipe) -> RecipeOut:
         time_minutes=r.time_minutes,
         items=[RecipeItemOut.model_validate(x) for x in r.items],
         estimated_unit_cost=est,
+        target_margin_percent=r.target_margin_percent,
+        effective_margin_percent=eff,
+        suggested_unit_price=sug,
     )
 
 
@@ -91,6 +103,7 @@ def create_recipe(
         product_id=body.product_id,
         yield_quantity=body.yield_quantity,
         time_minutes=body.time_minutes,
+        target_margin_percent=body.target_margin_percent,
     )
     for it in body.items:
         recipe.items.append(
@@ -150,6 +163,10 @@ def patch_recipe(
         r.yield_quantity = body.yield_quantity
     if body.time_minutes is not None:
         r.time_minutes = body.time_minutes
+
+    patch_data = body.model_dump(exclude_unset=True)
+    if "target_margin_percent" in patch_data:
+        r.target_margin_percent = patch_data["target_margin_percent"]
 
     if body.items is not None:
         p = db.get(Product, r.product_id)

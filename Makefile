@@ -1,7 +1,7 @@
-.PHONY: up down test test-report migrate lint openapi-export help backend-venv
+.PHONY: up down dev test test-report migrate lint openapi-export help backend-venv
 
 help:
-	@echo "Comandos: up | down | test | test-report | migrate | openapi-export | lint | backend-venv"
+	@echo "Comandos: up | down | dev | test | test-report | migrate | openapi-export | lint | backend-venv"
 
 # Cria backend/.venv na primeira utilização (PEP 668 / Debian).
 backend-venv:
@@ -15,6 +15,11 @@ up:
 
 down:
 	docker compose down
+
+# Postgres em Docker + uvicorn --reload + next dev (testar painel/vitrine manualmente).
+dev: backend-venv
+	@chmod +x scripts/dev-local.sh
+	@./scripts/dev-local.sh
 
 test: backend-venv
 	cd backend && .venv/bin/pytest tests/ -q

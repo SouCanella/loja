@@ -67,12 +67,12 @@ Escopo MVP: autenticação, catálogo, pedidos, estoque básico, receitas, preci
 
 | ID | Requisito | Estado | Dependência |
 |----|-----------|--------|-------------|
-| MVP-01 | Autenticação (JWT) | parcial | Fase 1 (access token); refresh token — backlog / DEC-16 |
+| MVP-01 | Autenticação (JWT) | parcial | Access + refresh (`POST /auth/refresh`); cookie httpOnly / BFF — evolução |
 | MVP-02 | Catálogo | parcial | Vitrine `/loja/[slug]`; imagens S3 e destaques RF-CA-11 — evolução |
 | MVP-03 | Pedidos | parcial | API Fase 2; painel: lista (filtro), novo (`POST /orders`), detalhe (estado + WhatsApp); vitrine/checkout; evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md) |
 | MVP-04 | Estoque básico | parcial | Lotes + baixa/reversão na API; leitura/ajuste dedicados e UI — ver [fase-02 §9](../fases/fase-02-operacao.md) |
 | MVP-05 | Receitas | parcial | API + painel (criar/listar/produzir); evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md) |
-| MVP-06 | Precificação simples | parcial | Custo estimado na API + sugestão indicativa no painel; **margem fixa na UI** — configurável em backlog |
+| MVP-06 | Precificação simples | parcial | Custo + margem loja/receita + `suggested_unit_price`; sincronizar com `products.price` ou métricas extra — backlog |
 
 Atualizar esta tabela ao fechar cada fase.
 

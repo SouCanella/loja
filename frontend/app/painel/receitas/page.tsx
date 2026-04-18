@@ -11,6 +11,9 @@ type RecipeOut = {
   yield_quantity: string;
   time_minutes: number | null;
   estimated_unit_cost: string | null;
+  target_margin_percent: string | null;
+  effective_margin_percent: string;
+  suggested_unit_price: string | null;
   items: { id: string; inventory_item_id: string; quantity: string }[];
 };
 
@@ -19,7 +22,7 @@ type ProductOut = {
   name: string;
 };
 
-type InvItem = { id: string; name: string; unit: string };
+type InvItem = { id: string; name: string; unit: string; has_sale_product?: boolean };
 
 export default function ReceitasPage() {
   const [recipes, setRecipes] = useState<RecipeOut[]>([]);
@@ -56,7 +59,9 @@ export default function ReceitasPage() {
 
   function invName(id: string): string {
     const row = inventory.find((x) => x.id === id);
-    return row ? `${row.name} (${row.unit})` : id.slice(0, 8);
+    if (!row) return id.slice(0, 8);
+    const tag = row.has_sale_product ? " · catálogo" : "";
+    return `${row.name} (${row.unit})${tag}`;
   }
 
   async function produzir(recipeId: string) {
@@ -118,8 +123,8 @@ export default function ReceitasPage() {
           </li>
         ) : null}
         {recipes.map((r) => {
-          const est = r.estimated_unit_cost ? Number.parseFloat(r.estimated_unit_cost) : null;
-          const sug = est !== null && !Number.isNaN(est) ? est * 1.3 : null;
+          const eff = Number.parseFloat(r.effective_margin_percent);
+          const effLabel = Number.isNaN(eff) ? "—" : `${eff}%`;
           return (
             <li
               key={r.id}
@@ -135,9 +140,13 @@ export default function ReceitasPage() {
                   {r.estimated_unit_cost != null ? (
                     <p className="mt-2 text-sm text-slate-600">
                       Custo estimado / un.: {formatBRL(r.estimated_unit_cost)}
-                      {sug != null ? (
-                        <span className="ml-2 text-slate-500">
-                          (sugestão ~30%: {formatBRL(sug)})
+                      <span className="ml-2 text-slate-500">
+                        · Margem efectiva: {effLabel}
+                        {r.target_margin_percent != null ? " (receita)" : " (loja)"}
+                      </span>
+                      {r.suggested_unit_price != null ? (
+                        <span className="ml-2 text-slate-600">
+                          · Sugestão preço: {formatBRL(r.suggested_unit_price)}
                         </span>
                       ) : null}
                     </p>

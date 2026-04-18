@@ -12,6 +12,7 @@ type Me = {
   store_slug: string;
   store_name: string;
   vitrine_whatsapp?: string | null;
+  store_target_margin_percent?: string | number;
 };
 
 export default function PainelHomePage() {

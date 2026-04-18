@@ -17,6 +17,12 @@ class RecipeCreate(BaseModel):
     yield_quantity: Decimal = Field(..., gt=0)
     time_minutes: int | None = Field(default=None, ge=0)
     items: list[RecipeItemCreate] = Field(..., min_length=1)
+    target_margin_percent: Decimal | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description="Margem % sobre custo; None herda da loja",
+    )
 
 
 class RecipeItemOut(BaseModel):
@@ -34,6 +40,9 @@ class RecipeOut(BaseModel):
     time_minutes: int | None
     items: list[RecipeItemOut]
     estimated_unit_cost: Decimal | None = None
+    target_margin_percent: Decimal | None = None
+    effective_margin_percent: Decimal
+    suggested_unit_price: Decimal | None = None
 
     model_config = {"from_attributes": True}
 
@@ -42,6 +51,12 @@ class RecipePatch(BaseModel):
     yield_quantity: Decimal | None = Field(default=None, gt=0)
     time_minutes: int | None = None
     items: list[RecipeItemCreate] | None = None
+    target_margin_percent: Decimal | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description="Enviar null para voltar à margem da loja",
+    )
 
 
 class ProductionRequest(BaseModel):
@@ -59,6 +74,21 @@ class ProductionRunOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class FinancialReportProductRow(BaseModel):
+    """Receita de pedidos vs custo de produção no período, por produto acabado."""
+
+    product_id: UUID
+    product_name: str
+    orders_revenue: Decimal
+    quantity_sold: Decimal
+    production_input_cost: Decimal
+    margin_amount: Decimal
+    margin_percent: Decimal | None = Field(
+        default=None,
+        description="(receita − custo produção) / receita × 100 quando receita > 0",
+    )
+
+
 class FinancialReportOut(BaseModel):
     date_from: date
     date_to: date
@@ -66,3 +96,8 @@ class FinancialReportOut(BaseModel):
     orders_count: int
     production_runs_count: int
     production_input_cost: Decimal
+    period_margin_estimate: Decimal = Field(
+        ...,
+        description="Receita pedidos − custo insumos produção no período (aproximação)",
+    )
+    by_product: list[FinancialReportProductRow] = Field(default_factory=list)

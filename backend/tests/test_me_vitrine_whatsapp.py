@@ -31,6 +31,7 @@ def test_me_includes_vitrine_whatsapp_when_theme_set(
 
     me1 = client.get("/api/v1/me", headers=h).json()
     assert me1.get("vitrine_whatsapp") in (None, "")
+    assert me1.get("store_target_margin_percent") in ("30", 30)
 
     store = db_session.get(Store, uuid.UUID(me1["store_id"]))
     assert store is not None

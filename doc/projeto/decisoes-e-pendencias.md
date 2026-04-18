@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-18 — ADR leve **DEC-01 … DEC-20**; Fase 3 em [fase-03-gestao.md](../fases/fase-03-gestao.md) **§10**. **Testes e CI** documentados em [TESTES-E-CI.md](../execucao/TESTES-E-CI.md); conformidade **RNF** em [qualidade-e-conformidade.md](qualidade-e-conformidade.md) (envelope **DEC-06** vs API actual).
+**Última actualização:** 2026-04-19 (2) — **DEC-06:** piloto **`/api/v2`** com `{ success, data, errors }` (`health`, `reports/financial`); **`/api/v1`** inalterado. **DEC-16:** refresh por endpoint. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md).
 
 ---
 
@@ -45,7 +45,7 @@ Cada decisão abaixo resume **por que** foi escolhida e **o que isso obriga** no
 
 - **DEC-05:** Domínios distintos (pedidos, estoque, auth) precisam evoluir sem “bola de lama”. **Consequência:** cada módulo com router, service, repository, schemas e models próprios; dependências explícitas entre módulos.
 
-- **DEC-06:** Clientes (web, futuro app) precisam evoluir sem quebrar integrações silenciosamente. **Consequência:** prefixo `/api/v1/`, envelope de resposta estável e mudanças compatíveis ou version bump.
+- **DEC-06:** Clientes (web, futuro app) precisam evoluir sem quebrar integrações silenciosamente. **Consequência:** resposta versionada; envelope `{ success, data, errors }` em **`/api/v2`** (piloto); **`/api/v1`** mantém payload directo até migração; *version bump* ao alinhar clientes.
 
 - **DEC-07:** Regras espalhadas no ORM ou no repositório dificultam testes e mudança de persistência. **Consequência:** serviços concentram regra de negócio; repositório só persiste o que o serviço decidiu.
 
@@ -65,7 +65,7 @@ Cada decisão abaixo resume **por que** foi escolhida e **o que isso obriga** no
 
 - **DEC-15:** Super Admin global é produto comercial (planos, billing) distinto do núcleo loja. **Consequência:** Fases 1–3 não dependem de `platform_admin`; quando priorizado, Fase 4 ou backlog explícito.
 
-- **DEC-16:** Access curto reduz janela de roubo de token; refresh evita login a cada poucos minutos. **Consequência:** implementar access + refresh (cookie httpOnly ou endpoint dedicado); não depender só de TTL longo no access.
+- **DEC-16:** Access curto reduz janela de roubo de token; refresh evita login a cada poucos minutos. **Consequência:** access + refresh (endpoint dedicado `POST /auth/refresh` e tokens no login/registo; **cookie httpOnly** como evolução opcional); não depender só de TTL longo no access.
 
 - **DEC-17:** Baixa física deve respeitar validade e ordem de entrada sem misturar com método de custo médio (DEC-09). **Consequência:** transações com estoque não negativo; FEFO quando houver validade, senão FIFO por data de entrada do lote.
 

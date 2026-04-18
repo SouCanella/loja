@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Loja API",
-    "description": "Backend multi-tenant — Fase 1 (auth, stores, users).",
-    "version": "0.2.0"
+    "description": "Backend multi-tenant — `/api/v1` JSON directo; `/api/v2` piloto envelope DEC-06.",
+    "version": "0.3.0"
   },
   "paths": {
     "/api/v1/health": {
@@ -114,6 +114,47 @@
         }
       }
     },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh Session",
+        "operationId": "refresh_session_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/me": {
       "get": {
         "tags": [
@@ -128,6 +169,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserMeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/store-pricing": {
+      "patch": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Patch Store Pricing",
+        "operationId": "patch_store_pricing_api_v1_me_store_pricing_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StorePricingPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -443,6 +530,193 @@
             "OAuth2PasswordBearer": []
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "inventory-items"
+        ],
+        "summary": "Create Inventory Item",
+        "operationId": "create_inventory_item_api_v1_inventory_items_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryItemCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryItemDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/inventory-items/{item_id}": {
+      "get": {
+        "tags": [
+          "inventory-items"
+        ],
+        "summary": "Get Inventory Item",
+        "operationId": "get_inventory_item_api_v1_inventory_items__item_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryItemDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "inventory-items"
+        ],
+        "summary": "Patch Inventory Item",
+        "operationId": "patch_inventory_item_api_v1_inventory_items__item_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryItemPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryItemDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "inventory-items"
+        ],
+        "summary": "Delete Inventory Item",
+        "operationId": "delete_inventory_item_api_v1_inventory_items__item_id__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/orders": {
@@ -1159,6 +1433,274 @@
         }
       }
     },
+    "/api/v2/health": {
+      "get": {
+        "tags": [
+          "health-v2"
+        ],
+        "summary": "Health V2",
+        "operationId": "health_v2_api_v2_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/register": {
+      "post": {
+        "tags": [
+          "auth-v2"
+        ],
+        "summary": "Register V2",
+        "operationId": "register_v2_api_v2_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/login": {
+      "post": {
+        "tags": [
+          "auth-v2"
+        ],
+        "summary": "Login V2",
+        "operationId": "login_v2_api_v2_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_login_v2_api_v2_auth_login_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth-v2"
+        ],
+        "summary": "Refresh V2",
+        "operationId": "refresh_v2_api_v2_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reports/financial": {
+      "get": {
+        "tags": [
+          "reports-v2"
+        ],
+        "summary": "Get Financial Report V2",
+        "operationId": "get_financial_report_v2_api_v2_reports_financial_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialReportEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders": {
+      "get": {
+        "tags": [
+          "orders-v2"
+        ],
+        "summary": "List Orders V2",
+        "operationId": "list_orders_v2_api_v2_orders_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderListEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/inventory-items": {
+      "get": {
+        "tags": [
+          "inventory-v2"
+        ],
+        "summary": "List Inventory Items V2",
+        "operationId": "list_inventory_items_v2_api_v2_inventory_items_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryItemListEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -1185,6 +1727,41 @@
   },
   "components": {
     "schemas": {
+      "ApiErrorDetail": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ApiErrorDetail"
+      },
       "Body_login_api_v1_auth_login_post": {
         "properties": {
           "grant_type": {
@@ -1243,6 +1820,65 @@
           "password"
         ],
         "title": "Body_login_api_v1_auth_login_post"
+      },
+      "Body_login_v2_api_v2_auth_login_post": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^password$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "format": "password",
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_login_v2_api_v2_auth_login_post"
       },
       "CategoryCreate": {
         "properties": {
@@ -1314,6 +1950,43 @@
         ],
         "title": "CategoryPublicOut"
       },
+      "FinancialReportEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FinancialReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "FinancialReportEnvelope"
+      },
       "FinancialReportOut": {
         "properties": {
           "date_from": {
@@ -1343,6 +2016,19 @@
             "type": "string",
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Production Input Cost"
+          },
+          "period_margin_estimate": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Period Margin Estimate",
+            "description": "Receita pedidos − custo insumos produção no período (aproximação)"
+          },
+          "by_product": {
+            "items": {
+              "$ref": "#/components/schemas/FinancialReportProductRow"
+            },
+            "type": "array",
+            "title": "By Product"
           }
         },
         "type": "object",
@@ -1352,9 +2038,67 @@
           "orders_revenue",
           "orders_count",
           "production_runs_count",
-          "production_input_cost"
+          "production_input_cost",
+          "period_margin_estimate"
         ],
         "title": "FinancialReportOut"
+      },
+      "FinancialReportProductRow": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "orders_revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Orders Revenue"
+          },
+          "quantity_sold": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity Sold"
+          },
+          "production_input_cost": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Production Input Cost"
+          },
+          "margin_amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Margin Amount"
+          },
+          "margin_percent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Percent",
+            "description": "(receita − custo produção) / receita × 100 quando receita > 0"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "product_name",
+          "orders_revenue",
+          "quantity_sold",
+          "production_input_cost",
+          "margin_amount"
+        ],
+        "title": "FinancialReportProductRow",
+        "description": "Receita de pedidos vs custo de produção no período, por produto acabado."
       },
       "HTTPValidationError": {
         "properties": {
@@ -1368,6 +2112,206 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HealthData": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Smoke da API v2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthData"
+      },
+      "HealthEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HealthData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "HealthEnvelope"
+      },
+      "InventoryBatchSeed": {
+        "properties": {
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit_cost": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Unit Cost"
+          },
+          "expiration_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantity",
+          "unit_cost"
+        ],
+        "title": "InventoryBatchSeed"
+      },
+      "InventoryItemCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Unit",
+            "default": "un"
+          },
+          "initial_batch": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InventoryBatchSeed"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "InventoryItemCreate"
+      },
+      "InventoryItemDetailOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "has_sale_product": {
+            "type": "boolean",
+            "title": "Has Sale Product"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "unit",
+          "has_sale_product"
+        ],
+        "title": "InventoryItemDetailOut"
+      },
+      "InventoryItemListEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/InventoryItemListOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "InventoryItemListEnvelope"
       },
       "InventoryItemListOut": {
         "properties": {
@@ -1383,6 +2327,11 @@
           "unit": {
             "type": "string",
             "title": "Unit"
+          },
+          "has_sale_product": {
+            "type": "boolean",
+            "title": "Has Sale Product",
+            "default": false
           }
         },
         "type": "object",
@@ -1392,6 +2341,38 @@
           "unit"
         ],
         "title": "InventoryItemListOut"
+      },
+      "InventoryItemPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "type": "object",
+        "title": "InventoryItemPatch"
       },
       "InventorySeed": {
         "properties": {
@@ -1589,6 +2570,47 @@
           "unit_price"
         ],
         "title": "OrderItemOut"
+      },
+      "OrderListEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OrderOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "OrderListEnvelope"
       },
       "OrderOut": {
         "properties": {
@@ -1953,6 +2975,24 @@
             "type": "array",
             "minItems": 1,
             "title": "Items"
+          },
+          "target_margin_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Margin Percent",
+            "description": "Margem % sobre custo; None herda da loja"
           }
         },
         "type": "object",
@@ -2063,6 +3103,35 @@
               }
             ],
             "title": "Estimated Unit Cost"
+          },
+          "target_margin_percent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Margin Percent"
+          },
+          "effective_margin_percent": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Effective Margin Percent"
+          },
+          "suggested_unit_price": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Unit Price"
           }
         },
         "type": "object",
@@ -2071,7 +3140,8 @@
           "product_id",
           "yield_quantity",
           "time_minutes",
-          "items"
+          "items",
+          "effective_margin_percent"
         ],
         "title": "RecipeOut"
       },
@@ -2117,10 +3187,79 @@
               }
             ],
             "title": "Items"
+          },
+          "target_margin_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Margin Percent",
+            "description": "Enviar null para voltar à margem da loja"
           }
         },
         "type": "object",
         "title": "RecipePatch"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "minLength": 10,
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "RegisterEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegisterResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "RegisterEnvelope"
       },
       "RegisterRequest": {
         "properties": {
@@ -2168,6 +3307,17 @@
             "title": "Token Type",
             "default": "bearer"
           },
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          },
           "store_id": {
             "type": "string",
             "format": "uuid",
@@ -2209,6 +3359,29 @@
           "url"
         ],
         "title": "SocialNetworkLink"
+      },
+      "StorePricingPatch": {
+        "properties": {
+          "target_margin_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Target Margin Percent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_margin_percent"
+        ],
+        "title": "StorePricingPatch"
       },
       "StorePublicOut": {
         "properties": {
@@ -2262,6 +3435,43 @@
         ],
         "title": "StorePublicOut"
       },
+      "TokenEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TokenResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "TokenEnvelope"
+      },
       "TokenResponse": {
         "properties": {
           "access_token": {
@@ -2272,6 +3482,17 @@
             "type": "string",
             "title": "Token Type",
             "default": "bearer"
+          },
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
           }
         },
         "type": "object",
@@ -2323,6 +3544,11 @@
               }
             ],
             "title": "Vitrine Whatsapp"
+          },
+          "store_target_margin_percent": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Store Target Margin Percent"
           }
         },
         "type": "object",
@@ -2333,7 +3559,8 @@
           "store_id",
           "store_slug",
           "store_name",
-          "created_at"
+          "created_at",
+          "store_target_margin_percent"
         ],
         "title": "UserMeResponse"
       },

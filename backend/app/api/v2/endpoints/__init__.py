@@ -1,0 +1,1 @@
+"""Endpoints `/api/v2`."""

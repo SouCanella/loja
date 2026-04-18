@@ -6,7 +6,11 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.store import Store
 from app.models.user import User
-from app.schemas.user import UserMeResponse
+from app.schemas.user import StorePricingPatch, UserMeResponse
+from app.services.store_pricing import (
+    get_store_target_margin_percent,
+    set_store_target_margin_percent,
+)
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
@@ -45,4 +49,33 @@ def read_me(
         store_name=u.store.name,
         created_at=u.created_at,
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
+        store_target_margin_percent=get_store_target_margin_percent(u.store),
+    )
+
+
+@router.patch("/me/store-pricing", response_model=UserMeResponse)
+def patch_store_pricing(
+    body: StorePricingPatch,
+    current: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> UserMeResponse:
+    u = db.scalars(
+        select(User).where(User.id == current.id).options(joinedload(User.store))
+    ).first()
+    if u is None or u.store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Utilizador inválido")
+    set_store_target_margin_percent(u.store, body.target_margin_percent)
+    db.add(u.store)
+    db.commit()
+    db.refresh(u)
+    return UserMeResponse(
+        id=u.id,
+        email=u.email,
+        role=u.role,
+        store_id=u.store_id,
+        store_slug=u.store.slug,
+        store_name=u.store.name,
+        created_at=u.created_at,
+        vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
+        store_target_margin_percent=get_store_target_margin_percent(u.store),
     )

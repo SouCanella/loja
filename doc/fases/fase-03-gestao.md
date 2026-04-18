@@ -99,7 +99,7 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): MVP-05/MVP-06 mant
 |-------|--------|
 | **Status** | `concluída` (MVP Fase 3 — **API** receitas/produção/relatório + **painel Next** para receitas, produção e relatório com CSV). |
 | **Data de conclusão** | 2026-04-17 |
-| **Notas** | Migração `20260417_0003`; contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). Insumos “puros” (sem produto de venda): listagem via `GET /inventory-items`; criação continua a depender de produto com inventário ou evolução futura de API. Margem sugerida na UI (~30%) é **indicativa**, não persistida. |
+| **Notas** | Migrações `20260417_0003`, `20260418_0004` (`recipes.target_margin_percent`); contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **2026-04-19:** CRUD de insumos em `/inventory-items`, margem por loja (`GET/PATCH /me` / `PATCH /me/store-pricing`) e por receita; sugestão de preço na API e painel; refresh JWT + rate limit no login — ver **§9.2**. |
 
 ---
 
@@ -116,13 +116,18 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 7. Testes `backend/tests/test_phase3_production.py`.
 8. OpenAPI exportado e entrada no [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md).
 
-### 9.1 Próximos incrementos (backlog / não bloqueantes)
+### 9.1 Incrementos entregues (2026-04-19)
 
-- **Painel — pedidos:** entregue — lista com **filtro por estado**, **`/painel/pedidos/novo`** (`POST /orders` + `Idempotency-Key`), detalhe com **`PATCH …/status`**, atalho **WhatsApp** (`wa.me` com rascunho) quando `GET /me` expõe `vitrine_whatsapp` (tema da loja). Evoluções possíveis: notificações, impressão, múltiplos números.
-- **Insumos:** `POST`/`PATCH` em `inventory_items` ou fluxo dedicado + UI mínima (além do `GET` actual).
-- **Margem configurável** por loja ou receita (substituir percentagem fixa na UI).
-- Endpoint opcional de **preço sugerido** explícito ou sincronização com `products.price`.
-- Relatório: mais métricas (ex.: margem por produto) além do CSV já disponível no cliente.
+- **Insumos:** `POST`/`GET`/`PATCH`/`DELETE /api/v1/inventory-items` (lote inicial opcional no POST); UI **`/painel/insumos`**.
+- **Margem:** `stores.config.pricing.target_margin_percent`; `GET /me` expõe `store_target_margin_percent`; **`PATCH /me/store-pricing`**; receitas com `target_margin_percent` opcional, `effective_margin_percent` e **`suggested_unit_price`**; UI **`/painel/definicoes`** e formulário de nova receita.
+- **Auth (DEC-16 parcial):** `refresh_token` no login/registo; **`POST /auth/refresh`**; cliente renova access após 401; **rate limit** configurável no `POST /auth/login`.
+
+### 9.2 Próximo marco sugerido (fora do fecho mínimo da Fase 3)
+
+1. **Produto / relatório:** métricas extra no financeiro (ex. margem por produto), CSV alargado — ver [backlog.md](../projeto/backlog.md).
+2. **Conformidade:** envelope API **DEC-06** (versão major ou *feature flag*); refresh em **cookie httpOnly** (alternativa ao `localStorage`).
+3. **Fase 4 / plataforma:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — escala, **DEC-15** se priorizado, observabilidade (**RNF-Ops-01**).
+4. **UX:** **DEC-10** FieldHelp em campos críticos; E2E no CI com credenciais de teste (`E2E_EMAIL` / `E2E_PASSWORD`).
 
 ---
 
@@ -130,7 +135,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 ### 10.1 Persistência e migração
 
-- **Ficheiro:** `backend/alembic/versions/20260417_0003_phase3_recipes_production.py`.
+- **Ficheiros:** `backend/alembic/versions/20260417_0003_phase3_recipes_production.py`; `backend/alembic/versions/20260418_0004_recipe_target_margin.py` (`recipes.target_margin_percent`, JSON `stores.config.pricing` usado em runtime).
 - **Tabelas / alterações:** `recipes`, `recipe_items`, `production_runs`; coluna `stock_movements.production_run_id`; enum de tipos de movimento alargado.
 
 ### 10.2 Backend — módulos principais
@@ -139,28 +144,39 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 |------|---------------------------|
 | Modelos | `backend/app/models/recipe.py`, `production_run.py`; `StockMovement` / enum em `order.py`, `enums.py` (tipos `production_*`, FK `production_run_id`) |
 | Schemas Fase 3 | `backend/app/schemas/phase3.py`; `backend/app/schemas/inventory_items.py`; `UserMeResponse` em `backend/app/schemas/user.py` |
-| Serviços | `backend/app/services/production_service.py`, `backend/app/services/pricing.py` |
-| Rotas | `backend/app/api/v1/endpoints/recipes.py`, `production.py`, `reports_financial.py`, `inventory_items.py`, `me.py` |
-| Registo no router | `backend/app/api/v1/router.py` |
+| Serviços | `production_service.py`, `pricing.py`, `financial_report.py` |
+| Rotas | `api/v1/endpoints/…`; `api/v2/endpoints/` (piloto DEC-06) |
+| Registo | `api/v1/router.py`; `api/v2/router.py` + `main.py` |
 
 ### 10.3 Endpoints HTTP (prefixo `/api/v1`, autenticação Bearer salvo indicação)
 
 | Método | Caminho | Notas |
 |--------|---------|--------|
-| GET | `/recipes` | Lista receitas da loja; inclui `estimated_unit_cost`. |
+| GET | `/recipes` | Lista receitas; `estimated_unit_cost`, `target_margin_percent`, `effective_margin_percent`, `suggested_unit_price`. |
 | POST | `/recipes` | Cria receita (uma por produto por loja). |
 | GET | `/recipes/{recipe_id}` | Detalhe. |
 | PATCH | `/recipes/{recipe_id}` | Actualiza receita e linhas. |
 | POST | `/production` | Corpo: receita, quantidade produzida; header **`Idempotency-Key`** recomendado. |
-| GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). |
-| GET | `/inventory-items` | Lista `id`, `name`, `unit` dos insumos da loja (para formulários de receita). |
-| GET | `/me` | `store_slug`, `store_name`, **`vitrine_whatsapp`** (opcional, de `theme.vitrine.whatsapp`). |
+| GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). Totais + `period_margin_estimate` + `by_product[]`. |
+| GET | `/inventory-items` | Lista insumos com `has_sale_product`. |
+| POST | `/inventory-items` | Cria insumo; `initial_batch` opcional (quantidade, custo, validade). |
+| GET | `/inventory-items/{id}` | Detalhe. |
+| PATCH | `/inventory-items/{id}` | Nome/unidade. |
+| DELETE | `/inventory-items/{id}` | Bloqueado se houver produto de venda ou linha de receita. |
+| GET | `/me` | `store_slug`, `store_name`, **`vitrine_whatsapp`**, **`store_target_margin_percent`**. |
+| PATCH | `/me/store-pricing` | `target_margin_percent` (0–100) → `stores.config.pricing`. |
+| POST | `/auth/refresh` | Corpo `{"refresh_token"}` → novo par access/refresh. |
+
+**API v2 (prefixo `/api/v2`, envelope DEC-06):** `GET /health`; `POST /auth/register`, `/auth/login`, `/auth/refresh`; `GET /reports/financial`; `GET /orders`; `GET /inventory-items` — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). Implementação: `backend/app/api/v2/`, `app/schemas/envelope.py`, handlers em `app/main.py`.
 
 **Pedidos (API Fase 2, usados no painel):** `GET` / `POST` `/orders`, `GET` `/orders/{order_id}`, `PATCH` `/orders/{order_id}/status`. O `GET` lista inclui **`created_at`** em cada `OrderOut`.
 
 ### 10.4 Testes automatizados
 
-- `backend/tests/test_phase3_production.py` — produção, idempotência, validações relevantes.
+- `backend/tests/test_phase3_production.py` — produção, idempotência, relatório.
+- `backend/tests/test_services_production.py` — FEFO multi-lote, receita removida, validações.
+- `backend/tests/test_inventory_items_crud.py` — CRUD insumos e regras de delete.
+- `backend/tests/test_auth.py` — refresh, `PATCH /me/store-pricing`, `store_target_margin_percent` em `/me`.
 
 ### 10.5 Frontend (Next.js — App Router)
 
@@ -170,11 +186,13 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | `/painel/pedidos` | `frontend/app/painel/pedidos/page.tsx` | Lista `GET /orders`; **filtro por estado**; botão **Novo pedido**. |
 | `/painel/pedidos/novo` | `frontend/app/painel/pedidos/novo/page.tsx` | `POST /orders` (linhas de produto + nota); `Idempotency-Key`; redirecciona ao detalhe. |
 | `/painel/pedidos/[id]` | `frontend/app/painel/pedidos/[id]/page.tsx` | Itens + total; `PATCH /orders/{id}/status`; produtos via `GET /products`; **WhatsApp** se `/me.vitrine_whatsapp` existir (`draftOrderWhatsAppMessage`, `whatsAppUrl`). |
-| `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo estimado, sugestão de preço indicativa, **Produzir lote** (`POST /production` + `Idempotency-Key`). |
-| `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita com dropdown de insumos (`GET /inventory-items`). |
+| `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo, margem efectiva, **suggested_unit_price**, **Produzir lote**. |
+| `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita; insumos via `GET /inventory-items`; margem % opcional por receita. |
 | `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /reports/financial` por intervalo; botão **Descarregar CSV** (gerado no browser). |
-| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Relatório / Sessão. |
-| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson`, `formatBRL`, `orderStatusLabel`, `ORDER_STATUS_VALUES`, `whatsappDigits`, `whatsAppUrl`, `draftOrderWhatsAppMessage`, erros tipados. |
+| `/painel/insumos` | `frontend/app/painel/insumos/page.tsx` | CRUD mínimo de insumos. |
+| `/painel/definicoes` | `frontend/app/painel/definicoes/page.tsx` | Margem alvo da loja. |
+| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Insumos / Definições / Relatório / Sessão. |
+| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson` (retry com `POST /auth/refresh` após 401), `setSessionTokens`, `formatBRL`, helpers pedido/WhatsApp. |
 
 ### 10.6 Documentação de contrato e raiz do repositório
 
@@ -190,4 +208,4 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 - Auditoria face a **RNF-*** (testes, idempotência, DevEx) e desvios conhecidos (envelope API, FieldHelp, E2E): [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 - Hub único de **comandos, pastas e CI** (pytest, Vitest, Playwright): [TESTES-E-CI.md](../execucao/TESTES-E-CI.md).
-- **Resumo:** `make lint`, `pytest` (**32+** casos), `npm run test` (Vitest), `npm run test:e2e` (Playwright smoke); pacote **`app/services`** ~**94%** com gate CI ≥**90%**. Workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+- **Resumo:** `make lint`, `pytest` (**39** casos), `make dev` (Postgres Docker + reload), `npm run test` (Vitest), `npm run test:e2e`; pacote **`app/services`** ~**94%** com gate CI ≥**90%**. Workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
