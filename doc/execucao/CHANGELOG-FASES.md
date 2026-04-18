@@ -10,6 +10,7 @@ Registro opcional de marcos por data.
 - **Serviços:** baixa FEFO ao passar para **confirmado**; estorno ao **cancelar** após confirmado; histórico de estado.
 - **Testes:** `backend/tests/test_phase2_orders.py` (fluxo confirmar/cancelar, stock insuficiente, isolamento).
 - **Pendente nesta fase:** UI Next (catálogo/carrinho/pedidos); reserva+timeout e envelope API global são backlog/evolução.
+- **Aderência planejado × código:** [fase-02-operacao.md](../fases/fase-02-operacao.md) secção **9**; [backlog.md](../projeto/backlog.md) (MVP-02/03/04 e índice de entregas).
 
 ## 2026-04-17 (DEC-14 / DEC-17 / DEC-20 — políticas MVP para implementação)
 

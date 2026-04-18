@@ -111,3 +111,52 @@ Planejado para esta fase (prefixo versionado, envelope `{ success, data, errors 
 | **Data de conclusão** | — (fase aberta até UI e critérios restantes) |
 | **Dependências** | Fase 1 concluída (auth, tenant, `stores`/`users`, Alembic base). |
 | **Notas** | Migração `20260417_0002`; rotas em [README.md](../../README.md) na raiz; OpenAPI em [doc/api/openapi.json](../api/openapi.json). Reserva pessimista / timeout: backlog. Ao fechar a fase: rever secção 3 e [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). |
+
+---
+
+## 9. Registo de execução e aderência (planejado × realizado)
+
+**Última revisão:** 2026-04-17. Compara o planejamento deste ficheiro e as decisões em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) com o código na `main` (mensagem de commit `feat(phase-2): catálogo, pedidos e estoque`).
+
+### 9.1 Gates DEC-14 / DEC-17 / DEC-20 (checklist pré-Fase 2)
+
+| Gate | Exigência | Aderência | Evidência no código |
+|------|-----------|-----------|---------------------|
+| **DEC-14** | Oito estados canónicos em migração e enum | **Sim** | `OrderStatus` em `backend/app/models/enums.py`; coluna `orders.status` na revisão `20260417_0002`. |
+| **DEC-17** | Consumo de lotes em transação; FEFO/FIFO; não negativo | **Sim** | `allocate_stock_for_order` / `release_stock_for_order` em `backend/app/services/stock.py`; ordenação `expiration_date` ASC + `nulls_last()`, depois `received_at`, depois `id`. |
+| **DEC-20** | `categories` + FK opcional em `products` | **Sim** | `categories` com `uq_categories_store_slug`; `products.category_id` nullable; API de categorias e produtos. |
+
+### 9.2 Políticas MVP (tabela em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) — *Decisões de implementação MVP*)
+
+| Norma | Política acordada | Aderência | Notas |
+|-------|-------------------|-----------|--------|
+| **RN-058** | Transições manuais flexíveis; histórico obrigatório; terminais `entregue` / `cancelado` | **Sim** | `PATCH /orders/{id}/status` + `OrderStatusHistory`; `is_transition_allowed_mvp` bloqueia saída de terminais (`order_flow.py`). |
+| **RN-059** | Matriz restrita só na evolução | **N/A no MVP** | Comportamento flexível mantido. |
+| **RN-071** | Primeira baixa física ao atingir `confirmado` (ou saltar para ≥ confirmado) | **Sim** | `needs_stock_commit` + `allocate_stock_for_order` quando o novo índice cruza `confirmado` sem já ter stock comprometido. |
+| **RN-072** | Reverter baixas ao cancelar após consumo | **Sim** | `release_stock_for_order` quando `cancelado` e `stock_committed`. |
+| **RN-034** | Categorias planas; `slug` único por loja; `category_id` opcional; filtros mínimos | **Sim** | Filtro `category_slug` em listagens autenticada e pública; `category_id` opcional na criação de produto. *Melhoria opcional:* aceitar também `category_id` como query param nas listagens (norma diz «e/ou»). |
+
+### 9.3 Escopo §2.1 (dados) e §2.2 (API)
+
+| Item planejado | Situação | Comentário |
+|----------------|----------|------------|
+| `products`, `inventory_*`, `orders`, `order_items`, `stock_movements` | **Implementado** | Inclui campos extra úteis (`unit_price` em linha, `stock_committed`, alocações por lote). |
+| `customer_id` ou texto | **Texto** | `orders.customer_note` (opcional); sem entidade Cliente — alinhado ao risco §7. |
+| `idempotency_key` | **Sim** | Coluna + `UniqueConstraint(store_id, idempotency_key)`; header opcional no `POST /orders`. |
+| API §17 com envelope **DEC-06** `{ success, data, errors }` | **Não** | Respostas «cruas» como na Fase 1; **DEC-06** continua débito de produto — evolução transversal ou Fase posterior. |
+| Endpoints auxiliares de estoque (leitura/ajuste) | **Parcial** | Estoque entra via criação de produto (lote inicial) e movimentos de venda/reversão; **sem** `GET /inventory` ou ajuste manual dedicado neste marco. |
+| `GET /api/v1/products`, `POST /api/v1/orders` + idempotência | **Sim** | Inclui `categories`, `GET /products/{id}`, `PATCH` status, catálogo público por `store_slug`. |
+
+### 9.4 Escopo §2.3 (frontend) e critérios §3
+
+| Entrega | Aderência |
+|---------|-----------|
+| Catálogo, detalhe, carrinho, lista de pedidos (mobile-first) | **Pendente** — não há UI Fase 2 além dos stubs herdados da Fase 1. |
+| Relatórios HTML de testes (critério opcional) | **Opcional** — `make test` (pytest + Vitest) sem relatório HTML obrigatório. |
+| Reserva + timeout §12 | **Fora do escopo** explícito do MVP atual; documentado como backlog (secção 3). |
+
+### 9.5 Síntese
+
+- **Normas DEC-14 / DEC-17 / DEC-20 e RN citadas para a Fase 2:** o backend entregue está **aderente** às políticas MVP acordadas.
+- **Desvios conscientes:** envelope **DEC-06**, leitura/ajuste explícito de inventário, reserva pessimista, UI vitrine/painel — registados acima e/ou no [backlog.md](../projeto/backlog.md).
+- **Próximo passo de aderência plena ao capítulo §2 da fase:** completar **frontend** §2.3 e, se priorizado, APIs de inventário e envelope comum.
