@@ -5,11 +5,13 @@
 
 ## Regenerar o JSON após alterar rotas ou modelos
 
-Na raiz do repositório:
+Na raiz do repositório (ou a partir desta pasta com `make openapi-export`; o `Makefile` local encaminha para a raiz):
 
 ```bash
 make openapi-export
 ```
+
+Ao alterar a API, siga também a política de testes HTTP em [criterios-testes-http-api.md](../execucao/criterios-testes-http-api.md) (OpenAPI + `test_http_contracts_*.py`).
 
 ## Ver a documentação sem subir o backend
 

@@ -17,6 +17,20 @@ from app.db.session import get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import Store, User  # noqa: E402, F401
 
+from tests.contract_helpers import register_random_store
+
+
+@pytest.fixture
+def auth_headers(client: TestClient) -> dict[str, str]:
+    """Authorization Bearer para um utilizador recém-registado."""
+    return register_random_store(client)["headers"]
+
+
+@pytest.fixture
+def auth_context(client: TestClient) -> dict:
+    """headers + store_id + user_id."""
+    return register_random_store(client)
+
 
 @pytest.fixture
 def db_session() -> Generator[Session, None, None]:

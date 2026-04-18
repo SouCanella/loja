@@ -6,6 +6,8 @@
 
 **Última actualização:** 2026-04-19.
 
+**Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
+
 ---
 
 ## 1. Comandos na raiz do monorepo
@@ -17,6 +19,8 @@
 | `make lint` | Ruff (`backend/app`, `backend/tests`) + ESLint (`frontend/`). |
 | `make test-report` | Pytest com relatório HTML + cobertura `app`; frontend `test:coverage`. |
 
+A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
+
 ## 2. Backend (pytest)
 
 | Item | Valor |
@@ -27,6 +31,8 @@
 | Inventário por ficheiro | [qualidade-e-conformidade.md §4](../projeto/qualidade-e-conformidade.md#4-inventário-de-testes-backend-referência-rápida) |
 
 Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_pricing.py`, `test_services_production.py`.
+
+**Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
 ## 3. Frontend unitário (Vitest)
 
@@ -78,3 +84,4 @@ Ver [`.gitignore`](../../.gitignore).
 | [CHANGELOG-FASES.md](CHANGELOG-FASES.md) | Marcos datados (inclui entradas sobre testes e CI). |
 | [fase-03-gestao.md §10.8](../fases/fase-03-gestao.md) | Resumo qualidade no âmbito da Fase 3. |
 | [README raiz](../../README.md) | Comandos `make test`, E2E, tabela de docs. |
+| [criterios-testes-http-api.md](criterios-testes-http-api.md) | Política: nova rota → OpenAPI + testes de contrato HTTP. |

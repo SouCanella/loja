@@ -11,7 +11,7 @@
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes backend | `pytest tests/ -q` — **39** testes | Inclui `test_api_v2_envelope.py` (auth/orders/inventory v2), relatório, produção, pedidos, insumos. |
+| Testes backend | `pytest tests/ -q` — **81** testes | Inclui `test_http_contracts_*.py` (contrato HTTP), `test_api_v2_envelope.py`, fluxos de domínio e serviços. |
 | Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~94%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
 | Testes frontend | `npm run test` (Vitest) | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` com `fetch` / `localStorage` mock. |
 | E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
@@ -70,6 +70,13 @@
 | `tests/test_inventory_items_crud.py` | CRUD `/inventory-items`, delete bloqueado |
 | `tests/test_smoke.py` | Smoke API |
 | `tests/test_api_v2_envelope.py` | `/api/v2/health`, relatório envelope, 401 envelope |
+| `tests/test_http_contracts_auth_health.py` | `/health`, registo/login/refresh — 401/422/409 |
+| `tests/test_http_contracts_bearer_401.py` | Rotas protegidas sem Bearer → 401 |
+| `tests/test_http_contracts_validation_bodies.py` | 422/404 em PATCH/POST/GET autenticados |
+| `tests/test_http_contracts_public.py` | Vitrine pública — slug inexistente 404 |
+| `tests/test_http_contracts_v2.py` | Envelope v2 — refresh e registo incompleto 422 |
+
+Política de novas rotas: [criterios-testes-http-api.md](../execucao/criterios-testes-http-api.md).
 
 ---
 
