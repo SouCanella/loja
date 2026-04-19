@@ -201,6 +201,14 @@ def post_json(client: httpx.Client, h: dict[str, str], path: str, body: dict) ->
     return r.json()
 
 
+def patch_json(client: httpx.Client, h: dict[str, str], path: str, body: dict) -> dict[str, Any]:
+    r = client.patch(_v1(path), headers=h, json=body)
+    if r.status_code != 200:
+        sys.stderr.write(f"PATCH {path} -> {r.status_code} {r.text}\n")
+        sys.exit(1)
+    return r.json()
+
+
 def build_catalog(
     client: httpx.Client, h: dict[str, str]
 ) -> tuple[dict[str, UUID], dict[str, UUID], dict[str, UUID]]:
@@ -320,7 +328,7 @@ def run_simulation(
             },
         )
         oid = UUID(o["id"])
-        post_json(client, h, f"/orders/{oid}/status", {"status": "cancelado"})
+        patch_json(client, h, f"/orders/{oid}/status", {"status": "cancelado"})
         order_backdate.append((oid, ts))
 
     # Pedidos com receita
@@ -339,7 +347,7 @@ def run_simulation(
         )
         oid = UUID(o["id"])
         st = random_status_weights()
-        post_json(client, h, f"/orders/{oid}/status", {"status": st})
+        patch_json(client, h, f"/orders/{oid}/status", {"status": st})
         order_backdate.append((oid, ts_slot))
 
     # Produções
