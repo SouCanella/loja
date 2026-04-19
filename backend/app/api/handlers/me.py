@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models.store import Store
 from app.models.user import User
-from app.schemas.user import StorePricingPatch, UserMeResponse
+from app.schemas.user import StorePricingPatch, StoreSettingsPatch, UserMeResponse
 from app.services.store_pricing import (
     get_store_target_margin_percent,
     set_store_target_margin_percent,
@@ -42,6 +42,51 @@ def read_me(db: Session, current: User) -> UserMeResponse:
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
         store_target_margin_percent=get_store_target_margin_percent(u.store),
     )
+
+
+def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -> UserMeResponse:
+    u = db.scalars(
+        select(User).where(User.id == current.id).options(joinedload(User.store))
+    ).first()
+    if u is None or u.store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Utilizador inválido")
+    store = u.store
+    if body.store_name is not None:
+        store.name = body.store_name.strip()
+    if body.store_slug is not None:
+        taken = db.scalars(
+            select(Store.id).where(Store.slug == body.store_slug, Store.id != store.id)
+        ).first()
+        if taken is not None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Este slug já está em uso.",
+            )
+        store.slug = body.store_slug
+    if body.theme is not None:
+        base = dict(store.theme) if isinstance(store.theme, dict) else {}
+        for key, val in body.theme.items():
+            if key == "vitrine" and isinstance(val, dict):
+                inner = dict(base.get("vitrine") or {}) if isinstance(base.get("vitrine"), dict) else {}
+                inner.update(val)
+                base["vitrine"] = inner
+            else:
+                base[key] = val
+        store.theme = base
+    if body.config is not None:
+        base_c = dict(store.config) if isinstance(store.config, dict) else {}
+        for key, val in body.config.items():
+            if key == "general" and isinstance(val, dict):
+                inner = dict(base_c.get("general") or {}) if isinstance(base_c.get("general"), dict) else {}
+                inner.update(val)
+                base_c["general"] = inner
+            else:
+                base_c[key] = val
+        store.config = base_c
+    db.add(store)
+    db.commit()
+    db.refresh(u)
+    return read_me(db, current)
 
 
 def patch_store_pricing(db: Session, current: User, body: StorePricingPatch) -> UserMeResponse:

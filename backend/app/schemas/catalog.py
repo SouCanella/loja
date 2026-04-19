@@ -42,7 +42,16 @@ class ProductOut(BaseModel):
     category_id: UUID | None
     name: str
     description: str | None
+    image_url: str | None = None
     price: Decimal
     active: bool
 
     model_config = {"from_attributes": True}
+
+
+class ProductPatch(BaseModel):
+    name: str | None = Field(None, min_length=1, max_length=255)
+    description: str | None = None
+    image_url: str | None = Field(None, max_length=512)
+    price: Decimal | None = Field(None, ge=0)
+    active: bool | None = None

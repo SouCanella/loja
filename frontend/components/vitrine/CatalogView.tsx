@@ -585,9 +585,18 @@ function ProductCard({
               : "relative aspect-square w-full"
         }
       >
-        <div className="flex h-full min-h-0 w-full items-center justify-center bg-gradient-to-br from-[#f0e6de] to-[#e8dcd2] text-4xl">
-          {emoji}
-        </div>
+        {product.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element -- URL externa configurável pelo lojista
+          <img
+            src={product.image_url}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full min-h-0 w-full items-center justify-center bg-gradient-to-br from-[#f0e6de] to-[#e8dcd2] text-4xl">
+            {emoji}
+          </div>
+        )}
       </Link>
       <div
         className={`flex min-w-0 flex-1 flex-col gap-1.5 ${

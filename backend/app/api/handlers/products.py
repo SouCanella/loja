@@ -13,7 +13,7 @@ from app.models.inventory import InventoryBatch, InventoryItem
 from app.models.order import StockMovement
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.catalog import ProductCreate
+from app.schemas.catalog import ProductCreate, ProductPatch
 
 
 def list_products(
@@ -100,4 +100,23 @@ def get_product(db: Session, current: User, product_id: UUID) -> Product:
     p = db.get(Product, product_id)
     if p is None or p.store_id != current.store_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produto não encontrado")
+    return p
+
+
+def update_product(db: Session, current: User, product_id: UUID, body: ProductPatch) -> Product:
+    p = get_product(db, current, product_id)
+    if body.name is not None:
+        p.name = body.name.strip()
+    if body.description is not None:
+        p.description = body.description
+    if body.image_url is not None:
+        url = body.image_url.strip()
+        p.image_url = url if url else None
+    if body.price is not None:
+        p.price = body.price
+    if body.active is not None:
+        p.active = body.active
+    db.add(p)
+    db.commit()
+    db.refresh(p)
     return p

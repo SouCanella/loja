@@ -6,6 +6,7 @@ from app.schemas.auth import RegisterResponse, TokenResponse
 from app.schemas.catalog import CategoryOut, ProductOut
 from app.schemas.inventory_items import InventoryItemDetailOut, InventoryItemListOut
 from app.schemas.orders import OrderDetailOut, OrderOut
+from app.schemas.dashboard import DashboardSummaryOut
 from app.schemas.phase3 import FinancialReportOut, ProductionRunOut, RecipeOut
 from app.schemas.public_catalog import CategoryPublicOut, ProductPublicOut, StorePublicOut
 from app.schemas.user import UserMeResponse
@@ -30,6 +31,12 @@ class HealthEnvelope(BaseModel):
 class FinancialReportEnvelope(BaseModel):
     success: bool
     data: FinancialReportOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class DashboardSummaryEnvelope(BaseModel):
+    success: bool
+    data: DashboardSummaryOut | None = None
     errors: list[ApiErrorDetail] | None = None
 
 

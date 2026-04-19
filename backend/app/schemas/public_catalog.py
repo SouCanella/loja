@@ -18,6 +18,7 @@ class ProductPublicOut(BaseModel):
     id: UUID
     name: str
     description: str | None
+    image_url: str | None = None
     price: Decimal
     category_id: UUID | None = None
     category_slug: str | None = None

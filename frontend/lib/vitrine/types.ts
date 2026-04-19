@@ -17,6 +17,7 @@ export type ProductPublic = {
   id: string;
   name: string;
   description: string | null;
+  image_url?: string | null;
   price: string;
   category_id: string | null;
   category_slug: string | null;

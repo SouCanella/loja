@@ -1649,6 +1649,110 @@
         ]
       }
     },
+    "/api/v2/me/store-settings": {
+      "patch": {
+        "tags": [
+          "me-v2"
+        ],
+        "summary": "Patch Store Settings V2",
+        "operationId": "patch_store_settings_v2_api_v2_me_store_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreSettingsPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMeEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/dashboard/summary": {
+      "get": {
+        "tags": [
+          "dashboard-v2"
+        ],
+        "summary": "Get Dashboard Summary V2",
+        "operationId": "get_dashboard_summary_v2_api_v2_dashboard_summary_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/categories": {
       "get": {
         "tags": [
@@ -1899,6 +2003,62 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "products-v2"
+        ],
+        "summary": "Patch Product V2",
+        "operationId": "patch_product_v2_api_v2_products__product_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPatch"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -3209,6 +3369,184 @@
         ],
         "title": "CategoryPublicOut"
       },
+      "DashboardKpisOut": {
+        "properties": {
+          "orders_today": {
+            "type": "integer",
+            "title": "Orders Today",
+            "description": "Pedidos com data UTC = hoje."
+          },
+          "orders_in_period": {
+            "type": "integer",
+            "title": "Orders In Period"
+          },
+          "ticket_avg": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticket Avg",
+            "description": "Receita ÷ pedidos no período."
+          },
+          "out_of_stock_items_count": {
+            "type": "integer",
+            "title": "Out Of Stock Items Count",
+            "description": "Insumos com quantidade total em lotes = 0."
+          },
+          "new_customers_in_period": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Customers In Period",
+            "description": "Reservado (3.1-b); null na 3.1-a."
+          }
+        },
+        "type": "object",
+        "required": [
+          "orders_today",
+          "orders_in_period",
+          "out_of_stock_items_count"
+        ],
+        "title": "DashboardKpisOut"
+      },
+      "DashboardRevenueDayOut": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Revenue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "revenue"
+        ],
+        "title": "DashboardRevenueDayOut"
+      },
+      "DashboardStatusCountOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "count"
+        ],
+        "title": "DashboardStatusCountOut"
+      },
+      "DashboardSummaryEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DashboardSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "DashboardSummaryEnvelope"
+      },
+      "DashboardSummaryOut": {
+        "properties": {
+          "date_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Date From"
+          },
+          "date_to": {
+            "type": "string",
+            "format": "date",
+            "title": "Date To"
+          },
+          "aggregation_note": {
+            "type": "string",
+            "title": "Aggregation Note",
+            "default": "Dias e «hoje» em calendário UTC (alinhado ao relatório financeiro)."
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/DashboardKpisOut"
+          },
+          "revenue_by_day": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardRevenueDayOut"
+            },
+            "type": "array",
+            "title": "Revenue By Day"
+          },
+          "revenue_moving_avg_7d": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardRevenueDayOut"
+            },
+            "type": "array",
+            "title": "Revenue Moving Avg 7D"
+          },
+          "orders_by_status": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardStatusCountOut"
+            },
+            "type": "array",
+            "title": "Orders By Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date_from",
+          "date_to",
+          "kpis",
+          "revenue_by_day",
+          "revenue_moving_avg_7d",
+          "orders_by_status"
+        ],
+        "title": "DashboardSummaryOut"
+      },
       "DeleteSuccessEnvelope": {
         "properties": {
           "success": {
@@ -3505,7 +3843,7 @@
           "orders_revenue"
         ],
         "title": "FinancialReportStatusRow",
-        "description": "Pedidos no período por estado (exclui rascunho e cancelado — alinhado à receita contabilizada)."
+        "description": "Pedidos por estado no período (exclui rascunho/cancelado; alinhado à receita)."
       },
       "HTTPValidationError": {
         "properties": {
@@ -4344,6 +4682,17 @@
             ],
             "title": "Description"
           },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
           "price": {
             "type": "string",
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
@@ -4366,6 +4715,75 @@
           "active"
         ],
         "title": "ProductOut"
+      },
+      "ProductPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          }
+        },
+        "type": "object",
+        "title": "ProductPatch"
       },
       "ProductPublicEnvelope": {
         "properties": {
@@ -4466,6 +4884,17 @@
               }
             ],
             "title": "Description"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
           },
           "price": {
             "type": "string",
@@ -5223,6 +5652,63 @@
           "slug"
         ],
         "title": "StorePublicOut"
+      },
+      "StoreSettingsPatch": {
+        "properties": {
+          "store_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Name"
+          },
+          "store_slug": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Slug"
+          },
+          "theme": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Theme"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "title": "StoreSettingsPatch",
+        "description": "Actualização parcial da loja (nome, slug, tema, config JSON)."
       },
       "TokenEnvelope": {
         "properties": {

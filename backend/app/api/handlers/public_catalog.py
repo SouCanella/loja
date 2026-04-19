@@ -37,6 +37,7 @@ def product_to_public(p: Product) -> ProductPublicOut:
         id=p.id,
         name=p.name,
         description=p.description,
+        image_url=p.image_url,
         price=p.price,
         category_id=p.category_id,
         category_slug=cat.slug if cat else None,

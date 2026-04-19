@@ -20,8 +20,17 @@ export function ProductDetail({
   return (
     <article>
       <div className="overflow-hidden rounded-[20px] border border-loja-ink/[0.06] bg-loja-surface shadow-loja">
-        <div className="flex aspect-[4/3] items-center justify-center bg-gradient-to-br from-[#f0e6de] to-[#e8dcd2] text-7xl">
-          {emoji}
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gradient-to-br from-[#f0e6de] to-[#e8dcd2] text-7xl">
+          {product.image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={product.image_url}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            emoji
+          )}
         </div>
         <div className="p-5">
           {product.category_name ? (

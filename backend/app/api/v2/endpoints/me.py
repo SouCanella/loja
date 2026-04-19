@@ -10,7 +10,7 @@ from app.api.handlers import me as me_handlers
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.envelope import UserMeEnvelope
-from app.schemas.user import StorePricingPatch
+from app.schemas.user import StorePricingPatch, StoreSettingsPatch
 
 router = APIRouter(tags=["me-v2"])
 
@@ -31,4 +31,14 @@ def patch_store_pricing_v2(
     db: Annotated[Session, Depends(get_db)],
 ) -> UserMeEnvelope:
     data = me_handlers.patch_store_pricing(db, current, body)
+    return UserMeEnvelope(success=True, data=data, errors=None)
+
+
+@router.patch("/me/store-settings", response_model=UserMeEnvelope)
+def patch_store_settings_v2(
+    body: StoreSettingsPatch,
+    current: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> UserMeEnvelope:
+    data = me_handlers.patch_store_settings(db, current, body)
     return UserMeEnvelope(success=True, data=data, errors=None)

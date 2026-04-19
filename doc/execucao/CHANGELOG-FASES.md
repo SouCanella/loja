@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-19 (Fase 3.1 — dashboard API, sidebar, Recharts, imagens produto)
+
+- **Backend:** migração `20260417_0005` — `products.image_url`; `GET /api/v2/dashboard/summary`; `PATCH /api/v2/products/{id}`; `PATCH /api/v2/me/store-settings` (merge `theme.vitrine` e `config.general`); `ProductPublicOut.image_url`.
+- **Frontend:** `recharts`; `PainelShell` (menu lateral); `/painel` = dashboard com KPIs + gráficos; `/painel/financeiro`, `/painel/configuracao`, `/painel/catalogo`, `/painel/precificacao`, `/painel/clientes`, `/painel/producao`, `/painel/categorias`; gráficos no relatório; vitrine usa `image_url` quando definido; `/painel/definicoes` → `/painel/configuracao`.
+- **Testes:** `tests/test_dashboard_v2.py` (dashboard, patch produto, settings, slug).
+- **Contrato:** `make openapi-export`.
+
 ## 2026-04-17 (Planeamento — Fase 3.1 paridade mockup)
 
 - **Novo:** [fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) — mapa mockup admin (e vitrine) ↔ código ↔ RF; prioridade **gráficos** (dashboard, financeiro, relatórios, precificação); **DEC-15** fora do âmbito; [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) actualizado (fluxo F3 → **3.1** → F4).

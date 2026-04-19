@@ -122,9 +122,9 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planeada` |
-| **Data de início** | — |
-| **Notas** | Mapa mockup ↔ código ↔ RF; **decisões de arranque** em **§11** (defaults para desenvolvimento). |
+| **Status** | `em_curso` |
+| **Data de início** | 2026-04-19 |
+| **Notas** | Entregue: **Recharts**, `GET /api/v2/dashboard/summary`, shell **PainelShell** (sidebar), dashboard com gráficos, **Financeiro** + gráficos no **Relatório**, **Precificação**, **Configuração** (`PATCH /me/store-settings`), **Catálogo** com `image_url` + vitrine; **Clientes** 3.1-a; **Produção** atalhos. Ver [CHANGELOG-FASES](../execucao/CHANGELOG-FASES.md). |
 
 ---
 
@@ -204,4 +204,4 @@ Estas opções são **coerentes com o código actual** (Next 14, App Router, API
 
 ---
 
-*Última revisão: 2026-04-17 — §11 decisões de arranque.*
+*Última revisão: 2026-04-19 — primeira entrega 3.1 (dashboard, sidebar, gráficos, imagens).*

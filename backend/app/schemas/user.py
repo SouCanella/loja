@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.models.user import UserRole
 
@@ -27,3 +27,20 @@ class UserMeResponse(BaseModel):
 
 class StorePricingPatch(BaseModel):
     target_margin_percent: Decimal = Field(..., ge=0, le=100)
+
+
+class StoreSettingsPatch(BaseModel):
+    """Actualização parcial da loja (nome, slug, tema, config JSON)."""
+
+    store_name: str | None = Field(None, min_length=1, max_length=255)
+    store_slug: str | None = Field(None, min_length=2, max_length=80)
+    theme: dict | None = None
+    config: dict | None = None
+
+    @field_validator("store_slug")
+    @classmethod
+    def slug_normalize(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        s = v.strip().lower().replace(" ", "-")
+        return s or None

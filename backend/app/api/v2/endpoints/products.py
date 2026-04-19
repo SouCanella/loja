@@ -10,7 +10,7 @@ from app.api.deps import get_current_user
 from app.api.handlers import products as products_handlers
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.catalog import ProductCreate, ProductOut
+from app.schemas.catalog import ProductCreate, ProductOut, ProductPatch
 from app.schemas.envelope import ProductEnvelope, ProductListEnvelope
 
 router = APIRouter(tags=["products-v2"])
@@ -47,4 +47,15 @@ def get_product_v2(
     current: Annotated[User, Depends(get_current_user)],
 ) -> ProductEnvelope:
     row = products_handlers.get_product(db, current, product_id)
+    return ProductEnvelope(success=True, data=ProductOut.model_validate(row), errors=None)
+
+
+@router.patch("/products/{product_id}", response_model=ProductEnvelope)
+def patch_product_v2(
+    product_id: UUID,
+    body: ProductPatch,
+    db: Annotated[Session, Depends(get_db)],
+    current: Annotated[User, Depends(get_current_user)],
+) -> ProductEnvelope:
+    row = products_handlers.update_product(db, current, product_id, body)
     return ProductEnvelope(success=True, data=ProductOut.model_validate(row), errors=None)

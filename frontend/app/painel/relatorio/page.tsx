@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
 import { apiPainelJson, formatBRL, orderStatusLabel, PainelApiError } from "@/lib/painel-api";
 
 type ProductRow = {
@@ -595,6 +596,14 @@ export default function RelatorioPage() {
                 Imprimir / PDF
               </button>
             </div>
+          </div>
+
+          <div className="print:hidden">
+            <FinancialReportCharts
+              byOrderStatus={data.by_order_status}
+              byCategory={data.by_category}
+              labelForStatus={orderStatusLabel}
+            />
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
