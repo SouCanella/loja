@@ -8,6 +8,41 @@ Script que cria uma **loja fictícia** com insumos, categorias, produtos, receit
 2. **API FastAPI** a responder no URL configurado (omissão `http://127.0.0.1:8000`).
 3. **Mesmo `DATABASE_URL`** que a API usa (ficheiro `.env` na raiz do repositório), porque o script ajusta `created_at` em `orders`, `production_runs` e movimentos de stock via SQLAlchemy.
 
+## Zerar a base e voltar a correr o seed (desenvolvimento local)
+
+Para repetir o script **com a mesma loja/email** sem apagar produtos à mão, o mais simples é **apagar o volume do Postgres** (todos os dados da BD Docker) e **reaplicar migrações**.
+
+1. **Pare** o que estiver a usar a BD (ex.: `make dev`, `uvicorn`, ou `docker compose` com backend).
+2. Na **raiz do repositório** (onde está `docker-compose.yml`):
+
+```bash
+docker compose down -v
+```
+
+O `-v` remove o volume `loja_pgdata` — ficas com Postgres **vazio** na próxima subida.
+
+3. Volta a subir **só o Postgres** (ou a stack completa):
+
+```bash
+docker compose up -d postgres
+```
+
+4. Espera o contentor ficar *healthy* (uns segundos) e aplica migrações:
+
+```bash
+make migrate
+```
+
+5. Sobe a API (`make dev` ou o teu fluxo habitual) e corre o seed:
+
+```bash
+make seed-demo-massa
+```
+
+**Nota:** isto apaga **tudo** nessa instância Docker (todas as lojas e utilizadores). É adequado a **dev local**, não a dados que queiras manter.
+
+**Alternativa sem apagar o volume:** criar outra base ou outro cluster não entra no fluxo por omissão; para “só limpar tabelas” podes usar `psql` e `DROP SCHEMA public CASCADE; CREATE SCHEMA public;` e depois `make migrate`, mas o fluxo com `down -v` costuma ser mais previsível.
+
 ## Execução
 
 Na raiz do repositório (ou a partir de `backend/`):
