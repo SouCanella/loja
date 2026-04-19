@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Script `seed_demo_mass` — massa 30 dias para QA manual)
+
+- **`backend/scripts/seed_demo_mass.py`** + **`make seed-demo-massa`**: loja demo, ~187 pedidos, ~38 produções, datas repartidas em 30 dias; doc [seed-demo-massa.md](seed-demo-massa.md).
+
 ## 2026-04-17 (Frontend em `/api/v2` + relatório financeiro alargado)
 
 - **Next.js (painel, login, vitrine SSR):** chamadas passam a **`/api/v2/...`** com envelope DEC-06; `frontend/lib/api-v2.ts` (`unwrapV2Success`, `messageFromV2Error`, `toApiV2Path` para compat. legada); `painel-api.ts` faz *unwrap* em sucesso, mensagens de erro a partir de `errors[]` ou `detail`, e **`POST /api/v2/auth/refresh`**; login em **`POST /api/v2/auth/login`**; `server-fetch` da vitrine em **`/api/v2/public/...`**. Vitest ajustado ao envelope.

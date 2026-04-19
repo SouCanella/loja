@@ -18,6 +18,7 @@
 | `make dev` | Postgres (Docker) + `uvicorn --reload` + `next dev` — ver [`scripts/dev-local.sh`](../../scripts/dev-local.sh); requer `.env` com `DATABASE_URL` para `localhost:5433` (ou `POSTGRES_HOST_PORT`). |
 | `make lint` | Ruff (`backend/app`, `backend/tests`) + ESLint (`frontend/`). |
 | `make test-report` | Pytest com relatório HTML + cobertura `app`; frontend `test:coverage`. |
+| `make seed-demo-massa` | Gera massa de dados de demonstração (~30 dias) na BD — requer API no ar; ver [seed-demo-massa.md](seed-demo-massa.md). |
 
 A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
 

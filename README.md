@@ -17,6 +17,7 @@ make up             # Postgres + API (porta 8000) + frontend (porta 3000) — Do
 make dev            # só Postgres em Docker + API (uvicorn --reload) + Next (dev) — ideal para editar código e testar páginas
 make migrate        # aplica Alembic no Postgres (com serviços no ar; DATABASE_URL em .env)
 make openapi-export # regenera doc/api/openapi.json (contrato OpenAPI offline)
+# make seed-demo-massa   # opcional: massa ~30 dias na BD (API no ar) — ver doc/execucao/seed-demo-massa.md
 ```
 
 Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O alvo `make backend-venv` (ou qualquer alvo que dependa dele) instala dependências Python em `backend/.venv`.

@@ -10,7 +10,7 @@
 | **[normativos/](normativos/)** | Regras de negócio (`RN-*`), requisitos funcionais/não funcionais (`RF-*`, `RNF-*`), matriz RN → testes |
 | **[projeto/](projeto/)** | Decisões **DEC-***, backlog, [qualidade-e-conformidade.md](projeto/qualidade-e-conformidade.md) (auditoria vs RNF), rastreabilidade com `inicio_planejamento.txt`, proposta legada |
 | **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
-| **[execucao/](execucao/)** | Changelog de marcos; [TESTES-E-CI.md](execucao/TESTES-E-CI.md); [api-v1-v2-deprecacao.md](execucao/api-v1-v2-deprecacao.md) (DEC-06, política v1/v2) |
+| **[execucao/](execucao/)** | Changelog de marcos; [TESTES-E-CI.md](execucao/TESTES-E-CI.md); [api-v1-v2-deprecacao.md](execucao/api-v1-v2-deprecacao.md); [seed-demo-massa.md](execucao/seed-demo-massa.md) (massa de dados para QA manual) |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
 | **[api/](api/)** | Contrato **OpenAPI 3** versionado (`openapi.json`), UI **ReDoc** offline (`index.html`); **RNF-DevEx-08** — ver **[api/README.md](api/README.md)** |
 | **[README.md](../README.md)** (raiz do repositório) | Monorepo: `make`, Docker Compose, pastas `backend/` / `frontend/` — Fases **0–3** documentadas; inventário Fase 3 em [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§10** |

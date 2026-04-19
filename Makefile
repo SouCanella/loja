@@ -1,7 +1,7 @@
-.PHONY: up down dev test test-report migrate lint openapi-export help backend-venv
+.PHONY: up down dev test test-report migrate lint openapi-export seed-demo-massa help backend-venv
 
 help:
-	@echo "Comandos: up | down | dev | test | test-report | migrate | openapi-export | lint | backend-venv"
+	@echo "Comandos: up | down | dev | test | test-report | migrate | openapi-export | seed-demo-massa | lint | backend-venv"
 
 # Cria backend/.venv na primeira utilização (PEP 668 / Debian).
 backend-venv:
@@ -40,6 +40,10 @@ migrate: backend-venv
 # Gera doc/api/openapi.json (+ use doc/api/index.html com servidor estático) sem subir a API.
 openapi-export: backend-venv
 	@cd backend && .venv/bin/python scripts/export_openapi.py
+
+# Massa de dados (~30 dias) para testes manuais — requer API no ar e mesmo DATABASE_URL que o backend.
+seed-demo-massa: backend-venv
+	cd backend && .venv/bin/python scripts/seed_demo_mass.py
 
 lint: backend-venv
 	cd backend && .venv/bin/ruff check app tests
