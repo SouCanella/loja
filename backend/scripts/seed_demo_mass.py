@@ -33,7 +33,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DAYS = 30
 STORE_SLUG = os.environ.get("SEED_STORE_SLUG", "loja-demo-massa")
 STORE_NAME = os.environ.get("SEED_STORE_NAME", "Doce Massa Demo")
-ADMIN_EMAIL = os.environ.get("SEED_ADMIN_EMAIL", "admin@demo-massa.local")
+# Domínio .local é rejeitado pelo validador de email (Pydantic) — usar TLD válido para demo.
+ADMIN_EMAIL = os.environ.get("SEED_ADMIN_EMAIL", "admin@demo-massa.example.com")
 ADMIN_PASSWORD = os.environ.get("SEED_ADMIN_PASSWORD", "DemoMassa#2026")
 API_BASE = os.environ.get("SEED_API_URL", "http://127.0.0.1:8000").rstrip("/")
 

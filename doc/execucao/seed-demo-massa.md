@@ -29,7 +29,7 @@ Variáveis opcionais:
 | `SEED_API_URL` | URL base da API (omissão `http://127.0.0.1:8000`). |
 | `SEED_STORE_SLUG` | *Slug* da loja (omissão `loja-demo-massa`). |
 | `SEED_STORE_NAME` | Nome da loja. |
-| `SEED_ADMIN_EMAIL` | Email do admin (omissão `admin@demo-massa.local`). |
+| `SEED_ADMIN_EMAIL` | Email do admin (omissão `admin@demo-massa.example.com`; evite `.local`, o validador da API rejeita). |
 | `SEED_ADMIN_PASSWORD` | Palavra-passe (omissão `DemoMassa#2026`). |
 
 ## Comportamento
