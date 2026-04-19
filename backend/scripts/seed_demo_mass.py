@@ -175,7 +175,23 @@ def register_or_login(client: httpx.Client) -> str:
         if login.status_code != 200:
             sys.stderr.write(f"Login falhou: {login.status_code} {login.text}\n")
             sys.exit(1)
-        return login.json()["access_token"]
+        token = login.json()["access_token"]
+        h = {"Authorization": f"Bearer {token}"}
+        me = client.get(_v1("/me"), headers=h)
+        if me.status_code != 200:
+            sys.stderr.write(f"GET /me: {me.status_code} {me.text}\n")
+            sys.exit(1)
+        actual_slug = me.json().get("store_slug")
+        if actual_slug != STORE_SLUG:
+            sys.stderr.write(
+                f"O email «{ADMIN_EMAIL}» já pertence à loja «{actual_slug}», "
+                f"não a «{STORE_SLUG}». "
+                "Mudar só SEED_STORE_SLUG não cria loja nova: cada admin está ligado a uma loja. "
+                "Use SEED_ADMIN_EMAIL (e palavra-passe) novos para outra loja, ou limpe a BD / "
+                "reutilize o mesmo slug e apague produtos manualmente se quiser repetir o seed.\n"
+            )
+            sys.exit(3)
+        return token
     sys.stderr.write(f"Registo falhou: {reg.status_code} {reg.text}\n")
     sys.exit(1)
 
@@ -187,8 +203,10 @@ def ensure_empty_catalog(client: httpx.Client, h: dict[str, str]) -> None:
         sys.exit(1)
     if len(pr.json()) > 0:
         sys.stderr.write(
-            "Já existem produtos nesta loja. Apague a loja ou use outro slug via "
-            "SEED_STORE_SLUG / conta SEED_ADMIN_EMAIL.\n"
+            "Já existem produtos nesta loja (seed anterior ou catálogo manual). Opções: "
+            "(1) apagar produtos na BD ou recriar a base; "
+            "(2) novo par SEED_ADMIN_EMAIL + SEED_STORE_SLUG para uma loja vazia; "
+            "(3) mesmo email só volta a funcionar se a loja estiver sem produtos.\n"
         )
         sys.exit(2)
 

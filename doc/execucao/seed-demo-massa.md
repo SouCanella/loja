@@ -35,7 +35,8 @@ Variáveis opcionais:
 ## Comportamento
 
 - **Primeira execução:** regista a loja e o utilizador, cria catálogo e simulação.
-- **Se já existirem produtos** nessa conta/loja, o script **termina com código 2** (evita duplicar dados). Use outro `SEED_STORE_SLUG` / email ou apague os dados de teste na BD.
+- **Se já existirem produtos** nessa conta/loja, o script **termina com código 2** (evita duplicar dados).
+- **Só mudar `SEED_STORE_SLUG` não serve:** o mesmo `SEED_ADMIN_EMAIL` continua associado à **primeira** loja; o login ignora o slug novo. Para uma segunda loja vazia, use **outro email** (e palavra-passe) **e** outro slug — o script valida isto e sai com **código 3** se o slug pedido não for o da loja do utilizador.
 
 ## O que ver no produto
 
