@@ -14,16 +14,21 @@ PROTECTED: list[tuple[str, str]] = [
     ("GET", "/api/v1/recipes"),
     ("GET", "/api/v1/reports/financial"),
     ("POST", "/api/v1/production"),
-    ("GET", "/api/v2/orders"),
+    ("GET", "/api/v2/me"),
+    ("GET", "/api/v2/categories"),
+    ("GET", "/api/v2/products"),
     ("GET", "/api/v2/inventory-items"),
+    ("GET", "/api/v2/orders"),
+    ("GET", "/api/v2/recipes"),
     ("GET", "/api/v2/reports/financial"),
+    ("POST", "/api/v2/production"),
 ]
 
 
 @pytest.mark.parametrize("method,path", PROTECTED)
 def test_requires_bearer_401(client: TestClient, method: str, path: str) -> None:
     kwargs: dict = {}
-    if method == "POST" and path == "/api/v1/production":
+    if method == "POST" and path.endswith("/production"):
         kwargs["json"] = {"recipe_id": str(uuid.uuid4())}
     r = client.request(method, path, **kwargs)
     assert r.status_code == 401, f"{method} {path} -> {r.status_code}"

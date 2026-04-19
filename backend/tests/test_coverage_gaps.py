@@ -310,7 +310,7 @@ def test_recipe_cost_exception_returns_null_estimate(client: TestClient) -> None
         headers=h,
     ).json()
     with patch(
-        "app.api.v1.endpoints.recipes.estimate_recipe_unit_cost",
+        "app.api.handlers.recipes.estimate_recipe_unit_cost",
         side_effect=RuntimeError("boom"),
     ):
         rc = client.post(

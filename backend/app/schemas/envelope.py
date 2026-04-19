@@ -3,9 +3,12 @@
 from pydantic import BaseModel, Field
 
 from app.schemas.auth import RegisterResponse, TokenResponse
-from app.schemas.inventory_items import InventoryItemListOut
-from app.schemas.orders import OrderOut
-from app.schemas.phase3 import FinancialReportOut
+from app.schemas.catalog import CategoryOut, ProductOut
+from app.schemas.inventory_items import InventoryItemDetailOut, InventoryItemListOut
+from app.schemas.orders import OrderDetailOut, OrderOut
+from app.schemas.phase3 import FinancialReportOut, ProductionRunOut, RecipeOut
+from app.schemas.public_catalog import CategoryPublicOut, ProductPublicOut, StorePublicOut
+from app.schemas.user import UserMeResponse
 
 
 class ApiErrorDetail(BaseModel):
@@ -51,4 +54,96 @@ class OrderListEnvelope(BaseModel):
 class InventoryItemListEnvelope(BaseModel):
     success: bool
     data: list[InventoryItemListOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class UserMeEnvelope(BaseModel):
+    success: bool
+    data: UserMeResponse | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class CategoryListEnvelope(BaseModel):
+    success: bool
+    data: list[CategoryOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class CategoryEnvelope(BaseModel):
+    success: bool
+    data: CategoryOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class ProductListEnvelope(BaseModel):
+    success: bool
+    data: list[ProductOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class ProductEnvelope(BaseModel):
+    success: bool
+    data: ProductOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class InventoryItemDetailEnvelope(BaseModel):
+    success: bool
+    data: InventoryItemDetailOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class OrderDetailEnvelope(BaseModel):
+    success: bool
+    data: OrderDetailOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class RecipeListEnvelope(BaseModel):
+    success: bool
+    data: list[RecipeOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class RecipeEnvelope(BaseModel):
+    success: bool
+    data: RecipeOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class ProductionRunEnvelope(BaseModel):
+    success: bool
+    data: ProductionRunOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class DeleteSuccessEnvelope(BaseModel):
+    """Resposta para DELETE sem payload (sucesso)."""
+
+    success: bool
+    data: None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class StorePublicEnvelope(BaseModel):
+    success: bool
+    data: StorePublicOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class CategoryPublicListEnvelope(BaseModel):
+    success: bool
+    data: list[CategoryPublicOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class ProductPublicListEnvelope(BaseModel):
+    success: bool
+    data: list[ProductPublicOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class ProductPublicEnvelope(BaseModel):
+    success: bool
+    data: ProductPublicOut | None = None
     errors: list[ApiErrorDetail] | None = None

@@ -11,7 +11,7 @@
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes backend | `pytest tests/ -q` — **119** testes | Contratos HTTP (`test_http_contracts_*`), lacunas de rotas/JWT (`test_coverage_gaps.py`), `test_api_v2_envelope.py`, fluxos de domínio e `test_services_*`. |
+| Testes backend | `pytest tests/ -q` — **125** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
 | Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~94%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
 | Testes frontend | `npm run test` (Vitest) | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` com `fetch` / `localStorage` mock. |
 | E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
@@ -36,7 +36,7 @@
 | **RNF-UX-01 / RNF-UX-03** mobile-first e painel simples | Layouts Tailwind, listas em cartões no painel; formulários por etapas não obrigatórios no MVP. |
 | **DEC-16** refresh (parcial) | `POST /auth/refresh`; `refresh_token` no login/registo; cliente renova token; cookie httpOnly — backlog. |
 | **RNF-SEC-04** rate limit (parcial) | Limite por IP em `POST /auth/login` (configurável). |
-| **DEC-06** envelope (parcial) | **`/api/v2`** piloto: `GET /health`, `GET /reports/financial` com `{ success, data, errors }`; erros HTTP/422 no mesmo formato. **`/api/v1`** mantém resposta directa. |
+| **DEC-06** envelope | **`/api/v2`** paridade com v1 (handlers em `app/api/handlers/`); erros HTTP/422 no mesmo formato envelope. **`/api/v1`** mantém resposta directa. |
 
 ---
 
@@ -48,7 +48,7 @@
 | **RNF-QA-02** fluxos críticos | Pytest cobre fluxos; Vitest cobre `painel-api.ts`. | Componentes React e mais fluxos Vitest conforme prioridade. |
 | **RNF-QA-03** E2E | Smoke `/login`; login+painel opcional com env — ver [TESTES-E-CI §4](../execucao/TESTES-E-CI.md#4-e2e-playwright). | Alargar fluxos (vitrina checkout) e activar E2E autenticado no CI com secrets. |
 | **RNF-QA-06** matriz RN → testes | [matriz-rn-testes.md](../normativos/matriz-rn-testes.md) existe; não está 100% preenchida para cada RN novo. | Actualizar ao fechar marcos. |
-| **DEC-06 / RNF-Ops-02** envelope global | **`/api/v1`** continua sem envelope; **`/api/v2`** inicia migração (rotas piloto). | Alargar `/api/v2` ou deprecar v1 quando clientes estiverem prontos. |
+| **DEC-06 / RNF-Ops-02** envelope global | **`/api/v1`** sem envelope; **`/api/v2`** cobre as mesmas rotas de negócio + público. | Migrar frontend para v2; deprecar v1 quando acordado — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). |
 | **DEC-10** FieldHelp | Ajuda contextual não está em todos os campos do painel (receitas, pedidos, etc.). | Incrementar por área conforme prioridade UX. |
 | **RNF-SEC-03 / DEC-16** cookie httpOnly | Refresh entregue em JSON + `localStorage` no cliente; cookie httpOnly **não** aplicado. | Evolução de segurança quando houver mesmo domínio API+front ou proxy BFF. |
 | **RNF-Ops-01** logs estruturados | MVP sem request id obrigatório em todos os caminhos. | Fase 4 / observabilidade. |
@@ -84,7 +84,7 @@ Política de novas rotas: [criterios-testes-http-api.md](../execucao/criterios-t
 
 ## 5. Próximos passos sugeridos (prioridade)
 
-1. **DEC-06:** migrar mais rotas para **`/api/v2`** (auth, CRUD críticos); documentar política de deprecação de `/api/v1`.  
+1. **DEC-06:** ~~migrar rotas para v2~~ — **feito** (paridade); seguir com adopção no frontend e política de deprecação v1.  
 2. **Relatório:** custo de vendas ligado a lotes (COGS) vs aproximação actual período-a-período.  
 3. **Qualidade:** Vitest; E2E no CI com secrets; cookie httpOnly para refresh.  
 4. **Roadmap:** [fase-03-gestao.md §9.2](../fases/fase-03-gestao.md#92-próximo-marco-sugerido-fora-do-fecho-mínimo-da-fase-3) e **Fase 4**.

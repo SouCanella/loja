@@ -19,7 +19,8 @@ app = FastAPI(
     title=settings.app_name,
     version="0.3.0",
     description=(
-        "Backend multi-tenant — `/api/v1` JSON directo; `/api/v2` piloto envelope DEC-06."
+        "Backend multi-tenant — `/api/v1` JSON directo; `/api/v2` envelope DEC-06 "
+        "(paridade de rotas com v1 + catálogo público)."
     ),
     openapi_url="/openapi.json",
     docs_url=None,  # sem Swagger UI; ver `doc/api/` (offline) ou `/redoc` com API no ar
