@@ -99,7 +99,7 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): MVP-05/MVP-06 mant
 |-------|--------|
 | **Status** | `concluída` (MVP Fase 3 — **API** receitas/produção/relatório + **painel Next** para receitas, produção e relatório com CSV). |
 | **Data de conclusão** | 2026-04-17 |
-| **Notas** | Migrações `20260417_0003`, `20260418_0004` (`recipes.target_margin_percent`); contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **2026-04-19:** CRUD de insumos, margem loja/receita, refresh JWT. **2026-04-17:** frontend em **`/api/v2`** (envelope DEC-06); relatório com `by_category`, `by_order_status`, `period_margin_percent` e UI alargada — ver **§9.2–9.3**. |
+| **Notas** | Migrações `20260417_0003`, `20260418_0004` (`recipes.target_margin_percent`); contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **2026-04-19:** CRUD de insumos, margem loja/receita, refresh JWT. **2026-04-17:** frontend em **`/api/v2`** (envelope DEC-06); relatório com `by_category`, `by_order_status`, `period_margin_percent` e UI alargada — ver **§9.2–9.3**. **2026-04-17 (UX vitrine):** contentor `max-w-screen-2xl`, cards em coluna até `xl`, padding `#sobre` para barra fixa do carrinho, sheet do carrinho `max-w-xl`/`sm:max-w-2xl`, remoção de `max-w-vitrine` no Tailwind — registo em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) (secção «2026-04-17 (Vitrine — largura, mobile e barra fixa do carrinho)»). |
 
 ---
 

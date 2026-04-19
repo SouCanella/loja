@@ -2,6 +2,15 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Vitrine — largura, mobile e barra fixa do carrinho)
+
+- **Next.js (vitrine pública):** contentor **`max-w-screen-2xl`** (alinhado ao painel); grelha com colunas responsivas; **ProductCard** em modo grelha: **`flex-col` até `xl`**, depois **`xl:flex-row`** — preço + «/ un» e controlos ± deixam de partir em ecrãs estreitos; bloco do cardápio com padding inferior ajustado.
+- **Secção Redes e contato** (`#sobre`): **`pb-32 sm:pb-36`** para não ficar tapada pela barra fixa **Total / Ver carrinho** (DEC-11 mobile-first).
+- **Carrinho (sheet lateral):** **`max-w-xl sm:max-w-2xl`** em vez de largura total do ecrã.
+- **Tailwind:** removido token custom `maxWidth.vitrine` em `frontend/tailwind.config.ts`; uso de **`max-w-screen-2xl`** nas páginas/componentes.
+- **Ficheiros:** `CatalogView.tsx`, `ProductDetail.tsx`, `app/loja/[slug]/p/[productId]/page.tsx`, `app/painel/layout.tsx`, `app/login/page.tsx`.
+- **Git:** commit `fix(front): vitrine mais larga, cards mobile e barra do carrinho`.
+
 ## 2026-04-17 (Script `seed_demo_mass` — massa 30 dias para QA manual)
 
 - **`backend/scripts/seed_demo_mass.py`** + **`make seed-demo-massa`**: loja demo, ~187 pedidos, ~38 produções, datas repartidas em 30 dias; doc [seed-demo-massa.md](seed-demo-massa.md).
