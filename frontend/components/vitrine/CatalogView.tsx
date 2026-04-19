@@ -98,7 +98,7 @@ export function CatalogView({ store, categories, products }: Props) {
   ]);
 
   return (
-    <div className="mx-auto max-w-vitrine">
+    <div className="mx-auto w-full max-w-screen-2xl">
       <header className="sticky top-0 z-[70] border-b border-loja-ink/[0.08] bg-white/90 shadow-loja-bar backdrop-blur-md">
         <div className="flex min-h-14 items-center justify-between gap-3 px-4 py-2">
           <nav className="flex gap-1 text-[0.8rem] font-semibold text-loja-muted" aria-label="Secções">
@@ -235,7 +235,7 @@ export function CatalogView({ store, categories, products }: Props) {
             {suggestions.map((p) => (
               <div
                 key={p.id}
-                className="min-w-[46vw] max-w-[200px] shrink-0 snap-start scroll-ml-4 sm:min-w-[180px]"
+                className="min-w-[46vw] max-w-[min(280px,42vw)] shrink-0 snap-start scroll-ml-4 sm:min-w-[200px]"
               >
                 <ProductCard
                   product={p}
@@ -259,8 +259,8 @@ export function CatalogView({ store, categories, products }: Props) {
       <div
         className={
           layout === "list"
-            ? "flex flex-col gap-2.5 px-4 pb-24 pt-2"
-            : "grid grid-cols-2 gap-3 px-4 pb-24 pt-2"
+            ? "flex flex-col gap-2.5 px-4 pb-12 pt-2"
+            : "grid grid-cols-2 gap-3 px-4 pb-12 pt-2 md:grid-cols-3 xl:grid-cols-4 md:gap-4"
         }
       >
         {filtered.map((p) => (
@@ -276,12 +276,15 @@ export function CatalogView({ store, categories, products }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="px-4 pb-24 text-center text-sm text-loja-muted">
+        <p className="px-4 pb-12 text-center text-sm text-loja-muted">
           Nenhum produto encontrado. Tente outra busca ou categoria.
         </p>
       ) : null}
 
-      <section id="sobre" className="scroll-mt-[72px] mx-4 mb-6 rounded-[20px] border border-loja-ink/[0.08] bg-loja-surface p-4 shadow-loja">
+      <section
+        id="sobre"
+        className="scroll-mt-[72px] mx-4 mb-6 rounded-[20px] border border-loja-ink/[0.08] bg-loja-surface p-4 pb-32 shadow-loja sm:pb-36"
+      >
         <h2 className="font-display text-lg font-bold text-loja-ink">Redes e contato</h2>
         <p className="mt-1 text-[0.85rem] leading-snug text-loja-muted">
           Siga a loja nas redes ou fale direto pelo WhatsApp.
@@ -321,7 +324,7 @@ export function CatalogView({ store, categories, products }: Props) {
         role="region"
         aria-label="Resumo do pedido"
       >
-        <div className="mx-auto flex max-w-vitrine items-center justify-between gap-3">
+        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3">
           <div>
             <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-loja-muted">Total</p>
             <p className="text-lg font-bold text-loja-ink">{formatBRL(cartTotal)}</p>
@@ -345,7 +348,7 @@ export function CatalogView({ store, categories, products }: Props) {
       />
 
       <aside
-        className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-vitrine flex-col bg-loja-bg shadow-[-8px_0_40px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col bg-loja-bg shadow-[-8px_0_40px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out sm:max-w-2xl ${
           sheetOpen ? "translate-x-0" : "translate-x-full"
         }`}
         aria-label="Carrinho"
@@ -607,11 +610,20 @@ function ProductCard({
         >
           Ver detalhes
         </Link>
-        <div className="mt-auto flex items-center justify-between gap-1.5 pt-2">
-          <div className="text-[0.95rem] font-bold text-loja-ink">
-            {formatBRL(product.price)} <small className="text-[0.65rem] font-semibold text-loja-muted">/ un</small>
+        <div
+          className={
+            layout === "grid"
+              ? "mt-auto flex flex-col gap-2 pt-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2"
+              : "mt-auto flex items-center justify-between gap-1.5 pt-2"
+          }
+        >
+          <div className="flex min-w-0 items-baseline gap-1.5">
+            <span className="text-[0.95rem] font-bold tabular-nums text-loja-ink">
+              {formatBRL(product.price)}
+            </span>
+            <span className="text-[0.65rem] font-semibold text-loja-muted">/ un</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center justify-end gap-1 xl:justify-end">
             <button
               type="button"
               className="h-[30px] w-[30px] rounded-lg border border-loja-ink/10 bg-loja-surface text-base leading-none disabled:opacity-35"

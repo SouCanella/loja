@@ -62,7 +62,7 @@ export function ProductDetail({
         </div>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-loja-ink/10 bg-loja-surface/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur-md pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
-        <div className="mx-auto flex max-w-vitrine items-center justify-between gap-3">
+        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3">
           <div>
             <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-loja-muted">
               No carrinho

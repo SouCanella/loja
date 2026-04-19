@@ -23,9 +23,6 @@ const config: Config = {
         ],
         display: ["var(--font-fraunces,Georgia)", "Times New Roman", "serif"],
       },
-      maxWidth: {
-        vitrine: "520px",
-      },
       boxShadow: {
         loja: "0 8px 32px rgba(26, 21, 18, 0.07)",
         "loja-bar": "0 4px 20px rgba(26, 21, 18, 0.06)",

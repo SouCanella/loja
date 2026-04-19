@@ -5,7 +5,7 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50 print:bg-white">
       <header className="border-b border-slate-200 bg-white print:hidden">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 py-3">
           <Link href="/painel" className="text-lg font-semibold text-slate-900">
             Painel
           </Link>
@@ -31,7 +31,7 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 py-8">{children}</div>
+      <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-8">{children}</div>
     </div>
   );
 }

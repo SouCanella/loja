@@ -26,7 +26,7 @@ export default async function ProdutoVitrinePage({ params }: Props) {
   if (!store || !product) notFound();
 
   return (
-    <div className="mx-auto max-w-vitrine px-4 pb-28 pt-4">
+    <div className="mx-auto w-full max-w-screen-2xl px-4 pb-28 pt-4 sm:px-6 lg:px-8">
       <nav className="mb-4 text-sm">
         <Link
           href={`/loja/${params.slug}`}
