@@ -9,7 +9,7 @@
 | **[documento_enterprise.md](documento_enterprise.md)** | Visão canônica (arquitetura, domínio, MVP, roadmap) — permanece na raiz de `doc/` |
 | **[normativos/](normativos/)** | Regras de negócio (`RN-*`), requisitos funcionais/não funcionais (`RF-*`, `RNF-*`), matriz RN → testes |
 | **[projeto/](projeto/)** | Decisões **DEC-***, backlog, [qualidade-e-conformidade.md](projeto/qualidade-e-conformidade.md) (auditoria vs RNF), rastreabilidade com `inicio_planejamento.txt`, proposta legada |
-| **[fases/](fases/)** | Roadmap por fase (0–4) e plano mestre |
+| **[fases/](fases/)** | Roadmap por fase (0–4), **Fase 3.1** (paridade mockup) e plano mestre |
 | **[execucao/](execucao/)** | Changelog de marcos; [TESTES-E-CI.md](execucao/TESTES-E-CI.md); [api-v1-v2-deprecacao.md](execucao/api-v1-v2-deprecacao.md); [seed-demo-massa.md](execucao/seed-demo-massa.md) (massa de dados para QA manual) |
 | **[mockups/](mockups/)** | Protótipos HTML navegáveis (vitrine pública, painel admin) — referência de UX e RF; ver **[mockups/README.md](mockups/README.md)** (índice, secções do admin, ligação aos RF) |
 | **[api/](api/)** | Contrato **OpenAPI 3** versionado (`openapi.json`), UI **ReDoc** offline (`index.html`); **RNF-DevEx-08** — ver **[api/README.md](api/README.md)** |
@@ -42,6 +42,7 @@
 | Fase 1 — Fundação | Concluída e documentada em [fases/fase-01-fundacao.md](fases/fase-01-fundacao.md) |
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
 | **Fase 3 — Gestão** | **Concluída** (API + painel receitas/produção/relatório CSV): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§8–§10** |
+| **Fase 3.1 — Paridade mockup** | **Planeada** — shell, gráficos, módulos em falta: [fases/fase-03-1-paridade-mockup.md](fases/fase-03-1-paridade-mockup.md) |
 
 ## Checklist pré-desenvolvimento
 

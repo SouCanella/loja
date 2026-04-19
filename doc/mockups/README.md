@@ -49,6 +49,7 @@ O mockup da vitrine ilustra fluxo de compra e políticas visíveis ao cliente. D
 
 | Documento | Ligação aos mockups |
 |-----------|---------------------|
+| [`fase-03-1-paridade-mockup.md`](../fases/fase-03-1-paridade-mockup.md) | **Fase 3.1** — plano até paridade com estes HTML (módulos, gráficos, critérios de aceite) |
 | [`requisitos-funcionais.md`](../normativos/requisitos-funcionais.md) | Tabela do mapa admin (gráficos); referências inline a `admin-painel` e `loja-vitrine` |
 | [`requisitos-funcionais.md`](../normativos/requisitos-funcionais.md) **RF-AR-01** | Rota `painel` ↔ mockup admin |
 | [`documento_enterprise.md`](../documento_enterprise.md) | Visão de produto e módulos (contexto) |

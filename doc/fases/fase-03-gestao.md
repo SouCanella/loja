@@ -129,10 +129,11 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 
 ### 9.3 Próximo marco sugerido
 
-1. **Relatório / stock:** **COGS por lote** ou comparação de períodos — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md) §4 e [backlog.md](../projeto/backlog.md).
-2. **Sessão:** refresh em **cookie httpOnly** (alternativa ao `localStorage`) — **DEC-16**.
-3. **Fase 4 / plataforma:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — escala, **DEC-15** se priorizado, observabilidade (**RNF-Ops-01**).
-4. **UX:** **DEC-10** FieldHelp em campos críticos; E2E no CI com credenciais de teste (`E2E_EMAIL` / `E2E_PASSWORD`).
+1. **Fase 3.1 — paridade com mockups** (shell, **gráficos**, módulos em falta): [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md).
+2. **Relatório / stock:** **COGS por lote** ou comparação de períodos — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md) §4 e [backlog.md](../projeto/backlog.md).
+3. **Sessão:** refresh em **cookie httpOnly** (alternativa ao `localStorage`) — **DEC-16**.
+4. **Fase 4 / plataforma:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — escala, **DEC-15** se priorizado, observabilidade (**RNF-Ops-01**).
+5. **UX:** **DEC-10** FieldHelp em campos críticos; E2E no CI com credenciais de teste (`E2E_EMAIL` / `E2E_PASSWORD`).
 
 ---
 

@@ -1,9 +1,9 @@
-# Planejamento completo do roadmap (Fases 0 a 4)
+# Planejamento completo do roadmap (Fases 0 a 4 + 3.1)
 
 **Referência:** [documento_enterprise.md](../documento_enterprise.md), [regras-negocio.md](../normativos/regras-negocio.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md)  
-**Última atualização do planejamento:** 2026-04-17 (Fase 3 encerrada no MVP; ver [fase-03-gestao.md](fase-03-gestao.md) §8–§10; UX vitrine mobile em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md))  
+**Última atualização do planejamento:** 2026-04-17 (Fase 3 encerrada no MVP; **Fase 3.1** planeada — paridade mockup; ver [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md))  
 
-**Estado actual (implementação):** Fases **0**, **1**, **2** e **3** concluídas no âmbito planeado ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo sugerido:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD com deploy documentado, hardening, e itens priorizados do [backlog.md](../projeto/backlog.md) (§23 enterprise e débitos DT-*); **DEC-15** (Super Admin) só se for objectivo explícito da iteração.
+**Estado actual (implementação):** Fases **0**, **1**, **2** e **3** concluídas no âmbito planeado ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo sugerido (produto UX):** [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) — shell tipo mockup, **gráficos** (RF-FI-05), módulos em falta até paridade com [admin-painel-layout-sugestao.html](../mockups/admin-painel-layout-sugestao.html). **Em paralelo ou a seguir:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD com deploy documentado, hardening, [backlog.md](../projeto/backlog.md) (§23 enterprise e DT-*); **DEC-15** (Super Admin) só se for objectivo explícito da iteração.
 
 Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o MVP. Cada fase tem documento próprio com detalhamento (entregáveis, critérios de aceite, riscos). **Volte aqui** ao ajustar escopo ou datas; depois sincronize o arquivo da fase afetada e o [backlog.md](../projeto/backlog.md).
 
@@ -17,6 +17,7 @@ Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o M
 | 1 | Fundação | Docker, Makefile, DB (**Postgres pin** §20), tenant + JWT, `stores`/`users`, **OpenAPI 3** (RNF-DevEx-08), esqueleto Next mobile-first, ajuda contextual mínima | [fase-01-fundacao.md](fase-01-fundacao.md) |
 | 2 | Operação | Produtos, estoque (itens + lotes), pedidos (status, reserva, idempotência conforme priorização), APIs mínimas §17 | [fase-02-operacao.md](fase-02-operacao.md) |
 | 3 | Gestão | Receitas, produção (**idempotência** RNF-Arq-02b), precificação, `/reports/financial` básico | [fase-03-gestao.md](fase-03-gestao.md) |
+| **3.1** | **Paridade mockup** | **Painel** alinhado a [admin-painel-layout-sugestao.html](../mockups/admin-painel-layout-sugestao.html): sidebar, dashboard com **gráficos**, financeiro/relatórios/precificação dedicados, config loja, catálogo, gaps RF; vitrine opcional | [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) |
 | 4 | Escala | Observabilidade, CI/CD §24, hardening, priorização do backlog enterprise (§23) | [fase-04-escala.md](fase-04-escala.md) |
 
 ## MVP (§22) vs fases
@@ -52,9 +53,12 @@ flowchart LR
   f1[Fase1_Fundacao]
   f2[Fase2_Operacao]
   f3[Fase3_Gestao]
+  f31[Fase3_1_Mockup]
   f4[Fase4_Escala]
-  f0 --> f1 --> f2 --> f3 --> f4
+  f0 --> f1 --> f2 --> f3 --> f31 --> f4
 ```
+
+A **Fase 3.1** é um marco de **produto/UX** entre a gestão (API) e a escala operacional; pode sobrepor-se no tempo a trabalhos da Fase 4 (CI, observabilidade) conforme capacidade da equipa.
 
 ## Testes e qualidade (todas as fases)
 

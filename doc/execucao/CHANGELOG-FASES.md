@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Planeamento — Fase 3.1 paridade mockup)
+
+- **Novo:** [fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) — mapa mockup admin (e vitrine) ↔ código ↔ RF; prioridade **gráficos** (dashboard, financeiro, relatórios, precificação); **DEC-15** fora do âmbito; [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) actualizado (fluxo F3 → **3.1** → F4).
+
 ## 2026-04-17 (Vitrine — largura, mobile e barra fixa do carrinho)
 
 - **Next.js (vitrine pública):** contentor **`max-w-screen-2xl`** (alinhado ao painel); grelha com colunas responsivas; **ProductCard** em modo grelha: **`flex-col` até `xl`**, depois **`xl:flex-row`** — preço + «/ un» e controlos ± deixam de partir em ecrãs estreitos; bloco do cardápio com padding inferior ajustado.
