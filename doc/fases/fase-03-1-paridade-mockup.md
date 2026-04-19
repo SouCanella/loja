@@ -124,8 +124,84 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 |-------|--------|
 | **Status** | `planeada` |
 | **Data de início** | — |
-| **Notas** | Primeira versão deste documento: 2026-04-17 — mapa único mockup ↔ código ↔ RF. |
+| **Notas** | Mapa mockup ↔ código ↔ RF; **decisões de arranque** em **§11** (defaults para desenvolvimento). |
 
 ---
 
-*Última revisão: 2026-04-17.*
+## 11. Decisões de arranque (defaults para fechar o plano e codificar)
+
+Estas opções são **coerentes com o código actual** (Next 14, App Router, API v2 com envelope, sem modelo `customers` dedicado). Ajustar por ADR se algo divergir.
+
+### 11.1 Biblioteca de gráficos (frontend)
+
+| Decisão | **Recharts** (`recharts`) |
+|---------|---------------------------|
+| Porquê | API declarativa em React, cobre linha/área, barras, pie/donut, scatter; documentação estável; uso comum com Tailwind. |
+| Como | Componentes de gráfico em **Client Components** (`'use client'`), dados via props; evitar SSR do canvas onde o Recharts exigir DOM. |
+| Alternativa se peso for problema | **uPlot** + wrapper React (menos DX, bundle menor) — só trocar se medição o justificar. |
+
+### 11.2 Contrato API — Dashboard (novo agregado)
+
+| Decisão | Um endpoint dedicado sob **`/api/v2`** com envelope DEC-06. |
+|---------|------------------------------------------------------------|
+| Caminho sugerido | `GET /api/v2/dashboard/summary` |
+| Query | `date_from`, `date_to` (ISO date), inclusivo; período máximo (ex. 366 dias) validado no backend. |
+| Corpo `data` (campos mínimos) | `kpis`: pedidos hoje, pedidos no intervalo, ticket médio (receita ÷ pedidos elegíveis), contagens **estoque baixo** (insumos/produtos com regra já existente ou `min_quantity`); `revenue_by_day[]` `{ date, amount }` para gráfico; `orders_by_status[]` `{ status, count }` no intervalo; opcional `moving_avg_7d[]` calculado no **servidor** ou no cliente (definir um só lugar — preferência **servidor** para um único critério). |
+| Regras de receita | Alinhar ao relatório financeiro: mesmos pedidos que contam como receita (excl. `rascunho` / `cancelado` — confirmar paridade com `financial_report.py`). |
+| Testes | Pelo menos um teste de integração que fixa datas e totais esperados. |
+
+*Nota:* `clientes novos` no mockup exige **identidade de cliente** nos dados; ver §11.4 — até lá, o KPI pode vir **omitido** ou como `null` com tooltip «em breve».
+
+### 11.3 Fuso horário e «dia»
+
+| Decisão | Usar **`America/Sao_Paulo`** como default da loja até existir campo explícito. |
+|---------|--------------------------------------------------------------------------------|
+| Onde | `stores.config.general.timezone` (JSON) ou chave equivalente; migração leve se necessário. |
+| Agrupamento `revenue_by_day` | `date_trunc` em UTC convertido para o fuso da loja **ou** armazenar `business_date` — preferência: **uma função utilitária** partilhada com relatório financeiro para não divergir. |
+
+### 11.4 Módulo «Clientes» (RF-CL)
+
+| Decisão | **Duas sub-fases**, para não bloquear o resto da 3.1. |
+|---------|--------------------------------------------------------|
+| **3.1-a (imediato)** | Menu **Clientes** pode abrir página **«Pedidos como proxy»**: lista de pedidos com filtros (já existente) + texto de ajuda — **sem** entidade nova. KPI «clientes novos» **não** aparece no dashboard ou aparece desactivado. |
+| **3.1-b (incremento)** | Migração: campos opcionais no pedido ou entidade mínima — **proposta mínima:** `orders.customer_name`, `orders.customer_phone` (nullable, índice por loja+telefone) preenchidos no checkout da vitrine e no «novo pedido» do painel; lista **Clientes** = agregação por telefone (ou email se acrescentarem depois). |
+| O que **não** fazer na 3.1 | CRM completo, segmentação, marketing — ficam no [backlog](../projeto/backlog.md). |
+
+### 11.5 Imagens e catálogo (RF-CA-03)
+
+| Decisão | **Fase útil em duas camadas.** |
+|---------|--------------------------------|
+| **3.1 — rápido** | Campo **`image_url`** (ou lista JSON de URLs) em produto **editável no painel** (URLs absolutas https) — sem upload de ficheiro; permite mockup visual com imagens reais. |
+| **3.1+ / MA-03** | Upload para **S3-compatível** (presigned POST) quando infra estiver definida; não bloquear gráficos e shell. |
+
+### 11.6 Avaliações (menu mockup)
+
+| Decisão | **Fora do primeiro incremento da 3.1.** |
+|---------|------------------------------------------|
+| UI | Item de menu **visível mas desactivado** + tooltip: «Avaliações — previsto em backlog (RN-025–027)». |
+| Motivo | Requer modelo, moderação e API; desvio grande face ao ganho dos gráficos e dashboard. |
+
+### 11.7 Ecrã «Precificação» (RF-PR)
+
+| Decisão | **Composição a partir do que já existe**: custo estimado da receita (`estimated_unit_cost`), `effective_margin_percent`, `suggested_unit_price`, preço actual do produto — apresentados numa **calculadora** visual (tabela + um gráfico de composição **mock** ou % texto). |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Fora do âmbito 3.1 | **RF-PR-04** custos indirectos, rateio, histórico de preço — backlog. |
+
+### 11.8 Super Admin (DEC-15)
+
+| Decisão | **Inalterado:** não implementar; entrada no menu **omitida** ou igual às avaliações (desactivada + legenda DEC-15). |
+
+### 11.9 Ordem de implementação sugerida (para sequência de PRs)
+
+1. Dependências: `npm install recharts` (e tipos se necessário).  
+2. **API** `GET /api/v2/dashboard/summary` + testes.  
+3. **Layout** painel: sidebar + rotas espelhando o mockup (podem ser páginas vazias com título).  
+4. **Dashboard** página com KPIs + 2 gráficos (linha receita, barras status).  
+5. **Financeiro** / **Relatórios**: reutilizar dados existentes, acrescentar gráficos onde já há agregados.  
+6. **Precificação** ecrã com dados de receitas/produtos.  
+7. **Config loja** / **catálogo** / URLs de imagem.  
+8. **Clientes** 3.1-a; depois migração 3.1-b se prioridade de negócio.  
+
+---
+
+*Última revisão: 2026-04-17 — §11 decisões de arranque.*
