@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 
+import { messageFromV2Error } from "@/lib/api-v2";
 import { getApiBaseUrl } from "@/lib/api";
 import { setSessionTokens } from "@/lib/painel-api";
 
@@ -20,22 +21,31 @@ export default function LoginPage() {
     body.set("username", email);
     body.set("password", password);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+      const res = await fetch(`${getApiBaseUrl()}/api/v2/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: body.toString(),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
       if (!res.ok) {
-        setMessage(typeof data.detail === "string" ? data.detail : "Falha no login");
+        const msg =
+          messageFromV2Error(data) ??
+          (typeof data.detail === "string" ? data.detail : "Falha no login");
+        setMessage(msg);
         return;
       }
-      if (typeof data.access_token === "string") {
+      const success = data.success === true && data.data && typeof data.data === "object";
+      const inner = success ? (data.data as Record<string, unknown>) : data;
+      const access = inner.access_token;
+      const refresh = inner.refresh_token;
+      if (typeof access === "string") {
         setSessionTokens(
-          data.access_token,
-          typeof data.refresh_token === "string" ? data.refresh_token : null,
+          access,
+          typeof refresh === "string" ? refresh : null,
         );
         setMessage("Sessão iniciada. Pode abrir o painel.");
+      } else {
+        setMessage("Resposta de login inválida.");
       }
     } catch {
       setMessage("Não foi possível contactar a API.");

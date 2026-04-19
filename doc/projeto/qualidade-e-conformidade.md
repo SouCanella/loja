@@ -48,7 +48,7 @@
 | **RNF-QA-02** fluxos críticos | Pytest cobre fluxos; Vitest cobre `painel-api.ts`. | Componentes React e mais fluxos Vitest conforme prioridade. |
 | **RNF-QA-03** E2E | Smoke `/login`; login+painel opcional com env — ver [TESTES-E-CI §4](../execucao/TESTES-E-CI.md#4-e2e-playwright). | Alargar fluxos (vitrina checkout) e activar E2E autenticado no CI com secrets. |
 | **RNF-QA-06** matriz RN → testes | [matriz-rn-testes.md](../normativos/matriz-rn-testes.md) existe; não está 100% preenchida para cada RN novo. | Actualizar ao fechar marcos. |
-| **DEC-06 / RNF-Ops-02** envelope global | **`/api/v1`** sem envelope; **`/api/v2`** cobre as mesmas rotas de negócio + público. | Migrar frontend para v2; deprecar v1 quando acordado — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). |
+| **DEC-06 / RNF-Ops-02** envelope global | **`/api/v1`** sem envelope; **`/api/v2`** cobre as mesmas rotas de negócio + público. | **Frontend em v2** (2026-04-17); deprecar v1 quando acordado — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). |
 | **DEC-10** FieldHelp | Ajuda contextual não está em todos os campos do painel (receitas, pedidos, etc.). | Incrementar por área conforme prioridade UX. |
 | **RNF-SEC-03 / DEC-16** cookie httpOnly | Refresh entregue em JSON + `localStorage` no cliente; cookie httpOnly **não** aplicado. | Evolução de segurança quando houver mesmo domínio API+front ou proxy BFF. |
 | **RNF-Ops-01** logs estruturados | MVP sem request id obrigatório em todos os caminhos. | Fase 4 / observabilidade. |
@@ -84,7 +84,7 @@ Política de novas rotas: [criterios-testes-http-api.md](../execucao/criterios-t
 
 ## 5. Próximos passos sugeridos (prioridade)
 
-1. **DEC-06:** ~~migrar rotas para v2~~ — **feito** (paridade); seguir com adopção no frontend e política de deprecação v1.  
+1. **DEC-06:** rotas de negócio em **paridade v1/v2** — **feito**; **frontend Next.js em v2** — **feito** (2026-04-17); seguir com **política de deprecação v1** quando acordado — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).  
 2. **Relatório:** custo de vendas ligado a lotes (COGS) vs aproximação actual período-a-período.  
 3. **Qualidade:** Vitest; E2E no CI com secrets; cookie httpOnly para refresh.  
 4. **Roadmap:** [fase-03-gestao.md §9.2](../fases/fase-03-gestao.md#92-próximo-marco-sugerido-fora-do-fecho-mínimo-da-fase-3) e **Fase 4**.

@@ -98,4 +98,6 @@ def test_v2_financial_envelope_ok(client: TestClient) -> None:
     assert data is not None
     assert "orders_revenue" in data
     assert "by_product" in data
+    assert "by_category" in data
+    assert "by_order_status" in data
     assert "period_margin_estimate" in data

@@ -24,7 +24,7 @@ export default function InsumosPage() {
 
   const load = useCallback(() => {
     setError(null);
-    apiPainelJson<InvRow[]>("/api/v1/inventory-items")
+    apiPainelJson<InvRow[]>("/api/v2/inventory-items")
       .then(setRows)
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Erro ao carregar");
@@ -57,7 +57,7 @@ export default function InsumosPage() {
       return;
     }
     try {
-      await apiPainelJson("/api/v1/inventory-items", {
+      await apiPainelJson("/api/v2/inventory-items", {
         method: "POST",
         body: JSON.stringify(body),
       });
@@ -78,7 +78,7 @@ export default function InsumosPage() {
     setBusyId(id);
     setMsg(null);
     try {
-      await apiPainelJson(`/api/v1/inventory-items/${id}`, { method: "DELETE" });
+      await apiPainelJson(`/api/v2/inventory-items/${id}`, { method: "DELETE" });
       setMsg("Removido.");
       void load();
     } catch (err: unknown) {

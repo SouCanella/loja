@@ -35,9 +35,9 @@ export default function ReceitasPage() {
   const load = useCallback(() => {
     setError(null);
     Promise.all([
-      apiPainelJson<RecipeOut[]>("/api/v1/recipes"),
-      apiPainelJson<ProductOut[]>("/api/v1/products"),
-      apiPainelJson<InvItem[]>("/api/v1/inventory-items"),
+      apiPainelJson<RecipeOut[]>("/api/v2/recipes"),
+      apiPainelJson<ProductOut[]>("/api/v2/products"),
+      apiPainelJson<InvItem[]>("/api/v2/inventory-items"),
     ])
       .then(([r, p, inv]) => {
         setRecipes(r);
@@ -77,7 +77,7 @@ export default function ReceitasPage() {
         output_quantity: string;
         total_input_cost: string;
         unit_output_cost: string;
-      }>("/api/v1/production", {
+      }>("/api/v2/production", {
         method: "POST",
         headers: { "Idempotency-Key": key },
         body: JSON.stringify({ recipe_id: recipeId }),

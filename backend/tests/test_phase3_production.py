@@ -134,7 +134,11 @@ def test_financial_report_orders_revenue(client: TestClient) -> None:
     assert float(data["orders_revenue"]) >= 20.0
     assert data["orders_count"] >= 1
     assert "period_margin_estimate" in data
+    assert "period_margin_percent" in data
     assert isinstance(data["by_product"], list)
+    assert isinstance(data["by_category"], list)
+    assert isinstance(data["by_order_status"], list)
+    assert any(s["status"] == "confirmado" for s in data["by_order_status"])
     row = next((x for x in data["by_product"] if x["product_id"] == pid), None)
     assert row is not None
     assert float(row["orders_revenue"]) >= 20.0

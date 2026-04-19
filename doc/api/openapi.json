@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Loja API",
-    "description": "Backend multi-tenant — `/api/v1` JSON directo; `/api/v2` piloto envelope DEC-06.",
+    "description": "Backend multi-tenant — `/api/v1` JSON directo; `/api/v2` envelope DEC-06 (paridade de rotas com v1 + catálogo público).",
     "version": "0.3.0"
   },
   "paths": {
@@ -3241,6 +3241,70 @@
         "title": "DeleteSuccessEnvelope",
         "description": "Resposta para DELETE sem payload (sucesso)."
       },
+      "FinancialReportCategoryRow": {
+        "properties": {
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "category_name": {
+            "type": "string",
+            "title": "Category Name"
+          },
+          "orders_revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Orders Revenue"
+          },
+          "quantity_sold": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity Sold"
+          },
+          "production_input_cost": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Production Input Cost"
+          },
+          "margin_amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Margin Amount"
+          },
+          "margin_percent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Percent",
+            "description": "(receita − custo produção) / receita × 100 quando receita > 0"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category_id",
+          "category_name",
+          "orders_revenue",
+          "quantity_sold",
+          "production_input_cost",
+          "margin_amount"
+        ],
+        "title": "FinancialReportCategoryRow",
+        "description": "Agregação por categoria de produto (mesma lógica de aproximação que por produto)."
+      },
       "FinancialReportEnvelope": {
         "properties": {
           "success": {
@@ -3314,12 +3378,39 @@
             "title": "Period Margin Estimate",
             "description": "Receita pedidos − custo insumos produção no período (aproximação)"
           },
+          "period_margin_percent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Margin Percent",
+            "description": "period_margin_estimate / orders_revenue × 100 quando receita > 0"
+          },
           "by_product": {
             "items": {
               "$ref": "#/components/schemas/FinancialReportProductRow"
             },
             "type": "array",
             "title": "By Product"
+          },
+          "by_category": {
+            "items": {
+              "$ref": "#/components/schemas/FinancialReportCategoryRow"
+            },
+            "type": "array",
+            "title": "By Category"
+          },
+          "by_order_status": {
+            "items": {
+              "$ref": "#/components/schemas/FinancialReportStatusRow"
+            },
+            "type": "array",
+            "title": "By Order Status"
           }
         },
         "type": "object",
@@ -3390,6 +3481,31 @@
         ],
         "title": "FinancialReportProductRow",
         "description": "Receita de pedidos vs custo de produção no período, por produto acabado."
+      },
+      "FinancialReportStatusRow": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "orders_count": {
+            "type": "integer",
+            "title": "Orders Count"
+          },
+          "orders_revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Orders Revenue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "orders_count",
+          "orders_revenue"
+        ],
+        "title": "FinancialReportStatusRow",
+        "description": "Pedidos no período por estado (exclui rascunho e cancelado — alinhado à receita contabilizada)."
       },
       "HTTPValidationError": {
         "properties": {

@@ -5,12 +5,12 @@
 
 ---
 
-## 1. Estado actual (2026-04-19)
+## 1. Estado actual (2026-04-17)
 
 | Prefixo | Formato de sucesso | Erros HTTP | Clientes oficiais |
 |---------|--------------------|------------|-------------------|
-| **`/api/v1`** | JSON **directo** do schema Pydantic | Corpo típico FastAPI `{"detail": …}` ou lista de validação | **Painel Next.js** (`NEXT_PUBLIC_API_URL`), testes pytest |
-| **`/api/v2`** | **`{ "success": true, "data": <payload>, "errors": null }`** | **`{ "success": false, "data": null, "errors": [ { "message", "code", "field" } ] }`** (handlers em `app/main.py`) | Integrações novas, SDKs, clientes que queiram erros homogéneos |
+| **`/api/v1`** | JSON **directo** do schema Pydantic | Corpo típico FastAPI `{"detail": …}` ou lista de validação | Testes pytest, integrações que ainda fixem v1; **paridade** com v2 |
+| **`/api/v2`** | **`{ "success": true, "data": <payload>, "errors": null }`** | **`{ "success": false, "data": null, "errors": [ { "message", "code", "field" } ] }`** (handlers em `app/main.py`) | **Aplicação web Next.js** (painel, login, vitrine SSR via `getApiBaseUrl()`), integrações novas |
 
 O mesmo modelo de domínio aparece em v1 **sem** wrapper e em v2 **dentro** de `data`.
 
@@ -64,17 +64,31 @@ A lógica de negócio está em `app/api/handlers/` (partilhada com v1). Novas ro
 
 1. **Não há data de desligamento:** `/api/v1` permanece suportado enquanto o painel e integrações existentes dependam dele.
 2. **Novos clientes** (mobile, parceiros) devem preferir **`/api/v2`** para contrato estável e erros homogéneos.
-3. **Alinhamento futuro:** quando o frontend migrar para v2, pode declarar-se **fase de deprecação** (avisos `Deprecation` header ou roadmap) antes de remover v1 — **não planeado no curto prazo**.
+3. **Alinhamento futuro:** o **frontend da loja já consome v2** (2026-04-17); a **declaração formal de deprecação de v1** (header `Deprecation`, prazos) fica para quando o ecossistema de testes/integrações estiver alinhado — **não planeado no curto prazo**.
 4. **Versionamento OpenAPI:** [`doc/api/openapi.json`](../api/openapi.json) agrega v1 e v2; filtrar por prefixo de path.
 
 ---
 
 ## 4. Relatório financeiro — margem vs COGS por lote (trabalho futuro)
 
-O relatório actual (`period_margin_estimate`, `by_product[]`) usa **aproximação no período** (receita de pedidos vs custo agregado de corridas de produção por produto). **COGS por lote** (custo exacto dos lotes vendidos) exigiria ligar linhas de pedido a movimentos de stock / lotes — evolução normativa e modelo; ver backlog e RN de stock quando priorizado.
+O relatório inclui **`period_margin_estimate`**, **`period_margin_percent`**, **`by_product[]`**, **`by_category[]`**, **`by_order_status[]`** — sempre com **aproximação no período** (receita de pedidos vs custo agregado de corridas de produção por produto/categoria). **COGS por lote** (custo exacto dos lotes vendidos) exigiria ligar linhas de pedido a movimentos de stock / lotes — evolução normativa e modelo; ver backlog e RN de stock quando priorizado.
 
 ---
 
-## 5. Desenvolvimento local rápido
+## 5. Cliente Next.js (`frontend/`)
+
+| Área | Ficheiros / notas |
+|------|-------------------|
+| Envelope v2 | `frontend/lib/api-v2.ts` |
+| Painel autenticado | `frontend/lib/painel-api.ts` — todas as rotas usam prefixo v2; *refresh* em `/api/v2/auth/refresh` |
+| Login | `frontend/app/login/page.tsx` — `POST /api/v2/auth/login`, tokens em `data` |
+| Vitrine (RSC) | `frontend/lib/vitrine/server-fetch.ts` — `GET /api/v2/public/...` + *unwrap* |
+| Testes | `frontend/__tests__/painel-api.test.ts` — mocks com `{ success, data }` / `{ success: false, errors }` |
+
+Variável: `NEXT_PUBLIC_API_URL` (ver `.env.example`).
+
+---
+
+## 6. Desenvolvimento local rápido
 
 Ver [README.md](../../README.md) e alvo **`make dev`**: Postgres só em Docker, API e Next no host com *hot reload* para testar painel/vitrine.

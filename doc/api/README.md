@@ -32,5 +32,5 @@ Abrir no navegador: `http://127.0.0.1:8766/` (ficheiro `index.html` + `openapi.j
 
 ## Versões `/api/v1` e `/api/v2`
 
-- **`/api/v1`** — resposta JSON directa dos schemas (painel Next.js).
-- **`/api/v2`** — envelope **DEC-06** `{ success, data, errors }`; lista de rotas e política em [execucao/api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).
+- **`/api/v1`** — resposta JSON directa dos schemas (testes de contrato, integrações legadas).
+- **`/api/v2`** — envelope **DEC-06** `{ success, data, errors }`; **cliente web Next.js** (painel, login, público SSR); lista de rotas e política em [execucao/api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).

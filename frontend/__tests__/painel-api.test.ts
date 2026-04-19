@@ -138,9 +138,9 @@ describe("apiPainelJson", () => {
     mockStorage("fake-token");
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ ok: true }),
+      json: async () => ({ success: true, data: { ok: true } }),
     });
-    const data = await apiPainelJson<{ ok: boolean }>("/api/v1/me");
+    const data = await apiPainelJson<{ ok: boolean }>("/api/v2/me");
     expect(data.ok).toBe(true);
     expect(globalThis.fetch).toHaveBeenCalled();
   });
@@ -150,7 +150,10 @@ describe("apiPainelJson", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,
-      json: async () => ({ detail: "stock baixo" }),
+      json: async () => ({
+        success: false,
+        errors: [{ message: "stock baixo" }],
+      }),
     });
     await expect(apiPainelJson("/x")).rejects.toMatchObject({
       name: "PainelApiError",

@@ -31,7 +31,7 @@ export default function PainelPedidoNovoPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    void apiPainelJson<ProductRow[]>("/api/v1/products")
+    void apiPainelJson<ProductRow[]>("/api/v2/products")
       .then((list) => setProducts(list.filter((p) => p.active)))
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Não foi possível carregar produtos.");
@@ -72,7 +72,7 @@ export default function PainelPedidoNovoPage() {
     }
     setSaving(true);
     try {
-      const created = await apiPainelJson<OrderDetail>("/api/v1/orders", {
+      const created = await apiPainelJson<OrderDetail>("/api/v2/orders", {
         method: "POST",
         headers: {
           "Idempotency-Key": crypto.randomUUID(),

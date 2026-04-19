@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "@/lib/api";
+import { messageFromV2Error, toApiV2Path, unwrapV2Success } from "@/lib/api-v2";
 
 const REFRESH_KEY = "refresh_token";
 
@@ -23,21 +24,29 @@ export function setSessionTokens(access: string, refresh?: string | null) {
 async function refreshAccessToken(): Promise<string | null> {
   const rt = getRefreshToken();
   if (!rt) return null;
-  const url = `${getApiBaseUrl()}/api/v1/auth/refresh`;
+  const url = `${getApiBaseUrl()}/api/v2/auth/refresh`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh_token: rt }),
   });
-  const data = (await res.json().catch(() => ({}))) as {
-    access_token?: string;
-    refresh_token?: string | null;
-  };
-  if (!res.ok || typeof data.access_token !== "string") {
+  const raw = await res.json().catch(() => ({}));
+  if (!res.ok) {
     return null;
   }
-  setSessionTokens(data.access_token, data.refresh_token ?? rt);
-  return data.access_token;
+  try {
+    const data = unwrapV2Success<{
+      access_token: string;
+      refresh_token?: string | null;
+    }>(raw);
+    if (typeof data.access_token !== "string") {
+      return null;
+    }
+    setSessionTokens(data.access_token, data.refresh_token ?? rt);
+    return data.access_token;
+  } catch {
+    return null;
+  }
 }
 
 export class PainelApiError extends Error {
@@ -50,7 +59,18 @@ export class PainelApiError extends Error {
   }
 }
 
-/** Chamada autenticada à API (JSON). */
+function errorMessageFromResponse(raw: unknown, status: number): string {
+  const v2 = messageFromV2Error(raw);
+  if (v2) return v2;
+  if (typeof raw === "object" && raw !== null && "detail" in raw) {
+    const d = (raw as { detail: unknown }).detail;
+    if (typeof d === "string") return d;
+    if (Array.isArray(d)) return JSON.stringify(d);
+  }
+  return `Erro ${status}`;
+}
+
+/** Chamada autenticada à API v2 (JSON com envelope). */
 export async function apiPainelJson<T>(
   path: string,
   init?: RequestInit,
@@ -59,7 +79,8 @@ export async function apiPainelJson<T>(
   if (!token) {
     throw new PainelApiError("Faça login para continuar.", 401);
   }
-  const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const pathV2 = toApiV2Path(path.startsWith("/") ? path : `/${path}`);
+  const url = `${getApiBaseUrl()}${pathV2.startsWith("/") ? pathV2 : `/${pathV2}`}`;
   const doFetch = (bearer: string) =>
     fetch(url, {
       ...init,
@@ -76,17 +97,11 @@ export async function apiPainelJson<T>(
       res = await doFetch(next);
     }
   }
-  const data = (await res.json().catch(() => ({}))) as { detail?: unknown };
+  const raw = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const msg =
-      typeof data.detail === "string"
-        ? data.detail
-        : Array.isArray(data.detail)
-          ? JSON.stringify(data.detail)
-          : `Erro ${res.status}`;
-    throw new PainelApiError(msg, res.status);
+    throw new PainelApiError(errorMessageFromResponse(raw, res.status), res.status);
   }
-  return data as T;
+  return unwrapV2Success<T>(raw);
 }
 
 export function formatBRL(value: string | number): string {

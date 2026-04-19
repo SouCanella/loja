@@ -89,6 +89,29 @@ class FinancialReportProductRow(BaseModel):
     )
 
 
+class FinancialReportCategoryRow(BaseModel):
+    """Agregação por categoria de produto (mesma lógica de aproximação que por produto)."""
+
+    category_id: UUID | None
+    category_name: str
+    orders_revenue: Decimal
+    quantity_sold: Decimal
+    production_input_cost: Decimal
+    margin_amount: Decimal
+    margin_percent: Decimal | None = Field(
+        default=None,
+        description="(receita − custo produção) / receita × 100 quando receita > 0",
+    )
+
+
+class FinancialReportStatusRow(BaseModel):
+    """Pedidos por estado no período (exclui rascunho/cancelado; alinhado à receita)."""
+
+    status: str
+    orders_count: int
+    orders_revenue: Decimal
+
+
 class FinancialReportOut(BaseModel):
     date_from: date
     date_to: date
@@ -100,4 +123,10 @@ class FinancialReportOut(BaseModel):
         ...,
         description="Receita pedidos − custo insumos produção no período (aproximação)",
     )
+    period_margin_percent: Decimal | None = Field(
+        default=None,
+        description="period_margin_estimate / orders_revenue × 100 quando receita > 0",
+    )
     by_product: list[FinancialReportProductRow] = Field(default_factory=list)
+    by_category: list[FinancialReportCategoryRow] = Field(default_factory=list)
+    by_order_status: list[FinancialReportStatusRow] = Field(default_factory=list)

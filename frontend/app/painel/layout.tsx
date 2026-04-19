@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 
 export default function PainelLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+    <div className="min-h-screen bg-slate-50 print:bg-white">
+      <header className="border-b border-slate-200 bg-white print:hidden">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <Link href="/painel" className="text-lg font-semibold text-slate-900">
             Painel
           </Link>
@@ -31,7 +31,7 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </header>
-      <div className="mx-auto max-w-3xl px-4 py-8">{children}</div>
+      <div className="mx-auto max-w-6xl px-4 py-8">{children}</div>
     </div>
   );
 }

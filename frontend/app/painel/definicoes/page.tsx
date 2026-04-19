@@ -17,7 +17,7 @@ export default function DefinicoesPage() {
 
   const load = useCallback(() => {
     setError(null);
-    apiPainelJson<Me>("/api/v1/me")
+    apiPainelJson<Me>("/api/v2/me")
       .then((m) => {
         const v = m.store_target_margin_percent;
         setMargin(typeof v === "number" ? String(v) : String(v));
@@ -41,7 +41,7 @@ export default function DefinicoesPage() {
     }
     setLoading(true);
     try {
-      await apiPainelJson<Me>("/api/v1/me/store-pricing", {
+      await apiPainelJson<Me>("/api/v2/me/store-pricing", {
         method: "PATCH",
         body: JSON.stringify({ target_margin_percent: String(n) }),
       });

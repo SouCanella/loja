@@ -99,7 +99,7 @@ Após esta fase, revisar [backlog.md](../projeto/backlog.md): MVP-05/MVP-06 mant
 |-------|--------|
 | **Status** | `concluída` (MVP Fase 3 — **API** receitas/produção/relatório + **painel Next** para receitas, produção e relatório com CSV). |
 | **Data de conclusão** | 2026-04-17 |
-| **Notas** | Migrações `20260417_0003`, `20260418_0004` (`recipes.target_margin_percent`); contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **2026-04-19:** CRUD de insumos em `/inventory-items`, margem por loja (`GET/PATCH /me` / `PATCH /me/store-pricing`) e por receita; sugestão de preço na API e painel; refresh JWT + rate limit no login — ver **§9.2**. |
+| **Notas** | Migrações `20260417_0003`, `20260418_0004` (`recipes.target_margin_percent`); contrato em [`doc/api/openapi.json`](../api/openapi.json); marcos em [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md). **2026-04-19:** CRUD de insumos, margem loja/receita, refresh JWT. **2026-04-17:** frontend em **`/api/v2`** (envelope DEC-06); relatório com `by_category`, `by_order_status`, `period_margin_percent` e UI alargada — ver **§9.2–9.3**. |
 
 ---
 
@@ -122,10 +122,15 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 - **Margem:** `stores.config.pricing.target_margin_percent`; `GET /me` expõe `store_target_margin_percent`; **`PATCH /me/store-pricing`**; receitas com `target_margin_percent` opcional, `effective_margin_percent` e **`suggested_unit_price`**; UI **`/painel/definicoes`** e formulário de nova receita.
 - **Auth (DEC-16 parcial):** `refresh_token` no login/registo; **`POST /auth/refresh`**; cliente renova access após 401; **rate limit** configurável no `POST /auth/login`.
 
-### 9.2 Próximo marco sugerido (fora do fecho mínimo da Fase 3)
+### 9.2 Entregue após o fecho mínimo (2026-04-17)
 
-1. **Produto / relatório:** métricas extra no financeiro (ex. margem por produto), CSV alargado — ver [backlog.md](../projeto/backlog.md).
-2. **Conformidade:** envelope API **DEC-06** (versão major ou *feature flag*); refresh em **cookie httpOnly** (alternativa ao `localStorage`).
+- **Cliente API v2:** aplicação Next.js (painel, login, `server-fetch` da vitrine) usa **`/api/v2`** com envelope DEC-06; helpers em `frontend/lib/api-v2.ts` e `painel-api.ts` (*unwrap*, erros, *refresh*). Documentação: [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md) §5.
+- **Relatório financeiro:** `FinancialReportOut` com `period_margin_percent`, `by_category[]`, `by_order_status[]`; painel `/painel/relatorio` com atalhos de período, tabelas, Pareto %, CSV UTF-8, impressão.
+
+### 9.3 Próximo marco sugerido
+
+1. **Relatório / stock:** **COGS por lote** ou comparação de períodos — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md) §4 e [backlog.md](../projeto/backlog.md).
+2. **Sessão:** refresh em **cookie httpOnly** (alternativa ao `localStorage`) — **DEC-16**.
 3. **Fase 4 / plataforma:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — escala, **DEC-15** se priorizado, observabilidade (**RNF-Ops-01**).
 4. **UX:** **DEC-10** FieldHelp em campos críticos; E2E no CI com credenciais de teste (`E2E_EMAIL` / `E2E_PASSWORD`).
 
@@ -157,7 +162,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | GET | `/recipes/{recipe_id}` | Detalhe. |
 | PATCH | `/recipes/{recipe_id}` | Actualiza receita e linhas. |
 | POST | `/production` | Corpo: receita, quantidade produzida; header **`Idempotency-Key`** recomendado. |
-| GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). Totais + `period_margin_estimate` + `by_product[]`. |
+| GET | `/reports/financial` | Query: `date_from`, `date_to` (ISO date). Totais + `period_margin_estimate` + `period_margin_percent` + `by_product[]` + `by_category[]` + `by_order_status[]`. |
 | GET | `/inventory-items` | Lista insumos com `has_sale_product`. |
 | POST | `/inventory-items` | Cria insumo; `initial_batch` opcional (quantidade, custo, validade). |
 | GET | `/inventory-items/{id}` | Detalhe. |
@@ -188,11 +193,14 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 | `/painel/pedidos/[id]` | `frontend/app/painel/pedidos/[id]/page.tsx` | Itens + total; `PATCH /orders/{id}/status`; produtos via `GET /products`; **WhatsApp** se `/me.vitrine_whatsapp` existir (`draftOrderWhatsAppMessage`, `whatsAppUrl`). |
 | `/painel/receitas` | `frontend/app/painel/receitas/page.tsx` | Lista receitas, custo, margem efectiva, **suggested_unit_price**, **Produzir lote**. |
 | `/painel/receitas/nova` | `frontend/app/painel/receitas/nova/page.tsx` | Criação de receita; insumos via `GET /inventory-items`; margem % opcional por receita. |
-| `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /reports/financial` por intervalo; botão **Descarregar CSV** (gerado no browser). |
+| `/painel/relatorio` | `frontend/app/painel/relatorio/page.tsx` | `GET /api/v2/reports/financial` por intervalo; resumo + por estado + por categoria + por produto (ordenação, Pareto %); **CSV UTF-8** e **imprimir/PDF**. |
 | `/painel/insumos` | `frontend/app/painel/insumos/page.tsx` | CRUD mínimo de insumos. |
 | `/painel/definicoes` | `frontend/app/painel/definicoes/page.tsx` | Margem alvo da loja. |
-| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Insumos / Definições / Relatório / Sessão. |
-| Cliente API | `frontend/lib/painel-api.ts` | `apiPainelJson` (retry com `POST /auth/refresh` após 401), `setSessionTokens`, `formatBRL`, helpers pedido/WhatsApp. |
+| Layout painel | `frontend/app/painel/layout.tsx` | Navegação Painel / Pedidos / Receitas / Insumos / Definições / Relatório / Sessão; `max-w-6xl`. |
+| Cliente API | `frontend/lib/painel-api.ts` | Chamadas **`/api/v2`** com *unwrap* DEC-06; `POST /api/v2/auth/refresh` após 401; `setSessionTokens`, `formatBRL`, helpers pedido/WhatsApp. |
+| Envelope v2 | `frontend/lib/api-v2.ts` | `unwrapV2Success`, `messageFromV2Error`, `toApiV2Path`. |
+| Vitrine SSR | `frontend/lib/vitrine/server-fetch.ts` | `GET /api/v2/public/...` + *unwrap*. |
+| Login | `frontend/app/login/page.tsx` | `POST /api/v2/auth/login`, tokens em `data`. |
 
 ### 10.6 Documentação de contrato e raiz do repositório
 

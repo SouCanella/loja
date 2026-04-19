@@ -28,8 +28,8 @@ export default function NovaReceitaPage() {
 
   useEffect(() => {
     void Promise.all([
-      apiPainelJson<ProductOut[]>("/api/v1/products"),
-      apiPainelJson<InvItem[]>("/api/v1/inventory-items"),
+      apiPainelJson<ProductOut[]>("/api/v2/products"),
+      apiPainelJson<InvItem[]>("/api/v2/inventory-items"),
     ])
       .then(([p, inv]) => {
         setProducts(p);
@@ -97,7 +97,7 @@ export default function NovaReceitaPage() {
         }
         payload.target_margin_percent = String(m);
       }
-      await apiPainelJson("/api/v1/recipes", {
+      await apiPainelJson("/api/v2/recipes", {
         method: "POST",
         body: JSON.stringify(payload),
       });

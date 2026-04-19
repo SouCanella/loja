@@ -20,7 +20,7 @@ export default function PainelHomePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void apiPainelJson<Me>("/api/v1/me")
+    void apiPainelJson<Me>("/api/v2/me")
       .then(setMe)
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Não foi possível carregar o perfil.");

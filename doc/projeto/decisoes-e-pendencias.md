@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-19 (2) — **DEC-06:** piloto **`/api/v2`** com `{ success, data, errors }` (`health`, `reports/financial`); **`/api/v1`** inalterado. **DEC-16:** refresh por endpoint. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md).
+**Última actualização:** 2026-04-17 — **DEC-06:** **`/api/v2`** é o contrato usado pelo **Next.js** (painel, login, dados públicos SSR); **`/api/v1`** mantém-se em paridade para testes e integrações. **DEC-16:** refresh via **`POST /api/v2/auth/refresh`** no cliente. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md), [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).
 
 ---
 
@@ -45,7 +45,7 @@ Cada decisão abaixo resume **por que** foi escolhida e **o que isso obriga** no
 
 - **DEC-05:** Domínios distintos (pedidos, estoque, auth) precisam evoluir sem “bola de lama”. **Consequência:** cada módulo com router, service, repository, schemas e models próprios; dependências explícitas entre módulos.
 
-- **DEC-06:** Clientes (web, futuro app) precisam evoluir sem quebrar integrações silenciosamente. **Consequência:** resposta versionada; envelope `{ success, data, errors }` em **`/api/v2`** (piloto); **`/api/v1`** mantém payload directo até migração; *version bump* ao alinhar clientes.
+- **DEC-06:** Clientes (web, futuro app) precisam evoluir sem quebrar integrações silenciosamente. **Consequência:** envelope `{ success, data, errors }` em **`/api/v2`**; a **app web** já consome v2; **`/api/v1`** mantém payload directo em paridade; política de desligamento de v1 em [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).
 
 - **DEC-07:** Regras espalhadas no ORM ou no repositório dificultam testes e mudança de persistência. **Consequência:** serviços concentram regra de negócio; repositório só persiste o que o serviço decidiu.
 

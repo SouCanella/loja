@@ -53,9 +53,9 @@ export default function PainelPedidoDetalhePage() {
     if (!id) return;
     setError(null);
     void Promise.all([
-      apiPainelJson<OrderDetail>(`/api/v1/orders/${id}`),
-      apiPainelJson<ProductRow[]>("/api/v1/products"),
-      apiPainelJson<Me>("/api/v1/me"),
+      apiPainelJson<OrderDetail>(`/api/v2/orders/${id}`),
+      apiPainelJson<ProductRow[]>("/api/v2/products"),
+      apiPainelJson<Me>("/api/v2/me"),
     ])
       .then(([o, plist, profile]) => {
         setOrder(o);
@@ -126,7 +126,7 @@ export default function PainelPedidoDetalhePage() {
     setSaving(true);
     setError(null);
     try {
-      const updated = await apiPainelJson<OrderDetail>(`/api/v1/orders/${order.id}/status`, {
+      const updated = await apiPainelJson<OrderDetail>(`/api/v2/orders/${order.id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status: next }),
       });

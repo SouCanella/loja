@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-17 (Frontend em `/api/v2` + relatório financeiro alargado)
+
+- **Next.js (painel, login, vitrine SSR):** chamadas passam a **`/api/v2/...`** com envelope DEC-06; `frontend/lib/api-v2.ts` (`unwrapV2Success`, `messageFromV2Error`, `toApiV2Path` para compat. legada); `painel-api.ts` faz *unwrap* em sucesso, mensagens de erro a partir de `errors[]` ou `detail`, e **`POST /api/v2/auth/refresh`**; login em **`POST /api/v2/auth/login`**; `server-fetch` da vitrine em **`/api/v2/public/...`**. Vitest ajustado ao envelope.
+- **Relatório financeiro (`GET /api/v1|v2/reports/financial`):** resposta com **`period_margin_percent`**, **`by_category[]`**, **`by_order_status[]`** (agregados no `financial_report.py`); painel com atalhos de período, tabelas por estado/categoria/produto, coluna Pareto %, CSV UTF-8 com BOM, impressão; *layout* do painel `max-w-6xl`.
+- **Contrato:** `make openapi-export`; testes pytest actualizados (`test_phase3_production`, `test_api_v2_envelope`).
+
 ## 2026-04-19 (v2 alargado: auth, pedidos, insumos; `make dev`; doc deprecação)
 
 - **`/api/v2`:** `auth/register`, `auth/login`, `auth/refresh`, `GET /orders`, `GET /inventory-items` (envelope); serviços `auth_session`, `order_queries`, `inventory_queries`.

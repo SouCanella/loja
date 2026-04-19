@@ -24,7 +24,7 @@ export default function PainelPedidosPage() {
   const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
-    void apiPainelJson<OrderRow[]>("/api/v1/orders")
+    void apiPainelJson<OrderRow[]>("/api/v2/orders")
       .then(setRows)
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Não foi possível carregar os pedidos.");
