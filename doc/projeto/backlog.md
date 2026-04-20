@@ -109,6 +109,9 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |
 | IP-10 | Resposta pública do lojista a um comentário aprovado | ideia | Moderação RF-AV |
 | **IP-11** | **Pedidos da vitrine (WhatsApp) visíveis no painel / registo em `orders`** | parcial | **MVP:** `POST` público + referência na mensagem WA; lista `/painel/pedidos` com filtro por origem; **notificações in-app** + som opcional no painel — ver [ip-11-pedidos-vitrine-painel.md](../execucao/ip-11-pedidos-vitrine-painel.md). **Evolução:** WhatsApp Business API; push/WebSockets se necessário. |
+| **IP-12** | **Partilhar loja** (painel e opcionalmente vitrine): copiar link, WhatsApp, Web Share API — URL canónica `/loja/{slug}` | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §1 |
+| **IP-13** | **Cardápio para WhatsApp / Instagram** gerado a partir do catálogo (texto, imagem ou PDF); entrada no painel (e opcional na vitrine) | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §2 |
+| **IP-14** | **Controlo de stock por produto** (`track_inventory` / `inventory_item_id` opcional): CRUD com toggle; impacto em pedidos e RN — **DEC-23** | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §3 |
 
 Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/` e remover ou marcar como `convertido` aqui.
 

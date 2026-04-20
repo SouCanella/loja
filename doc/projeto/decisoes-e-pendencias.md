@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-20 — **DEC-22:** relatórios (confirmada/pendente, cupons, descontos) — [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md). **DEC-06:** **`/api/v2`** é o contrato usado pelo **Next.js** (painel, login, dados públicos SSR); **`/api/v1`** mantém-se em paridade para testes e integrações. **DEC-16:** refresh via **`POST /api/v2/auth/refresh`** no cliente. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md), [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). **Vitrine vs mockup:** [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md); **tema / fundo / logo na vitrine:** [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md); pedidos WhatsApp ↔ painel: **IP-11** em [backlog.md](backlog.md). OpenAPI em `doc/api/openapi.json` (`make openapi-export`).
+**Última actualização:** 2026-04-20 — **DEC-23** reservada (stock opcional por produto, [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md)). **DEC-22:** relatórios — [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md). **DEC-06:** **`/api/v2`** é o contrato usado pelo **Next.js** (painel, login, dados públicos SSR); **`/api/v1`** mantém-se em paridade para testes e integrações. **DEC-16:** refresh via **`POST /api/v2/auth/refresh`** no cliente. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md), [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). **Vitrine vs mockup:** [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md); **tema / fundo / logo na vitrine:** [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md); pedidos WhatsApp ↔ painel: **IP-11** em [backlog.md](backlog.md). OpenAPI em `doc/api/openapi.json` (`make openapi-export`).
 
 ---
 
@@ -32,6 +32,7 @@ Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio
 | **DEC-20** | **Categorias:** entidade `categories` + FK em `products` na **Fase 2**, com filtros mínimos no catálogo. *(Antigo DOC-P07.)* | RF-Catalogo |
 | **DEC-21** | **Impressão de pedidos** (bobina térmica USB/BT 58/80 mm, comprovativos **A4/A6**): fixar estratégia **browser** (Web USB, Web Bluetooth, `window.print`) vs **agente local**; protocolo **ESC/POS** e templates; modelos suportados. Ver [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md). | Fase 3.2 |
 | **DEC-22** | **Relatórios e partição de pedidos:** «Receita/lucro **Confirmada**» = estados `confirmado`…`entregue`; «**Pendente**» = `aguardando_confirmacao` (excl. `rascunho`/`cancelado`). Volume «**Pagos**»/«**Pendentes**» sem liquidação financeira explícita = rótulos **Aceites** vs **Pendentes de confirmação** (mesma partição) até existir `payment_status`/`paid_at`. **Cupons** (`store_coupons`) + **desconto em linha** (`list_unit_price` opcional, `coupon_discount_amount` no pedido). Ver [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md). | Relatórios / billing |
+| **DEC-23** | **Stock por produto:** produto pode **não** participar de movimentos de stock (`track_inventory = false`, `inventory_item_id` nulo); pedidos não baixam lotes para esses itens; RN e relatórios actualizados. **Reservada** até PR de implementação — ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §3. | IP-14 |
 
 ### ADR leve (contexto + consequência — revisão sugerida em ~6 meses)
 
@@ -80,6 +81,8 @@ Cada decisão abaixo resume **por que** foi escolhida e **o que isso obriga** no
 - **DEC-21:** Impressão térmica depende de capacidades do browser ou de agente local; não pode ser “detalhe de UI” sem ADR. **Consequência:** documentar modo local vs S3 de mídia e caminho de impressão na Fase 3.2.
 
 - **DEC-22:** O painel comercial precisa de **partição única** para cartões (pendente vs confirmada) alinhada a DEC-14; “pago” no sentido bancário exige dados que o MVP não tinha. **Consequência:** métricas de receita/lucro usam estados explícitos; rótulos “pago” no volume mapeiam para “aceite pela loja” até existir `payment_status`; cupons e descontos em linha ficam modelados para totais e relatórios de desconto concedido.
+
+- **DEC-23:** Nem todo produto tem stock físico rastreado (serviços, encomendas externas). **Consequência:** permitir produto sem `inventory_item` quando `track_inventory = false`; serviços de pedido e relatórios de stock devem respeitar o flag; migração e testes obrigatórios.
 
 ---
 
@@ -148,7 +151,7 @@ As sugestões abaixo foram **absorvidas** na documentação normativa (não fica
 
 | Tema | Onde ficou registrado |
 |------|------------------------|
-| **ADR leve** por DEC | Secção **ADR leve** acima (DEC-01 … DEC-22) |
+| **ADR leve** por DEC | Secção **ADR leve** acima (DEC-01 … DEC-23) |
 | **OpenAPI** na Fase 1 | [documento enterprise](../documento_enterprise.md) §17; [requisitos não funcionais](../normativos/requisitos-nao-funcionais.md) **RNF-DevEx-08**; [fase-01-fundacao.md](../fases/fase-01-fundacao.md) |
 | **PostgreSQL** — pin da imagem | [documento enterprise](../documento_enterprise.md) §20 (subseção reprodutibilidade); Compose ao implementar a Fase 1 |
 | **Idempotência** pedidos + produção (Fase 3) | [requisitos não funcionais](../normativos/requisitos-nao-funcionais.md) **RNF-Arq-02a**, **RNF-Arq-02b**; [fase-03-gestao.md](../fases/fase-03-gestao.md) |
@@ -168,7 +171,7 @@ Detalhes completos: [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) �
 | Etapas 1–5 (descoberta → implementação) | Metodologia; não substitui Fases 0–4 |
 | Fases A–E (arquitetura txt) | A≈F0–1, B≈F2, C≈F2–3, D≈F3, E≈F4 + backlog |
 
-Decisões normativas: tabela **Decisões já tomadas** acima (DEC-01 … DEC-22).
+Decisões normativas: tabela **Decisões já tomadas** acima (DEC-01 … DEC-23).
 
 ---
 

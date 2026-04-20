@@ -20,6 +20,7 @@
 | Relatórios | [relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md) | Analytics vs operação |
 | Relatórios (negócio) | [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md) | **DEC-22** — estados, cupons, descontos |
 | Landing marketing | [landing-site-produto.md](landing-site-produto.md) | Página inicial — especificação Fase 3.2 |
+| Ideias (partilha, cardápio, stock/produto) | [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) | IP-12 … IP-14; **DEC-23** reservada |
 | Vitrine / tema | [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md) | RF-CF, cache |
 | Paridade vitrine | [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md) | Mockup vs código |
 | Identidade visual | [identidade-visual-e-paletas.md](identidade-visual-e-paletas.md) | Tokens gráficos |

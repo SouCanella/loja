@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Ideias de produto — partilha, cardápio, stock por produto)
+
+- **Novo:** [ideias-compartilhar-cardapio-estoque-por-produto.md](../projeto/ideias-compartilhar-cardapio-estoque-por-produto.md) — IP-12 (partilhar loja), IP-13 (cardápio WA/IG), IP-14 (toggle stock no CRUD); **DEC-23** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).
+
 ## 2026-04-20 (Documentação — landing completa, índice de gaps, Fase 3.2 alargada)
 
 - **Novo:** [landing-site-produto.md](../projeto/landing-site-produto.md) — página inicial de marketing (copy, SEO, checklist, honestidade vs features); referência [Stoqui](https://www.stoqui.com.br/) como estrutura, não como texto.
