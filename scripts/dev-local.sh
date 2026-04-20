@@ -43,9 +43,11 @@ fi
 
 echo ""
 echo ">> Serviços de desenvolvimento:"
-echo "   API:    http://127.0.0.1:8000  (reload)"
-echo "   Next:   http://127.0.0.1:3000"
+echo "   API:    http://127.0.0.1:8000  (reload, escuta 0.0.0.0 — acessível na LAN)"
+echo "   Next:   http://127.0.0.1:3000  (escuta 0.0.0.0 — telemóvel na mesma WiFi)"
 echo "   Health: http://127.0.0.1:8000/health"
+echo "   Na LAN: defina no .env CORS_EXTRA_ORIGINS e NEXT_PUBLIC_API_URL com o IP desta máquina"
+echo "           (ex.: http://192.168.1.5:3000 e http://192.168.1.5:8000) e reinicie o Next."
 echo "   CTRL+C termina API e Next (o contentor Postgres fica a correr)."
 echo ""
 
@@ -59,6 +61,6 @@ trap cleanup EXIT INT TERM
   cd backend && exec .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ) &
 (
-  cd frontend && exec npm run dev
+  cd frontend && exec npm run dev -- -H 0.0.0.0
 ) &
 wait

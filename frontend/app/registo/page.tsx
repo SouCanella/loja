@@ -2,12 +2,16 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { messageFromV2Error } from "@/lib/api-v2";
 import { getApiBaseUrl } from "@/lib/api";
 import { setSessionTokens } from "@/lib/painel-api";
 
-export default function LoginPage() {
+export default function RegistoLojaPage() {
+  const router = useRouter();
+  const [storeName, setStoreName] = useState("");
+  const [storeSlug, setStoreSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -17,20 +21,22 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    const body = new URLSearchParams();
-    body.set("username", email);
-    body.set("password", password);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/v2/auth/login`, {
+      const res = await fetch(`${getApiBaseUrl()}/api/v2/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          store_name: storeName.trim(),
+          store_slug: storeSlug.trim().toLowerCase(),
+          admin_email: email.trim(),
+          password,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
       if (!res.ok) {
         const msg =
           messageFromV2Error(data) ??
-          (typeof data.detail === "string" ? data.detail : "Falha no login");
+          (typeof data.detail === "string" ? data.detail : "Não foi possível criar a conta");
         setMessage(msg);
         return;
       }
@@ -39,14 +45,11 @@ export default function LoginPage() {
       const access = inner.access_token;
       const refresh = inner.refresh_token;
       if (typeof access === "string") {
-        setSessionTokens(
-          access,
-          typeof refresh === "string" ? refresh : null,
-        );
-        setMessage("Sessão iniciada. Pode abrir o painel.");
-      } else {
-        setMessage("Resposta de login inválida.");
+        setSessionTokens(access, typeof refresh === "string" ? refresh : null);
+        router.push("/painel");
+        return;
       }
+      setMessage("Resposta de registo inválida.");
     } catch {
       setMessage("Não foi possível contactar a API.");
     } finally {
@@ -56,19 +59,51 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center px-4 sm:px-6 py-10">
-      <h1 className="text-2xl font-semibold text-slate-900">Entrar</h1>
+      <h1 className="text-2xl font-semibold text-slate-900">Criar loja</h1>
       <p className="mt-1 text-sm text-slate-500">
-        OAuth2 password flow — email no campo utilizador.
+        Regista a tua loja e o utilizador administrador. O slug identifica a vitrine pública.
       </p>
       <form className="mt-6 space-y-4" onSubmit={onSubmit}>
         <div>
+          <label className="block text-sm font-medium text-slate-700" htmlFor="store_name">
+            Nome da loja
+          </label>
+          <input
+            id="store_name"
+            type="text"
+            autoComplete="organization"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            value={storeName}
+            onChange={(ev) => setStoreName(ev.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700" htmlFor="store_slug">
+            Slug da vitrine
+          </label>
+          <input
+            id="store_slug"
+            type="text"
+            autoComplete="off"
+            placeholder="minha-loja"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            value={storeSlug}
+            onChange={(ev) => setStoreSlug(ev.target.value)}
+            required
+            minLength={2}
+            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+            title="Minúsculas, números e hífens (ex.: minha-loja)"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="email">
-            Email
+            Email do administrador
           </label>
           <input
             id="email"
             type="email"
-            autoComplete="username"
+            autoComplete="email"
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
@@ -82,7 +117,8 @@ export default function LoginPage() {
           <input
             id="password"
             type="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
+            minLength={8}
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
@@ -94,19 +130,14 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
         >
-          {loading ? "A enviar…" : "Entrar"}
+          {loading ? "A criar…" : "Criar conta"}
         </button>
       </form>
-      {message ? <p className="mt-4 text-sm text-slate-700">{message}</p> : null}
+      {message ? <p className="mt-4 text-sm text-red-700">{message}</p> : null}
       <p className="mt-8 text-center text-sm text-slate-500">
-        Ainda não tens loja?{" "}
-        <Link href="/registo" className="text-slate-800 underline">
-          Criar conta
-        </Link>
-      </p>
-      <p className="mt-3 text-center text-sm text-slate-500">
-        <Link href="/painel" className="text-slate-800 underline">
-          Painel
+        Já tens conta?{" "}
+        <Link href="/login" className="text-slate-800 underline">
+          Entrar
         </Link>
         {" · "}
         <Link href="/" className="text-slate-800 underline">

@@ -1,7 +1,7 @@
 """Dashboard e extensões v2 (Fase 3.1)."""
 
 import uuid
-from datetime import date, timedelta
+from datetime import date
 
 from fastapi.testclient import TestClient
 
@@ -34,6 +34,14 @@ def test_dashboard_summary_ok_empty_store(client: TestClient, auth_headers: dict
 def test_dashboard_rejects_inverted_range(client: TestClient, auth_headers: dict) -> None:
     r = client.get(
         "/api/v2/dashboard/summary?date_from=2026-02-01&date_to=2026-01-01",
+        headers=auth_headers,
+    )
+    assert r.status_code == 400
+
+
+def test_dashboard_rejects_range_over_366_days(client: TestClient, auth_headers: dict) -> None:
+    r = client.get(
+        "/api/v2/dashboard/summary?date_from=2025-01-01&date_to=2026-01-05",
         headers=auth_headers,
     )
     assert r.status_code == 400

@@ -28,10 +28,10 @@ A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Make
 |------|--------|
 | Pasta | `backend/tests/` |
 | Config | `backend/pytest.ini` |
-| Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` — agregado ~**94%** (referência 2026-04). |
+| Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` — agregado ~**99%** (referência 2026-04); ver `test_services_dec12_coverage.py`. |
 | Inventário por ficheiro | [qualidade-e-conformidade.md §4](../projeto/qualidade-e-conformidade.md#4-inventário-de-testes-backend-referência-rápida) |
 
-Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_pricing.py`, `test_services_production.py`.
+Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_pricing.py`, `test_services_production.py`, `test_services_dec12_coverage.py` (lacunas DEC-12 / refresh / dashboard / stock).
 
 **Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
@@ -41,11 +41,11 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 
 | Item | Valor |
 |------|--------|
-| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js) |
+| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); `pool: forks` + `singleFork` para estabilidade em alguns ambientes |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
-| Foco actual | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` |
+| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine) |
 
-Comando: `cd frontend && npm run test` (ou `npm run test:coverage`).
+Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). **Nota:** em **sandbox** restrito (ex. alguns agentes), o Vitest pode falhar no *teardown* do worker (`tinypool`); no CI Ubuntu ou terminal normal costuma concluir com exit 0.
 
 ## 4. E2E (Playwright)
 
@@ -55,6 +55,8 @@ Comando: `cd frontend && npm run test` (ou `npm run test:coverage`).
 | Testes | `frontend/e2e/*.spec.ts` |
 | Documentação de uso | [`frontend/e2e/README.md`](../../frontend/e2e/README.md) |
 | Smoke | `smoke.spec.ts` — `/login` (HTML apenas). |
+| Auth público | `auth-public.spec.ts` — `/login` (link registo) e `/registo` (formulário). |
+| Vitrine conta | `vitrine-conta.spec.ts` — `/loja/[slug]/conta` (UI; não exige API graças a `fetchStorePublic` degradado). |
 | Opcional (API + credenciais) | `login-painel.spec.ts` — preenche login e verifica `/painel`; **omitido** se `E2E_EMAIL` / `E2E_PASSWORD` não estiverem definidos. |
 
 Variáveis úteis:

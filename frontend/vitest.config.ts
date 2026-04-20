@@ -12,6 +12,13 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    fileParallelism: false,
+    maxConcurrency: 1,
+    /** Evita falhas do worker (tinypool) em alguns ambientes/CI sandbox. */
+    pool: "forks",
+    poolOptions: {
+      forks: { singleFork: true },
+    },
     include: ["__tests__/**/*.test.ts"],
     coverage: {
       provider: "v8",

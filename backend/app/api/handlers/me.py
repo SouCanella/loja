@@ -78,7 +78,8 @@ def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -
         base = dict(store.theme) if isinstance(store.theme, dict) else {}
         for key, val in body.theme.items():
             if key == "vitrine" and isinstance(val, dict):
-                inner = dict(base.get("vitrine") or {}) if isinstance(base.get("vitrine"), dict) else {}
+                vit = base.get("vitrine")
+                inner = dict(vit or {}) if isinstance(vit, dict) else {}
                 inner.update(val)
                 base["vitrine"] = inner
             else:
@@ -88,7 +89,8 @@ def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -
         base_c = dict(store.config) if isinstance(store.config, dict) else {}
         for key, val in body.config.items():
             if key == "general" and isinstance(val, dict):
-                inner = dict(base_c.get("general") or {}) if isinstance(base_c.get("general"), dict) else {}
+                gen = base_c.get("general")
+                inner = dict(gen or {}) if isinstance(gen, dict) else {}
                 inner.update(val)
                 base_c["general"] = inner
             else:

@@ -23,6 +23,7 @@ from app.db.base import Base
 from app.models.enums import OrderStatus, StockMovementType
 
 if TYPE_CHECKING:
+    from app.models.customer import Customer
     from app.models.product import Product
     from app.models.production_run import ProductionRun
     from app.models.store import Store
@@ -48,11 +49,28 @@ class Order(Base):
         default=OrderStatus.rascunho,
     )
     customer_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    customer_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("customers.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    contact_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    contact_phone: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    delivery_option_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    payment_method_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    delivery_address: Mapped[str | None] = mapped_column(Text, nullable=True)
     idempotency_key: Mapped[str | None] = mapped_column(String(128), nullable=True)
     stock_committed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     store: Mapped["Store"] = relationship("Store", back_populates="orders")
+    customer_account: Mapped["Customer | None"] = relationship(
+        "Customer",
+        back_populates="orders",
+        foreign_keys=[customer_id],
+    )
     items: Mapped[list["OrderItem"]] = relationship(
         "OrderItem", back_populates="order", cascade="all, delete-orphan"
     )

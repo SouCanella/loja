@@ -132,6 +132,14 @@ def _payment_methods_from_theme(v: dict[str, Any]) -> list[PaymentMethodPublic]:
     return [PaymentMethodPublic(id=k, label=v) for k, v in _PAYMENT_PRESETS]
 
 
+def allowed_delivery_and_payment_ids(store: Store) -> tuple[set[str], set[str]]:
+    """IDs válidos para checkout público (alinhados à vitrine)."""
+    v = vitrine_from_theme(store)
+    d_ids = {x.id for x in _delivery_options_from_theme(v)}
+    p_ids = {x.id for x in _payment_methods_from_theme(v)}
+    return d_ids, p_ids
+
+
 def product_to_public(p: Product) -> ProductPublicOut:
     cat = p.category
     return ProductPublicOut(

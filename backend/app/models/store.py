@@ -11,6 +11,7 @@ from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.models.category import Category
+    from app.models.customer import Customer
     from app.models.inventory import InventoryItem
     from app.models.order import Order
     from app.models.product import Product
@@ -30,6 +31,11 @@ class Store(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     users: Mapped[list["User"]] = relationship("User", back_populates="store")
+    customers: Mapped[list["Customer"]] = relationship(
+        "Customer",
+        back_populates="store",
+        cascade="all, delete-orphan",
+    )
     categories: Mapped[list["Category"]] = relationship(
         "Category", back_populates="store", cascade="all, delete-orphan"
     )

@@ -1,7 +1,7 @@
 """Agregações do relatório financeiro (pedidos + produção por período)."""
 
 from datetime import UTC, date, datetime, time, timedelta
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select

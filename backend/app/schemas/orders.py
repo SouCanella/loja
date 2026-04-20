@@ -33,6 +33,13 @@ class OrderOut(BaseModel):
     store_id: UUID
     status: OrderStatus
     customer_note: str | None
+    source: str | None = None
+    customer_id: UUID | None = None
+    contact_name: str | None = None
+    contact_phone: str | None = None
+    delivery_option_id: str | None = None
+    payment_method_id: str | None = None
+    delivery_address: str | None = None
     stock_committed: bool
     created_at: datetime
 

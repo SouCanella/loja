@@ -27,6 +27,14 @@ class Settings(BaseSettings):
     login_rate_limit_max_attempts: int = 20
     login_rate_limit_window_seconds: int = 120
 
+    # POST /public/stores/{slug}/orders — por chave IP|store_id
+    public_order_rate_limit_max_attempts: int = 30
+    public_order_rate_limit_window_seconds: int = 120
+
+    # CORS — origens extra (vírgulas), ex.: vitrine no telemóvel na LAN
+    # `http://192.168.1.10:3000`
+    cors_extra_origins: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

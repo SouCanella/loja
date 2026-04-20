@@ -22,6 +22,8 @@ No **CI** (GitHub Actions), o workflow faz `build` e corre E2E com `PW_SERVER_ON
 
 - `playwright.config.ts` — `baseURL`, `webServer`, project Chromium.
 - `smoke.spec.ts` — página `/login` (sem dependência da API).
+- `auth-public.spec.ts` — links `/login` ↔ `/registo` e campos do formulário de nova loja.
+- `vitrine-conta.spec.ts` — `/loja/[slug]/conta` (formulário cliente; tema pode estar vazio se a API não estiver acessível).
 - `login-painel.spec.ts` — login real + `/painel` (requer API acessível e utilizador válido).
 
 ## Login com API real (opcional)

@@ -13,6 +13,8 @@ from app.api.v2.endpoints import (
     production,
     products,
     public_catalog,
+    public_customer_auth,
+    public_vitrine_orders,
     recipes,
     reports_financial,
 )
@@ -30,3 +32,5 @@ api_router.include_router(recipes.router)
 api_router.include_router(production.router)
 api_router.include_router(reports_financial.router)
 api_router.include_router(public_catalog.router)
+api_router.include_router(public_customer_auth.router)
+api_router.include_router(public_vitrine_orders.router)

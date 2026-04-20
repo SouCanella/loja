@@ -1,7 +1,7 @@
 # Qualidade e conformidade com a documentação normativa
 
 **Propósito:** registar o estado da implementação face às propostas de [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md), [documento_enterprise.md](../documento_enterprise.md) e [decisoes-e-pendencias.md](decisoes-e-pendencias.md).  
-**Última auditoria:** 2026-04-21 — cobertura global `app` ~**97%** (referência); **137** testes pytest; novo: `test_public_catalog_theme.py` (tema público + helpers).
+**Última auditoria:** 2026-04-17 — cobertura `app/services` ~**99%** (gate CI 90%); **155** testes pytest; reforço DEC-12: `test_services_dec12_coverage.py` (refresh, dashboard, stock, `login_customer`).
 
 ---
 
@@ -11,9 +11,9 @@
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes backend | `pytest tests/ -q` — **137** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), tema vitrine pública (`test_public_catalog_theme.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
-| Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~94%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
-| Testes frontend | `npm run test` (Vitest) | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` com `fetch` / `localStorage` mock. |
+| Testes backend | `pytest tests/ -q` — **155** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), DEC-12 serviços (`test_services_dec12_coverage.py`), tema vitrine pública (`test_public_catalog_theme.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
+| Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~99%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
+| Testes frontend | `npm run test` (Vitest) | `painel-api.test.ts`, `customer-session.test.ts` — helpers e mocks de `fetch` / `localStorage`. |
 | E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
 | Cobertura global `app` (referência) | `pytest --cov=app` | Total ~**97%** (referência 2026-04); restam sobretudo ramos raros (`IntegrityError` em produção, `init_db`, ramos defensivos em `stock` / `me`). |
 | Contrato HTTP | `make openapi-export` → [doc/api/openapi.json](../api/openapi.json) | **RNF-DevEx-08**. |
@@ -44,7 +44,7 @@
 
 | Referência | Situação | Recomendação |
 |------------|----------|--------------|
-| **RNF-QA-01** 90% serviço | Pacote `app/services` ~**94%**; gate CI **90%**. | Manter ao evoluir serviços. |
+| **RNF-QA-01** 90% serviço | Pacote `app/services` ~**99%**; gate CI **90%**. Restam sobretudo ramos raros em `financial_report` (agregação por categoria / ordenação de status). | Manter ao evoluir serviços; acrescentar testes quando mexer em relatório. |
 | **RNF-QA-02** fluxos críticos | Pytest cobre fluxos; Vitest cobre `painel-api.ts`. | Componentes React e mais fluxos Vitest conforme prioridade. |
 | **RNF-QA-03** E2E | Smoke `/login`; login+painel opcional com env — ver [TESTES-E-CI §4](../execucao/TESTES-E-CI.md#4-e2e-playwright). | Alargar fluxos (vitrina checkout) e activar E2E autenticado no CI com secrets. |
 | **RNF-QA-06** matriz RN → testes | [matriz-rn-testes.md](../normativos/matriz-rn-testes.md) existe; não está 100% preenchida para cada RN novo. | Actualizar ao fechar marcos. |
@@ -78,6 +78,7 @@
 | `tests/test_http_contracts_public.py` | Vitrine pública — slug inexistente 404 |
 | `tests/test_http_contracts_v2.py` | Envelope v2 — refresh e registo incompleto 422 |
 | `tests/test_coverage_gaps.py` | JWT/deps, rate limit, receitas/produtos/categorias, pedidos, produção, público, auth v2, refresh, inventário |
+| `tests/test_services_dec12_coverage.py` | Refresh JWT (cliente/staff, `store_id`), `login_customer`, `_coerce_date` / dashboard (intervalo, ticket médio), `_qpct`, stock (idempotência, loja cruzada, lotes, release) |
 
 Política de novas rotas: [criterios-testes-http-api.md](../execucao/criterios-testes-http-api.md).
 

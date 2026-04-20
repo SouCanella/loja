@@ -1,4 +1,5 @@
 from app.models.category import Category
+from app.models.customer import Customer
 from app.models.enums import OrderStatus, StockMovementType
 from app.models.inventory import InventoryBatch, InventoryItem
 from app.models.order import (
@@ -16,6 +17,7 @@ from app.models.user import User, UserRole
 
 __all__ = [
     "Category",
+    "Customer",
     "InventoryBatch",
     "InventoryItem",
     "Order",

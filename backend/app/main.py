@@ -15,6 +15,15 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+_cors_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+for _o in settings.cors_extra_origins.split(","):
+    s = _o.strip()
+    if s:
+        _cors_origins.append(s)
+
 app = FastAPI(
     title=settings.app_name,
     version="0.3.0",
@@ -29,10 +38,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

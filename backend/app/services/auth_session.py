@@ -14,9 +14,11 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.models.customer import Customer
 from app.models.store import Store
 from app.models.user import User, UserRole
 from app.schemas.auth import RegisterRequest, RegisterResponse, TokenResponse
+from app.services.customer_auth import issue_tokens_for_customer
 
 
 def issue_tokens_for_user(user: User) -> TokenResponse:
@@ -70,13 +72,24 @@ def refresh_session_tokens(db: Session, refresh_token: str) -> TokenResponse | N
     except (JWTError, ValueError):
         return None
     try:
-        user_id = UUID(str(payload.get("sub")))
+        subject_id = UUID(str(payload.get("sub")))
     except ValueError:
         return None
-    user = db.get(User, user_id)
+    claim_store = payload.get("store_id")
+    if claim_store is None:
+        return None
+
+    if payload.get("role") == "customer":
+        customer = db.get(Customer, subject_id)
+        if customer is None:
+            return None
+        if str(customer.store_id) != str(claim_store):
+            return None
+        return issue_tokens_for_customer(customer)
+
+    user = db.get(User, subject_id)
     if user is None:
         return None
-    claim_store = payload.get("store_id")
-    if claim_store is None or str(user.store_id) != str(claim_store):
+    if str(user.store_id) != str(claim_store):
         return None
     return issue_tokens_for_user(user)

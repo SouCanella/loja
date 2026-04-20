@@ -18,6 +18,12 @@ type OrderDetail = {
   id: string;
   status: string;
   customer_note: string | null;
+  source: string | null;
+  contact_name: string | null;
+  contact_phone: string | null;
+  delivery_option_id: string | null;
+  payment_method_id: string | null;
+  delivery_address: string | null;
   stock_committed: boolean;
   created_at: string;
   items: {
@@ -211,6 +217,21 @@ export default function PainelPedidoDetalhePage() {
               </select>
               {saving ? <span className="text-xs text-slate-500">A guardar…</span> : null}
             </div>
+            {order.source === "vitrine" ? (
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-teal-800">
+                Origem: vitrine
+              </p>
+            ) : null}
+            {order.contact_name || order.contact_phone ? (
+              <div className="mt-3 rounded-md border border-slate-100 bg-slate-50/80 px-3 py-2 text-sm text-slate-700">
+                <p className="font-medium text-slate-900">Contacto (checkout)</p>
+                {order.contact_name ? <p>Nome: {order.contact_name}</p> : null}
+                {order.contact_phone ? <p>Telefone: {order.contact_phone}</p> : null}
+                {order.delivery_option_id ? <p>Recebimento: {order.delivery_option_id}</p> : null}
+                {order.payment_method_id ? <p>Pagamento: {order.payment_method_id}</p> : null}
+                {order.delivery_address ? <p>Endereço: {order.delivery_address}</p> : null}
+              </div>
+            ) : null}
             {order.customer_note ? (
               <p className="mt-4 text-sm text-slate-700">
                 <span className="font-medium text-slate-900">Nota do cliente: </span>

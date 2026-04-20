@@ -12,11 +12,15 @@ function apiUrl(path: string): string {
 const noStore: RequestInit = { cache: "no-store" };
 
 export async function fetchStorePublic(slug: string): Promise<StorePublic | null> {
-  const res = await fetch(apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}`), noStore);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Loja: ${res.status}`);
-  const raw = await res.json();
-  return unwrapV2Success<StorePublic>(raw);
+  try {
+    const res = await fetch(apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}`), noStore);
+    if (res.status === 404) return null;
+    if (!res.ok) return null;
+    const raw = await res.json();
+    return unwrapV2Success<StorePublic>(raw);
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchCategoriesPublic(slug: string): Promise<CategoryPublic[]> {

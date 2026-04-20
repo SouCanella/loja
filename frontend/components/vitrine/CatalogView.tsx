@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { messageFromV2Error } from "@/lib/api-v2";
+import { getApiBaseUrl } from "@/lib/api";
 import { useCart } from "@/lib/vitrine/cart-context";
+import { getVitrineCustomerTokens } from "@/lib/vitrine/customer-session";
 import { productEmoji } from "@/lib/vitrine/product-emoji";
 import type {
   CategoryPublic,
@@ -110,6 +114,10 @@ export function CatalogView({ store, categories, products }: Props) {
   );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [waPreviewOpen, setWaPreviewOpen] = useState(false);
+  const [orderShortCode, setOrderShortCode] = useState<string | null>(null);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [registering, setRegistering] = useState(false);
+  const hpRef = useRef<HTMLInputElement>(null);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -192,18 +200,91 @@ export function CatalogView({ store, categories, products }: Props) {
     address,
   ]);
 
+  const orderMessageWithRef = useMemo(() => {
+    if (!orderMessage) return "";
+    if (!orderShortCode) return orderMessage;
+    return `${orderMessage}\n\n*Ref. pedido:* #${orderShortCode}`;
+  }, [orderMessage, orderShortCode]);
+
+  useEffect(() => {
+    setOrderShortCode(null);
+  }, [cart.quantities]);
+
   const waUrl = useMemo(() => {
-    if (!store.whatsapp || orderLines.length === 0 || !orderMessage) return "";
-    return whatsappOrderUrl(store.whatsapp, orderMessage);
-  }, [store.whatsapp, orderLines.length, orderMessage]);
+    if (!store.whatsapp || orderLines.length === 0 || !orderMessageWithRef) return "";
+    if (!orderShortCode) return "";
+    return whatsappOrderUrl(store.whatsapp, orderMessageWithRef);
+  }, [store.whatsapp, orderLines.length, orderMessageWithRef, orderShortCode]);
 
   const needAddress = delivery !== "retirada";
+
+  async function registerOrderWithApi() {
+    if (orderLines.length === 0) return;
+    if (needAddress && !address.trim()) {
+      setRegisterError("Indique o endereço para entrega.");
+      return;
+    }
+    if (!customerName.trim() || !customerPhone.trim()) {
+      setRegisterError("Preencha nome e telefone.");
+      return;
+    }
+    setRegisterError(null);
+    setRegistering(true);
+    try {
+      const items = orderLines.map((l) => ({
+        product_id: l.product.id,
+        quantity: String(l.qty),
+      }));
+      const body: Record<string, unknown> = {
+        items,
+        customer_name: customerName.trim(),
+        customer_phone: customerPhone.trim(),
+        customer_note: null,
+        delivery_option_id: delivery,
+        payment_method_id: payment,
+        delivery_address: needAddress ? address.trim() || null : null,
+        website: hpRef.current?.value ?? "",
+      };
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const tok = getVitrineCustomerTokens(store.slug)?.access_token;
+      if (tok) headers.Authorization = `Bearer ${tok}`;
+      const res = await fetch(
+        `${getApiBaseUrl()}/api/v2/public/stores/${encodeURIComponent(store.slug)}/orders`,
+        { method: "POST", headers, body: JSON.stringify(body) },
+      );
+      const raw = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      if (!res.ok) {
+        const msg =
+          messageFromV2Error(raw) ??
+          (typeof raw.detail === "string" ? raw.detail : "Não foi possível registar o pedido.");
+        setRegisterError(msg);
+        return;
+      }
+      const ok = raw.success === true && raw.data && typeof raw.data === "object";
+      const inner = ok ? (raw.data as { short_code?: string }) : null;
+      if (inner && typeof inner.short_code === "string" && inner.short_code) {
+        setOrderShortCode(inner.short_code);
+      } else {
+        setRegisterError("Resposta inválida da API.");
+      }
+    } catch {
+      setRegisterError("Não foi possível contactar a API.");
+    } finally {
+      setRegistering(false);
+    }
+  }
 
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
       <header className="sticky top-0 z-[70] border-b border-loja-primary/25 bg-white/90 shadow-loja-bar backdrop-blur-md">
         <div className="flex min-h-14 items-center justify-between gap-3 px-4 py-2">
           <nav className="flex flex-wrap gap-1 text-[0.8rem] font-semibold text-loja-muted" aria-label="Secções">
+            <Link
+              href={`/loja/${store.slug}/conta`}
+              className="rounded-lg px-2.5 py-2 hover:bg-loja-primary/8 hover:text-loja-primary"
+            >
+              Conta
+            </Link>
             <a
               href="#destaques"
               className="rounded-lg px-2.5 py-2 hover:bg-loja-primary/8 hover:text-loja-primary"
@@ -687,6 +768,45 @@ export function CatalogView({ store, categories, products }: Props) {
                   </label>
                 ))}
               </div>
+              <input
+                ref={hpRef}
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                className="absolute h-px w-px overflow-hidden opacity-0"
+                aria-hidden
+              />
+              {orderLines.length > 0 ? (
+                <div className="mb-3 rounded-2xl border border-loja-primary/20 bg-loja-primary/[0.06] px-3 py-3">
+                  <p className="text-[0.78rem] font-semibold text-loja-ink">
+                    1. Registar o pedido na loja
+                  </p>
+                  <p className="mt-1 text-[0.72rem] text-loja-muted">
+                    O pedido aparece no painel do lojista. Depois pode abrir o WhatsApp com a referência.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={
+                      registering ||
+                      !customerName.trim() ||
+                      !customerPhone.trim() ||
+                      (needAddress && !address.trim())
+                    }
+                    className="mt-2 w-full rounded-xl bg-loja-primary py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-95 disabled:opacity-50"
+                    onClick={() => void registerOrderWithApi()}
+                  >
+                    {registering
+                      ? "A registar…"
+                      : orderShortCode
+                        ? `Pedido registado (#${orderShortCode})`
+                        : "Registar pedido"}
+                  </button>
+                  {registerError ? (
+                    <p className="mt-2 text-[0.78rem] text-red-700">{registerError}</p>
+                  ) : null}
+                </div>
+              ) : null}
               <button
                 type="button"
                 className="mb-2 w-full rounded-2xl border border-loja-ink/15 bg-loja-surface py-3 text-sm font-bold text-loja-ink shadow-sm hover:bg-loja-bg"
@@ -703,11 +823,15 @@ export function CatalogView({ store, categories, products }: Props) {
                 >
                   Abrir WhatsApp com o pedido
                 </a>
-              ) : (
+              ) : store.whatsapp && orderLines.length > 0 && !orderShortCode ? (
+                <p className="rounded-2xl border border-dashed border-loja-amber-400/50 bg-amber-50/80 px-3 py-4 text-center text-[0.85rem] text-loja-ink">
+                  Registe o pedido acima para gerar a referência e abrir o WhatsApp.
+                </p>
+              ) : !store.whatsapp ? (
                 <p className="rounded-2xl border border-dashed border-loja-ink/15 bg-loja-surface px-3 py-4 text-center text-[0.85rem] text-loja-muted">
                   Configure o WhatsApp da loja no painel para habilitar o envio.
                 </p>
-              )}
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -737,7 +861,7 @@ export function CatalogView({ store, categories, products }: Props) {
               Será enviada para o WhatsApp da loja com o texto abaixo (RF-PE-08).
             </p>
             <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap break-words px-4 py-3 text-[0.82rem] text-loja-ink">
-              {orderMessage || "—"}
+              {orderMessageWithRef || "—"}
             </pre>
             <div className="flex flex-wrap gap-2 border-t border-loja-ink/10 p-4">
               <button
