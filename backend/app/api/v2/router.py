@@ -8,6 +8,7 @@ from app.api.v2.endpoints import (
     dashboard,
     health,
     inventory_items,
+    media,
     me,
     notifications,
     orders,
@@ -24,6 +25,7 @@ api_router = APIRouter()
 api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(me.router)
+api_router.include_router(media.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(categories.router)
 api_router.include_router(products.router)

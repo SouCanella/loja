@@ -1,6 +1,9 @@
 """API FastAPI — loja (multi-tenant)."""
 
+from uuid import UUID
+
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse
 from fastapi.exception_handlers import (
     http_exception_handler,
     request_validation_exception_handler,
@@ -12,6 +15,7 @@ from fastapi.responses import JSONResponse
 from app.api.v1.router import api_router as api_router_v1
 from app.api.v2.router import api_router as api_router_v2
 from app.core.config import get_settings
+from app.services.media_storage import local_file_path
 
 settings = get_settings()
 
@@ -87,6 +91,23 @@ async def envelope_validation_handler(
 
 app.include_router(api_router_v1, prefix="/api/v1")
 app.include_router(api_router_v2, prefix="/api/v2")
+
+
+@app.get("/media/{store_id}/{file_path:path}")
+def serve_local_media_file(store_id: UUID, file_path: str) -> FileResponse:
+    """Serve ficheiros gravados em modo `media_backend=local` (MA-03)."""
+    settings = get_settings()
+    path = local_file_path(settings, store_id, file_path)
+    if path is None:
+        raise HTTPException(status_code=404, detail="Ficheiro não encontrado")
+    suffix = path.suffix.lower()
+    media_map = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".webp": "image/webp",
+    }
+    return FileResponse(path, media_type=media_map.get(suffix, "application/octet-stream"))
 
 
 @app.get("/health")

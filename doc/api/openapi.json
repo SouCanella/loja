@@ -1763,6 +1763,52 @@
         ]
       }
     },
+    "/api/v2/media/upload": {
+      "post": {
+        "tags": [
+          "media-v2"
+        ],
+        "summary": "Upload Media V2",
+        "operationId": "upload_media_v2_api_v2_media_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_media_v2_api_v2_media_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaUploadEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/dashboard/summary": {
       "get": {
         "tags": [
@@ -3567,6 +3613,54 @@
         }
       }
     },
+    "/media/{store_id}/{file_path}": {
+      "get": {
+        "summary": "Serve Local Media File",
+        "description": "Serve ficheiros gravados em modo `media_backend=local` (MA-03).",
+        "operationId": "serve_local_media_file_media__store_id___file_path__get",
+        "parameters": [
+          {
+            "name": "store_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Store Id"
+            }
+          },
+          {
+            "name": "file_path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Path"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -3745,6 +3839,26 @@
           "password"
         ],
         "title": "Body_login_v2_api_v2_auth_login_post"
+      },
+      "Body_upload_media_v2_api_v2_media_upload_post": {
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "product | vitrine_logo | vitrine_hero"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "purpose",
+          "file"
+        ],
+        "title": "Body_upload_media_v2_api_v2_media_upload_post"
       },
       "CategoryCreate": {
         "properties": {
@@ -5032,6 +5146,57 @@
           "unit_cost"
         ],
         "title": "InventorySeed"
+      },
+      "MediaUploadEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaUploadOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "MediaUploadEnvelope"
+      },
+      "MediaUploadOut": {
+        "properties": {
+          "public_url": {
+            "type": "string",
+            "title": "Public Url",
+            "description": "URL do ficheiro (https ou http em dev; gravar em image_url ou tema)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "public_url"
+        ],
+        "title": "MediaUploadOut"
       },
       "NotificationMarkReadBody": {
         "properties": {

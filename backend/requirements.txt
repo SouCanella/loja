@@ -20,3 +20,6 @@ pytest>=8.3.0,<9
 pytest-cov>=6.0.0,<7
 pytest-html>=4.1.0,<5
 ruff>=0.8.0,<0.10
+
+# Media S3 (MA-03) — opcional; modo local não requer boto3
+boto3>=1.35.0,<2

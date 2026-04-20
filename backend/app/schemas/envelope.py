@@ -7,6 +7,7 @@ from app.schemas.catalog import CategoryOut, ProductOut
 from app.schemas.customers_public import CustomerAuthResponse, CustomerMeOut
 from app.schemas.dashboard import DashboardSummaryOut
 from app.schemas.inventory_items import InventoryItemDetailOut, InventoryItemListOut
+from app.schemas.media import MediaUploadOut
 from app.schemas.notifications import NotificationsInboxOut
 from app.schemas.orders import OrderDetailOut, OrderOut
 from app.schemas.phase3 import FinancialReportOut, ProductionRunOut, RecipeOut
@@ -130,6 +131,12 @@ class ProductionRunEnvelope(BaseModel):
 class ProductionRunListEnvelope(BaseModel):
     success: bool
     data: list[ProductionRunOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class MediaUploadEnvelope(BaseModel):
+    success: bool
+    data: MediaUploadOut | None = None
     errors: list[ApiErrorDetail] | None = None
 
 

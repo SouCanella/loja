@@ -35,6 +35,18 @@ class Settings(BaseSettings):
     # `http://192.168.1.10:3000`
     cors_extra_origins: str = ""
 
+    # Media / MA-03 — upload de imagens (prefixo por loja)
+    media_backend: str = "local"
+    media_root: str = "var/media"
+    # Base URL pública (sem / final) para URLs https dos uploads locais; vazio = derivar do pedido HTTP
+    public_base_url: str = ""
+    s3_bucket: str = ""
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
+    aws_region: str = "us-east-1"
+    s3_endpoint_url: str = ""
+    s3_public_base_url: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

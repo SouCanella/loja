@@ -104,6 +104,40 @@ export async function apiPainelJson<T>(
   return unwrapV2Success<T>(raw);
 }
 
+/** Upload multipart para `POST /api/v2/media/upload` (MA-03). Devolve URL pública do ficheiro. */
+export async function apiPainelMediaUpload(
+  purpose: "product" | "vitrine_logo" | "vitrine_hero",
+  file: File,
+): Promise<string> {
+  let token = getAccessToken();
+  if (!token) {
+    throw new PainelApiError("Faça login para continuar.", 401);
+  }
+  const formData = new FormData();
+  formData.append("purpose", purpose);
+  formData.append("file", file);
+  const url = `${getApiBaseUrl()}/api/v2/media/upload`;
+  const doFetch = (bearer: string) =>
+    fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${bearer}` },
+      body: formData,
+    });
+  let res = await doFetch(token);
+  if (res.status === 401 && getRefreshToken()) {
+    const next = await refreshAccessToken();
+    if (next) {
+      res = await doFetch(next);
+    }
+  }
+  const raw = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new PainelApiError(errorMessageFromResponse(raw, res.status), res.status);
+  }
+  const data = unwrapV2Success<{ public_url: string }>(raw);
+  return data.public_url;
+}
+
 export function formatBRL(value: string | number): string {
   const n = typeof value === "string" ? Number.parseFloat(value) : value;
   if (Number.isNaN(n)) return "—";

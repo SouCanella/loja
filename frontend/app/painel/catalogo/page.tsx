@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { FieldTip } from "@/components/painel/FieldTip";
+import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
 
 type Product = {
@@ -364,17 +365,26 @@ export default function CatalogoPage() {
                   </select>
                 </td>
                 <td className="max-w-md px-4 py-3 align-top">
-                  <input
-                    type="url"
-                    className="w-full rounded border border-slate-200 px-2 py-1 text-xs"
-                    defaultValue={p.image_url ?? ""}
-                    placeholder="https://…"
-                    disabled={saving === p.id}
-                    onBlur={(e) => {
-                      const v = e.target.value.trim();
-                      if (v !== (p.image_url ?? "")) void patchProduct(p.id, { image_url: v || null });
-                    }}
-                  />
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                    <input
+                      key={`${p.id}-img-${p.image_url ?? ""}`}
+                      type="url"
+                      className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs"
+                      defaultValue={p.image_url ?? ""}
+                      placeholder="https://…"
+                      disabled={saving === p.id}
+                      onBlur={(e) => {
+                        const v = e.target.value.trim();
+                        if (v !== (p.image_url ?? "")) void patchProduct(p.id, { image_url: v || null });
+                      }}
+                    />
+                    <ImageUploadButton
+                      purpose="product"
+                      disabled={saving === p.id}
+                      label="Enviar"
+                      onUploaded={(url) => void patchProduct(p.id, { image_url: url })}
+                    />
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-right align-top">
                   <input

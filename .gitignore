@@ -4,6 +4,9 @@
 .env.*.local
 !.env.example
 
+# Media local (MA-03)
+backend/var/media/
+
 # Python
 __pycache__/
 *.py[cod]

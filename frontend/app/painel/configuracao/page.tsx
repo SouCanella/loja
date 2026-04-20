@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { ConfigFormSection } from "@/components/painel/ConfigFormSection";
 import { FieldTip } from "@/components/painel/FieldTip";
+import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 
 type Me = {
@@ -264,7 +266,8 @@ export default function ConfiguracaoLojaPage() {
               </code>
             </div>
           </div>
-          <form onSubmit={saveProfile} className="mt-6 max-w-xl space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <form onSubmit={saveProfile} className="mt-6 max-w-xl space-y-4">
+          <ConfigFormSection title="Identidade da loja" defaultOpen>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="sn">
               Nome da loja
@@ -290,26 +293,34 @@ export default function ConfiguracaoLojaPage() {
               required
             />
           </div>
-          <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Aparência da vitrine</p>
-            <p className="mt-1 text-xs text-slate-500">
-              O cliente vê estas opções na loja pública (<code className="rounded bg-white px-1">/loja/seu-slug</code>).
-              São poucos campos a propósito — sem um editor complexo.
+          </ConfigFormSection>
+          <ConfigFormSection title="Aparência da vitrine" defaultOpen>
+            <p className="text-xs text-slate-500">
+              O cliente vê estas opções na loja pública (
+              <code className="rounded bg-slate-100 px-1">/loja/seu-slug</code>). São poucos campos a propósito — sem um
+              editor complexo.
             </p>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="logo">
                   Logótipo da loja (URL https)
                   <FieldTip text="Imagem quadrada ou horizontal do logótipo no topo da vitrine (PNG ou SVG com URL https). Se ficar vazio, usa-se o emoji de reserva (definido nos dados da loja)." />
                 </label>
-                <input
-                  id="logo"
-                  type="url"
-                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  value={logoImageUrl}
-                  onChange={(e) => setLogoImageUrl(e.target.value)}
-                  placeholder="https://exemplo.com/logo.png"
-                />
+                <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end">
+                  <input
+                    id="logo"
+                    type="url"
+                    className="min-w-0 flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                    value={logoImageUrl}
+                    onChange={(e) => setLogoImageUrl(e.target.value)}
+                    placeholder="https://exemplo.com/logo.png"
+                  />
+                  <ImageUploadButton
+                    purpose="vitrine_logo"
+                    onUploaded={(url) => setLogoImageUrl(url)}
+                    label="Enviar ficheiro"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="tg">
@@ -422,14 +433,21 @@ export default function ConfiguracaoLojaPage() {
                   Imagem de fundo (URL https)
                   <FieldTip text="Textura ou fotografia suave em ecrã inteiro por detrás do conteúdo. Link direto .jpg / .png; apenas https. Deixe vazio para fundo sólido." />
                 </label>
-                <input
-                  id="hi"
-                  type="url"
-                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  value={backgroundImageUrl}
-                  onChange={(e) => setBackgroundImageUrl(e.target.value)}
-                  placeholder="https://exemplo.com/fundo.jpg"
-                />
+                <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end">
+                  <input
+                    id="hi"
+                    type="url"
+                    className="min-w-0 flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                    value={backgroundImageUrl}
+                    onChange={(e) => setBackgroundImageUrl(e.target.value)}
+                    placeholder="https://exemplo.com/fundo.jpg"
+                  />
+                  <ImageUploadButton
+                    purpose="vitrine_hero"
+                    onUploaded={(url) => setBackgroundImageUrl(url)}
+                    label="Enviar ficheiro"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="bgsoft">
@@ -482,12 +500,9 @@ export default function ConfiguracaoLojaPage() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Vitrine e checkout
-            </p>
-            <div className="mt-3 space-y-3">
+          </ConfigFormSection>
+          <ConfigFormSection title="Vitrine e checkout" defaultOpen={false}>
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="clay">
                   Layout padrão do catálogo
@@ -565,7 +580,8 @@ export default function ConfiguracaoLojaPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </ConfigFormSection>
+          <ConfigFormSection title="Contacto, horário e margem" defaultOpen={false}>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="wa">
               WhatsApp (vitrine)
@@ -607,7 +623,8 @@ export default function ConfiguracaoLojaPage() {
               onChange={(e) => setMargin(e.target.value)}
             />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          </ConfigFormSection>
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
             <button
               type="submit"
               className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
