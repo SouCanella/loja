@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Documentação — relatórios e analytics ampliados)
+
+- **Novo:** [relatorios-analytics-roadmap.md](../projeto/relatorios-analytics-roadmap.md) — vitrine (visitas, vistas, carrinho, geo) vs operação (hora, património, categorias); o que já é derivável do modelo e o que exige eventos ou novos campos (pagamento, cupons, descontos).
+
 ## 2026-04-20 (Planeamento — Fase 3.2 impressão de pedidos)
 
 - **Novo:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) — marco **3.2** (térmica Bluetooth/USB 58/80 mm, desligado; comprovativos e etiquetas **A4/A6**); sub-fases 3.2-a (PDF/HTML), 3.2-b (USB), 3.2-c (BT); **DEC-21** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).

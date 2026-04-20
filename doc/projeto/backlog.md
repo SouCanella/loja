@@ -29,6 +29,12 @@ Commits na `main` com mensagem `feat(phase-0): …` fecham o registro técnico n
 
 ---
 
+## Relatórios e analytics ampliados (produto)
+
+Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** — mapa viabilidade **já / novo / analytics**, ordem sugerida e ligação a DEC-14.
+
+---
+
 ## Melhorias de engenharia (MA-*) — pós-validação Fase 0
 
 Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md](../documento_enterprise.md) §5 (multi-tenant) e §20; não estavam como linhas explícitas até o mapeamento abaixo. **Estado** reflete se já existe norma/código.
