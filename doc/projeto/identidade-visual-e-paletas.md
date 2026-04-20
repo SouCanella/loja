@@ -2,7 +2,7 @@
 
 Documento de referência para **design de marca**, **logótipo**, **ilustração** e **UI** do produto. Descreve o que está **implementado no código** (Tailwind, variáveis CSS, gráficos) e separa **identidade da plataforma (painel)** da **identidade por loja (vitrine pública)**.
 
-**Última actualização:** 2026-04-17 (inclui tokens `painel-cta` para botões preenchidos).
+**Última actualização:** 2026-04-22 (menu lateral alinhado ao CTA; dicas `FieldTip` com fundo opaco).
 
 ---
 
@@ -44,17 +44,26 @@ Definida em `frontend/tailwind.config.ts` no objecto `colors.painel`. Classes Ta
 
 ### 2.2 Menu lateral (shell do painel)
 
-Gradiente sobre base **#1a1522**, cartões com **primary** translúcido, rótulos **lavanda** (`nav-label`), item activo **#8A05BE** com **acento amarelo** (#FFDE21) em sombra interior; links inactivos em **violeta claro** (boa legibilidade).
+Gradiente em **roxo escuro** próximo do tom dos botões CTA (`#5c0d73`), mais claro que o preto-roxo inicial — base **`#301a3e`**, transição para **`#24142f`**, topo **`#452252`**. Cartões com **primary** translúcido, rótulos **lavanda** (`nav-label`), item activo **#8A05BE** com **acento amarelo** (#FFDE21) em sombra interior; links inactivos em **violeta claro**.
 
 | Token | Hex | Uso |
 |-------|-----|-----|
-| `painel-sidebar-bg` (referência) | ~#1a1522 | Fallback `SIDEBAR_SOLID` + gradiente `SIDEBAR_GRADIENT` em `PainelShell` |
-| `painel-sidebar-border` | #3d2f52 | Borda exterior do painel |
+| `painel-sidebar-bg` (referência) | **#301a3e** | Fallback `SIDEBAR_SOLID` + gradiente `SIDEBAR_GRADIENT` em `PainelShell` |
+| `painel-sidebar-border` | **#4a3560** | Borda exterior do painel |
 | `painel-nav-label` | #c9b3dd | Títulos de grupo e subtítulo “Gestão da loja” |
 | `painel-sidebar-text` | #f4f1f8 | (legado / outros usos) |
 | `painel-sidebar-muted` | #9488a3 | (legado / outros usos) |
 
 Ficheiro principal: `frontend/components/painel/PainelShell.tsx`.
+
+### 2.3 Dicas contextuais (`FieldTip`)
+
+Componente **`frontend/components/painel/FieldTip.tsx`:** botão «?» abre tooltip em portal (fixo ao ecrã). Estilo de marca: **borda roxa** (`border-painel-primary`), **barra amarela** à esquerda (`border-painel-secondary`), **fundo branco opaco** — evita transparências que prejudiquem a leitura sobre o formulário.
+
+### 2.4 Outras páginas do painel (referência rápida)
+
+- **Clientes** (`/painel/clientes`): filtro local por **nome ou telefone** (texto; telefone com ≥2 dígitos após normalização).
+- **Relatórios** (`/painel/relatorio`): botão «Atualizar» usa o mesmo CTA roxo (`painel-cta`) que o resto do painel.
 
 ---
 
@@ -146,15 +155,16 @@ Ou seja: a **marca visual da loja do cliente** é independente da paleta **paine
 | Gráficos (hex duplicados) | Preferir editar `frontend/lib/painel-chart-colors.ts` e componentes que o importam |
 | Tema vitrine por loja | `vitrine-theme-vars.ts`, `tailwind.config.ts` (`loja.*`), handlers de `store-settings` |
 | Shell navegação | `PainelShell.tsx` |
+| Dicas «?» em formulários | `FieldTip.tsx` |
 
-Após mudar tokens Tailwind, validar contraste (WCAG) em botões **secundários** (`on-secondary` sobre amarelo) e texto sobre `sidebar-bg`.
+Após mudar tokens Tailwind, validar contraste (WCAG) em botões **secundários** (`on-secondary` sobre amarelo) e texto sobre o fundo do menu lateral (`painel-sidebar-bg` / gradiente em `PainelShell`).
 
 ---
 
 ## 7. Notas para evolução (arte, logo, manual de marca)
 
 1. **Proporção roxo : amarelo:** no UI actual, o amarelo é **secundário** (chamadas pontuais); um logótipo pode equilibrar os dois sem usar 50/50 em área.
-2. **Sidebar escura:** qualquer ícone ou marca reduzida no canto do painel deve funcionar em **#151016** ou em branco/#f4f1f8.
+2. **Sidebar escura:** qualquer ícone ou marca reduzida no canto do painel deve funcionar sobre o fundo **roxo escuro** actual (**~#24142f–#452252** no gradiente) ou em branco/#f4f1f8.
 3. **Vitrine:** o logótipo da **plataforma** não deve ser confundido com o **logótipo uploadado pela loja** (hero da vitrine); são duas camadas de identidade.
 4. **Favicon / PWA:** derivar do roxo **#8A05BE** ou monograma sobre fundo **#151016** mantém coerência com o painel.
 5. **Documentação viva:** quando fecharem cores definitivas de marca (com nomes Pantone/HEX oficiais), actualizar **este ficheiro** e `tailwind.config.ts` para manter uma única fonte de verdade.

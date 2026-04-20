@@ -531,7 +531,7 @@ export default function RelatorioPage() {
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-md bg-painel-secondary px-4 py-2 text-sm font-semibold text-neutral-950 shadow-sm hover:bg-painel-secondary-hover"
+          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
         >
           Atualizar
         </button>

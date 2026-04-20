@@ -65,11 +65,12 @@ export function FieldTip({ text }: { text: string }) {
           top: box.top,
           left: box.left,
           width: box.width,
-          maxHeight: "min(50vh, 320px)",
         }}
-        className="z-[300] overflow-y-auto rounded-xl border border-slate-200 bg-white p-3 text-left text-sm leading-relaxed text-slate-700 shadow-xl"
+        className="z-[300] flex max-h-[min(50vh,320px)] flex-col overflow-hidden rounded-xl border-2 border-painel-primary bg-white shadow-lg shadow-painel-primary/25"
       >
-        {text}
+        <div className="min-h-0 flex-1 overflow-y-auto border-l-4 border-painel-secondary bg-white py-3 pl-3 pr-3 text-left text-sm leading-relaxed text-slate-800">
+          {text}
+        </div>
       </div>
     ) : null;
 

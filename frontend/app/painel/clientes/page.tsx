@@ -58,9 +58,35 @@ function contactLabel(orders: OrderRow[]): { title: string; subtitle: string | n
   };
 }
 
+type ContactGroup = {
+  key: string;
+  orders: OrderRow[];
+  label: { title: string; subtitle: string | null };
+};
+
+/** Pesquisa por texto (nome, rótulos) ou por sequência de dígitos do telefone. */
+function groupMatchesFilter(group: ContactGroup, raw: string): boolean {
+  const q = raw.trim().toLowerCase();
+  if (!q) return true;
+
+  const qDigits = raw.replace(/\D/g, "");
+  const labelText = `${group.label.title} ${group.label.subtitle ?? ""}`.toLowerCase();
+  if (labelText.includes(q)) return true;
+
+  for (const o of group.orders) {
+    const name = (o.contact_name ?? "").trim().toLowerCase();
+    if (name.includes(q)) return true;
+    const phoneDigits = (o.contact_phone ?? "").replace(/\D/g, "");
+    if (qDigits.length >= 2 && phoneDigits.includes(qDigits)) return true;
+  }
+
+  return false;
+}
+
 export default function ClientesPage() {
   const [rows, setRows] = useState<OrderRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filterQuery, setFilterQuery] = useState("");
 
   useEffect(() => {
     void apiPainelJson<OrderRow[]>("/api/v2/orders")
@@ -90,6 +116,10 @@ export default function ClientesPage() {
     );
     return list.reverse();
   }, [rows]);
+
+  const filteredGroups = useMemo(() => {
+    return groups.filter((g) => groupMatchesFilter(g, filterQuery));
+  }, [groups, filterQuery]);
 
   return (
     <>
@@ -122,7 +152,30 @@ export default function ClientesPage() {
       ) : null}
 
       {groups.length > 0 ? (
-        <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="mt-8 space-y-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+            <div className="max-w-md flex-1">
+              <label className="block text-xs font-medium text-slate-600" htmlFor="clientes-filter">
+                Filtrar por nome ou telefone
+              </label>
+              <input
+                id="clientes-filter"
+                type="search"
+                autoComplete="off"
+                placeholder="Ex.: Maria, 11999…"
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+              />
+            </div>
+            <p className="text-xs text-slate-500">
+              {filteredGroups.length === groups.length
+                ? `${groups.length} contacto${groups.length === 1 ? "" : "s"}`
+                : `${filteredGroups.length} de ${groups.length} contactos`}
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
               <tr>
@@ -133,7 +186,7 @@ export default function ClientesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {groups.map(({ key, orders, label }) => {
+              {filteredGroups.map(({ key, orders, label }) => {
                 const latest = orders[0];
                 const n = orders.length;
                 return (
@@ -189,6 +242,19 @@ export default function ClientesPage() {
               })}
             </tbody>
           </table>
+          {filterQuery.trim() && filteredGroups.length === 0 ? (
+            <p className="border-t border-slate-100 px-4 py-6 text-center text-sm text-slate-600">
+              Nenhum contacto corresponde a «{filterQuery.trim()}».{" "}
+              <button
+                type="button"
+                className="font-medium text-painel-primary hover:underline"
+                onClick={() => setFilterQuery("")}
+              >
+                Limpar filtro
+              </button>
+            </p>
+          ) : null}
+        </div>
         </div>
       ) : null}
     </>

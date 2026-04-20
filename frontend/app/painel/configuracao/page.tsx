@@ -46,6 +46,47 @@ const PAYMENT_DEFAULTS: { id: string; label: string }[] = [
   { id: "entrega_pix", label: "PIX na entrega (na hora)" },
 ];
 
+/** Valores alinhados a `catalog-hero` (`socialIconLabel` usa `icon.includes(...)`). */
+const SOCIAL_ICON_PRESETS: { value: string; label: string }[] = [
+  { value: "instagram", label: "Instagram" },
+  { value: "facebook", label: "Facebook" },
+  { value: "tiktok", label: "TikTok" },
+  { value: "youtube", label: "YouTube" },
+  { value: "link", label: "Outro / site" },
+];
+
+type SocialLinkRow = { label: string; url: string; icon: string };
+
+function normalizeSocialIcon(icon: string): string {
+  const i = icon.toLowerCase();
+  if (i.includes("instagram")) return "instagram";
+  if (i.includes("facebook")) return "facebook";
+  if (i.includes("tiktok")) return "tiktok";
+  if (i.includes("youtube")) return "youtube";
+  return "link";
+}
+
+function socialNetworksFromTheme(v: Record<string, unknown> | null | undefined): SocialLinkRow[] {
+  if (!v) return [];
+  const raw = v["social_networks"];
+  if (!Array.isArray(raw)) return [];
+  const out: SocialLinkRow[] = [];
+  for (const item of raw) {
+    if (typeof item !== "object" || item === null) continue;
+    const o = item as Record<string, unknown>;
+    const url = typeof o.url === "string" ? o.url.trim() : "";
+    if (!url) continue;
+    const label = typeof o.label === "string" ? o.label : "";
+    const iconRaw = typeof o.icon === "string" ? o.icon : "link";
+    out.push({
+      url,
+      label,
+      icon: normalizeSocialIcon(iconRaw),
+    });
+  }
+  return out;
+}
+
 export default function ConfiguracaoLojaPage() {
   const [me, setMe] = useState<Me | null>(null);
   const [name, setName] = useState("");
@@ -66,6 +107,7 @@ export default function ConfiguracaoLojaPage() {
   const [paymentEnabled, setPaymentEnabled] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(PAYMENT_DEFAULTS.map((p) => [p.id, true])),
   );
+  const [socialLinks, setSocialLinks] = useState<SocialLinkRow[]>([]);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -108,6 +150,7 @@ export default function ConfiguracaoLojaPage() {
         } else {
           setPaymentEnabled(Object.fromEntries(PAYMENT_DEFAULTS.map((p) => [p.id, true])));
         }
+        setSocialLinks(socialNetworksFromTheme(vt ?? undefined));
         const sm = m.store_target_margin_percent;
         setMargin(typeof sm === "number" ? String(sm) : String(sm ?? "30"));
       })
@@ -143,6 +186,19 @@ export default function ConfiguracaoLojaPage() {
                 label: p.label,
                 enabled: paymentEnabled[p.id] !== false,
               })),
+              social_networks: socialLinks
+                .filter((s) => s.url.trim())
+                .map((s) => {
+                  const preset = SOCIAL_ICON_PRESETS.find((x) => x.value === s.icon);
+                  const label =
+                    s.label.trim() ||
+                    (preset ? preset.label : "Rede social");
+                  return {
+                    label,
+                    url: s.url.trim(),
+                    icon: s.icon,
+                  };
+                }),
             },
           },
           config: { general: { timezone: tz.trim() } },
@@ -167,6 +223,7 @@ export default function ConfiguracaoLojaPage() {
       setCatalogLayout(vt2?.catalog_layout_default === "list" ? "list" : "grid");
       setOrderGreeting(strFromTheme(vt2, "order_greeting"));
       setHideUnavailable(vt2?.hide_unavailable_products === true);
+      setSocialLinks(socialNetworksFromTheme(vt2 ?? undefined));
       setMsg(
         "Alterações guardadas. Se já tinha a vitrine aberta, actualize o separador da pré-visualização para ver o resultado.",
       );
@@ -266,6 +323,99 @@ export default function ConfiguracaoLojaPage() {
                   onChange={(e) => setTagline(e.target.value)}
                   placeholder="Opcional"
                 />
+              </div>
+              <div className="border-t border-slate-200 pt-4">
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <span className="text-sm font-medium text-slate-700">Redes sociais (vitrine)</span>
+                  <FieldTip text="Aparecem no topo da loja pública como ícones ao lado do nome. Indique o tipo (para o emoji certo) e o URL completo em https://. O texto opcional é usado em dicas de acessibilidade (title)." />
+                </div>
+                <p className="mt-1 text-xs text-slate-500">
+                  Igual ao bloco de redes no hero da loja — antes não era possível editar aqui.
+                </p>
+                <div className="mt-3 space-y-3">
+                  {socialLinks.map((row, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 lg:flex-row lg:flex-wrap lg:items-end"
+                    >
+                      <div className="w-full shrink-0 lg:w-40">
+                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-icon-${idx}`}>
+                          Tipo / ícone
+                        </label>
+                        <select
+                          id={`soc-icon-${idx}`}
+                          className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
+                          value={row.icon}
+                          onChange={(e) =>
+                            setSocialLinks((prev) =>
+                              prev.map((r, i) => (i === idx ? { ...r, icon: e.target.value } : r)),
+                            )
+                          }
+                        >
+                          {SOCIAL_ICON_PRESETS.map((p) => (
+                            <option key={p.value} value={p.value}>
+                              {p.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="min-w-0 flex-1 lg:min-w-[220px]">
+                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-url-${idx}`}>
+                          URL (https)
+                        </label>
+                        <input
+                          id={`soc-url-${idx}`}
+                          type="url"
+                          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                          value={row.url}
+                          onChange={(e) =>
+                            setSocialLinks((prev) =>
+                              prev.map((r, i) => (i === idx ? { ...r, url: e.target.value } : r)),
+                            )
+                          }
+                          placeholder="https://instagram.com/sua_loja"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1 lg:min-w-[200px]">
+                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-lbl-${idx}`}>
+                          Rótulo (opcional)
+                        </label>
+                        <input
+                          id={`soc-lbl-${idx}`}
+                          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                          value={row.label}
+                          onChange={(e) =>
+                            setSocialLinks((prev) =>
+                              prev.map((r, i) => (i === idx ? { ...r, label: e.target.value } : r)),
+                            )
+                          }
+                          placeholder="Segue-nos no Instagram"
+                        />
+                      </div>
+                      <div className="flex justify-end lg:shrink-0">
+                        <button
+                          type="button"
+                          className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+                          onClick={() => setSocialLinks((prev) => prev.filter((_, i) => i !== idx))}
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
+                    onClick={() =>
+                      setSocialLinks((prev) => [
+                        ...prev,
+                        { label: "", url: "", icon: "instagram" },
+                      ])
+                    }
+                  >
+                    + Adicionar rede
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="hi">

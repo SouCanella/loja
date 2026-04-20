@@ -9,10 +9,10 @@ import { PainelNotificationsBell } from "@/components/painel/PainelNotifications
 
 type NavItem = { href: string; label: string; disabled?: boolean; hint?: string };
 
-/** Fallback sólido; por cima aplica-se gradiente em tons da marca (roxo). */
-const SIDEBAR_SOLID = "#1a1522" as const;
+/** Fallback sólido; gradiente em roxo alinhado ao CTA dos botões (mais claro que o preto-roxo anterior). */
+const SIDEBAR_SOLID = "#301a3e" as const;
 const SIDEBAR_GRADIENT =
-  "linear-gradient(165deg, #231633 0%, #1a1522 42%, #120c18 100%)" as const;
+  "linear-gradient(165deg, #452252 0%, #301a3e 45%, #24142f 100%)" as const;
 
 const GROUPS: { title: string; items: NavItem[] }[] = [
   { title: "Visão geral", items: [{ href: "/painel", label: "Dashboard" }] },

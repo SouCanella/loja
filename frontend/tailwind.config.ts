@@ -20,9 +20,9 @@ const config: Config = {
           "secondary-hover": "#e6c81e",
           "secondary-soft": "#fff9d6",
           "on-secondary": "#1a1512",
-          /** Menu lateral — base e variações da marca (harmonia roxo + toques de amarelo) */
-          "sidebar-bg": "#1a1522",
-          "sidebar-border": "#3d2f52",
+          /** Menu lateral — tom próximo ao CTA (#5c0d73), um pouco mais claro que o fundo quase-preto */
+          "sidebar-bg": "#301a3e",
+          "sidebar-border": "#4a3560",
           "sidebar-text": "#f4f1f8",
           "sidebar-muted": "#9488a3",
           /** Rótulos de grupo no menu (lavanda, legível sobre fundo escuro) */

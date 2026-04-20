@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-20.
+**Última actualização:** 2026-04-22.
 
 **Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
 

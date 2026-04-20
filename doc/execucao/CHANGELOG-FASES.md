@@ -2,6 +2,15 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (Painel — redes sociais na configuração, filtro em Clientes, dicas e menu)
+
+- **Configuração da loja:** em **`/painel/configuracao`**, secção **Redes sociais (vitrine)** — lista `label` / `url` / `icon` (preset Instagram, Facebook, etc.), persistida em `stores.theme.vitrine.social_networks` (alinhado ao hero `catalog-hero.tsx` e à API pública).
+- **Clientes:** filtro por **nome ou telefone** na lista agregada por contacto (`/painel/clientes`).
+- **FieldTip:** tooltip de ajuda com **borda roxa**, **barra amarela** e **fundo branco opaco** (legibilidade).
+- **Menu lateral:** fundo em gradiente roxo mais próximo do CTA (`PainelShell` + tokens `painel-sidebar-bg` / `painel-sidebar-border` em `tailwind.config.ts`).
+- **Relatórios:** botão «Atualizar» com estilo **CTA** (`painel-cta`), coerente com o resto do painel.
+- **Documentação:** [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md), [identidade-visual-e-paletas.md](../projeto/identidade-visual-e-paletas.md).
+
 ## 2026-04-20 (Refactor vitrine + DRY pedidos + Vitest estável)
 
 - **Backend:** `app/services/order_line_items.py` — `get_product_for_order_line(..., reject_catalog_unavailable)` partilhado entre `handlers/orders.py` (painel) e `services/public_vitrine_order.py` (vitrine bloqueia produto `unavailable` no catálogo).

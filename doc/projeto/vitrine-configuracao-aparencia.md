@@ -2,7 +2,7 @@
 
 Documento de **síntese** do que está implementado (painel do lojista → loja pública `/loja/[slug]`), alinhado a [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md) e ao [backlog](backlog.md).
 
-**Última actualização:** 2026-04-21.
+**Última actualização:** 2026-04-22.
 
 Para a **paleta da plataforma (painel de administração)** e **gráficos**, ver [identidade-visual-e-paletas.md](identidade-visual-e-paletas.md).
 
@@ -30,6 +30,7 @@ Campos relevantes em **`theme.vitrine`** (não exaustivo — ver código em `bac
 | `hide_unavailable_products` | boolean | Ocultar produtos indisponíveis na listagem pública |
 | `delivery_option_ids` | string[] | Modos de entrega mostrados no checkout |
 | `payment_methods` | `{ id, label, enabled }[]` | Formas de pagamento no checkout |
+| `social_networks` | `{ label, url, icon }[]` | Links no hero da vitrine (ícones por palavra-chave em `icon`, ex.: `instagram`); configurável no painel em **Aparência da vitrine → Redes sociais** |
 
 **Limpar imagens:** o painel envia `null` em `logo_image_url` / `hero_image_url` quando o campo é apagado, para remover valores antigos no merge do tema.
 
@@ -67,7 +68,12 @@ A documentação OpenAPI canónica está em `doc/api/openapi.json` — regenerar
 
 - **`frontend/components/vitrine/CatalogView.tsx`:** se `logo_image_url` (https) existir, mostra-se `<img object-contain>`; caso contrário, o emoji `logo_emoji`.
 
-### 3.5 Uso das cores na UI
+### 3.5 Redes sociais no hero
+
+- **`frontend/components/vitrine/catalog-hero.tsx`:** se `social_networks` tiver entradas com `url` válido, mostram-se botões com emoji conforme `icon` (ex.: texto que contenha `instagram`, `facebook`, `tiktok`, `youtube`; caso contrário ícone de link genérico).
+- **Painel:** `frontend/app/painel/configuracao/page.tsx` — lista editável (tipo + URL https + rótulo opcional); persiste em `theme.vitrine.social_networks` via `PATCH /api/v2/me/store-settings` (merge no objecto `vitrine`).
+
+### 3.6 Uso das cores na UI
 
 A cor **principal** aplica-se a navegação, títulos de secção, alternador grade/lista activo, pills de categoria, bordas suaves do hero, etc. A cor de **destaque** mantém-se para links de acção, badge do carrinho, estados seleccionados no checkout, etc.
 
@@ -84,7 +90,7 @@ A cor **principal** aplica-se a navegação, títulos de secção, alternador gr
 | Camada | Ficheiros |
 |--------|-----------|
 | Backend | `app/schemas/public_catalog.py`, `app/api/handlers/public_catalog.py` |
-| Frontend vitrine | `app/loja/[slug]/layout.tsx`, `app/loja/[slug]/page.tsx`, `components/vitrine/CatalogView.tsx`, `lib/vitrine/*.ts` |
+| Frontend vitrine | `app/loja/[slug]/layout.tsx`, `app/loja/[slug]/page.tsx`, `components/vitrine/CatalogView.tsx`, `components/vitrine/catalog-hero.tsx`, `lib/vitrine/*.ts` |
 | Painel | `app/painel/configuracao/page.tsx` |
 
 ---
