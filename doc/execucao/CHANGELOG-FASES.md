@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Planeamento — Fase 3.2 impressão de pedidos)
+
+- **Novo:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) — marco **3.2** (térmica Bluetooth/USB 58/80 mm, desligado; comprovativos e etiquetas **A4/A6**); sub-fases 3.2-a (PDF/HTML), 3.2-b (USB), 3.2-c (BT); **DEC-21** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).
+- **Roadmap:** [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) — fluxo 3.1 → **3.2** → 4.
+
 ## 2026-04-22 (Fase 3.1 — fecho: perfil, produção API, gráficos precificação/relatório)
 
 - **API v2:** `PATCH /api/v2/me/password` (alterar palavra-passe do lojista); `GET /api/v2/production-runs` (lista corridas de produção com `date_from` / `date_to` / `limit`). Testes em `test_me_password_v2.py`, `test_production_runs_list_v2.py`.

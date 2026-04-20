@@ -1,0 +1,113 @@
+# Fase 3.2 — Impressão de pedidos (térmica, Bluetooth, USB, comprovativos e etiquetas)
+
+**Relação:** prolonga a [Fase 3 — Operação de pedidos](fase-03-gestao.md) e o [painel](fase-03-1-paridade-mockup.md) com capacidade de **imprimir** na cozinha/balcão sem depender só de PDF genérico. **Não substitui** a [Fase 4 — Escala](fase-04-escala.md); pode ser desenvolvida **em paralelo** a trabalhos da Fase 4 (CI, observabilidade).
+
+**Referência de produto (pedido):**
+
+| Canal / suporte | Larguras | Modo |
+|-----------------|----------|------|
+| Impressora térmica **Bluetooth** | 58 mm, 80 mm, **desligado** | Comprovante **e** etiqueta via BT |
+| Impressora térmica **USB** / com fio | 58 mm, 80 mm, **desligado** | Comprovante via USB/cabo |
+| Etiqueta / documento de envio | **A4**, **A6** | Layout distinto de bobina térmica |
+
+---
+
+## 1. É possível?
+
+**Sim.** O desafio não é “ter pedido na base de dados”, e sim **como o browser ou o SO entregam bytes à impressora**.
+
+| Abordagem | Térmica 58/80 mm | A4 / A6 | Complexidade | Notas |
+|-----------|------------------|---------|----------------|--------|
+| **Impressão do sistema** (`window.print`, PDF/HTML) | Só se o driver/OS mapear a térmica como “impressora normal” (nem sempre legível) | **Boa** para comprovativo e etiqueta em folha | Baixa | Primeiro incremento útil sem hardware específico. |
+| **Web USB** (Chrome/Edge, HTTPS) | **Possível** para muitos dispositivos USB-serial | — | Média | Utilizador concede acesso ao dispositivo por sessão; nem todas as impressoras expõem o perfil certo. |
+| **Web Bluetooth** (GATT, HTTPS) | **Possível** para impressoras expostas como BLE compatíveis | — | Média–alta | Suporte varia por modelo e fabricante; testes em hardware real obrigatórios. |
+| **Agente local** (app desktop leve ou serviço na máquina da loja) | **Robusto** (Node/Python envia ESC/POS à porta) | Pode gerar PDF e mandar para impressora de sistema | Média | Melhor controlo; distribuição e atualizações (instalador ou auto-update). |
+| **App móvel nativo** (futuro) | BT clássico muitas vezes **só** aqui | — | Alta | Fora do âmbito mínimo 3.2 se o alvo for só web. |
+
+**Formato típico bobina:** **ESC/POS** (comandos de texto, negrito, corte). Etiquetas dedicadas podem exigir **outro protocolo** (ex.: TSPL, ZPL) conforme modelo — a Fase 3.2 deve **fixar marcas/modelos suportados** ou documentar “melhor esforço”.
+
+---
+
+## 2. O que vamos precisar (produto + engenharia)
+
+### 2.1 Produto / UX
+
+- **Ecrã de definições** (por loja ou por posto): escolha **desligado** | **USB** | **Bluetooth**; **58 mm** | **80 mm**; separação **comprovante de cozinha** vs **etiqueta de envio** quando fizer sentido.
+- **Acção “Imprimir”** no detalhe do pedido (e opcionalmente na lista): pré-visualização quando for PDF/HTML; envio directo quando for térmica.
+- **Templates**: texto do comprovante (itens, observações, totais, QR opcional) e layout **A4 vs A6** para envio (margens, fonte mínima legível).
+
+### 2.2 Backend (API)
+
+- Modelo ou JSON em `store` / `store_settings`: `print_config` com campos alinhados à tabela do §0 (canal, largura, papel envio).
+- Endpoint estável do tipo **`GET /api/v2/orders/{id}/print`** (ou POST se preferir body de opções) que devolve:
+  - **JSON** com campos já normalizados para o cliente renderizar ESC/POS ou PDF, **ou**
+  - **PDF** gerado no servidor para A4/A6 (mais previsível para “um só critério” entre browsers).
+- **Autorização:** só utilizadores da loja do pedido; sem cache público.
+
+### 2.3 Frontend (painel)
+
+- Componente de impressão que escolhe o caminho: **PDF/HTML** vs **Web USB** vs **Web Bluetooth** (conforme `print_config` e `navigator` capabilities).
+- Biblioteca **ESC/POS** em TypeScript (ou geração mínima de bytes no cliente) para 58/80 mm — a documentar na implementação.
+- **HTTPS** em produção (requisito das APIs Web USB / Web Bluetooth).
+
+### 2.4 Operação e testes
+
+- **Matriz de testes** com pelo menos uma impressora USB e uma BT reais (ou emulador serial) antes de declarar “suportado”.
+- Documentação para a loja: “Como emparelhar”, “Permitir acesso ao dispositivo no Chrome”, limitações Safari/Firefox se aplicável.
+
+### 2.5 Fora do âmbito inicial (explícito)
+
+- Driver universal para **todas** as marcas de térmicas.
+- Impressão **a partir da vitrine** (cliente final).
+- **Fila de impressão** persistente na cloud (opcional backlog).
+
+---
+
+## 3. Entregáveis sugeridos em sub-fases
+
+| Sub-fase | Entrega | Valor |
+|----------|---------|--------|
+| **3.2-a** | Comprovativo e etiqueta de envio em **PDF ou HTML** com `window.print`, tamanhos **A4 / A6** configuráveis; definições básicas na loja. | Funciona em qualquer impressora a jato/laser; valida templates. |
+| **3.2-b** | **USB** térmica: Web USB + ESC/POS 58/80 mm; opção “desligado”. | Uso típico balcão com PC. |
+| **3.2-c** | **Bluetooth** térmica: Web Bluetooth ou documentar necessidade de **agente** se os modelos alvo não forem compatíveis. | Mobilidade; mais risco de compatibilidade. |
+
+A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar em **3.2-a** e avaliar.
+
+---
+
+## 4. Critérios de aceite (macro)
+
+- [ ] Definições por loja (ou dispositivo) para canal, largura de bobina e papel de envio (A4/A6).
+- [ ] Impressão de comprovante a partir do pedido com conteúdo alinhado ao detalhe do painel (linhas, totais, notas).
+- [ ] Pelo menos um caminho **não térmico** (PDF/HTML) estável em Chrome e Firefox em desktop.
+- [ ] Pelo menos um caminho **térmico** documentado (USB **ou** BT) com lista de modelos testados ou “modo experimental”.
+- [ ] OpenAPI e testes de API para o contrato de impressão; testes E2E opcionais com mock de impressão.
+
+---
+
+## 5. Dependências e gates
+
+- **Fase 3.1** concluída no painel (detalhe de pedidos utilizável).
+- **HTTPS** no ambiente onde se pretende Web USB / Web Bluetooth.
+- Decisão registada em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md) quando se fixar **estratégia principal** (só web vs agente obrigatório para BT) — proposta **DEC-21** reservada para impressão (preencher na primeira iteração).
+
+---
+
+## 6. Estado da execução
+
+| Campo | Valor |
+|-------|--------|
+| **Status** | `planeada` |
+| **Documento** | Este ficheiro |
+
+---
+
+## 7. Documentação a manter sincronizada
+
+- [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — posição da 3.2 entre 3.1 e 4.
+- [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — ao iniciar/fechar sub-fases.
+- [backlog.md](../projeto/backlog.md) — se surgirem débitos (novos modelos, agente nativo).
+
+---
+
+*Última revisão: 2026-04-20 — criação do marco 3.2 (impressão térmica e documentos de envio).*

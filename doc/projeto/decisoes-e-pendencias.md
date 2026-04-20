@@ -30,6 +30,7 @@ Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio
 | **DEC-18** | **ORM:** apenas **SQLAlchemy 2.x** no MVP; sem SQLModel no núcleo. *(Antigo DOC-P05.)* | Enterprise §4 |
 | **DEC-19** | **URL da vitrine:** prioridade **`/loja/[slug]`** no mesmo domínio; **subdomínio** como evolução (Fase 4 / backlog). *(Antigo DOC-P06.)* | P2 |
 | **DEC-20** | **Categorias:** entidade `categories` + FK em `products` na **Fase 2**, com filtros mínimos no catálogo. *(Antigo DOC-P07.)* | RF-Catalogo |
+| **DEC-21** | **Impressão de pedidos** (bobina térmica USB/BT 58/80 mm, comprovativos **A4/A6**): fixar estratégia **browser** (Web USB, Web Bluetooth, `window.print`) vs **agente local**; protocolo **ESC/POS** e templates; modelos suportados. Ver [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md). | Fase 3.2 |
 
 ### ADR leve (contexto + consequência — revisão sugerida em ~6 meses)
 
@@ -142,7 +143,7 @@ As sugestões abaixo foram **absorvidas** na documentação normativa (não fica
 
 | Tema | Onde ficou registrado |
 |------|------------------------|
-| **ADR leve** por DEC | Secção **ADR leve** acima (DEC-01 … DEC-20) |
+| **ADR leve** por DEC | Secção **ADR leve** acima (DEC-01 … DEC-21) |
 | **OpenAPI** na Fase 1 | [documento enterprise](../documento_enterprise.md) §17; [requisitos não funcionais](../normativos/requisitos-nao-funcionais.md) **RNF-DevEx-08**; [fase-01-fundacao.md](../fases/fase-01-fundacao.md) |
 | **PostgreSQL** — pin da imagem | [documento enterprise](../documento_enterprise.md) §20 (subseção reprodutibilidade); Compose ao implementar a Fase 1 |
 | **Idempotência** pedidos + produção (Fase 3) | [requisitos não funcionais](../normativos/requisitos-nao-funcionais.md) **RNF-Arq-02a**, **RNF-Arq-02b**; [fase-03-gestao.md](../fases/fase-03-gestao.md) |
@@ -162,7 +163,7 @@ Detalhes completos: [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) �
 | Etapas 1–5 (descoberta → implementação) | Metodologia; não substitui Fases 0–4 |
 | Fases A–E (arquitetura txt) | A≈F0–1, B≈F2, C≈F2–3, D≈F3, E≈F4 + backlog |
 
-Decisões normativas: tabela **Decisões já tomadas** acima (DEC-01 … DEC-20).
+Decisões normativas: tabela **Decisões já tomadas** acima (DEC-01 … DEC-21).
 
 ---
 

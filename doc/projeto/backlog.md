@@ -13,6 +13,7 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3** (receitas, produção idempotente, relatório financeiro, painel Next, `GET /inventory-items`, `/me` com slug) | [fase-03-gestao.md](../fases/fase-03-gestao.md) **§8–§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3.1** (paridade UX com mockups admin/vitrine, **gráficos**, shell sidebar) | [fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md); [mockups/README.md](../mockups/README.md) |
+| **Fase 3.2** (impressão de pedidos: térmica BT/USB, A4/A6, **DEC-21**) | [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) |
 | **Qualidade / RNF** (auditoria vs normas, cobertura, lacunas) | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
 | **Testes e CI** (pytest, Vitest, Playwright, GitHub Actions) | [TESTES-E-CI.md](../execucao/TESTES-E-CI.md) |
 | Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
