@@ -47,6 +47,7 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
       { href: "/painel/financeiro", label: "Financeiro" },
       { href: "/painel/relatorio", label: "Relatórios" },
       { href: "/painel/relatorio-estoque", label: "Stock (insumos)" },
+      { href: "/painel/analytics-vitrine", label: "Vitrine (analytics)" },
     ],
   },
   {

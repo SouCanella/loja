@@ -11,9 +11,11 @@ from app.schemas.media import MediaUploadOut
 from app.schemas.notifications import NotificationsInboxOut
 from app.schemas.orders import OrderDetailOut, OrderOut
 from app.schemas.phase3 import FinancialReportOut, ProductionRunOut, RecipeOut
+from app.schemas.print import OrderPrintOut
 from app.schemas.public_catalog import CategoryPublicOut, ProductPublicOut, StorePublicOut
 from app.schemas.public_vitrine_order import PublicOrderCreatedOut
 from app.schemas.user import UserMeResponse
+from app.schemas.vitrine_analytics import VitrineAnalyticsIngestOut, VitrineAnalyticsSummaryOut
 
 
 class ApiErrorDetail(BaseModel):
@@ -107,6 +109,12 @@ class InventoryItemDetailEnvelope(BaseModel):
 class OrderDetailEnvelope(BaseModel):
     success: bool
     data: OrderDetailOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class OrderPrintEnvelope(BaseModel):
+    success: bool
+    data: OrderPrintOut | None = None
     errors: list[ApiErrorDetail] | None = None
 
 
@@ -205,4 +213,16 @@ class NotificationMarkReadResult(BaseModel):
 class NotificationMarkReadEnvelope(BaseModel):
     success: bool
     data: NotificationMarkReadResult | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class VitrineAnalyticsIngestEnvelope(BaseModel):
+    success: bool
+    data: VitrineAnalyticsIngestOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class VitrineAnalyticsSummaryEnvelope(BaseModel):
+    success: bool
+    data: VitrineAnalyticsSummaryOut | None = None
     errors: list[ApiErrorDetail] | None = None

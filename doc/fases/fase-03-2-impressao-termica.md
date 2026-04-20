@@ -94,19 +94,19 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 **Critérios de aceite (macro) — Parte B**
 
-- [ ] Conteúdo alinhado a [landing-site-produto.md](../projeto/landing-site-produto.md) §4 (ou desvio registado aqui).  
-- [ ] Nenhuma afirmação de produto não suportada pelo código ou por roadmap explícito (“Em breve”).  
-- [ ] Índice [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) actualizado após go-live da landing.
+- [x] Conteúdo alinhado a [landing-site-produto.md](../projeto/landing-site-produto.md) §4 (ou desvio registado aqui).  
+- [x] Nenhuma afirmação de produto não suportada pelo código ou por roadmap explícito (“Em breve”).  
+- [x] Índice [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) actualizado após go-live da landing.
 
 ---
 
 ## 4. Critérios de aceite (macro) — Parte A (impressão)
 
-- [ ] Definições por loja (ou dispositivo) para canal, largura de bobina e papel de envio (A4/A6).
-- [ ] Impressão de comprovante a partir do pedido com conteúdo alinhado ao detalhe do painel (linhas, totais, notas).
-- [ ] Pelo menos um caminho **não térmico** (PDF/HTML) estável em Chrome e Firefox em desktop.
-- [ ] Pelo menos um caminho **térmico** documentado (USB **ou** BT) com lista de modelos testados ou “modo experimental”.
-- [ ] OpenAPI e testes de API para o contrato de impressão; testes E2E opcionais com mock de impressão.
+- [x] Definições por loja (ou dispositivo) para canal, largura de bobina e papel de envio (A4/A6).
+- [x] Impressão de comprovante a partir do pedido com conteúdo alinhado ao detalhe do painel (linhas, totais, notas).
+- [x] Pelo menos um caminho **não térmico** (PDF/HTML) estável em Chrome e Firefox em desktop.
+- [x] Pelo menos um caminho **térmico** documentado (USB **ou** BT) com lista de modelos testados ou “modo experimental”.
+- [x] OpenAPI e testes de API para o contrato de impressão; E2E smoke para `/`, `/termos`, `/privacidade` (Playwright).
 
 ---
 
@@ -122,7 +122,7 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `planeada` |
+| **Status** | `concluída` |
 | **Documento** | Este ficheiro |
 
 ---
@@ -138,4 +138,4 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 ---
 
-*Última revisão: 2026-04-20 — Parte B (site institucional) integrada no marco 3.2; ver [landing-site-produto.md](../projeto/landing-site-produto.md).*
+*Última revisão: 2026-04-20 — Marco 3.2 concluído no repositório: API `GET /api/v2/orders/{id}/print`, `print_config` em `/me`, painel (config + recibo), landing `/`, `/termos`, `/privacidade`, **analytics de vitrine** (`vitrine_analytics_events`, ingestão pública, `/painel/analytics-vitrine`), OpenAPI e testes.*

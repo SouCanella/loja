@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+
+import { trackVitrineEvent } from "@/lib/vitrine/analytics";
 import { useCart } from "@/lib/vitrine/cart-context";
 import { productEmoji } from "@/lib/vitrine/product-emoji";
 import type { ProductPublic, StorePublic } from "@/lib/vitrine/types";
@@ -26,6 +29,17 @@ export function ProductDetail({
 }) {
   const cart = useCart();
   const qty = cart.quantities[product.id] ?? 0;
+  const lastProductTracked = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (lastProductTracked.current === product.id) return;
+    lastProductTracked.current = product.id;
+    trackVitrineEvent(store.slug, {
+      event_type: "product_view",
+      path: `/loja/${store.slug}/p/${product.id}`,
+      product_id: product.id,
+    });
+  }, [store.slug, product.id]);
   const emoji = productEmoji(product.id);
   const ribbons = ribbonLabels(product);
   const unavailable = (product.catalog_sale_mode ?? "in_stock") === "unavailable";
@@ -102,7 +116,13 @@ export function ProductDetail({
                 type="button"
                 className="h-10 w-10 rounded-xl border border-loja-ink/10 bg-loja-surface text-lg leading-none disabled:opacity-35"
                 onClick={() => {
-                  if (!unavailable) cart.add(product.id, 1);
+                  if (unavailable) return;
+                  trackVitrineEvent(store.slug, {
+                    event_type: "add_to_cart",
+                    path: `/loja/${store.slug}/p/${product.id}`,
+                    product_id: product.id,
+                  });
+                  cart.add(product.id, 1);
                 }}
                 disabled={unavailable}
                 aria-label="Adicionar um"

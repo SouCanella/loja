@@ -43,7 +43,7 @@
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
 | **Fase 3 — Gestão** | **Concluída** (API + painel receitas/produção/relatório CSV): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§8–§10** |
 | **Fase 3.1 — Paridade mockup** | **Concluída** (shell, gráficos, paridade UX; ver §7–§10): [fases/fase-03-1-paridade-mockup.md](fases/fase-03-1-paridade-mockup.md) |
-| **Fase 3.2 — Experiência lojista** | **Planeada** — impressão térmica + [landing institucional](../projeto/landing-site-produto.md): [fases/fase-03-2-impressao-termica.md](fases/fase-03-2-impressao-termica.md) |
+| **Fase 3.2 — Experiência lojista** | **Concluída** — impressão (`/print`, `print_config`, recibo HTML/USB experimental) + landing: [fases/fase-03-2-impressao-termica.md](fases/fase-03-2-impressao-termica.md) |
 
 ## Checklist pré-desenvolvimento
 
@@ -74,6 +74,7 @@ O planejamento **detalhado** de cada fase está em [fases/](fases/).
 | [projeto/backlog.md](projeto/backlog.md) | Backlog enterprise (BE-*), MVP, débitos técnicos, **ideias de produto** (IP-*) |
 | [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md) | Notas datadas por sprint ou marco |
 | [execucao/plano-implementacao-fase-3-2.md](execucao/plano-implementacao-fase-3-2.md) | **Plano mestre** Fase 3.2: tarefas, testes (pytest/Vitest/E2E), documentação no merge |
+| [execucao/fase-3-2-implementacao-resumo.md](execucao/fase-3-2-implementacao-resumo.md) | **Resumo do código entregue** na Fase 3.2 (impressão, landing, analytics vitrine, testes, migração) |
 
 ## Testes e relatórios HTML
 

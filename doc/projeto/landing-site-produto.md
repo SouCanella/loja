@@ -5,7 +5,7 @@
 
 **Fase:** [Fase 3.2](../fases/fase-03-2-impressao-termica.md) — sub-fases **3.2-d / 3.2-e** (ver §8 desse ficheiro).
 
-**Estado da implementação (repo):** a rota `frontend/app/page.tsx` é ainda um **stub** (“Loja — frontend” + links). Este documento é a **fonte para substituir** esse conteúdo.
+**Estado da implementação (repo):** a rota `frontend/app/page.tsx` foi substituída por uma landing em secções (hero, passos, funcionalidades, FAQ, CTAs), com `/termos` e `/privacidade` para texto legal placeholder. Este documento continua a ser referência de copy e SEO.
 
 ---
 

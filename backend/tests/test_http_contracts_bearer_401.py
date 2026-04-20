@@ -22,6 +22,8 @@ PROTECTED: list[tuple[str, str]] = [
     ("GET", "/api/v2/recipes"),
     ("GET", "/api/v2/reports/financial"),
     ("POST", "/api/v2/production"),
+    ("GET", "/api/v2/orders/00000000-0000-0000-0000-000000000001/print"),
+    ("GET", "/api/v2/analytics/vitrine/summary?date_from=2026-01-01&date_to=2026-01-31"),
 ]
 
 

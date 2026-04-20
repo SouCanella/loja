@@ -1,9 +1,9 @@
 # Planejamento completo do roadmap (Fases 0 a 4 + 3.1 + 3.2)
 
 **Referência:** [documento_enterprise.md](../documento_enterprise.md), [regras-negocio.md](../normativos/regras-negocio.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md)  
-**Última atualização do planejamento:** 2026-04-20 (Fases **0–3** e **3.1** concluídas no âmbito planeado; ver [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) §7–§10).  
+**Última atualização do planejamento:** 2026-04-20 (Fases **0–3**, **3.1** e **3.2** concluídas no âmbito planeado; **3.2** — [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md)).  
 
-**Estado actual (implementação):** Fases **0**, **1**, **2**, **3** e **3.1** concluídas ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo de produto (opcional):** [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md) — impressão de pedidos (térmica Bluetooth/USB, A4/A6). **Em paralelo ou a seguir:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD, hardening; incrementos **3.1-b** (Clientes) ou vitrine conforme prioridade; **DEC-15** (Super Admin) só se for objectivo explícito.
+**Estado actual (implementação):** Fases **0**, **1**, **2**, **3**, **3.1** e **3.2** concluídas ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo típico:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD, hardening; incrementos **3.1-b** (Clientes) ou vitrine conforme prioridade; **DEC-15** (Super Admin) só se for objectivo explícito.
 
 Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o MVP. Cada fase tem documento próprio com detalhamento (entregáveis, critérios de aceite, riscos). **Volte aqui** ao ajustar escopo ou datas; depois sincronize o arquivo da fase afetada e o [backlog.md](../projeto/backlog.md).
 

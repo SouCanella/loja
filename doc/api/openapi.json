@@ -2561,6 +2561,54 @@
         }
       }
     },
+    "/api/v2/orders/{order_id}/print": {
+      "get": {
+        "tags": [
+          "orders-v2"
+        ],
+        "summary": "Get Order Print V2",
+        "operationId": "get_order_print_v2_api_v2_orders__order_id__print_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderPrintEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/orders/{order_id}": {
       "get": {
         "tags": [
@@ -3211,6 +3259,68 @@
         }
       }
     },
+    "/api/v2/analytics/vitrine/summary": {
+      "get": {
+        "tags": [
+          "analytics-v2"
+        ],
+        "summary": "Get Vitrine Analytics Summary V2",
+        "operationId": "get_vitrine_analytics_summary_v2_api_v2_analytics_vitrine_summary_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Início (UTC, inclusivo)",
+              "title": "Date From"
+            },
+            "description": "Início (UTC, inclusivo)"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Fim (UTC, inclusivo)",
+              "title": "Date To"
+            },
+            "description": "Fim (UTC, inclusivo)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VitrineAnalyticsSummaryEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/public/stores/{store_slug}": {
       "get": {
         "tags": [
@@ -3539,6 +3649,58 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomerMeEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/public/stores/{store_slug}/analytics/events": {
+      "post": {
+        "tags": [
+          "public-analytics-v2"
+        ],
+        "summary": "Post Vitrine Analytics Events V2",
+        "operationId": "post_vitrine_analytics_events_v2_api_v2_public_stores__store_slug__analytics_events_post",
+        "parameters": [
+          {
+            "name": "store_slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Store Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VitrineAnalyticsBatchIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VitrineAnalyticsIngestEnvelope"
                 }
               }
             }
@@ -5749,6 +5911,191 @@
         ],
         "title": "OrderOut"
       },
+      "OrderPrintEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrderPrintOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "OrderPrintEnvelope"
+      },
+      "OrderPrintLineOut": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity",
+            "description": "Quantidade como decimal string"
+          },
+          "unit_price": {
+            "type": "string",
+            "title": "Unit Price"
+          },
+          "line_total": {
+            "type": "string",
+            "title": "Line Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "quantity",
+          "unit_price",
+          "line_total"
+        ],
+        "title": "OrderPrintLineOut"
+      },
+      "OrderPrintOut": {
+        "properties": {
+          "store_name": {
+            "type": "string",
+            "title": "Store Name"
+          },
+          "store_slug": {
+            "type": "string",
+            "title": "Store Slug"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Order Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "customer_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Note"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "delivery_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Address"
+          },
+          "delivery_option_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Option Id"
+          },
+          "payment_method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method Id"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderPrintLineOut"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "total": {
+            "type": "string",
+            "title": "Total"
+          },
+          "print_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Print Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "store_name",
+          "store_slug",
+          "order_id",
+          "status",
+          "created_at",
+          "lines",
+          "total"
+        ],
+        "title": "OrderPrintOut"
+      },
       "OrderStatus": {
         "type": "string",
         "enum": [
@@ -7541,6 +7888,30 @@
         ],
         "title": "TokenResponse"
       },
+      "TopProductViewRow": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "views": {
+            "type": "integer",
+            "title": "Views"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "views"
+        ],
+        "title": "TopProductViewRow"
+      },
       "UserMeEnvelope": {
         "properties": {
           "success": {
@@ -7638,6 +8009,11 @@
             "type": "string",
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Store Target Margin Percent"
+          },
+          "print_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Print Config"
           }
         },
         "type": "object",
@@ -7715,6 +8091,203 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VitrineAnalyticsBatchIn": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/VitrineAnalyticsEventIn"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "events"
+        ],
+        "title": "VitrineAnalyticsBatchIn"
+      },
+      "VitrineAnalyticsEventIn": {
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Event Type"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 512,
+            "title": "Path"
+          },
+          "session_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Session Id"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_type",
+          "path",
+          "session_id"
+        ],
+        "title": "VitrineAnalyticsEventIn"
+      },
+      "VitrineAnalyticsIngestEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VitrineAnalyticsIngestOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "VitrineAnalyticsIngestEnvelope"
+      },
+      "VitrineAnalyticsIngestOut": {
+        "properties": {
+          "accepted": {
+            "type": "integer",
+            "title": "Accepted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accepted"
+        ],
+        "title": "VitrineAnalyticsIngestOut"
+      },
+      "VitrineAnalyticsSummaryEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VitrineAnalyticsSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "VitrineAnalyticsSummaryEnvelope"
+      },
+      "VitrineAnalyticsSummaryOut": {
+        "properties": {
+          "date_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Date From"
+          },
+          "date_to": {
+            "type": "string",
+            "format": "date",
+            "title": "Date To"
+          },
+          "distinct_sessions": {
+            "type": "integer",
+            "title": "Distinct Sessions"
+          },
+          "events_by_type": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Events By Type"
+          },
+          "top_products_by_view": {
+            "items": {
+              "$ref": "#/components/schemas/TopProductViewRow"
+            },
+            "type": "array",
+            "title": "Top Products By View"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date_from",
+          "date_to",
+          "distinct_sessions",
+          "events_by_type",
+          "top_products_by_view"
+        ],
+        "title": "VitrineAnalyticsSummaryOut"
       }
     },
     "securitySchemes": {

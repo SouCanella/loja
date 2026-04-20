@@ -30,7 +30,7 @@ Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O
 - Frontend: `http://localhost:3000` — `/loja/[slug]` vitrine (dados via **`/api/v2/public/...`** no SSR); `/painel`, `/painel/pedidos`, `/painel/receitas`, `/painel/receitas/nova`, **`/painel/insumos`**, **`/painel/definicoes`**, `/painel/relatorio` (relatório alargado + CSV); **`/login`** (`POST /api/v2/auth/login`). Tema WhatsApp: `stores.theme` → `{"vitrine": {"whatsapp": "+5511…"}}` — lido via `/me`.
 - OpenAPI: esquema em [`doc/api/openapi.json`](doc/api/openapi.json) (offline; regenerar com `make openapi-export`); com API no ar: `http://localhost:8000/openapi.json` e UI ReDoc em `http://localhost:8000/redoc`
 
-Variáveis: ver [`.env.example`](.env.example) (`DATABASE_URL` com `postgresql+psycopg`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
+Variáveis: ver [`.env.example`](.env.example) (`DATABASE_URL` com `postgresql+psycopg`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`). Opcional na landing: `NEXT_PUBLIC_SITE_URL` (URL absoluta para metadados OG).
 
 **Media (MA-03):** upload de imagens para a loja (`POST /api/v2/media/upload`). Em desenvolvimento típico use `MEDIA_BACKEND=local`, `MEDIA_ROOT` (ex.: `var/media` sob `backend/`) e servir via `GET /media/...`; produção pode usar backend S3-compatível (`S3_*`, `S3_ENDPOINT_URL`, etc.) — ver campos em `backend/app/core/config.py`.
 

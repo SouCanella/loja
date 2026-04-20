@@ -14,6 +14,11 @@ type Me = {
   vitrine_whatsapp?: string | null;
   vitrine_theme?: Record<string, unknown> | null;
   store_target_margin_percent: string | number;
+  print_config?: {
+    channel?: string;
+    paper_width_mm?: number;
+    shipping_label_size?: string;
+  };
 };
 
 function strFromTheme(v: Record<string, unknown> | null | undefined, key: string): string {
@@ -110,6 +115,9 @@ export default function ConfiguracaoLojaPage() {
     Object.fromEntries(PAYMENT_DEFAULTS.map((p) => [p.id, true])),
   );
   const [socialLinks, setSocialLinks] = useState<SocialLinkRow[]>([]);
+  const [printChannel, setPrintChannel] = useState<"off" | "usb" | "bluetooth">("off");
+  const [paperWidthMm, setPaperWidthMm] = useState<58 | 80>(80);
+  const [shippingLabelSize, setShippingLabelSize] = useState<"a4" | "a6">("a4");
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -155,6 +163,15 @@ export default function ConfiguracaoLojaPage() {
         setSocialLinks(socialNetworksFromTheme(vt ?? undefined));
         const sm = m.store_target_margin_percent;
         setMargin(typeof sm === "number" ? String(sm) : String(sm ?? "30"));
+        const pc = m.print_config;
+        if (pc && typeof pc === "object") {
+          const ch = pc.channel;
+          if (ch === "usb" || ch === "bluetooth" || ch === "off") setPrintChannel(ch);
+          const w = pc.paper_width_mm;
+          if (w === 58 || w === 80) setPaperWidthMm(w);
+          const sz = pc.shipping_label_size;
+          if (sz === "a4" || sz === "a6") setShippingLabelSize(sz);
+        }
       })
       .catch(() => setErr("Não foi possível carregar os dados da loja."));
   }, []);
@@ -203,7 +220,14 @@ export default function ConfiguracaoLojaPage() {
                 }),
             },
           },
-          config: { general: { timezone: tz.trim() } },
+          config: {
+            general: { timezone: tz.trim() },
+            print: {
+              channel: printChannel,
+              paper_width_mm: paperWidthMm,
+              shipping_label_size: shippingLabelSize,
+            },
+          },
         }),
       });
       const m = Number.parseFloat(margin.replace(",", "."));
@@ -215,6 +239,15 @@ export default function ConfiguracaoLojaPage() {
       }
       const updated = await apiPainelJson<Me>("/api/v2/me");
       setMe(updated);
+      const pc2 = updated.print_config;
+      if (pc2 && typeof pc2 === "object") {
+        const ch = pc2.channel;
+        if (ch === "usb" || ch === "bluetooth" || ch === "off") setPrintChannel(ch);
+        const w = pc2.paper_width_mm;
+        if (w === 58 || w === 80) setPaperWidthMm(w);
+        const sz = pc2.shipping_label_size;
+        if (sz === "a4" || sz === "a6") setShippingLabelSize(sz);
+      }
       const vt2 = updated.vitrine_theme;
       setTagline(strFromTheme(vt2, "tagline"));
       setLogoImageUrl(strFromTheme(vt2, "logo_image_url"));
@@ -623,6 +656,60 @@ export default function ConfiguracaoLojaPage() {
               onChange={(e) => setMargin(e.target.value)}
             />
           </div>
+          </ConfigFormSection>
+          <ConfigFormSection title="Impressão de pedidos" defaultOpen={false}>
+            <p className="text-xs text-slate-500">
+              Configuração para recibos no painel e tentativa de envio USB (Chrome/Edge, HTTPS ou localhost). Bluetooth
+              Web API é ainda mais limitada — use impressão do sistema quando possível.
+            </p>
+            <div className="mt-3 space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700" htmlFor="pch">
+                  Canal térmico
+                </label>
+                <select
+                  id="pch"
+                  className="mt-1 max-w-md rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  value={printChannel}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "usb" || v === "bluetooth" || v === "off") setPrintChannel(v);
+                  }}
+                >
+                  <option value="off">Desligado (só HTML / impressão do sistema)</option>
+                  <option value="usb">USB (experimental — Web USB)</option>
+                  <option value="bluetooth">Bluetooth (experimental)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700" htmlFor="pwm">
+                  Largura do papel térmico (mm)
+                </label>
+                <select
+                  id="pwm"
+                  className="mt-1 max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  value={paperWidthMm}
+                  onChange={(e) => setPaperWidthMm(e.target.value === "58" ? 58 : 80)}
+                >
+                  <option value="80">80 mm</option>
+                  <option value="58">58 mm</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700" htmlFor="sls">
+                  Tamanho da etiqueta de envio (referência)
+                </label>
+                <select
+                  id="sls"
+                  className="mt-1 max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  value={shippingLabelSize}
+                  onChange={(e) => setShippingLabelSize(e.target.value === "a6" ? "a6" : "a4")}
+                >
+                  <option value="a4">A4</option>
+                  <option value="a6">A6</option>
+                </select>
+              </div>
+            </div>
           </ConfigFormSection>
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
             <button

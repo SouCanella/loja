@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     public_order_rate_limit_max_attempts: int = 30
     public_order_rate_limit_window_seconds: int = 120
 
+    # POST /public/stores/{slug}/analytics/events — por chave analytics|IP|store_id
+    public_analytics_rate_limit_max_attempts: int = 200
+    public_analytics_rate_limit_window_seconds: int = 120
+
     # CORS — origens extra (vírgulas), ex.: vitrine no telemóvel na LAN
     # `http://192.168.1.10:3000`
     cors_extra_origins: str = ""

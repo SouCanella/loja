@@ -23,6 +23,8 @@ class UserMeResponse(BaseModel):
     vitrine_theme: dict | None = None
     # Margem alvo % (stores.config.pricing.target_margin_percent; default 30)
     store_target_margin_percent: Decimal
+    # `stores.config.print` — impressão de pedidos (Fase 3.2)
+    print_config: dict = Field(default_factory=dict)
 
     model_config = {"from_attributes": True}
 

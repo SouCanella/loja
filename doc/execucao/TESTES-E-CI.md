@@ -22,7 +22,7 @@
 
 A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
 
-**Fase 3.2 (impressão + landing):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md).
+**Fase 3.2 (impressão + landing + analytics vitrine):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md). Contrato de impressão: `test_order_print_v2.py`; Vitest `__tests__/escpos.test.ts`; E2E smoke `e2e/smoke.spec.ts` (landing, termos, privacidade); analytics: `test_vitrine_analytics_v2.py`.
 
 ## 2. Backend (pytest)
 

@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Loja",
-  description: "Vitrine — Fase 0",
+  title: {
+    default: "Loja — Vitrine e gestão",
+    template: "%s — Loja",
+  },
+  description: "Vitrine pública e painel de gestão para pequenas lojas.",
 };
 
 export default function RootLayout({

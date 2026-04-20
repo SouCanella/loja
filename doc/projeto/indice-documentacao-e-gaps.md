@@ -13,9 +13,9 @@
 | Visão | [documento_enterprise.md](../documento_enterprise.md) | Canónico: arquitectura, MVP, backlog enterprise |
 | Roadmap | [fases/PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) | Fases 0–4, 3.1, 3.2 |
 | Fase 3.1 | [fases/fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) | Paridade painel — concluída |
-| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional (planeada) |
+| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional — **concluída** |
 | Fase 4 | [fases/fase-04-escala.md](../fases/fase-04-escala.md) | Escala, CI, observabilidade |
-| Decisões | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) | DEC-01 … DEC-22 |
+| Decisões | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) | DEC-01 … DEC-23 |
 | Backlog | [backlog.md](backlog.md) | MA-*, BE-*, MVP-* |
 | Relatórios | [relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md) | Analytics vs operação |
 | Relatórios (negócio) | [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md) | **DEC-22** — estados, cupons, descontos |
@@ -40,9 +40,9 @@
 | Media / imagens (MA-03) | enterprise DEC-04; norma RF-CA-03 | **Sim** (`/api/v2/media/upload`, local/S3) | Actualizar linha MA-03 em [backlog.md](backlog.md) para `convertido`/`parcial` + variáveis env documentadas em README backend se faltar |
 | Relatórios ampliados (DEC-22) | [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md) | Cupons/descontos **não** migrados em schema | Migração Alembic + API + UI |
 | Pagamento liquidado (`payment_status`) | DEC-22 §3 | Não | Campo opcional em `orders` |
-| Analytics vitrine (visitas, geo) | [relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md) §4 | Não | Eventos ou SaaS |
-| Impressão térmica | [fase-03-2](../fases/fase-03-2-impressao-termica.md), DEC-21 | Parcial / API existente | Fechar sub-fases 3.2-a–c |
-| Site institucional / landing | [landing-site-produto.md](landing-site-produto.md) | `app/page.tsx` stub | Implementar copy §4 |
+| Analytics vitrine (visitas, geo) | [relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md) §4 | **Parcial** — eventos `page_view`, `product_view`, `add_to_cart`, `checkout_open`; resumo no painel | Geo agregada (país) opcional via cabeçalhos CDN; funil completo e retention |
+| Impressão térmica | [fase-03-2](../fases/fase-03-2-impressao-termica.md), DEC-21 | **Sim** — `GET /api/v2/orders/{id}/print`, `print_config`, painel, ESC/POS experimental | Matriz hardware real (USB/BT) para suporte declarado |
+| Site institucional / landing | [landing-site-produto.md](landing-site-produto.md) | **Sim** — `/`, `/termos`, `/privacidade` | Revisão jurídica dos textos legais |
 | Monetização / planos PRO | enterprise §23, BE-06, DEC-22 §5 | Não | Billing |
 | App mobile | BE-03 | Não | Backlog |
 | Super Admin (DEC-15) | decisoes | Não | Fase 4 / backlog |

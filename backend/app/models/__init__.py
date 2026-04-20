@@ -15,6 +15,7 @@ from app.models.recipe import Recipe, RecipeItem
 from app.models.store import Store
 from app.models.store_notification import StoreNotification
 from app.models.user import User, UserRole
+from app.models.vitrine_analytics_event import VitrineAnalyticsEvent
 
 __all__ = [
     "Category",
@@ -34,6 +35,7 @@ __all__ = [
     "StockMovementType",
     "Store",
     "StoreNotification",
+    "VitrineAnalyticsEvent",
     "User",
     "UserRole",
 ]

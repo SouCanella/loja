@@ -2,6 +2,19 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Fase 3.2 — analytics vitrine)
+
+- **Backend:** tabela `vitrine_analytics_events`; `POST /api/v2/public/stores/{slug}/analytics/events` (rate limit dedicado); `GET /api/v2/analytics/vitrine/summary` (painel). Migração `20260424_0011_vitrine_analytics_events`.
+- **Frontend:** cliente `lib/vitrine/analytics.ts` (sessão anónima, fila); eventos na vitrine (catálogo, produto, carrinho, abrir sheet); página **`/painel/analytics-vitrine`**.
+- **Testes:** `test_vitrine_analytics_v2.py`; OpenAPI regenerado.
+
+## 2026-04-20 (Fase 3.2 — fecho: impressão + landing + OpenAPI)
+
+- **Backend:** `GET /api/v2/orders/{order_id}/print` → `OrderPrintOut` (envelope v2); `stores.config.print` com merge em `PATCH /api/v2/me/store-settings`; `UserMeResponse.print_config` (efectivo). Handlers em `app/api/handlers/order_print.py`, schemas `app/schemas/print.py`. Testes: `test_order_print_v2.py`.
+- **Frontend:** secção **Impressão de pedidos** em `/painel/configuracao`; `OrderPrintPanel` no detalhe do pedido (pré-visualização + janela de impressão; Web USB + ESC/POS experimental); `lib/escpos.ts` + Vitest.
+- **Marketing:** landing em `/` (hero, passos, funcionalidades, FAQ, CTAs); `/termos` e `/privacidade` (placeholders jurídicos); `metadata` / OG na home.
+- **Documentação:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) estado **concluída**; **DEC-21** ADR actualizado; `doc/api/openapi.json` regenerado (`make openapi-export`).
+
 ## 2026-04-20 (Plano de implementação — Fase 3.2)
 
 - **Novo:** [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md) — plano mestre (Parte A impressão 3.2-a–c, Parte B landing 3.2-d–e), matriz de testes, checklist de documentação no merge, DoD, riscos; ligado em [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md).

@@ -4,6 +4,7 @@ import {
   vitrineOverlayAlphaFromPercent,
 } from "@/lib/vitrine/vitrine-background-overlay";
 import { vitrineThemeStyle } from "@/lib/vitrine/vitrine-theme-vars";
+import { VitrineAnalyticsBridge } from "./VitrineAnalyticsBridge";
 import { CartProvider } from "@/lib/vitrine/cart-context";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -49,7 +50,10 @@ export default async function LojaSlugLayout({ children, params }: Props) {
         </>
       ) : null}
       <div className="relative z-10">
-        <CartProvider storeSlug={params.slug}>{children}</CartProvider>
+        <CartProvider storeSlug={params.slug}>
+          <VitrineAnalyticsBridge slug={params.slug} />
+          {children}
+        </CartProvider>
       </div>
     </div>
   );

@@ -7,10 +7,11 @@ from fastapi import APIRouter, Depends, Header, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
+from app.api.handlers import order_print as order_print_handlers
 from app.api.handlers import orders as orders_handlers
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.envelope import OrderDetailEnvelope, OrderListEnvelope
+from app.schemas.envelope import OrderDetailEnvelope, OrderListEnvelope, OrderPrintEnvelope
 from app.schemas.orders import OrderCreate, OrderDetailOut, OrderOut, OrderStatusPatch
 
 router = APIRouter(tags=["orders-v2"])
@@ -35,6 +36,16 @@ def create_order_v2(
 ) -> OrderDetailEnvelope:
     o = orders_handlers.create_order(db, current, body, idempotency_key=idempotency_key)
     return OrderDetailEnvelope(success=True, data=OrderDetailOut.model_validate(o), errors=None)
+
+
+@router.get("/orders/{order_id}/print", response_model=OrderPrintEnvelope)
+def get_order_print_v2(
+    order_id: UUID,
+    db: Annotated[Session, Depends(get_db)],
+    current: Annotated[User, Depends(get_current_user)],
+) -> OrderPrintEnvelope:
+    data = order_print_handlers.get_order_print_for_store(db, current, order_id)
+    return OrderPrintEnvelope(success=True, data=data, errors=None)
 
 
 @router.get("/orders/{order_id}", response_model=OrderDetailEnvelope)

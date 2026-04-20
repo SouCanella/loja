@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { OrderPrintPanel } from "@/components/painel/OrderPrintPanel";
 import {
   apiPainelJson,
   draftOrderWhatsAppMessage,
@@ -258,6 +259,7 @@ export default function PainelPedidoDetalhePage() {
                 Para atalho WhatsApp, defina o telefone da vitrine em Configuração da loja.
               </p>
             ) : null}
+            <OrderPrintPanel orderId={id} />
           </section>
 
           <section className="rounded-lg border border-slate-200 bg-white shadow-sm">

@@ -4,9 +4,10 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
+from app.api.handlers.order_print import effective_print_config
+from app.core.security import hash_password, verify_password
 from app.models.store import Store
 from app.models.user import User
-from app.core.security import hash_password, verify_password
 from app.schemas.user import (
     StorePricingPatch,
     StoreSettingsPatch,
@@ -58,6 +59,7 @@ def read_me(db: Session, current: User) -> UserMeResponse:
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
         vitrine_theme=_vitrine_theme_from_store(u.store),
         store_target_margin_percent=get_store_target_margin_percent(u.store),
+        print_config=effective_print_config(u.store),
     )
 
 
@@ -99,6 +101,11 @@ def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -
                 inner = dict(gen or {}) if isinstance(gen, dict) else {}
                 inner.update(val)
                 base_c["general"] = inner
+            elif key == "print" and isinstance(val, dict):
+                pr = base_c.get("print")
+                inner = dict(pr or {}) if isinstance(pr, dict) else {}
+                inner.update(val)
+                base_c["print"] = inner
             else:
                 base_c[key] = val
         store.config = base_c
@@ -136,15 +143,4 @@ def patch_store_pricing(db: Session, current: User, body: StorePricingPatch) -> 
     db.add(u.store)
     db.commit()
     db.refresh(u)
-    return UserMeResponse(
-        id=u.id,
-        email=u.email,
-        role=u.role,
-        store_id=u.store_id,
-        store_slug=u.store.slug,
-        store_name=u.store.name,
-        created_at=u.created_at,
-        vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
-        vitrine_theme=_vitrine_theme_from_store(u.store),
-        store_target_margin_percent=get_store_target_margin_percent(u.store),
-    )
+    return read_me(db, current)

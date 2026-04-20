@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVitrineCheckout } from "@/hooks/use-vitrine-checkout";
+import { trackVitrineEvent } from "@/lib/vitrine/analytics";
 import { useCart } from "@/lib/vitrine/cart-context";
 import type { CategoryPublic, ProductPublic, StorePublic } from "@/lib/vitrine/types";
 
@@ -28,6 +29,7 @@ export function CatalogView({ store, categories, products }: Props) {
   );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [waPreviewOpen, setWaPreviewOpen] = useState(false);
+  const pageViewSent = useRef(false);
 
   const productsById = useMemo(() => {
     const m = new Map<string, ProductPublic>();
@@ -40,6 +42,24 @@ export function CatalogView({ store, categories, products }: Props) {
   useEffect(() => {
     setLayout(store.catalog_layout_default === "list" ? "list" : "grid");
   }, [store.slug, store.catalog_layout_default]);
+
+  useEffect(() => {
+    if (pageViewSent.current) return;
+    pageViewSent.current = true;
+    trackVitrineEvent(store.slug, {
+      event_type: "page_view",
+      path: `/loja/${store.slug}`,
+    });
+  }, [store.slug]);
+
+  useEffect(() => {
+    if (sheetOpen) {
+      trackVitrineEvent(store.slug, {
+        event_type: "checkout_open",
+        path: `/loja/${store.slug}`,
+      });
+    }
+  }, [sheetOpen, store.slug]);
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
@@ -175,7 +195,16 @@ export function CatalogView({ store, categories, products }: Props) {
                   storeSlug={store.slug}
                   layout="rail"
                   qty={cart.quantities[p.id] ?? 0}
-                  onAdd={(d) => cart.add(p.id, d)}
+                  onAdd={(d) => {
+                    if (d > 0) {
+                      trackVitrineEvent(store.slug, {
+                        event_type: "add_to_cart",
+                        path: `/loja/${store.slug}`,
+                        product_id: p.id,
+                      });
+                    }
+                    cart.add(p.id, d);
+                  }}
                 />
               </div>
             ))}
@@ -201,7 +230,16 @@ export function CatalogView({ store, categories, products }: Props) {
             storeSlug={store.slug}
             layout={layout === "list" ? "list" : "grid"}
             qty={cart.quantities[p.id] ?? 0}
-            onAdd={(d) => cart.add(p.id, d)}
+            onAdd={(d) => {
+              if (d > 0) {
+                trackVitrineEvent(store.slug, {
+                  event_type: "add_to_cart",
+                  path: `/loja/${store.slug}`,
+                  product_id: p.id,
+                });
+              }
+              cart.add(p.id, d);
+            }}
           />
         ))}
       </div>
