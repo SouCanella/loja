@@ -31,7 +31,7 @@ Commits na `main` com mensagem `feat(phase-0): …` fecham o registro técnico n
 
 ## Relatórios e analytics ampliados (produto)
 
-Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** — mapa viabilidade **já / novo / analytics**, ordem sugerida e ligação a DEC-14.
+Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** e definições fechadas **DEC-22** em **[relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md)** (partição de estados, cupons, desconto em linha, faixa PRO).
 
 ---
 

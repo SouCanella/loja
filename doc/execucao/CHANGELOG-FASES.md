@@ -2,6 +2,11 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Documentação — DEC-22 relatórios, cupons, descontos)
+
+- **Novo:** [relatorios-definicoes-negocio.md](../projeto/relatorios-definicoes-negocio.md) — partição **Confirmada** (`confirmado`…`entregue`) vs **Pendente** (`aguardando_confirmacao`); volume «Pagos/Pendentes» como **Aceites** vs **Pendentes de confirmação** até `payment_status`; modelo **store_coupons** + **desconto em linha** (`list_unit_price`, `coupon_discount_amount`); faixa **PRO**; **DEC-22** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).
+- **Actualizado:** [relatorios-analytics-roadmap.md](../projeto/relatorios-analytics-roadmap.md) alinhado a DEC-22.
+
 ## 2026-04-20 (Documentação — relatórios e analytics ampliados)
 
 - **Novo:** [relatorios-analytics-roadmap.md](../projeto/relatorios-analytics-roadmap.md) — vitrine (visitas, vistas, carrinho, geo) vs operação (hora, património, categorias); o que já é derivável do modelo e o que exige eventos ou novos campos (pagamento, cupons, descontos).
