@@ -2,7 +2,7 @@
 
 Referência cruzada: [documento enterprise](../documento_enterprise.md), [inicio_planejamento.txt](../../inicio_planejamento.txt), [regras de negócio](../normativos/regras-negocio.md).
 
-**Última actualização:** 2026-04-17 — **DEC-06:** **`/api/v2`** é o contrato usado pelo **Next.js** (painel, login, dados públicos SSR); **`/api/v1`** mantém-se em paridade para testes e integrações. **DEC-16:** refresh via **`POST /api/v2/auth/refresh`** no cliente. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md), [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md).
+**Última actualização:** 2026-04-21 — **DEC-06:** **`/api/v2`** é o contrato usado pelo **Next.js** (painel, login, dados públicos SSR); **`/api/v1`** mantém-se em paridade para testes e integrações. **DEC-16:** refresh via **`POST /api/v2/auth/refresh`** no cliente. Ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md), [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md). **Vitrine vs mockup:** [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md); **tema / fundo / logo na vitrine:** [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md); pedidos WhatsApp ↔ painel: **IP-11** em [backlog.md](backlog.md). OpenAPI em `doc/api/openapi.json` (`make openapi-export`).
 
 ---
 
@@ -163,3 +163,9 @@ Detalhes completos: [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) �
 | Fases A–E (arquitetura txt) | A≈F0–1, B≈F2, C≈F2–3, D≈F3, E≈F4 + backlog |
 
 Decisões normativas: tabela **Decisões já tomadas** acima (DEC-01 … DEC-20).
+
+---
+
+## Paridade vitrine ↔ mockup (`doc/mockups/loja-vitrine-layout-sugestao.html`)
+
+**2026-04-20–21:** Cobertura dos RF citados no mockup (RF-CF-08, RF-CA-09, RF-CA-11, RF-CF-04, RF-CF-06, RF-CF-09, RF-PE-08, RF-CA-05, RF-CA-04) com modelo de dados (`products.catalog_spotlight`, `catalog_sale_mode`; `theme.vitrine.*`), vitrine Next.js e painel de configuração. Resumo e checklist: [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md). Documentação de **aparência** (cores, logótipo, imagem de fundo, véu, cache SSR): [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md).

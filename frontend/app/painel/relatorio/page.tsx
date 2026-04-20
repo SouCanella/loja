@@ -3,7 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
-import { apiPainelJson, formatBRL, orderStatusLabel, PainelApiError } from "@/lib/painel-api";
+import {
+  apiPainelJson,
+  formatBRL,
+  formatPercent,
+  orderStatusLabel,
+  PainelApiError,
+} from "@/lib/painel-api";
 
 type ProductRow = {
   product_id: string;
@@ -84,13 +90,6 @@ function applyPreset(p: Preset): { from: string; to: string } {
   const endPrev = new Date(today.getFullYear(), today.getMonth(), 0);
   const startPrev = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   return { from: formatLocalIsoDate(startPrev), to: formatLocalIsoDate(endPrev) };
-}
-
-function marginPctLabel(p: string | null): string {
-  if (p == null || p === "") return "—";
-  const n = Number.parseFloat(p);
-  if (Number.isNaN(n)) return "—";
-  return `${n.toFixed(1)}%`;
 }
 
 function num(s: string): number {
@@ -576,7 +575,7 @@ export default function RelatorioPage() {
               <div>
                 <dt className="text-sm text-slate-500">Margem % sobre receita</dt>
                 <dd className="text-xl font-semibold text-slate-900">
-                  {marginPctLabel(data.period_margin_percent)}
+                  {formatPercent(data.period_margin_percent)}
                 </dd>
               </div>
             </dl>
@@ -692,7 +691,7 @@ export default function RelatorioPage() {
                           {formatBRL(r.margin_amount)}
                         </td>
                         <td className="px-4 py-2 text-right tabular-nums text-slate-600">
-                          {marginPctLabel(r.margin_percent)}
+                          {formatPercent(r.margin_percent)}
                         </td>
                       </tr>
                     ))}
@@ -778,7 +777,7 @@ export default function RelatorioPage() {
                           {formatBRL(r.margin_amount)}
                         </td>
                         <td className="px-4 py-2 text-right tabular-nums text-slate-600">
-                          {marginPctLabel(r.margin_percent)}
+                          {formatPercent(r.margin_percent)}
                         </td>
                         <td className="px-4 py-2 text-right tabular-nums text-slate-500">
                           {paretoByProduct.get(r.product_id) ?? "—"}%

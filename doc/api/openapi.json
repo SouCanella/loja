@@ -924,27 +924,49 @@
         ],
         "summary": "List Recipes",
         "operationId": "list_recipes_api_v1_recipes_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/RecipeOut"
                   },
-                  "type": "array",
                   "title": "Response List Recipes Api V1 Recipes Get"
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       },
       "post": {
         "tags": [
@@ -952,15 +974,20 @@
         ],
         "summary": "Create Recipe",
         "operationId": "create_recipe_api_v1_recipes_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RecipeCreate"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -983,12 +1010,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/api/v1/recipes/{recipe_id}": {
@@ -1824,6 +1846,62 @@
       }
     },
     "/api/v2/categories/{category_id}": {
+      "patch": {
+        "tags": [
+          "categories-v2"
+        ],
+        "summary": "Patch Category V2",
+        "operationId": "patch_category_v2_api_v2_categories__category_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Category Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "categories-v2"
@@ -2504,6 +2582,25 @@
         ],
         "summary": "List Recipes V2",
         "operationId": "list_recipes_v2_api_v2_recipes_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Incluir receitas inactivas",
+              "default": false,
+              "title": "Include Inactive"
+            },
+            "description": "Incluir receitas inactivas"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2514,13 +2611,18 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       },
       "post": {
         "tags": [
@@ -2528,15 +2630,20 @@
         ],
         "summary": "Create Recipe V2",
         "operationId": "create_recipe_v2_api_v2_recipes_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RecipeCreate"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -2559,12 +2666,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/api/v2/recipes/{recipe_id}": {
@@ -3304,6 +3406,38 @@
         ],
         "title": "CategoryOut"
       },
+      "CategoryPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          }
+        },
+        "type": "object",
+        "title": "CategoryPatch"
+      },
       "CategoryPublicListEnvelope": {
         "properties": {
           "success": {
@@ -3578,6 +3712,29 @@
         ],
         "title": "DeleteSuccessEnvelope",
         "description": "Resposta para DELETE sem payload (sucesso)."
+      },
+      "DeliveryOptionPublic": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "hint": {
+            "type": "string",
+            "title": "Hint"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "hint"
+        ],
+        "title": "DeliveryOptionPublic"
       },
       "FinancialReportCategoryRow": {
         "properties": {
@@ -4114,13 +4271,40 @@
             "type": "boolean",
             "title": "Has Sale Product",
             "default": false
+          },
+          "quantity_available": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity Available",
+            "description": "Soma das quantidades em todos os lotes deste insumo."
+          },
+          "weighted_avg_unit_cost": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weighted Avg Unit Cost",
+            "description": "Custo médio ponderado pelos lotes (q×custo / q total) quando q > 0."
+          },
+          "inventory_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Inventory Value",
+            "description": "Soma (quantidade × custo unitário do lote) — valor aproximado em stock."
           }
         },
         "type": "object",
         "required": [
           "id",
           "name",
-          "unit"
+          "unit",
+          "quantity_available",
+          "inventory_value"
         ],
         "title": "InventoryItemListOut"
       },
@@ -4504,6 +4688,24 @@
         ],
         "title": "OrderStatusPatch"
       },
+      "PaymentMethodPublic": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "PaymentMethodPublic"
+      },
       "ProductCreate": {
         "properties": {
           "name": {
@@ -4547,6 +4749,32 @@
               }
             ],
             "title": "Category Id"
+          },
+          "catalog_spotlight": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "featured",
+                  "new",
+                  "bestseller"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Spotlight"
+          },
+          "catalog_sale_mode": {
+            "type": "string",
+            "enum": [
+              "in_stock",
+              "order_only",
+              "unavailable"
+            ],
+            "title": "Catalog Sale Mode",
+            "default": "in_stock"
           },
           "inventory": {
             "$ref": "#/components/schemas/InventorySeed"
@@ -4701,6 +4929,22 @@
           "active": {
             "type": "boolean",
             "title": "Active"
+          },
+          "catalog_spotlight": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Spotlight"
+          },
+          "catalog_sale_mode": {
+            "type": "string",
+            "title": "Catalog Sale Mode",
+            "default": "in_stock"
           }
         },
         "type": "object",
@@ -4780,6 +5024,50 @@
               }
             ],
             "title": "Active"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "catalog_spotlight": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "featured",
+                  "new",
+                  "bestseller"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Spotlight"
+          },
+          "catalog_sale_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "in_stock",
+                  "order_only",
+                  "unavailable"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Sale Mode"
           }
         },
         "type": "object",
@@ -4934,6 +5222,22 @@
               }
             ],
             "title": "Category Name"
+          },
+          "catalog_spotlight": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Spotlight"
+          },
+          "catalog_sale_mode": {
+            "type": "string",
+            "title": "Catalog Sale Mode",
+            "default": "in_stock"
           }
         },
         "type": "object",
@@ -5266,6 +5570,11 @@
             ],
             "title": "Time Minutes"
           },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/RecipeItemOut"
@@ -5354,6 +5663,17 @@
               }
             ],
             "title": "Time Minutes"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
           },
           "items": {
             "anyOf": [
@@ -5644,6 +5964,90 @@
             },
             "type": "array",
             "title": "Social Networks"
+          },
+          "catalog_layout_default": {
+            "type": "string",
+            "title": "Catalog Layout Default",
+            "default": "grid"
+          },
+          "order_greeting": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Greeting"
+          },
+          "hide_unavailable_products": {
+            "type": "boolean",
+            "title": "Hide Unavailable Products",
+            "default": false
+          },
+          "delivery_options": {
+            "items": {
+              "$ref": "#/components/schemas/DeliveryOptionPublic"
+            },
+            "type": "array",
+            "title": "Delivery Options"
+          },
+          "payment_methods": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodPublic"
+            },
+            "type": "array",
+            "title": "Payment Methods"
+          },
+          "primary_color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Color"
+          },
+          "accent_color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accent Color"
+          },
+          "hero_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hero Image Url"
+          },
+          "logo_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Image Url"
+          },
+          "background_overlay_percent": {
+            "type": "integer",
+            "title": "Background Overlay Percent",
+            "default": 88
           }
         },
         "type": "object",
@@ -5856,6 +6260,18 @@
               }
             ],
             "title": "Vitrine Whatsapp"
+          },
+          "vitrine_theme": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vitrine Theme"
           },
           "store_target_margin_percent": {
             "type": "string",

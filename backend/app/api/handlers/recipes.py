@@ -36,6 +36,7 @@ def recipe_to_out(db: Session, r: Recipe) -> RecipeOut:
         product_id=r.product_id,
         yield_quantity=r.yield_quantity,
         time_minutes=r.time_minutes,
+        is_active=r.is_active,
         items=[RecipeItemOut.model_validate(x) for x in r.items],
         estimated_unit_cost=est,
         target_margin_percent=r.target_margin_percent,
@@ -44,13 +45,16 @@ def recipe_to_out(db: Session, r: Recipe) -> RecipeOut:
     )
 
 
-def list_recipes(db: Session, current: User) -> list[RecipeOut]:
-    rows = db.scalars(
+def list_recipes(db: Session, current: User, *, include_inactive: bool = False) -> list[RecipeOut]:
+    q = (
         select(Recipe)
         .where(Recipe.store_id == current.store_id)
         .options(selectinload(Recipe.items))
         .order_by(Recipe.created_at.desc())
-    ).all()
+    )
+    if not include_inactive:
+        q = q.where(Recipe.is_active.is_(True))
+    rows = db.scalars(q).all()
     return [recipe_to_out(db, r) for r in rows]
 
 
@@ -135,14 +139,15 @@ def patch_recipe(db: Session, current: User, recipe_id: UUID, body: RecipePatch)
     if r is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Receita não encontrada")
 
-    if body.yield_quantity is not None:
-        r.yield_quantity = body.yield_quantity
-    if body.time_minutes is not None:
-        r.time_minutes = body.time_minutes
-
     patch_data = body.model_dump(exclude_unset=True)
+    if "yield_quantity" in patch_data and body.yield_quantity is not None:
+        r.yield_quantity = body.yield_quantity
+    if "time_minutes" in patch_data:
+        r.time_minutes = body.time_minutes
     if "target_margin_percent" in patch_data:
         r.target_margin_percent = patch_data["target_margin_percent"]
+    if body.is_active is not None:
+        r.is_active = body.is_active
 
     if body.items is not None:
         p = db.get(Product, r.product_id)

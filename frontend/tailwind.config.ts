@@ -10,8 +10,13 @@ const config: Config = {
           surface: "#ffffff",
           ink: "#1a1512",
           muted: "#5c4d42",
-          accent: "#b8452e",
-          accentSoft: "#fceee9",
+          /** Identidade (gradientes suaves) — override via `--loja-primary-rgb` em `vitrineThemeStyle`. */
+          primary:
+            "rgb(var(--loja-primary-rgb, 15 118 110) / <alpha-value>)",
+          /** Destaques — override via `--loja-accent-rgb`. */
+          accent: "rgb(var(--loja-accent-rgb, 184 69 46) / <alpha-value>)",
+          accentSoft:
+            "rgb(var(--loja-accent-soft-rgb, 252 238 233) / <alpha-value>)",
           whatsapp: "#128c7e",
         },
       },

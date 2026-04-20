@@ -70,7 +70,7 @@ Escopo MVP: autenticação, catálogo, pedidos, estoque básico, receitas, preci
 |----|-----------|--------|-------------|
 | MVP-01 | Autenticação (JWT) | parcial | Access + refresh (`POST /auth/refresh`); cookie httpOnly / BFF — evolução |
 | MVP-02 | Catálogo | parcial | Vitrine `/loja/[slug]`; imagens S3 e destaques RF-CA-11 — evolução |
-| MVP-03 | Pedidos | parcial | API Fase 2; painel: lista (filtro), novo (`POST /orders`), detalhe (estado + WhatsApp); vitrine/checkout; evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md) |
+| MVP-03 | Pedidos | parcial | API Fase 2; painel: lista (filtro), novo (`POST /orders`), detalhe (estado + WhatsApp); vitrine/checkout; evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md). **Pendência explícita:** vitrine → WhatsApp sem persistência na app — ver **IP-11**. |
 | MVP-04 | Estoque básico | parcial | Lotes + baixa/reversão na API; leitura/ajuste dedicados e UI — ver [fase-02 §9](../fases/fase-02-operacao.md) |
 | MVP-05 | Receitas | parcial | API + painel (criar/listar/produzir); evoluções em [fase-03 §9.1](../fases/fase-03-gestao.md) |
 | MVP-06 | Precificação simples | parcial | Custo + margem loja/receita + `suggested_unit_price`; sincronizar com `products.price` ou métricas extra — backlog |
@@ -101,6 +101,7 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap |
 | IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |
 | IP-10 | Resposta pública do lojista a um comentário aprovado | ideia | Moderação RF-AV |
+| **IP-11** | **Pedidos da vitrine (WhatsApp) visíveis no painel / registo em `orders`** | ideia | **2026-04-20 — Estado actual:** o checkout da vitrine só abre o WhatsApp com mensagem pré-preenchida; **não** chama a API e **não** cria `Order`. O admin só vê pedidos criados no painel (`POST /orders` autenticado) ou equivalente. **Objetivo:** cada encomenda iniciada pelo cliente passar a existir na lista do painel (e opcionalmente alinhar com a conversa WhatsApp). **Caminhos possíveis (escolher na especificação):** (a) `POST` público por loja com validação forte (rate limit, honeypot, assinatura opcional); (b) integração **WhatsApp Business API** / webhook para criar ou reconciliar pedido; (c) passo “Confirmar na loja” na vitrine que grava rascunho antes do WA. Rever **MVP-03** e nota em [decisoes-e-pendencias.md](decisoes-e-pendencias.md) (transições manuais DEC-14 até haver orquestração). |
 
 Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/` e remover ou marcar como `convertido` aqui.
 

@@ -53,6 +53,13 @@ class Product(Base):
     image_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    # Vitrine (RF-CA-11 / RF-CA-05): destaque opcional; modo de venda no catálogo público
+    catalog_spotlight: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    catalog_sale_mode: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="in_stock",
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     store: Mapped["Store"] = relationship("Store", back_populates="products")

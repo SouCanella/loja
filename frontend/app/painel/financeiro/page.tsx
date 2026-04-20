@@ -6,6 +6,7 @@ import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts
 import {
   apiPainelJson,
   formatBRL,
+  formatPercent,
   orderStatusLabel,
   PainelApiError,
 } from "@/lib/painel-api";
@@ -107,10 +108,10 @@ export default function FinanceiroPage() {
               <div className="text-xs font-medium uppercase text-slate-500">Custo insumos (produção)</div>
               <div className="mt-1 text-xl font-semibold">{formatBRL(report.production_input_cost)}</div>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="text-xs font-medium uppercase text-slate-500">Margem % período</div>
-              <div className="mt-1 text-xl font-semibold">
-                {report.period_margin_percent != null ? `${report.period_margin_percent}%` : "—"}
+              <div className="mt-1 break-words text-xl font-semibold tabular-nums">
+                {formatPercent(report.period_margin_percent)}
               </div>
             </div>
           </div>

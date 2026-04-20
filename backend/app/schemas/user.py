@@ -19,6 +19,8 @@ class UserMeResponse(BaseModel):
     created_at: datetime
     # `stores.theme.vitrine.whatsapp` — usado no painel (atalho para cliente)
     vitrine_whatsapp: str | None = None
+    # Cópia de `stores.theme["vitrine"]` (cores, textos, imagens) para o painel editar a vitrine
+    vitrine_theme: dict | None = None
     # Margem alvo % (stores.config.pricing.target_margin_percent; default 30)
     store_target_margin_percent: Decimal
 

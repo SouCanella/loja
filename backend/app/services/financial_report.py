@@ -1,7 +1,7 @@
 """Agregações do relatório financeiro (pedidos + produção por período)."""
 
 from datetime import UTC, date, datetime, time, timedelta
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -19,6 +19,14 @@ from app.schemas.phase3 import (
     FinancialReportProductRow,
     FinancialReportStatusRow,
 )
+
+_PCT_Q = Decimal("0.01")
+
+
+def _qpct(value: Decimal | None) -> Decimal | None:
+    if value is None:
+        return None
+    return value.quantize(_PCT_Q, rounding=ROUND_HALF_UP)
 
 
 def report_datetime_bounds(date_from: date, date_to: date) -> tuple[datetime, datetime]:
@@ -129,7 +137,7 @@ def compute_financial_report(
             margin = rev - run_cost
             margin_pct: Decimal | None = None
             if rev > 0:
-                margin_pct = (margin / rev) * Decimal("100")
+                margin_pct = _qpct((margin / rev) * Decimal("100"))
             by_product.append(
                 FinancialReportProductRow(
                     product_id=pid,
@@ -146,7 +154,7 @@ def compute_financial_report(
     period_margin_estimate = orders_revenue - production_input_cost
     period_margin_pct: Decimal | None = None
     if orders_revenue > 0:
-        period_margin_pct = (period_margin_estimate / orders_revenue) * Decimal("100")
+        period_margin_pct = _qpct((period_margin_estimate / orders_revenue) * Decimal("100"))
 
     sales_cat_rows = db.execute(
         select(
@@ -209,7 +217,7 @@ def compute_financial_report(
             margin = rev - run_cost
             margin_pct: Decimal | None = None
             if rev > 0:
-                margin_pct = (margin / rev) * Decimal("100")
+                margin_pct = _qpct((margin / rev) * Decimal("100"))
             label = named[cid] if cid is not None else "Sem categoria"
             by_category.append(
                 FinancialReportCategoryRow(

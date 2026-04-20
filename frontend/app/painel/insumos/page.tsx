@@ -3,13 +3,22 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { FieldTip } from "@/components/painel/FieldTip";
+import {
+  apiPainelJson,
+  formatBRL,
+  formatQty,
+  PainelApiError,
+} from "@/lib/painel-api";
 
 type InvRow = {
   id: string;
   name: string;
   unit: string;
   has_sale_product?: boolean;
+  quantity_available: string;
+  weighted_avg_unit_cost: string | null;
+  inventory_value: string;
 };
 
 export default function InsumosPage() {
@@ -72,7 +81,11 @@ export default function InsumosPage() {
   }
 
   async function remove(id: string) {
-    if (!window.confirm("Remover este insumo? (Só é permitido se não estiver em receitas nem ligado a produto.)")) {
+    if (
+      !window.confirm(
+        "Remover este insumo? (Só é permitido se não estiver em receitas nem ligado a produto.)",
+      )
+    ) {
       return;
     }
     setBusyId(id);
@@ -97,9 +110,17 @@ export default function InsumosPage() {
             Matéria-prima sem produto de venda — base para receitas e stock.
           </p>
         </div>
-        <Link href="/painel" className="text-sm text-teal-700 hover:underline">
-          ← Painel
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/painel/relatorio-estoque"
+            className="text-sm text-teal-700 hover:underline"
+          >
+            Relatório de stock →
+          </Link>
+          <Link href="/painel" className="text-sm text-teal-700 hover:underline">
+            ← Painel
+          </Link>
+        </div>
       </div>
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
       {msg ? (
@@ -119,6 +140,7 @@ export default function InsumosPage() {
           <div className="min-w-[10rem] flex-1">
             <label className="block text-xs font-medium text-slate-600" htmlFor="nm">
               Nome
+              <FieldTip text="Identificação da matéria-prima (ex.: farinha, embalagem). Aparece em receitas e movimentos." />
             </label>
             <input
               id="nm"
@@ -131,6 +153,7 @@ export default function InsumosPage() {
           <div className="w-24">
             <label className="block text-xs font-medium text-slate-600" htmlFor="un">
               Unidade
+              <FieldTip text="Unidade de medida do stock (kg, L, un). Deve ser consistente com as quantidades nas receitas." />
             </label>
             <input
               id="un"
@@ -178,41 +201,77 @@ export default function InsumosPage() {
         </button>
       </form>
 
-      <ul className="mt-8 space-y-2">
-        {rows.length === 0 && !error ? (
-          <li className="rounded-md border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-            Nenhum insumo ainda.
-          </li>
-        ) : null}
-        {rows.map((r) => (
-          <li
-            key={r.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
-          >
-            <span className="text-slate-800">
-              <span className="font-medium">{r.name}</span>{" "}
-              <span className="text-slate-500">
-                ({r.unit})
-                {r.has_sale_product ? (
-                  <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
-                    produto catálogo
-                  </span>
-                ) : null}
-              </span>
-            </span>
-            <button
-              type="button"
-              disabled={busyId === r.id}
-              onClick={() => void remove(r.id)}
-              className="text-xs font-medium text-red-700 hover:underline disabled:opacity-50"
-            >
-              {busyId === r.id ? "…" : "Remover"}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+            <tr>
+              <th className="px-4 py-3">Insumo</th>
+              <th className="px-4 py-3 text-right">
+                <span className="inline-flex items-center">
+                  Qtd disponível
+                  <FieldTip text="Soma das quantidades em todos os lotes deste insumo." />
+                </span>
+              </th>
+              <th className="px-4 py-3 text-right">
+                <span className="inline-flex items-center justify-end">
+                  Custo médio / un.
+                  <FieldTip text="Custo médio ponderado pelos lotes (quando há stock)." />
+                </span>
+              </th>
+              <th className="px-4 py-3 text-right">
+                <span className="inline-flex items-center justify-end">
+                  Valor em stock
+                  <FieldTip text="Quantidade × custo por lote (aproximação do valor inventariado)." />
+                </span>
+              </th>
+              <th className="px-4 py-3 text-right"> </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {rows.length === 0 && !error ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                  Nenhum insumo ainda.
+                </td>
+              </tr>
+            ) : null}
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="max-w-[14rem] px-4 py-3">
+                  <span className="font-medium text-slate-900">{r.name}</span>
+                  <span className="text-slate-500"> ({r.unit})</span>
+                  {r.has_sale_product ? (
+                    <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                      produto catálogo
+                    </span>
+                  ) : null}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums text-slate-800">
+                  {formatQty(r.quantity_available)}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                  {r.weighted_avg_unit_cost != null ? formatBRL(r.weighted_avg_unit_cost) : "—"}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums text-slate-800">
+                  {formatBRL(r.inventory_value)}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button
+                    type="button"
+                    disabled={busyId === r.id}
+                    onClick={() => void remove(r.id)}
+                    className="text-xs font-medium text-red-700 hover:underline disabled:opacity-50"
+                  >
+                    {busyId === r.id ? "…" : "Remover"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <p className="mt-6 text-xs text-slate-500">
-        Dica: custo em stock vem dos lotes (entradas). O valor acima só preenche o primeiro lote ao criar.
+        Dica: custo em stock vem dos lotes (entradas). O lote inicial no formulário só preenche o primeiro lote ao criar.
       </p>
     </>
   );

@@ -8,10 +8,11 @@ function apiUrl(path: string): string {
   return `${base}${p}`;
 }
 
+/** Sem cache na Data Cache do Next: tema e catálogo vêm do painel e devem reflectir-se ao recarregar. */
+const noStore: RequestInit = { cache: "no-store" };
+
 export async function fetchStorePublic(slug: string): Promise<StorePublic | null> {
-  const res = await fetch(apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}`), {
-    next: { revalidate: 30 },
-  });
+  const res = await fetch(apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}`), noStore);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Loja: ${res.status}`);
   const raw = await res.json();
@@ -21,7 +22,7 @@ export async function fetchStorePublic(slug: string): Promise<StorePublic | null
 export async function fetchCategoriesPublic(slug: string): Promise<CategoryPublic[]> {
   const res = await fetch(
     apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}/categories`),
-    { next: { revalidate: 30 } },
+    noStore,
   );
   if (!res.ok) return [];
   const raw = await res.json();
@@ -35,7 +36,7 @@ export async function fetchProductsPublic(
   const q = categorySlug ? `?category_slug=${encodeURIComponent(categorySlug)}` : "";
   const res = await fetch(
     apiUrl(`/api/v2/public/stores/${encodeURIComponent(slug)}/products${q}`),
-    { next: { revalidate: 15 } },
+    noStore,
   );
   if (!res.ok) return [];
   const raw = await res.json();
@@ -50,7 +51,7 @@ export async function fetchProductPublic(
     apiUrl(
       `/api/v2/public/stores/${encodeURIComponent(slug)}/products/${encodeURIComponent(productId)}`,
     ),
-    { next: { revalidate: 15 } },
+    noStore,
   );
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Produto: ${res.status}`);

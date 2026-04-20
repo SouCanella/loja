@@ -10,7 +10,7 @@ from app.api.deps import get_current_user
 from app.api.handlers import categories as categories_handlers
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.catalog import CategoryCreate, CategoryOut
+from app.schemas.catalog import CategoryCreate, CategoryOut, CategoryPatch
 from app.schemas.envelope import CategoryEnvelope, CategoryListEnvelope, DeleteSuccessEnvelope
 
 router = APIRouter(tags=["categories-v2"])
@@ -33,6 +33,17 @@ def create_category_v2(
     current: Annotated[User, Depends(get_current_user)],
 ) -> CategoryEnvelope:
     row = categories_handlers.create_category(db, current, body)
+    return CategoryEnvelope(success=True, data=CategoryOut.model_validate(row), errors=None)
+
+
+@router.patch("/categories/{category_id}", response_model=CategoryEnvelope)
+def patch_category_v2(
+    category_id: UUID,
+    body: CategoryPatch,
+    db: Annotated[Session, Depends(get_db)],
+    current: Annotated[User, Depends(get_current_user)],
+) -> CategoryEnvelope:
+    row = categories_handlers.update_category(db, current, category_id, body)
     return CategoryEnvelope(success=True, data=CategoryOut.model_validate(row), errors=None)
 
 

@@ -8,7 +8,7 @@ from app.api.handlers import recipes as recipes_handlers
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.phase3 import RecipeCreate, RecipeOut, RecipePatch
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 router = APIRouter(tags=["recipes"])
@@ -18,8 +18,9 @@ router = APIRouter(tags=["recipes"])
 def list_recipes(
     db: Annotated[Session, Depends(get_db)],
     current: Annotated[User, Depends(get_current_user)],
+    include_inactive: bool = Query(False),
 ) -> list[RecipeOut]:
-    return recipes_handlers.list_recipes(db, current)
+    return recipes_handlers.list_recipes(db, current, include_inactive=include_inactive)
 
 
 @router.post("", response_model=RecipeOut, status_code=status.HTTP_201_CREATED)

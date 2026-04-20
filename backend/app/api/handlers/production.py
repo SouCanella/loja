@@ -48,6 +48,11 @@ def post_production(
     ).first()
     if recipe is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Receita não encontrada")
+    if not recipe.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Receita inactiva — reactivar antes de produzir.",
+        )
 
     try:
         run = execute_production(

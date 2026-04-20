@@ -2,6 +2,14 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Vitrine — tema configurável, fundo, logótipo, cache SSR, backlog IP-11)
+
+- **Produto:** o lojista configura em **`/painel/configuracao`** a aparência da loja pública: cores principal/destaque, **URL do logótipo** (`logo_image_url`), **URL da imagem de fundo** (`hero_image_url`), **suavização do fundo** (`background_overlay_percent`, 15–97). Secção do painel renomeada/contextualizada («Aparência da vitrine»).
+- **API pública:** `StorePublicOut` expõe `primary_color`, `accent_color`, `hero_image_url`, `logo_image_url`, `background_overlay_percent` (validação https e limites no handler `public_get_store`).
+- **Frontend vitrine:** Tailwind com variáveis CSS (`--loja-*-rgb`); `getStorePublicCached` + **`cache: "no-store"`** nos `fetch` públicos para refletir alterações ao recarregar; layout com camadas de fundo + véu dinâmico; hero com imagem de logótipo ou emoji; uso consistente de `loja-primary` / `loja-accent` na UI.
+- **Documentação:** [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md); actualizações em [paridade-mockup-vitrine.md](../projeto/paridade-mockup-vitrine.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).
+- **Backlog:** [IP-11](../projeto/backlog.md) — pedidos iniciados só pelo WhatsApp ainda **não** criam `Order` no sistema; referência cruzada em **MVP-03**.
+
 ## 2026-04-19 (Fase 3.1 — dashboard API, sidebar, Recharts, imagens produto)
 
 - **Backend:** migração `20260417_0005` — `products.image_url`; `GET /api/v2/dashboard/summary`; `PATCH /api/v2/products/{id}`; `PATCH /api/v2/me/store-settings` (merge `theme.vitrine` e `config.general`); `ProductPublicOut.image_url`.

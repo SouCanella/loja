@@ -1,16 +1,13 @@
 import { CatalogView } from "@/components/vitrine/CatalogView";
-import {
-  fetchCategoriesPublic,
-  fetchProductsPublic,
-  fetchStorePublic,
-} from "@/lib/vitrine/server-fetch";
+import { getStorePublicCached } from "@/lib/vitrine/cache-store-public";
+import { fetchCategoriesPublic, fetchProductsPublic } from "@/lib/vitrine/server-fetch";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 type Props = { params: { slug: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const store = await fetchStorePublic(params.slug);
+  const store = await getStorePublicCached(params.slug);
   if (!store) return { title: "Loja" };
   return {
     title: `${store.name} — Vitrine`,
@@ -19,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LojaVitrinePage({ params }: Props) {
-  const store = await fetchStorePublic(params.slug);
+  const store = await getStorePublicCached(params.slug);
   if (!store) notFound();
 
   const [categories, products] = await Promise.all([

@@ -6,6 +6,17 @@ import { productEmoji } from "@/lib/vitrine/product-emoji";
 import type { ProductPublic, StorePublic } from "@/lib/vitrine/types";
 import { formatBRL } from "@/lib/vitrine/whatsapp";
 
+function ribbonLabels(product: ProductPublic): string[] {
+  const out: string[] = [];
+  const sp = product.catalog_spotlight;
+  if (sp === "featured") out.push("Destaque");
+  else if (sp === "new") out.push("Novidade");
+  else if (sp === "bestseller") out.push("Mais vendido");
+  const sale = product.catalog_sale_mode ?? "in_stock";
+  if (sale === "order_only") out.push("Sob encomenda");
+  return out;
+}
+
 export function ProductDetail({
   store,
   product,
@@ -16,6 +27,8 @@ export function ProductDetail({
   const cart = useCart();
   const qty = cart.quantities[product.id] ?? 0;
   const emoji = productEmoji(product.id);
+  const ribbons = ribbonLabels(product);
+  const unavailable = (product.catalog_sale_mode ?? "in_stock") === "unavailable";
 
   return (
     <article>
@@ -26,11 +39,41 @@ export function ProductDetail({
             <img
               src={product.image_url}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover"
+              className={`absolute inset-0 h-full w-full object-cover ${unavailable ? "opacity-60" : ""}`}
             />
           ) : (
-            emoji
+            <span className={unavailable ? "opacity-60" : undefined}>{emoji}</span>
           )}
+          {ribbons.length > 0 ? (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 z-[3] flex flex-wrap gap-1">
+              {ribbons.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-md px-2 py-0.5 text-[0.65rem] font-extrabold uppercase tracking-wide shadow-sm"
+                  style={{
+                    background:
+                      t === "Destaque"
+                        ? "#fde047"
+                        : t === "Novidade"
+                          ? "#0ea5e9"
+                          : t === "Mais vendido"
+                            ? "#a855f7"
+                            : t === "Sob encomenda"
+                              ? "#fed7aa"
+                              : "#e5e7eb",
+                    color: t === "Novidade" || t === "Mais vendido" ? "#fff" : "#1a1512",
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {unavailable ? (
+            <div className="pointer-events-none absolute inset-0 z-[2] grid place-items-center bg-white/75 text-sm font-bold text-loja-muted">
+              Indisponível
+            </div>
+          ) : null}
         </div>
         <div className="p-5">
           {product.category_name ? (
@@ -57,8 +100,11 @@ export function ProductDetail({
               <span className="min-w-[2rem] text-center text-base font-bold">{qty}</span>
               <button
                 type="button"
-                className="h-10 w-10 rounded-xl border border-loja-ink/10 bg-loja-surface text-lg leading-none"
-                onClick={() => cart.add(product.id, 1)}
+                className="h-10 w-10 rounded-xl border border-loja-ink/10 bg-loja-surface text-lg leading-none disabled:opacity-35"
+                onClick={() => {
+                  if (!unavailable) cart.add(product.id, 1);
+                }}
+                disabled={unavailable}
                 aria-label="Adicionar um"
               >
                 +
@@ -68,14 +114,15 @@ export function ProductDetail({
               Loja: <strong className="text-loja-ink">{store.name}</strong>
             </p>
           </div>
+          {unavailable ? (
+            <p className="mt-4 text-sm text-amber-800">Este produto está indisponível para encomenda de momento.</p>
+          ) : null}
         </div>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-loja-ink/10 bg-loja-surface/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur-md pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3">
           <div>
-            <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-loja-muted">
-              No carrinho
-            </p>
+            <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-loja-muted">No carrinho</p>
             <p className="text-lg font-bold text-loja-ink">{cart.count} itens</p>
           </div>
           <Link

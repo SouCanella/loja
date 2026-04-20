@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.models.category import Category
 from app.models.user import User
-from app.schemas.catalog import CategoryCreate
+from app.schemas.catalog import CategoryCreate, CategoryPatch
 
 
 def _slugify(raw: str) -> str:
@@ -28,6 +28,26 @@ def create_category(db: Session, current: User, body: CategoryCreate) -> Categor
     slug = _slugify(body.slug)
     cat = Category(store_id=current.store_id, name=body.name.strip(), slug=slug)
     db.add(cat)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Slug ou nome em conflito")
+    db.refresh(cat)
+    return cat
+
+
+def update_category(db: Session, current: User, category_id: UUID, body: CategoryPatch) -> Category:
+    cat = db.get(Category, category_id)
+    if cat is None or cat.store_id != current.store_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Categoria não encontrada",
+        )
+    if body.name is not None:
+        cat.name = body.name.strip()
+    if body.slug is not None:
+        cat.slug = _slugify(body.slug)
     try:
         db.commit()
     except IntegrityError:

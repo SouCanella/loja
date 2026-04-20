@@ -82,6 +82,8 @@ def create_product(db: Session, current: User, body: ProductCreate) -> Product:
         description=body.description,
         price=body.price,
         active=True,
+        catalog_spotlight=body.catalog_spotlight,
+        catalog_sale_mode=body.catalog_sale_mode,
     )
     db.add(product)
     try:
@@ -116,6 +118,22 @@ def update_product(db: Session, current: User, product_id: UUID, body: ProductPa
         p.price = body.price
     if body.active is not None:
         p.active = body.active
+    if body.category_id is not None:
+        if body.category_id:
+            cat = db.get(Category, body.category_id)
+            if cat is None or cat.store_id != current.store_id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Categoria inválida",
+                )
+            p.category_id = body.category_id
+        else:
+            p.category_id = None
+    patch_data = body.model_dump(exclude_unset=True)
+    if "catalog_spotlight" in patch_data:
+        p.catalog_spotlight = body.catalog_spotlight
+    if "catalog_sale_mode" in patch_data and body.catalog_sale_mode is not None:
+        p.catalog_sale_mode = body.catalog_sale_mode
     db.add(p)
     db.commit()
     db.refresh(p)

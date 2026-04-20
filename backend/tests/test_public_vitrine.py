@@ -47,8 +47,13 @@ def test_public_store_categories_and_products(client: TestClient) -> None:
 
     st = client.get(f"/api/v1/public/stores/{slug}")
     assert st.status_code == 200
-    assert st.json()["name"] == "Doçura Pública"
-    assert st.json()["slug"] == slug
+    sj = st.json()
+    assert sj["name"] == "Doçura Pública"
+    assert sj["slug"] == slug
+    assert isinstance(sj.get("delivery_options"), list)
+    assert len(sj["delivery_options"]) >= 1
+    assert isinstance(sj.get("payment_methods"), list)
+    assert len(sj["payment_methods"]) >= 1
 
     cats = client.get(f"/api/v1/public/stores/{slug}/categories")
     assert cats.status_code == 200
@@ -59,7 +64,10 @@ def test_public_store_categories_and_products(client: TestClient) -> None:
     body = prods.json()
     assert len(body) >= 1
     assert body[0]["id"] == pid
+    assert body[0].get("catalog_sale_mode") == "in_stock"
 
     one = client.get(f"/api/v1/public/stores/{slug}/products/{pid}")
     assert one.status_code == 200
-    assert one.json()["name"] == "Bolo chocolate"
+    pj = one.json()
+    assert pj["name"] == "Bolo chocolate"
+    assert pj.get("catalog_sale_mode") == "in_stock"

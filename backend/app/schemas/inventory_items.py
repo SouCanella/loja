@@ -12,6 +12,18 @@ class InventoryItemListOut(BaseModel):
     name: str
     unit: str
     has_sale_product: bool = False
+    quantity_available: Decimal = Field(
+        ...,
+        description="Soma das quantidades em todos os lotes deste insumo.",
+    )
+    weighted_avg_unit_cost: Decimal | None = Field(
+        default=None,
+        description="Custo médio ponderado pelos lotes (q×custo / q total) quando q > 0.",
+    )
+    inventory_value: Decimal = Field(
+        ...,
+        description="Soma (quantidade × custo unitário do lote) — valor aproximado em stock.",
+    )
 
     model_config = {"from_attributes": True}
 

@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
+import { FieldTip } from "@/components/painel/FieldTip";
+import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 
 type RecipeOut = {
   id: string;
   product_id: string;
   yield_quantity: string;
   time_minutes: number | null;
+  is_active: boolean;
   estimated_unit_cost: string | null;
   target_margin_percent: string | null;
   effective_margin_percent: string;
@@ -31,11 +33,14 @@ export default function ReceitasPage() {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [includeInactive, setIncludeInactive] = useState(false);
+  const [filterText, setFilterText] = useState("");
 
   const load = useCallback(() => {
     setError(null);
+    const q = includeInactive ? "?include_inactive=true" : "";
     Promise.all([
-      apiPainelJson<RecipeOut[]>("/api/v2/recipes"),
+      apiPainelJson<RecipeOut[]>(`/api/v2/recipes${q}`),
       apiPainelJson<ProductOut[]>("/api/v2/products"),
       apiPainelJson<InvItem[]>("/api/v2/inventory-items"),
     ])
@@ -47,11 +52,20 @@ export default function ReceitasPage() {
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Erro ao carregar");
       });
-  }, []);
+  }, [includeInactive]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  const filtered = useMemo(() => {
+    const t = filterText.trim().toLowerCase();
+    if (!t) return recipes;
+    return recipes.filter((r) => {
+      const name = products.find((x) => x.id === r.product_id)?.name ?? "";
+      return name.toLowerCase().includes(t) || r.id.toLowerCase().includes(t);
+    });
+  }, [recipes, products, filterText]);
 
   function productName(id: string): string {
     return products.find((x) => x.id === id)?.name ?? id.slice(0, 8);
@@ -91,12 +105,30 @@ export default function ReceitasPage() {
     }
   }
 
+  async function toggleActive(r: RecipeOut) {
+    setBusyId(r.id);
+    setMsg(null);
+    try {
+      await apiPainelJson(`/api/v2/recipes/${r.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ is_active: !r.is_active }),
+      });
+      void load();
+    } catch (e: unknown) {
+      setMsg(e instanceof PainelApiError ? e.message : "Não foi possível alterar o estado.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Receitas</h1>
-          <p className="mt-1 text-sm text-slate-500">Uma receita por produto. Depois, produzir lote.</p>
+          <p className="mt-1 text-sm text-slate-500">
+            Uma receita por produto. Depois, produzir lote.
+          </p>
         </div>
         <Link
           href="/painel/receitas/nova"
@@ -105,6 +137,30 @@ export default function ReceitasPage() {
           Nova receita
         </Link>
       </div>
+
+      <div className="mt-4 flex flex-wrap items-end gap-4">
+        <label className="text-xs text-slate-600">
+          Filtrar por nome do produto
+          <input
+            type="search"
+            className="ml-2 mt-1 block rounded border border-slate-200 px-2 py-1 text-sm"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            placeholder="Comece a escrever…"
+          />
+        </label>
+        <label className="flex items-center gap-2 text-xs text-slate-600">
+          <input
+            type="checkbox"
+            className="h-4 w-4 rounded border-slate-300"
+            checked={includeInactive}
+            onChange={(e) => setIncludeInactive(e.target.checked)}
+          />
+          Mostrar inactivas
+          <FieldTip text="Receitas inactivas ficam ocultas na produção até serem reactivadas." />
+        </label>
+      </div>
+
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
       {msg ? (
         <p
@@ -114,25 +170,31 @@ export default function ReceitasPage() {
         </p>
       ) : null}
       <ul className="mt-6 space-y-4">
-        {recipes.length === 0 && !error ? (
+        {filtered.length === 0 && !error ? (
           <li className="rounded-lg border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
-            Nenhuma receita.{" "}
+            Nenhuma receita neste filtro.{" "}
             <Link href="/painel/receitas/nova" className="font-medium text-teal-700 underline">
-              Criar a primeira
+              Criar
             </Link>
           </li>
         ) : null}
-        {recipes.map((r) => {
-          const eff = Number.parseFloat(r.effective_margin_percent);
-          const effLabel = Number.isNaN(eff) ? "—" : `${eff}%`;
+        {filtered.map((r) => {
+          const effLabel = formatPercent(r.effective_margin_percent);
           return (
             <li
               key={r.id}
-              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+              className={`rounded-lg border border-slate-200 bg-white p-4 shadow-sm ${!r.is_active ? "opacity-80" : ""}`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-slate-900">{productName(r.product_id)}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-semibold text-slate-900">{productName(r.product_id)}</p>
+                    {!r.is_active ? (
+                      <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
+                        Inactiva
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="mt-1 text-xs text-slate-500">
                     Rendimento: {r.yield_quantity} un. · Tempo:{" "}
                     {r.time_minutes != null ? `${r.time_minutes} min` : "—"}
@@ -159,14 +221,31 @@ export default function ReceitasPage() {
                     ))}
                   </ul>
                 </div>
-                <button
-                  type="button"
-                  disabled={busyId === r.id}
-                  onClick={() => void produzir(r.id)}
-                  className="shrink-0 rounded-md bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-60"
-                >
-                  {busyId === r.id ? "A processar…" : "Produzir lote"}
-                </button>
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
+                  <Link
+                    href={`/painel/receitas/${r.id}`}
+                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-center text-sm font-medium text-slate-800 hover:bg-slate-50"
+                  >
+                    Editar
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={busyId === r.id}
+                    onClick={() => void toggleActive(r)}
+                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-60"
+                  >
+                    {r.is_active ? "Inactivar" : "Activar"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyId === r.id || !r.is_active}
+                    onClick={() => void produzir(r.id)}
+                    title={!r.is_active ? "Active a receita para produzir." : undefined}
+                    className="rounded-md bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {busyId === r.id ? "A processar…" : "Produzir lote"}
+                  </button>
+                </div>
               </div>
             </li>
           );

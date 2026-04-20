@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
+import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 
 type Recipe = {
   id: string;
@@ -68,7 +68,7 @@ export default function PrecificacaoPage() {
                 <td className="px-4 py-3 text-right tabular-nums">
                   {r.estimated_unit_cost != null ? formatBRL(r.estimated_unit_cost) : "—"}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums">{r.effective_margin_percent}%</td>
+                <td className="px-4 py-3 text-right tabular-nums">{formatPercent(r.effective_margin_percent)}</td>
                 <td className="px-4 py-3 text-right font-semibold tabular-nums text-indigo-900">
                   {r.suggested_unit_price != null ? formatBRL(r.suggested_unit_price) : "—"}
                 </td>

@@ -38,6 +38,7 @@ class RecipeOut(BaseModel):
     product_id: UUID
     yield_quantity: Decimal
     time_minutes: int | None
+    is_active: bool = True
     items: list[RecipeItemOut]
     estimated_unit_cost: Decimal | None = None
     target_margin_percent: Decimal | None = None
@@ -50,6 +51,7 @@ class RecipeOut(BaseModel):
 class RecipePatch(BaseModel):
     yield_quantity: Decimal | None = Field(default=None, gt=0)
     time_minutes: int | None = None
+    is_active: bool | None = None
     items: list[RecipeItemCreate] | None = None
     target_margin_percent: Decimal | None = Field(
         default=None,

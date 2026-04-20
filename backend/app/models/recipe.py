@@ -6,6 +6,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
+    Boolean,
     DateTime,
     ForeignKey,
     Integer,
@@ -40,6 +41,7 @@ class Recipe(Base):
     time_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     # Margem alvo % (None = herda stores.config.pricing.target_margin_percent)
     target_margin_percent: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     store: Mapped["Store"] = relationship("Store", back_populates="recipes")

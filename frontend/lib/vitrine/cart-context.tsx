@@ -29,6 +29,8 @@ type CartContextValue = {
     delivery: string;
     payment: string;
     address?: string;
+    orderGreeting?: string | null;
+    deliveryOptionId?: string;
   }) => string;
 };
 
@@ -124,6 +126,8 @@ export function CartProvider({
       delivery: string;
       payment: string;
       address?: string;
+      orderGreeting?: string | null;
+      deliveryOptionId?: string;
     }) => {
       const lines = params.lines
         .map(
@@ -135,7 +139,11 @@ export function CartProvider({
         (s, l) => s + Number.parseFloat(l.product.price) * l.qty,
         0,
       );
-      let body = `*Pedido — ${params.storeName}*\n\n`;
+      let body = "";
+      if (params.orderGreeting?.trim()) {
+        body += `${params.orderGreeting.trim()}\n\n`;
+      }
+      body += `*Pedido — ${params.storeName}*\n\n`;
       body += `${lines}\n\n`;
       body += `*Total:* ${formatBRL(sub)}\n\n`;
       body += `*Cliente:* ${params.customerName || "—"}\n`;
@@ -143,6 +151,10 @@ export function CartProvider({
       body += `*Recebimento:* ${params.delivery}\n`;
       if (params.address) body += `*Endereço:* ${params.address}\n`;
       body += `*Pagamento:* ${params.payment}\n`;
+      if (params.deliveryOptionId === "uber" || params.deliveryOptionId === "nove") {
+        body +=
+          "\n→ Combinar pelo WhatsApp o pedido no app (Uber ou 99), taxa e horário, link e endereço.\n";
+      }
       return body;
     },
     [],

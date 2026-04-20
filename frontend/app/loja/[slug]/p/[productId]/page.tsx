@@ -1,5 +1,6 @@
 import { ProductDetail } from "@/components/vitrine/ProductDetail";
-import { fetchProductPublic, fetchStorePublic } from "@/lib/vitrine/server-fetch";
+import { getStorePublicCached } from "@/lib/vitrine/cache-store-public";
+import { fetchProductPublic } from "@/lib/vitrine/server-fetch";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,7 +9,7 @@ type Props = { params: { slug: string; productId: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const [store, product] = await Promise.all([
-    fetchStorePublic(params.slug),
+    getStorePublicCached(params.slug),
     fetchProductPublic(params.slug, params.productId),
   ]);
   if (!store || !product) return { title: "Produto" };
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProdutoVitrinePage({ params }: Props) {
   const [store, product] = await Promise.all([
-    fetchStorePublic(params.slug),
+    getStorePublicCached(params.slug),
     fetchProductPublic(params.slug, params.productId),
   ]);
   if (!store || !product) notFound();

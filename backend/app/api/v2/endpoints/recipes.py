@@ -3,7 +3,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -20,8 +20,9 @@ router = APIRouter(tags=["recipes-v2"])
 def list_recipes_v2(
     db: Annotated[Session, Depends(get_db)],
     current: Annotated[User, Depends(get_current_user)],
+    include_inactive: Annotated[bool, Query(description="Incluir receitas inactivas")] = False,
 ) -> RecipeListEnvelope:
-    data = recipes_handlers.list_recipes(db, current)
+    data = recipes_handlers.list_recipes(db, current, include_inactive=include_inactive)
     return RecipeListEnvelope(success=True, data=data, errors=None)
 
 

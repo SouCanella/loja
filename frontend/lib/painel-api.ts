@@ -110,6 +110,31 @@ export function formatBRL(value: string | number): string {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+/** Percentual para UI (evita dezenas de casas decimais vindas de Decimal/string). */
+export function formatPercent(
+  value: string | number | null | undefined,
+  fractionDigits = 2,
+): string {
+  if (value === null || value === undefined || value === "") return "—";
+  const n = typeof value === "string" ? Number.parseFloat(value) : value;
+  if (Number.isNaN(n)) return "—";
+  return `${n.toLocaleString("pt-BR", {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  })}%`;
+}
+
+/** Quantidade decimal (stock, rendimento) — legível e sem overflow. */
+export function formatQty(value: string | number | null | undefined, maxFrac = 4): string {
+  if (value === null || value === undefined || value === "") return "—";
+  const n = typeof value === "string" ? Number.parseFloat(value) : value;
+  if (Number.isNaN(n)) return "—";
+  return n.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: maxFrac,
+  });
+}
+
 /** Estados canónicos (DEC-14) — ordem do fluxo operacional. */
 export const ORDER_STATUS_VALUES = [
   "rascunho",

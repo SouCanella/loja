@@ -25,6 +25,16 @@ def _vitrine_whatsapp_from_store(store: Store) -> str | None:
     return None
 
 
+def _vitrine_theme_from_store(store: Store) -> dict | None:
+    raw = store.theme
+    if not isinstance(raw, dict):
+        return None
+    inner = raw.get("vitrine")
+    if not isinstance(inner, dict):
+        return None
+    return dict(inner)
+
+
 def read_me(db: Session, current: User) -> UserMeResponse:
     u = db.scalars(
         select(User).where(User.id == current.id).options(joinedload(User.store))
@@ -40,6 +50,7 @@ def read_me(db: Session, current: User) -> UserMeResponse:
         store_name=u.store.name,
         created_at=u.created_at,
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
+        vitrine_theme=_vitrine_theme_from_store(u.store),
         store_target_margin_percent=get_store_target_margin_percent(u.store),
     )
 
@@ -108,5 +119,6 @@ def patch_store_pricing(db: Session, current: User, body: StorePricingPatch) -> 
         store_name=u.store.name,
         created_at=u.created_at,
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
+        vitrine_theme=_vitrine_theme_from_store(u.store),
         store_target_margin_percent=get_store_target_margin_percent(u.store),
     )
