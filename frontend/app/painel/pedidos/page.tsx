@@ -14,6 +14,7 @@ type OrderRow = {
   id: string;
   status: string;
   customer_note: string | null;
+  source: string | null;
   stock_committed: boolean;
   created_at: string;
 };
@@ -22,6 +23,7 @@ export default function PainelPedidosPage() {
   const [rows, setRows] = useState<OrderRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "vitrine" | "painel">("all");
 
   useEffect(() => {
     void apiPainelJson<OrderRow[]>("/api/v2/orders")
@@ -31,11 +33,18 @@ export default function PainelPedidosPage() {
       });
   }, []);
 
-  const filtered = useMemo(() => {
+  const bySource = useMemo(() => {
     if (!rows) return null;
-    if (filter === "all") return rows;
-    return rows.filter((o) => o.status === filter);
-  }, [rows, filter]);
+    if (sourceFilter === "all") return rows;
+    if (sourceFilter === "vitrine") return rows.filter((o) => o.source === "vitrine");
+    return rows.filter((o) => o.source !== "vitrine");
+  }, [rows, sourceFilter]);
+
+  const filtered = useMemo(() => {
+    if (!bySource) return null;
+    if (filter === "all") return bySource;
+    return bySource.filter((o) => o.status === filter);
+  }, [bySource, filter]);
 
   return (
     <>
@@ -43,8 +52,8 @@ export default function PainelPedidosPage() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Pedidos</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Mais recentes primeiro. Filtre por estado ou abra um pedido para ver itens e alterar o
-            estado.
+            Mais recentes primeiro. Filtre por origem (vitrine vs painel) e por estado; abra um pedido
+            para ver itens e alterar o estado.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -63,27 +72,48 @@ export default function PainelPedidosPage() {
         </div>
       </div>
 
-      {rows && rows.length > 0 ? (
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label htmlFor="filtro-estado" className="text-sm text-slate-600">
-            Estado
-          </label>
-          <select
-            id="filtro-estado"
-            className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">Todos ({rows.length})</option>
-            {ORDER_STATUS_VALUES.map((s) => {
-              const n = rows.filter((o) => o.status === s).length;
-              return (
-                <option key={s} value={s}>
-                  {orderStatusLabel(s)} ({n})
-                </option>
-              );
-            })}
-          </select>
+      {rows && rows.length > 0 && bySource ? (
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="filtro-origem" className="text-sm text-slate-600">
+              Origem
+            </label>
+            <select
+              id="filtro-origem"
+              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value as "all" | "vitrine" | "painel")}
+            >
+              <option value="all">Todas ({rows.length})</option>
+              <option value="vitrine">
+                Vitrine ({rows.filter((o) => o.source === "vitrine").length})
+              </option>
+              <option value="painel">
+                Painel ({rows.filter((o) => o.source !== "vitrine").length})
+              </option>
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="filtro-estado" className="text-sm text-slate-600">
+              Estado
+            </label>
+            <select
+              id="filtro-estado"
+              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">Todos ({bySource.length})</option>
+              {ORDER_STATUS_VALUES.map((s) => {
+                const n = bySource.filter((o) => o.status === s).length;
+                return (
+                  <option key={s} value={s}>
+                    {orderStatusLabel(s)} ({n})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         </div>
       ) : null}
 
@@ -98,7 +128,7 @@ export default function PainelPedidosPage() {
       ) : null}
 
       {filtered && filtered.length === 0 && rows && rows.length > 0 ? (
-        <p className="mt-6 text-sm text-slate-600">Nenhum pedido com este estado.</p>
+        <p className="mt-6 text-sm text-slate-600">Nenhum pedido com estes filtros.</p>
       ) : null}
 
       {filtered && filtered.length > 0 ? (
@@ -115,6 +145,11 @@ export default function PainelPedidosPage() {
                   </span>
                   <p className="text-sm font-medium text-slate-900">
                     {orderStatusLabel(o.status)}
+                    {o.source === "vitrine" ? (
+                      <span className="ml-2 rounded bg-teal-100 px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-teal-900">
+                        Vitrine
+                      </span>
+                    ) : null}
                   </p>
                   {o.customer_note ? (
                     <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{o.customer_note}</p>

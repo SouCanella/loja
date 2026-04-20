@@ -101,7 +101,7 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap |
 | IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |
 | IP-10 | Resposta pública do lojista a um comentário aprovado | ideia | Moderação RF-AV |
-| **IP-11** | **Pedidos da vitrine (WhatsApp) visíveis no painel / registo em `orders`** | parcial | **MVP:** `POST` público + referência na mensagem WA — ver [ip-11-pedidos-vitrine-painel.md](../execucao/ip-11-pedidos-vitrine-painel.md). **Evolução:** (b) WhatsApp Business API; (c) passos extra de UX. |
+| **IP-11** | **Pedidos da vitrine (WhatsApp) visíveis no painel / registo em `orders`** | parcial | **MVP:** `POST` público + referência na mensagem WA; lista `/painel/pedidos` com filtro por origem (vitrine vs painel) — ver [ip-11-pedidos-vitrine-painel.md](../execucao/ip-11-pedidos-vitrine-painel.md). **Evolução:** WhatsApp Business API; notificações ao lojista; UX extra. |
 
 Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/` e remover ou marcar como `convertido` aqui.
 

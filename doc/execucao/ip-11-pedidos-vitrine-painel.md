@@ -22,11 +22,11 @@ Cada encomenda iniciada pelo cliente na vitrine deve **passar a existir** na lis
 
 ## Próximos passos técnicos sugeridos
 
-1. Fechar **modelo de dados mínimo** do pedido público (itens, totais, dados de contacto, `store_id`, origem `vitrine`).
-2. Definir **transição inicial** DEC-14 (ex. `rascunho` → `aguardando_confirmacao` quando o lojista confirma no painel ou no WA).
-3. API: rota pública versionada (`/api/v2/public/stores/{slug}/orders` ou equivalente), testes em `test_http_contracts_*` / `test_coverage_gaps.py`.
-4. Painel: lista/filtro a mostrar pedidos com origem vitrine; detalhe alinhado ao fluxo existente.
-5. Actualizar [backlog.md](../projeto/backlog.md) e [CHANGELOG-FASES.md](CHANGELOG-FASES.md) quando a primeira fatia estiver entregue.
+1. ~~Fechar **modelo de dados mínimo** do pedido público~~ (feito).
+2. Evoluções **DEC-14** / UX se quiserem matriz de transições mais restrita (hoje saltos flexíveis no MVP).
+3. ~~API pública + testes~~ — rota e testes em `test_public_vitrine_orders.py` / cobertura.
+4. ~~Painel: lista com filtro por origem~~ — `/painel/pedidos` com filtro **Origem** (Todas / Vitrine / Painel) e crachá «Vitrine» na linha; detalhe em `/painel/pedidos/[id]` com contacto e origem.
+5. Evoluções produto: notificações ao lojista, WA Business API, CAPTCHA opcional no `POST` público.
 
 ## Relação com contas de cliente
 
