@@ -27,6 +27,7 @@
 | Qualidade | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) | RNF vs código |
 | API | [api/openapi.json](../api/openapi.json) | Contrato; `make openapi-export` |
 | Execução | [execucao/CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) | Marcos por data |
+| Fase 3.2 — plano | [execucao/plano-implementacao-fase-3-2.md](../execucao/plano-implementacao-fase-3-2.md) | Implementação, testes, docs |
 | Testes | [execucao/TESTES-E-CI.md](../execucao/TESTES-E-CI.md) | pytest, Vitest, E2E |
 
 ---

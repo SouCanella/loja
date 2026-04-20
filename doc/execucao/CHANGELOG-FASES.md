@@ -2,6 +2,10 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Plano de implementação — Fase 3.2)
+
+- **Novo:** [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md) — plano mestre (Parte A impressão 3.2-a–c, Parte B landing 3.2-d–e), matriz de testes, checklist de documentação no merge, DoD, riscos; ligado em [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md).
+
 ## 2026-04-20 (Ideias de produto — partilha, cardápio, stock por produto)
 
 - **Novo:** [ideias-compartilhar-cardapio-estoque-por-produto.md](../projeto/ideias-compartilhar-cardapio-estoque-por-produto.md) — IP-12 (partilhar loja), IP-13 (cardápio WA/IG), IP-14 (toggle stock no CRUD); **DEC-23** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).

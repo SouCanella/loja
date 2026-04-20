@@ -22,6 +22,8 @@
 
 A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
 
+**Fase 3.2 (impressão + landing):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md).
+
 ## 2. Backend (pytest)
 
 | Item | Valor |

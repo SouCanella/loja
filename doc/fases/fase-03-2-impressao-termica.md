@@ -4,6 +4,8 @@
 
 **Relação:** prolonga a [Fase 3 — Operação de pedidos](fase-03-gestao.md) e o [painel](fase-03-1-paridade-mockup.md). **Não substitui** a [Fase 4 — Escala](fase-04-escala.md); pode sobrepor-se a trabalhos da Fase 4 (CI, observabilidade).
 
+**Plano de implementação (tarefas, testes, documentação):** [plano-implementacao-fase-3-2.md](../execucao/plano-implementacao-fase-3-2.md).
+
 ---
 
 ## Parte A — Impressão de pedidos (térmica, Bluetooth, USB, comprovativos e etiquetas)
@@ -127,6 +129,7 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 ## 7. Documentação a manter sincronizada
 
+- [plano-implementacao-fase-3-2.md](../execucao/plano-implementacao-fase-3-2.md) — **checklist mestre** (testes + docs no merge).
 - [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — posição da 3.2 entre 3.1 e 4.
 - [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — ao iniciar/fechar sub-fases.
 - [backlog.md](../projeto/backlog.md) — se surgirem débitos (novos modelos, agente nativo).
