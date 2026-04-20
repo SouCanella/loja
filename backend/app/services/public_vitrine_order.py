@@ -12,8 +12,9 @@ from app.models.customer import Customer
 from app.models.enums import OrderStatus
 from app.models.order import Order, OrderItem, OrderStatusHistory
 from app.models.store import Store
-from app.services.order_line_items import get_product_for_order_line
 from app.schemas.public_vitrine_order import PublicOrderCreate
+from app.services.order_line_items import get_product_for_order_line
+from app.services.store_notifications import add_new_vitrine_order_notification
 
 
 def order_short_code(order_id: UUID) -> str:
@@ -108,6 +109,7 @@ def create_order_from_vitrine(
             user_id=None,
         )
     )
+    add_new_vitrine_order_notification(db, order)
     db.commit()
     db.refresh(order)
     return order

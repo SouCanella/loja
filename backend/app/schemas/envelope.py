@@ -7,6 +7,7 @@ from app.schemas.catalog import CategoryOut, ProductOut
 from app.schemas.customers_public import CustomerAuthResponse, CustomerMeOut
 from app.schemas.dashboard import DashboardSummaryOut
 from app.schemas.inventory_items import InventoryItemDetailOut, InventoryItemListOut
+from app.schemas.notifications import NotificationsInboxOut
 from app.schemas.orders import OrderDetailOut, OrderOut
 from app.schemas.phase3 import FinancialReportOut, ProductionRunOut, RecipeOut
 from app.schemas.public_catalog import CategoryPublicOut, ProductPublicOut, StorePublicOut
@@ -173,4 +174,22 @@ class CustomerMeEnvelope(BaseModel):
 class PublicOrderCreatedEnvelope(BaseModel):
     success: bool
     data: PublicOrderCreatedOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class NotificationsInboxEnvelope(BaseModel):
+    success: bool
+    data: NotificationsInboxOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class NotificationMarkReadResult(BaseModel):
+    """Marcadas como lidas neste pedido."""
+
+    marked_count: int
+
+
+class NotificationMarkReadEnvelope(BaseModel):
+    success: bool
+    data: NotificationMarkReadResult | None = None
     errors: list[ApiErrorDetail] | None = None

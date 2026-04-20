@@ -9,6 +9,7 @@ from app.api.v2.endpoints import (
     health,
     inventory_items,
     me,
+    notifications,
     orders,
     production,
     products,
@@ -28,6 +29,7 @@ api_router.include_router(categories.router)
 api_router.include_router(products.router)
 api_router.include_router(inventory_items.router)
 api_router.include_router(orders.router)
+api_router.include_router(notifications.router)
 api_router.include_router(recipes.router)
 api_router.include_router(production.router)
 api_router.include_router(reports_financial.router)

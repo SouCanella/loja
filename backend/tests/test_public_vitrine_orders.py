@@ -74,6 +74,21 @@ def test_public_order_201_aguardando_confirmacao(client: TestClient) -> None:
     assert detail["contact_name"] == "Ana"
     assert detail["contact_phone"] == "11999999999"
 
+    inbox = client.get("/api/v2/notifications", headers=headers).json()
+    assert inbox["success"] is True
+    assert inbox["data"]["unread_count"] >= 1
+    notif_ids = [n["id"] for n in inbox["data"]["items"] if n.get("order_id") == oid]
+    assert len(notif_ids) >= 1
+    mr = client.post(
+        "/api/v2/notifications/mark-read",
+        headers=headers,
+        json={"notification_ids": notif_ids},
+    )
+    assert mr.status_code == 200
+    assert mr.json()["data"]["marked_count"] >= 1
+    inbox2 = client.get("/api/v2/notifications", headers=headers).json()
+    assert inbox2["data"]["unread_count"] < inbox["data"]["unread_count"]
+
 
 def test_public_order_404_slug(client: TestClient) -> None:
     fake_pid = str(uuid.uuid4())

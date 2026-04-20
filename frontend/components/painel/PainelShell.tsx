@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useState } from "react";
 
+import { PainelNotificationsBell } from "@/components/painel/PainelNotificationsBell";
+
 type NavItem = { href: string; label: string; disabled?: boolean; hint?: string };
 
 const GROUPS: { title: string; items: NavItem[] }[] = [
@@ -20,6 +22,7 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
     title: "Vendas",
     items: [
       { href: "/painel/pedidos", label: "Pedidos" },
+      { href: "/painel/notificacoes", label: "Notificações" },
       { href: "/painel/clientes", label: "Clientes" },
     ],
   },
@@ -90,11 +93,14 @@ export function PainelShell({ children }: { children: ReactNode }) {
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px] print:max-w-none">
         {/* Desktop sidebar */}
         <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-slate-900 text-slate-100 md:flex print:hidden">
-          <div className="border-b border-white/10 px-4 py-4">
-            <Link href="/painel" className="text-lg font-semibold text-white">
-              Painel
-            </Link>
-            <p className="mt-0.5 text-[0.65rem] uppercase tracking-wide text-slate-400">Gestão da loja</p>
+          <div className="flex items-start justify-between gap-2 border-b border-white/10 px-4 py-4">
+            <div className="min-w-0">
+              <Link href="/painel" className="text-lg font-semibold text-white">
+                Painel
+              </Link>
+              <p className="mt-0.5 text-[0.65rem] uppercase tracking-wide text-slate-400">Gestão da loja</p>
+            </div>
+            <PainelNotificationsBell />
           </div>
           <nav className="flex-1 space-y-5 overflow-y-auto px-2 py-4">
             {GROUPS.map((g) => (
@@ -134,7 +140,9 @@ export function PainelShell({ children }: { children: ReactNode }) {
             <Link href="/painel" className="font-semibold text-slate-900">
               Painel
             </Link>
-            <span className="w-14" />
+            <div className="flex w-14 justify-end">
+              <PainelNotificationsBell variant="light" />
+            </div>
           </header>
           {open ? (
             <div className="fixed inset-0 z-30 md:hidden print:hidden">

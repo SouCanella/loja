@@ -2575,6 +2575,128 @@
         }
       }
     },
+    "/api/v2/notifications": {
+      "get": {
+        "tags": [
+          "notifications-v2"
+        ],
+        "summary": "List Notifications V2",
+        "operationId": "list_notifications_v2_api_v2_notifications_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationsInboxEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/notifications/mark-read": {
+      "post": {
+        "tags": [
+          "notifications-v2"
+        ],
+        "summary": "Mark Notifications Read V2",
+        "operationId": "mark_notifications_read_v2_api_v2_notifications_mark_read_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationMarkReadBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationMarkReadEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/notifications/read-all": {
+      "post": {
+        "tags": [
+          "notifications-v2"
+        ],
+        "summary": "Mark All Notifications Read V2",
+        "operationId": "mark_all_notifications_read_v2_api_v2_notifications_read_all_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationMarkReadEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/recipes": {
       "get": {
         "tags": [
@@ -4777,6 +4899,133 @@
         ],
         "title": "InventorySeed"
       },
+      "NotificationMarkReadBody": {
+        "properties": {
+          "notification_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Notification Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "notification_ids"
+        ],
+        "title": "NotificationMarkReadBody"
+      },
+      "NotificationMarkReadEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NotificationMarkReadResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "NotificationMarkReadEnvelope"
+      },
+      "NotificationMarkReadResult": {
+        "properties": {
+          "marked_count": {
+            "type": "integer",
+            "title": "Marked Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "marked_count"
+        ],
+        "title": "NotificationMarkReadResult",
+        "description": "Marcadas como lidas neste pedido."
+      },
+      "NotificationsInboxEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NotificationsInboxOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "NotificationsInboxEnvelope"
+      },
+      "NotificationsInboxOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StoreNotificationOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "unread_count": {
+            "type": "integer",
+            "title": "Unread Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "unread_count"
+        ],
+        "title": "NotificationsInboxOut"
+      },
       "OrderCreate": {
         "properties": {
           "items": {
@@ -6564,6 +6813,74 @@
           "url"
         ],
         "title": "SocialNetworkLink"
+      },
+      "StoreNotificationOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Read At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "order_id",
+          "title",
+          "body",
+          "read_at",
+          "created_at"
+        ],
+        "title": "StoreNotificationOut"
       },
       "StorePricingPatch": {
         "properties": {

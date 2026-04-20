@@ -41,3 +41,14 @@ A existência de **cliente registado** na vitrine (`customers`) pode facilitar i
 | UI catálogo / checkout | `frontend/components/vitrine/CatalogView.tsx`, `catalog-*.tsx`, `whatsapp-order-preview-modal.tsx` |
 | Estado checkout + mensagem WhatsApp | `frontend/hooks/use-vitrine-checkout.ts` |
 | Sessão cliente (fetch com refresh) | `frontend/lib/vitrine/vitrine-customer-fetch.ts`, `frontend/hooks/use-vitrine-customer-me.ts` |
+
+## Notificações in-app (lojista)
+
+Em vez de email: **notificações dentro do painel** quando chega um pedido novo da vitrine.
+
+| Aspecto | Implementação |
+|---------|----------------|
+| Persistência | Tabela `store_notifications` (migração `20260423_0010`); criada na mesma transacção do pedido vitrine (`add_new_vitrine_order_notification`). |
+| API v2 | `GET /api/v2/notifications?limit=…`, `POST /api/v2/notifications/mark-read`, `POST /api/v2/notifications/read-all` |
+| Painel | `PainelNotificationsProvider` + ícone 🔔 na barra lateral e no header mobile; página `/painel/notificacoes`; polling ~22s com `document.visibilityState`. |
+| Som | Dois bipes (Web Audio API), activável/desactivável no dropdown; preferência em `localStorage` (`painel_notif_sound`); primeiro clique no painel tenta desbloquear o áudio (política dos browsers). |

@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
 
+import { PainelNotificationsProvider } from "@/components/painel/PainelNotificationsContext";
 import { PainelShell } from "@/components/painel/PainelShell";
 
 export default function PainelLayout({ children }: { children: ReactNode }) {
-  return <PainelShell>{children}</PainelShell>;
+  return (
+    <PainelNotificationsProvider>
+      <PainelShell>{children}</PainelShell>
+    </PainelNotificationsProvider>
+  );
 }

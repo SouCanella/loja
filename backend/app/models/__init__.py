@@ -13,6 +13,7 @@ from app.models.product import Product
 from app.models.production_run import ProductionRun
 from app.models.recipe import Recipe, RecipeItem
 from app.models.store import Store
+from app.models.store_notification import StoreNotification
 from app.models.user import User, UserRole
 
 __all__ = [
@@ -32,6 +33,7 @@ __all__ = [
     "StockMovement",
     "StockMovementType",
     "Store",
+    "StoreNotification",
     "User",
     "UserRole",
 ]

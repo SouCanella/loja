@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from app.models.product import Product
     from app.models.production_run import ProductionRun
     from app.models.recipe import Recipe
+    from app.models.store_notification import StoreNotification
     from app.models.user import User
 
 
@@ -55,4 +56,9 @@ class Store(Base):
     )
     production_runs: Mapped[list["ProductionRun"]] = relationship(
         "ProductionRun", back_populates="store", cascade="all, delete-orphan"
+    )
+    notifications: Mapped[list["StoreNotification"]] = relationship(
+        "StoreNotification",
+        back_populates="store",
+        cascade="all, delete-orphan",
     )
