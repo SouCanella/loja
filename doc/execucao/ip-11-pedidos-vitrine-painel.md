@@ -51,4 +51,4 @@ Em vez de email: **notificações dentro do painel** quando chega um pedido novo
 | Persistência | Tabela `store_notifications` (migração `20260423_0010`); criada na mesma transacção do pedido vitrine (`add_new_vitrine_order_notification`). |
 | API v2 | `GET /api/v2/notifications?limit=…`, `POST /api/v2/notifications/mark-read`, `POST /api/v2/notifications/read-all` |
 | Painel | `PainelNotificationsProvider` + ícone 🔔 na barra lateral e no header mobile; página `/painel/notificacoes`; polling ~22s com `document.visibilityState`. |
-| Som | Dois bipes (Web Audio API), activável/desactivável no dropdown; preferência em `localStorage` (`painel_notif_sound`); primeiro clique no painel tenta desbloquear o áudio (política dos browsers). |
+| Som | Dois bipes (Web Audio API), activável/desactivável no dropdown; preferência em `localStorage` (`painel_notif_sound`); primeiro clique no painel tenta desbloquear o áudio (política dos browsers). Botão **Testar som** no mesmo menu. |

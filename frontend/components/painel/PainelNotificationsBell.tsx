@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { usePainelNotifications } from "@/components/painel/PainelNotificationsContext";
-import { unlockNotificationAudio } from "@/lib/painel-notification-sound";
+import { playNewOrderChime, unlockNotificationAudio } from "@/lib/painel-notification-sound";
 
 type Props = {
   /** `light` para barra clara (mobile); `dark` para sidebar escura (default). */
@@ -77,6 +77,21 @@ export function PainelNotificationsBell({ variant = "dark" }: Props) {
               />
               Som ao novo pedido (vitrine)
             </label>
+            <button
+              type="button"
+              className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
+              onClick={() => {
+                unlockNotificationAudio();
+                void playNewOrderChime().catch(() => {
+                  /* browser pode bloquear sem gesto prévio */
+                });
+              }}
+            >
+              Testar som
+            </button>
+            <p className="mt-1 text-[0.65rem] leading-snug text-slate-400">
+              Usa o mesmo alerta que um pedido novo (dois bipes). Se não ouvir, clique outra vez no painel e tente de novo.
+            </p>
           </div>
           <div className="max-h-72 overflow-y-auto">
             {loading && !inbox ? (
