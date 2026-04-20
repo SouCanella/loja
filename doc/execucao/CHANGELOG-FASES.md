@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Documentação — landing completa, índice de gaps, Fase 3.2 alargada)
+
+- **Novo:** [landing-site-produto.md](../projeto/landing-site-produto.md) — página inicial de marketing (copy, SEO, checklist, honestidade vs features); referência [Stoqui](https://www.stoqui.com.br/) como estrutura, não como texto.
+- **Novo:** [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) — mapa da documentação e lacunas (MA-03 actualizado no backlog; media no README raiz).
+- **Fase 3.2:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) — Parte B (site institucional), sub-fases **3.2-d**, **3.2-e**; título alargado a «experiência lojista completa».
+- **Roadmap:** [PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md), [doc/README.md](../README.md).
+
 ## 2026-04-20 (Documentação — DEC-22 relatórios, cupons, descontos)
 
 - **Novo:** [relatorios-definicoes-negocio.md](../projeto/relatorios-definicoes-negocio.md) — partição **Confirmada** (`confirmado`…`entregue`) vs **Pendente** (`aguardando_confirmacao`); volume «Pagos/Pendentes» como **Aceites** vs **Pendentes de confirmação** até `payment_status`; modelo **store_coupons** + **desconto em linha** (`list_unit_price`, `coupon_discount_amount`); faixa **PRO**; **DEC-22** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md).

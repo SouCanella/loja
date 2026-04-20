@@ -1,6 +1,12 @@
-# Fase 3.2 — Impressão de pedidos (térmica, Bluetooth, USB, comprovativos e etiquetas)
+# Fase 3.2 — Experiência lojista completa (impressão + site institucional)
 
-**Relação:** prolonga a [Fase 3 — Operação de pedidos](fase-03-gestao.md) e o [painel](fase-03-1-paridade-mockup.md) com capacidade de **imprimir** na cozinha/balcão sem depender só de PDF genérico. **Não substitui** a [Fase 4 — Escala](fase-04-escala.md); pode ser desenvolvida **em paralelo** a trabalhos da Fase 4 (CI, observabilidade).
+**Âmbito:** (A) **impressão** de pedidos (térmica/USB/BT, A4/A6); (B) **página inicial de marketing** do produto (site institucional), documentada em [landing-site-produto.md](../projeto/landing-site-produto.md). As duas frentes podem avançar **em paralelo** por equipas diferentes.
+
+**Relação:** prolonga a [Fase 3 — Operação de pedidos](fase-03-gestao.md) e o [painel](fase-03-1-paridade-mockup.md). **Não substitui** a [Fase 4 — Escala](fase-04-escala.md); pode sobrepor-se a trabalhos da Fase 4 (CI, observabilidade).
+
+---
+
+## Parte A — Impressão de pedidos (térmica, Bluetooth, USB, comprovativos e etiquetas)
 
 **Referência de produto (pedido):**
 
@@ -75,7 +81,24 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 ---
 
-## 4. Critérios de aceite (macro)
+## Parte B — Site institucional e página inicial (marketing)
+
+**Referência:** [landing-site-produto.md](../projeto/landing-site-produto.md) (copy completo, SEO, checklist, honestidade vs funcionalidades reais). Inspiração de estrutura: mercado (ex.: [Stoqui](https://www.stoqui.com.br/)) sem copiar textos nem prometer PDV/IA/gateways inexistentes.
+
+| Sub-fase | Entrega |
+|----------|---------|
+| **3.2-d** | Substituir stub `frontend/app/page.tsx` por landing em secções (hero, passos, funcionalidades, FAQ, rodapé); tokens Tailwind coerentes; links `/login`, `/registo`, vitrine demo. |
+| **3.2-e** | Páginas legais mínimas (`/termos`, `/privacidade`) com placeholders revisáveis por jurídico; `metadata` SEO e OG; Lighthouse ≥ alvo acordado. |
+
+**Critérios de aceite (macro) — Parte B**
+
+- [ ] Conteúdo alinhado a [landing-site-produto.md](../projeto/landing-site-produto.md) §4 (ou desvio registado aqui).  
+- [ ] Nenhuma afirmação de produto não suportada pelo código ou por roadmap explícito (“Em breve”).  
+- [ ] Índice [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) actualizado após go-live da landing.
+
+---
+
+## 4. Critérios de aceite (macro) — Parte A (impressão)
 
 - [ ] Definições por loja (ou dispositivo) para canal, largura de bobina e papel de envio (A4/A6).
 - [ ] Impressão de comprovante a partir do pedido com conteúdo alinhado ao detalhe do painel (linhas, totais, notas).
@@ -107,7 +130,9 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 - [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — posição da 3.2 entre 3.1 e 4.
 - [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) — ao iniciar/fechar sub-fases.
 - [backlog.md](../projeto/backlog.md) — se surgirem débitos (novos modelos, agente nativo).
+- [landing-site-produto.md](../projeto/landing-site-produto.md) — copy e checklist da Parte B.
+- [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) — rastreio global.
 
 ---
 
-*Última revisão: 2026-04-20 — criação do marco 3.2 (impressão térmica e documentos de envio).*
+*Última revisão: 2026-04-20 — Parte B (site institucional) integrada no marco 3.2; ver [landing-site-produto.md](../projeto/landing-site-produto.md).*

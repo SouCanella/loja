@@ -32,6 +32,8 @@ Requer **Node.js 20+** e **Python 3.12+** para comandos locais fora do Docker. O
 
 Variáveis: ver [`.env.example`](.env.example) (`DATABASE_URL` com `postgresql+psycopg`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
 
+**Media (MA-03):** upload de imagens para a loja (`POST /api/v2/media/upload`). Em desenvolvimento típico use `MEDIA_BACKEND=local`, `MEDIA_ROOT` (ex.: `var/media` sob `backend/`) e servir via `GET /media/...`; produção pode usar backend S3-compatível (`S3_*`, `S3_ENDPOINT_URL`, etc.) — ver campos em `backend/app/core/config.py`.
+
 **Postgres no host:** por omissão o Compose publica a porta **5433** no teu PC (`POSTGRES_HOST_PORT`, evita conflito com Postgres local na 5432). Para **Alembic ou API no host**, usa `DATABASE_URL` com `localhost:5433` (como em [`.env.example`](.env.example)). O contentor **backend** usa sempre `postgres:5432` na rede interna, independentemente do `DATABASE_URL` do `.env`.
 
 Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md`](doc/fases/fase-01-fundacao.md) e [`doc/fases/fase-00-kickoff.md`](doc/fases/fase-00-kickoff.md).
@@ -41,6 +43,7 @@ Mais detalhes: [`doc/README.md`](doc/README.md), [`doc/fases/fase-01-fundacao.md
 | O quê | Onde |
 |-------|------|
 | Índice geral de `doc/` | [`doc/README.md`](doc/README.md) |
+| Índice da doc + lacunas | [`doc/projeto/indice-documentacao-e-gaps.md`](doc/projeto/indice-documentacao-e-gaps.md) |
 | Visão de produto e arquitetura | [`doc/documento_enterprise.md`](doc/documento_enterprise.md) |
 | Roadmap Fases 0–4 | [`doc/fases/PLANO-ROADMAP-FASES.md`](doc/fases/PLANO-ROADMAP-FASES.md) |
 | Fase 1 (fechada) | [`doc/fases/fase-01-fundacao.md`](doc/fases/fase-01-fundacao.md) |

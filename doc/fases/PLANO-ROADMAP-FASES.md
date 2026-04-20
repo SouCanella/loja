@@ -18,7 +18,7 @@ Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o M
 | 2 | Operação | Produtos, estoque (itens + lotes), pedidos (status, reserva, idempotência conforme priorização), APIs mínimas §17 | [fase-02-operacao.md](fase-02-operacao.md) |
 | 3 | Gestão | Receitas, produção (**idempotência** RNF-Arq-02b), precificação, `/reports/financial` básico | [fase-03-gestao.md](fase-03-gestao.md) |
 | **3.1** | **Paridade mockup** | **Painel** alinhado a [admin-painel-layout-sugestao.html](../mockups/admin-painel-layout-sugestao.html): sidebar, dashboard com **gráficos**, financeiro/relatórios/precificação dedicados, config loja, catálogo, gaps RF; vitrine opcional | [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) |
-| **3.2** | **Impressão de pedidos** | Térmica **Bluetooth** / **USB** (58/80 mm, desligado), comprovativos e etiquetas **A4/A6**; templates e **DEC-21** | [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md) |
+| **3.2** | **Experiência lojista** | **A)** Impressão: térmica BT/USB (58/80 mm), A4/A6, **DEC-21**. **B)** [Site institucional / landing](../projeto/landing-site-produto.md) (sub-fases 3.2-d–e) | [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md) |
 | 4 | Escala | Observabilidade, CI/CD §24, hardening, priorização do backlog enterprise (§23) | [fase-04-escala.md](fase-04-escala.md) |
 
 ## MVP (§22) vs fases

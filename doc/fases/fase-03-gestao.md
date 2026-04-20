@@ -130,7 +130,7 @@ A sequência planejada na redacção inicial desta fase foi implementada:
 ### 9.3 Próximo marco sugerido
 
 1. **Fase 3.1 — paridade com mockups** (shell, **gráficos**, módulos em falta): [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) — **concluída** (ver §7–§10 desse ficheiro).
-2. **Fase 3.2 — impressão de pedidos** (térmica USB/Bluetooth, A4/A6): [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md); **DEC-21**.
+2. **Fase 3.2 — experiência lojista** (impressão **DEC-21** + [landing institucional](../projeto/landing-site-produto.md)): [fase-03-2-impressao-termica.md](fase-03-2-impressao-termica.md).
 3. **Relatório / stock:** **COGS por lote** ou comparação de períodos — ver [api-v1-v2-deprecacao.md](../execucao/api-v1-v2-deprecacao.md) §4 e [backlog.md](../projeto/backlog.md).
 4. **Sessão:** refresh em **cookie httpOnly** (alternativa ao `localStorage`) — **DEC-16**.
 5. **Fase 4 / plataforma:** [PLANO-ROADMAP-FASES.md](PLANO-ROADMAP-FASES.md) — escala, **DEC-15** se priorizado, observabilidade (**RNF-Ops-01**).

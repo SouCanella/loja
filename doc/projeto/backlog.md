@@ -13,7 +13,7 @@ O backlog **não duplica** o detalhe de trabalho fechado; use:
 | **Fase 2** (backend + vitrine; ressalvas §10.4) | [fase-02-operacao.md](../fases/fase-02-operacao.md) secções **3**, **8**, **9**, **§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3** (receitas, produção idempotente, relatório financeiro, painel Next, `GET /inventory-items`, `/me` com slug) | [fase-03-gestao.md](../fases/fase-03-gestao.md) **§8–§10**; [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
 | **Fase 3.1** (paridade UX com mockups admin/vitrine, **gráficos**, shell sidebar) | [fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md); [mockups/README.md](../mockups/README.md) |
-| **Fase 3.2** (impressão de pedidos: térmica BT/USB, A4/A6, **DEC-21**) | [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) |
+| **Fase 3.2** (impressão **DEC-21** + [landing site](../projeto/landing-site-produto.md) 3.2-d–e) | [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) |
 | **Qualidade / RNF** (auditoria vs normas, cobertura, lacunas) | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
 | **Testes e CI** (pytest, Vitest, Playwright, GitHub Actions) | [TESTES-E-CI.md](../execucao/TESTES-E-CI.md) |
 | Marco / changelog | [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) |
@@ -43,7 +43,7 @@ Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md]
 |----|------|--------|-----------|--------|
 | MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | parcial | 1 | Cobertura inicial em pytest (BD em memória); reforço com Postgres real em CI — ver testes em `backend/tests/test_auth.py` |
 | MA-02 | Contrato HTTP com prefixo versionado (**ex. `/api/v1`**) desde o primeiro conjunto de rotas de negócio | convertido | 1 | Rotas sob `/api/v1`; OpenAPI em [doc/api/openapi.json](../api/openapi.json) |
-| MA-03 | **Storage** de ficheiros (imagens, logos) com **prefixo por `store_id`** ou tenant no bucket (S3-compatível) | nao_iniciado | 2+ | Alinha a **RF-CA-03** e §4 enterprise (storage) |
+| MA-03 | **Storage** de ficheiros (imagens, logos) com **prefixo por `store_id`** ou tenant no bucket (S3-compatível) | convertido | 2+ | Implementado: `media_storage`, `POST /api/v2/media/upload`, `GET /media/...` local; S3 em config — ver código e [indice-documentacao-e-gaps.md](indice-documentacao-e-gaps.md) |
 | MA-04 | **Índices compostos** `(store_id, …)` nas tabelas mais consultadas (produtos, pedidos, etc.) | nao_iniciado | 1–2 | Performance e clareza de modelo multi-tenant |
 | MA-05 | **Row Level Security (RLS)** no Postgres como reforço opcional de isolamento | nao_iniciado | 4 / hardening | Avaliar custo operacional vs benefício; alternativa ao erro de aplicação |
 | MA-06 | **Read replicas** ou **sharding** por tenant | nao_iniciado | pós-MVP | Só se o monólito + uma BD deixarem de chegar; documentar gatilho |
