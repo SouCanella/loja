@@ -26,11 +26,18 @@ export function unlockNotificationAudio(): void {
 }
 
 /** Dois bipes curtos (~880 Hz + ~660 Hz). */
-export function playNewOrderChime(): void {
+export async function playNewOrderChime(): Promise<void> {
   const ctx = getContext();
   if (!ctx) return;
   if (ctx.state === "suspended") {
-    void ctx.resume();
+    try {
+      await ctx.resume();
+    } catch {
+      return;
+    }
+  }
+  if (ctx.state !== "running") {
+    return;
   }
   const t0 = ctx.currentTime;
   const beep = (freq: number, start: number, dur: number) => {

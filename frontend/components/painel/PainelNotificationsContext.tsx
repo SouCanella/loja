@@ -88,7 +88,9 @@ export function PainelNotificationsProvider({ children }: { children: ReactNode 
 
       const prev = prevUnreadRef.current ?? 0;
       if (data.unread_count > prev && soundEnabledRef.current) {
-        playNewOrderChime();
+        void playNewOrderChime().catch(() => {
+          /* autopilot / browser bloqueou áudio */
+        });
       }
       prevUnreadRef.current = data.unread_count;
     } catch (e: unknown) {
