@@ -1,19 +1,16 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { messageFromV2Error } from "@/lib/api-v2";
 import { getApiBaseUrl } from "@/lib/api";
+import { useVitrineCustomerMe } from "@/hooks/use-vitrine-customer-me";
 import {
   clearVitrineCustomerSession,
-  getVitrineCustomerTokens,
-  refreshVitrineCustomerAccess,
   setVitrineCustomerTokens,
 } from "@/lib/vitrine/customer-session";
-
-type MeData = { email: string; store_slug: string };
 
 export default function VitrineContaPage() {
   const params = useParams();
@@ -24,57 +21,8 @@ export default function VitrineContaPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [me, setMe] = useState<MeData | null>(null);
-  const [meLoading, setMeLoading] = useState(true);
 
-  const loadMe = useCallback(async () => {
-    if (!slug) {
-      setMe(null);
-      setMeLoading(false);
-      return;
-    }
-    const tok = getVitrineCustomerTokens(slug);
-    if (!tok) {
-      setMe(null);
-      setMeLoading(false);
-      return;
-    }
-    setMeLoading(true);
-    const meUrl = `${getApiBaseUrl()}/api/v2/public/stores/${encodeURIComponent(slug)}/customers/me`;
-    try {
-      let res = await fetch(meUrl, {
-        headers: { Authorization: `Bearer ${tok.access_token}` },
-      });
-      if (res.status === 401 && tok.refresh_token) {
-        const nextAccess = await refreshVitrineCustomerAccess(slug);
-        if (nextAccess) {
-          res = await fetch(meUrl, {
-            headers: { Authorization: `Bearer ${nextAccess}` },
-          });
-        }
-      }
-      const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-      if (!res.ok) {
-        if (res.status === 401) {
-          clearVitrineCustomerSession(slug);
-        }
-        setMe(null);
-        setMeLoading(false);
-        return;
-      }
-      const success = data.success === true && data.data && typeof data.data === "object";
-      const inner = success ? (data.data as MeData) : null;
-      setMe(inner);
-    } catch {
-      setMe(null);
-    } finally {
-      setMeLoading(false);
-    }
-  }, [slug]);
-
-  useEffect(() => {
-    void loadMe();
-  }, [loadMe]);
+  const { me, loading: meLoading, refetch: refetchMe } = useVitrineCustomerMe(slug);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -106,7 +54,7 @@ export default function VitrineContaPage() {
       if (typeof access === "string") {
         setVitrineCustomerTokens(slug, access, typeof refresh === "string" ? refresh : null);
         setPassword("");
-        await loadMe();
+        await refetchMe();
         setMessage(null);
       } else {
         setMessage("Resposta inválida da API.");
@@ -121,7 +69,7 @@ export default function VitrineContaPage() {
   function onLogout() {
     if (!slug) return;
     clearVitrineCustomerSession(slug);
-    setMe(null);
+    void refetchMe();
     setMessage("Sessão terminada.");
   }
 

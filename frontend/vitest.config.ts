@@ -14,10 +14,10 @@ export default defineConfig({
     environment: "node",
     fileParallelism: false,
     maxConcurrency: 1,
-    /** Evita falhas do worker (tinypool) em alguns ambientes/CI sandbox. */
-    pool: "forks",
+    /** threads + singleThread evita crash do tinypool ao terminar forks em alguns Node/OS. */
+    pool: "threads",
     poolOptions: {
-      forks: { singleFork: true },
+      threads: { singleThread: true },
     },
     include: ["__tests__/**/*.test.ts"],
     coverage: {

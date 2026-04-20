@@ -11,8 +11,8 @@ from app.core.public_order_rate_limit import register_public_order_attempt
 from app.models.customer import Customer
 from app.models.enums import OrderStatus
 from app.models.order import Order, OrderItem, OrderStatusHistory
-from app.models.product import Product
 from app.models.store import Store
+from app.services.order_line_items import get_product_for_order_line
 from app.schemas.public_vitrine_order import PublicOrderCreate
 
 
@@ -84,17 +84,12 @@ def create_order_from_vitrine(
     )
 
     for line in body.items:
-        p = db.get(Product, line.product_id)
-        if p is None or p.store_id != store.id or not p.active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Produto inválido",
-            )
-        if (p.catalog_sale_mode or "in_stock") == "unavailable":
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Produto indisponível",
-            )
+        p = get_product_for_order_line(
+            db,
+            product_id=line.product_id,
+            store_id=store.id,
+            reject_catalog_unavailable=True,
+        )
         order.items.append(
             OrderItem(
                 product_id=p.id,

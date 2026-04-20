@@ -2,7 +2,7 @@
 
 Referência visual e normativa: [`doc/mockups/loja-vitrine-layout-sugestao.html`](../mockups/loja-vitrine-layout-sugestao.html), [`doc/normativos/requisitos-funcionais.md`](../normativos/requisitos-funcionais.md).
 
-**Última verificação:** 2026-04-17 — inclui tema visual (cores, logo, fundo, véu), cache SSR, contrato público alargado, link **Conta** (auth cliente); síntese em [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md).
+**Última verificação:** 2026-04-20 — inclui tema visual (cores, logo, fundo, véu), cache SSR, contrato público alargado, link **Conta** (auth cliente), refactor modular do catálogo (`CatalogView` + `catalog-*`, `use-vitrine-checkout`); síntese em [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md).
 
 ## Mapa mockup → implementação
 
@@ -19,8 +19,9 @@ Referência visual e normativa: [`doc/mockups/loja-vitrine-layout-sugestao.html`
 | Checkout | Registo do pedido no painel antes do WhatsApp | `POST /api/v2/public/stores/{slug}/orders` + referência `#XXXXXXXX` na mensagem |
 | Pré-visualização WhatsApp | Modal antes de `wa.me` | Estado `waPreviewOpen` na vitrine |
 | Secção «Entrega e retirada» | Texto explicativo Uber/99 | Bloco `#entrega-info` |
-| Navegação | Âncoras Destaques, Cardápio, Entrega, Redes, Sobre | Links no header sticky |
-| Conta (cliente vitrine) | Registo/login por loja | Link **Conta** no header → `/loja/[slug]/conta` (sessão separada do painel) |
+| Navegação | Âncoras Destaques, Cardápio, Entrega, Redes, Sobre | Links no header sticky (`catalog-header.tsx`) |
+| Conta (cliente vitrine) | Registo/login por loja | Link **Conta** no header → `/loja/[slug]/conta` (sessão separada do painel; `use-vitrine-customer-me.ts`, `vitrine-customer-fetch.ts`) |
+| Organização do código (catálogo) | Componentes e hook de checkout | `CatalogView.tsx` orquestra; UI em `catalog-product-card`, `catalog-cart-sheet`, etc.; lógica WhatsApp/pedido em `use-vitrine-checkout.ts` |
 
 ## Diferenças aceites (UX)
 

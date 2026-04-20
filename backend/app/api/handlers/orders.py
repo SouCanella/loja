@@ -8,10 +8,10 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models.enums import OrderStatus
 from app.models.order import Order, OrderItem, OrderStatusHistory
-from app.models.product import Product
 from app.models.user import User
 from app.schemas.orders import OrderCreate, OrderStatusPatch
 from app.services.order_flow import apply_status_change
+from app.services.order_line_items import get_product_for_order_line
 from app.services.order_queries import list_orders_for_store
 
 
@@ -58,9 +58,12 @@ def create_order(
         stock_committed=False,
     )
     for line in body.items:
-        p = db.get(Product, line.product_id)
-        if p is None or p.store_id != current.store_id or not p.active:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Produto inválido")
+        p = get_product_for_order_line(
+            db,
+            product_id=line.product_id,
+            store_id=current.store_id,
+            reject_catalog_unavailable=False,
+        )
         order.items.append(
             OrderItem(
                 product_id=p.id,

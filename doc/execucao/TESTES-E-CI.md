@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-19.
+**Última actualização:** 2026-04-20.
 
 **Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
@@ -41,11 +41,11 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 
 | Item | Valor |
 |------|--------|
-| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); `pool: forks` + `singleFork` para estabilidade em alguns ambientes |
+| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
 | Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine) |
 
-Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). **Nota:** em **sandbox** restrito (ex. alguns agentes), o Vitest pode falhar no *teardown* do worker (`tinypool`); no CI Ubuntu ou terminal normal costuma concluir com exit 0.
+Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). O `make test` na raiz depende deste comando concluir com **exit 0**.
 
 ## 4. E2E (Playwright)
 

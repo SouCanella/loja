@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Refactor vitrine + DRY pedidos + Vitest estável)
+
+- **Backend:** `app/services/order_line_items.py` — `get_product_for_order_line(..., reject_catalog_unavailable)` partilhado entre `handlers/orders.py` (painel) e `services/public_vitrine_order.py` (vitrine bloqueia produto `unavailable` no catálogo).
+- **Frontend vitrine:** `CatalogView.tsx` decomposto em `components/vitrine/catalog-*.tsx`, `whatsapp-order-preview-modal.tsx`; lógica de checkout em `hooks/use-vitrine-checkout.ts`; constantes de fallback em `lib/vitrine/catalog-defaults.ts`; `lib/vitrine/vitrine-customer-fetch.ts` (Bearer + refresh em 401); página `/loja/[slug]/conta` com `hooks/use-vitrine-customer-me.ts`.
+- **Vitest:** pool `threads` + `singleThread` em `vitest.config.ts`; `package.json` `test` sem flags redundantes — `make test` conclui com exit 0 de forma fiável.
+- **Documentação:** `TESTES-E-CI.md`, esta entrada; `paridade-mockup-vitrine.md`; `ip-11-pedidos-vitrine-painel.md` (estrutura de código).
+
 ## 2026-04-21 (Vitrine — tema configurável, fundo, logótipo, cache SSR, backlog IP-11)
 
 - **Produto:** o lojista configura em **`/painel/configuracao`** a aparência da loja pública: cores principal/destaque, **URL do logótipo** (`logo_image_url`), **URL da imagem de fundo** (`hero_image_url`), **suavização do fundo** (`background_overlay_percent`, 15–97). Secção do painel renomeada/contextualizada («Aparência da vitrine»).
