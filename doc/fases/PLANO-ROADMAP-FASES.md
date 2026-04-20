@@ -1,9 +1,9 @@
 # Planejamento completo do roadmap (Fases 0 a 4 + 3.1)
 
 **Referência:** [documento_enterprise.md](../documento_enterprise.md), [regras-negocio.md](../normativos/regras-negocio.md), [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md)  
-**Última atualização do planejamento:** 2026-04-17 (Fase 3 encerrada no MVP; **Fase 3.1** planeada — paridade mockup; ver [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md))  
+**Última atualização do planejamento:** 2026-04-20 (Fases **0–3** e **3.1** concluídas no âmbito planeado; ver [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) §7–§10).  
 
-**Estado actual (implementação):** Fases **0**, **1**, **2** e **3** concluídas no âmbito planeado ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo sugerido (produto UX):** [fase-03-1-paridade-mockup.md](fase-03-1-paridade-mockup.md) — shell tipo mockup, **gráficos** (RF-FI-05), módulos em falta até paridade com [admin-painel-layout-sugestao.html](../mockups/admin-painel-layout-sugestao.html). **Em paralelo ou a seguir:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD com deploy documentado, hardening, [backlog.md](../projeto/backlog.md) (§23 enterprise e DT-*); **DEC-15** (Super Admin) só se for objectivo explícito da iteração.
+**Estado actual (implementação):** Fases **0**, **1**, **2**, **3** e **3.1** concluídas ([CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md)); inventário Fase 3 em [fase-03-gestao.md](fase-03-gestao.md) **§10**. **Próximo passo sugerido:** [fase-04-escala.md](fase-04-escala.md) — observabilidade, CI/CD com deploy documentado, hardening, [backlog.md](../projeto/backlog.md) (§23 enterprise e DT-*); incrementos opcionais (ex. **3.1-b** Clientes, vitrine) conforme prioridade; **DEC-15** (Super Admin) só se for objectivo explícito da iteração.
 
 Este arquivo é o **índice mestre**: resume objetivos, ordem e vínculo com o MVP. Cada fase tem documento próprio com detalhamento (entregáveis, critérios de aceite, riscos). **Volte aqui** ao ajustar escopo ou datas; depois sincronize o arquivo da fase afetada e o [backlog.md](../projeto/backlog.md).
 

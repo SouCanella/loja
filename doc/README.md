@@ -42,7 +42,7 @@
 | Fase 1 — Fundação | Concluída e documentada em [fases/fase-01-fundacao.md](fases/fase-01-fundacao.md) |
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
 | **Fase 3 — Gestão** | **Concluída** (API + painel receitas/produção/relatório CSV): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§8–§10** |
-| **Fase 3.1 — Paridade mockup** | **Planeada** — shell, gráficos, módulos em falta: [fases/fase-03-1-paridade-mockup.md](fases/fase-03-1-paridade-mockup.md) |
+| **Fase 3.1 — Paridade mockup** | **Concluída** (shell, gráficos, paridade UX; ver §7–§10): [fases/fase-03-1-paridade-mockup.md](fases/fase-03-1-paridade-mockup.md) |
 
 ## Checklist pré-desenvolvimento
 

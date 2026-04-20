@@ -95,7 +95,7 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 - [x] **Financeiro** e **Relatórios** com pelo menos **um gráfico cada** além de tabelas.
 - [x] **Precificação** com ecrã dedicado e visualização de composição (gráfico donut custo vs margem bruta aprox.).
 - [x] **Relatórios:** matriz **margem × volume** (dispersão por produto) — RF-FI-06.
-- [ ] **Configuração da loja** com accordion formal RF-CF (secções colapsáveis); hoje página multi-secção com FieldTips.
+- [x] **Configuração da loja** com accordion formal RF-CF (secções colapsáveis); `ConfigFormSection` + FieldTips.
 - [x] **Produtos** com caminho claro para **imagens** (URL https no catálogo; upload S3 = MA-03).
 - [x] **Perfil** — `/painel/conta` + `PATCH /api/v2/me/password`.
 - [x] **Produção** — listagem de corridas `GET /api/v2/production-runs`.
@@ -128,7 +128,7 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 | **Status** | `concluída` (âmbito normativo 3.1; ver §2 fora de âmbito) |
 | **Data de início** | 2026-04-19 |
 | **Data de fecho** | 2026-04-22 |
-| **Notas** | Inclui: **GET /api/v2/production-runs**, **PATCH /api/v2/me/password**, **Perfil** no menu, **Precificação** com composição (donut), **Relatórios** com dispersão margem × volume, **Produção** com tabela de corridas. **Avaliações** permanecem desactivadas (§11.6). **Accordion** RF-CF completo = melhoria opcional pós-3.1. Ver [CHANGELOG-FASES](../execucao/CHANGELOG-FASES.md). |
+| **Notas** | Inclui: **GET /api/v2/production-runs**, **PATCH /api/v2/me/password**, **Perfil** no menu, **Precificação** com composição (donut), **Relatórios** com dispersão margem × volume, **Produção** com tabela de corridas. **Configuração** com accordion RF-CF e **MA-03** (upload local/S3 + catálogo/config). **Avaliações** permanecem desactivadas (§11.6). Ver [CHANGELOG-FASES](../execucao/CHANGELOG-FASES.md). |
 
 ---
 
