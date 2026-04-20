@@ -1,7 +1,7 @@
 # Qualidade e conformidade com a documentação normativa
 
 **Propósito:** registar o estado da implementação face às propostas de [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md), [documento_enterprise.md](../documento_enterprise.md) e [decisoes-e-pendencias.md](decisoes-e-pendencias.md).  
-**Última auditoria:** 2026-04-19 (3) — cobertura global `app` ~**97%** + `test_coverage_gaps.py`.
+**Última auditoria:** 2026-04-21 — cobertura global `app` ~**97%** (referência); **137** testes pytest; novo: `test_public_catalog_theme.py` (tema público + helpers).
 
 ---
 
@@ -11,7 +11,7 @@
 |-------------|---------------------|--------|
 | Lint backend | `make lint` → **Ruff** em `app/` e `tests/` | Deve passar antes de merge. |
 | Lint frontend | `npm run lint` (Next.js / ESLint) | Idem. |
-| Testes backend | `pytest tests/ -q` — **125** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
+| Testes backend | `pytest tests/ -q` — **137** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), tema vitrine pública (`test_public_catalog_theme.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
 | Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~94%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
 | Testes frontend | `npm run test` (Vitest) | `__tests__/painel-api.test.ts` — helpers e `apiPainelJson` com `fetch` / `localStorage` mock. |
 | E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
@@ -62,7 +62,8 @@
 |----------|------|
 | `tests/test_auth.py` | Registo, login, `/me`, refresh, margem loja, isolamento duas lojas |
 | `tests/test_phase2_orders.py` | Pedidos, stock, cancelamento |
-| `tests/test_public_vitrine.py` | Catálogo público |
+| `tests/test_public_vitrine.py` | Catálogo público (fluxo básico) |
+| `tests/test_public_catalog_theme.py` | Helpers `_safe_https_url` / `_overlay_percent`; `GET` loja pública v1 e v2 com tema (cores, URLs, véu) |
 | `tests/test_phase3_production.py` | Receitas, produção idempotente, relatório financeiro |
 | `tests/test_services_order_flow.py` | `is_transition_allowed_mvp`, `needs_stock_commit` (parametrizado), `apply_status_change` transição inválida |
 | `tests/test_services_pricing.py` | `weighted_average_unit_cost`, `estimate_recipe_unit_cost`, rendimento zero |
