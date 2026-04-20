@@ -1625,6 +1625,52 @@
         ]
       }
     },
+    "/api/v2/me/password": {
+      "patch": {
+        "tags": [
+          "me-v2"
+        ],
+        "summary": "Patch User Password V2",
+        "operationId": "patch_user_password_v2_api_v2_me_password_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPasswordPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMeEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/me/store-pricing": {
       "patch": {
         "tags": [
@@ -2878,6 +2924,94 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RecipeEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/production-runs": {
+      "get": {
+        "tags": [
+          "production-v2"
+        ],
+        "summary": "List Production Runs V2",
+        "operationId": "list_production_runs_v2_api_v2_production_runs_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Início do intervalo (UTC, inclusivo)",
+              "title": "Date From"
+            },
+            "description": "Início do intervalo (UTC, inclusivo)"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fim do intervalo (UTC, inclusivo)",
+              "title": "Date To"
+            },
+            "description": "Fim do intervalo (UTC, inclusivo)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductionRunListEnvelope"
                 }
               }
             }
@@ -6088,6 +6222,47 @@
         ],
         "title": "ProductionRunEnvelope"
       },
+      "ProductionRunListEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ProductionRunOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ProductionRunListEnvelope"
+      },
       "ProductionRunOut": {
         "properties": {
           "id": {
@@ -7312,6 +7487,29 @@
           "store_target_margin_percent"
         ],
         "title": "UserMeResponse"
+      },
+      "UserPasswordPatch": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Current Password"
+          },
+          "new_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_password",
+          "new_password"
+        ],
+        "title": "UserPasswordPatch",
+        "description": "Alteração da palavra-passe do utilizador autenticado (painel)."
       },
       "UserRole": {
         "type": "string",

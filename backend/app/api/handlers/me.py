@@ -6,7 +6,13 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models.store import Store
 from app.models.user import User
-from app.schemas.user import StorePricingPatch, StoreSettingsPatch, UserMeResponse
+from app.core.security import hash_password, verify_password
+from app.schemas.user import (
+    StorePricingPatch,
+    StoreSettingsPatch,
+    UserMeResponse,
+    UserPasswordPatch,
+)
 from app.services.store_pricing import (
     get_store_target_margin_percent,
     set_store_target_margin_percent,
@@ -97,6 +103,24 @@ def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -
                 base_c[key] = val
         store.config = base_c
     db.add(store)
+    db.commit()
+    db.refresh(u)
+    return read_me(db, current)
+
+
+def patch_user_password(db: Session, current: User, body: UserPasswordPatch) -> UserMeResponse:
+    u = db.scalars(
+        select(User).where(User.id == current.id).options(joinedload(User.store))
+    ).first()
+    if u is None or u.store is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Utilizador inválido")
+    if not verify_password(body.current_password, u.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha actual incorrecta.",
+        )
+    u.password_hash = hash_password(body.new_password)
+    db.add(u)
     db.commit()
     db.refresh(u)
     return read_me(db, current)

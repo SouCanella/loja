@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FieldTip } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
+import { MarginVolumeScatter } from "@/components/painel/MarginVolumeScatter";
 import {
   apiPainelJson,
   formatBRL,
@@ -621,6 +622,9 @@ export default function RelatorioPage() {
               byCategory={data.by_category}
               labelForStatus={orderStatusLabel}
             />
+            <div className="mt-6">
+              <MarginVolumeScatter rows={data.by_product} />
+            </div>
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-white shadow-sm">

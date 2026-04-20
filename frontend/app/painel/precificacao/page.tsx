@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { FieldTip } from "@/components/painel/FieldTip";
+import { PricingCompositionChart } from "@/components/painel/PricingCompositionChart";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 
 type Recipe = {
@@ -19,6 +20,7 @@ type Product = { id: string; name: string };
 export default function PrecificacaoPage() {
   const [rows, setRows] = useState<Recipe[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
+  const [chartRecipeId, setChartRecipeId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,11 +33,21 @@ export default function PrecificacaoPage() {
         const m: Record<string, string> = {};
         for (const p of products) m[p.id] = p.name;
         setNames(m);
+        setChartRecipeId((prev) => {
+          if (prev) return prev;
+          return recipes[0]?.id ?? null;
+        });
       })
       .catch((e: unknown) => {
         setErr(e instanceof PainelApiError ? e.message : "Erro ao carregar receitas.");
       });
   }, []);
+
+  const selectedRecipe = useMemo(
+    () => rows.find((r) => r.id === chartRecipeId) ?? rows[0] ?? null,
+    [rows, chartRecipeId],
+  );
+  const chartProductLabel = selectedRecipe ? (names[selectedRecipe.product_id] ?? "Produto") : "—";
 
   return (
     <>
@@ -84,6 +96,35 @@ export default function PrecificacaoPage() {
           <p className="p-6 text-sm text-slate-500">Sem receitas cadastradas. Crie em Receitas.</p>
         ) : null}
       </div>
+
+      {rows.length > 0 ? (
+        <div className="mt-10 max-w-xl">
+          <h2 className="text-sm font-semibold text-slate-800">Composição visual (mockup RF-PR)</h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Escolha uma receita para ver a divisão aproximada do preço sugerido entre custo e margem.
+          </p>
+          <div className="mt-3">
+            <label className="text-xs font-medium text-slate-600" htmlFor="pc-chart-recipe">
+              Receita
+            </label>
+            <select
+              id="pc-chart-recipe"
+              className="mt-1 w-full max-w-md rounded-md border border-slate-300 px-3 py-2 text-sm"
+              value={chartRecipeId ?? ""}
+              onChange={(e) => setChartRecipeId(e.target.value || null)}
+            >
+              {rows.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {names[r.product_id] ?? r.product_id.slice(0, 8)}…
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mt-4">
+            <PricingCompositionChart row={selectedRecipe} productLabel={chartProductLabel} />
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

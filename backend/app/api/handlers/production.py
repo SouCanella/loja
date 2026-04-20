@@ -1,5 +1,7 @@
 """Produção — lógica partilhada v1/v2."""
 
+from datetime import date, datetime, timedelta, timezone
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -10,6 +12,28 @@ from app.models.recipe import Recipe
 from app.models.user import User
 from app.schemas.phase3 import ProductionRequest, ProductionRunOut
 from app.services.production_service import execute_production
+
+
+def list_production_runs(
+    db: Session,
+    current: User,
+    *,
+    date_from: date | None,
+    date_to: date | None,
+    limit: int,
+) -> list[ProductionRunOut]:
+    """Últimas corridas da loja, opcionalmente filtradas por intervalo de datas (UTC, inclusivo)."""
+    lim = max(1, min(limit, 500))
+    stmt = select(ProductionRun).where(ProductionRun.store_id == current.store_id)
+    if date_from is not None:
+        start = datetime.combine(date_from, datetime.min.time(), tzinfo=timezone.utc)
+        stmt = stmt.where(ProductionRun.created_at >= start)
+    if date_to is not None:
+        end_excl = datetime.combine(date_to + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc)
+        stmt = stmt.where(ProductionRun.created_at < end_excl)
+    stmt = stmt.order_by(ProductionRun.created_at.desc()).limit(lim)
+    rows = db.scalars(stmt).all()
+    return [production_run_to_out(r) for r in rows]
 
 
 def production_run_to_out(run: ProductionRun) -> ProductionRunOut:

@@ -127,6 +127,12 @@ class ProductionRunEnvelope(BaseModel):
     errors: list[ApiErrorDetail] | None = None
 
 
+class ProductionRunListEnvelope(BaseModel):
+    success: bool
+    data: list[ProductionRunOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
 class DeleteSuccessEnvelope(BaseModel):
     """Resposta para DELETE sem payload (sucesso)."""
 

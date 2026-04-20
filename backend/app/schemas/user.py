@@ -31,6 +31,13 @@ class StorePricingPatch(BaseModel):
     target_margin_percent: Decimal = Field(..., ge=0, le=100)
 
 
+class UserPasswordPatch(BaseModel):
+    """Alteração da palavra-passe do utilizador autenticado (painel)."""
+
+    current_password: str = Field(..., min_length=1, max_length=128)
+    new_password: str = Field(..., min_length=8, max_length=128)
+
+
 class StoreSettingsPatch(BaseModel):
     """Actualização parcial da loja (nome, slug, tema, config JSON)."""
 

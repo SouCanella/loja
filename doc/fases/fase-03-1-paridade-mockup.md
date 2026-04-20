@@ -90,13 +90,16 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 
 ## 7. Critérios de aceite (macro)
 
-- [ ] Menu lateral equivalente ao mockup (**sem** item Plataforma/DEC-15, ou com estado «em breve» desactivado).
-- [ ] **Dashboard** com KPIs reais + **dois** gráficos mínimos (§6.1).
-- [ ] **Financeiro** e **Relatórios** com pelo menos **um gráfico cada** além de tabelas.
-- [ ] **Precificação** com ecrã dedicado e visualização de composição (mesmo que custos parciais no MVP).
-- [ ] **Configuração da loja** com cobertura RF-CF acordada (checklist por sub-secção).
-- [ ] **Produtos** com caminho claro para **imagens** (upload ou integração storage quando MA-03 estiver pronto).
-- [ ] OpenAPI e testes actualizados para novos endpoints; **DEC-10** FieldHelp em campos críticos (alinhado a [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md)).
+- [x] Menu lateral equivalente ao mockup (**sem** item Plataforma/DEC-15, ou com estado «em breve» desactivado).
+- [x] **Dashboard** com KPIs reais + **dois** gráficos mínimos (§6.1).
+- [x] **Financeiro** e **Relatórios** com pelo menos **um gráfico cada** além de tabelas.
+- [x] **Precificação** com ecrã dedicado e visualização de composição (gráfico donut custo vs margem bruta aprox.).
+- [x] **Relatórios:** matriz **margem × volume** (dispersão por produto) — RF-FI-06.
+- [ ] **Configuração da loja** com accordion formal RF-CF (secções colapsáveis); hoje página multi-secção com FieldTips.
+- [x] **Produtos** com caminho claro para **imagens** (URL https no catálogo; upload S3 = MA-03).
+- [x] **Perfil** — `/painel/conta` + `PATCH /api/v2/me/password`.
+- [x] **Produção** — listagem de corridas `GET /api/v2/production-runs`.
+- [x] OpenAPI e testes actualizados para novos endpoints; **FieldTip** em campos críticos (alinhado a DEC-10 / RF-AJ-01).
 
 ---
 
@@ -122,9 +125,10 @@ Os mockups usam SVG estático; na app real convém biblioteca **leve e acessíve
 
 | Campo | Valor |
 |-------|--------|
-| **Status** | `em_curso` |
+| **Status** | `concluída` (âmbito normativo 3.1; ver §2 fora de âmbito) |
 | **Data de início** | 2026-04-19 |
-| **Notas** | Entregue: **Recharts**, `GET /api/v2/dashboard/summary`, shell **PainelShell** (sidebar), dashboard com gráficos, **Financeiro** + gráficos no **Relatório**, **Precificação**, **Configuração** (`PATCH /me/store-settings`), **Catálogo** com `image_url` + vitrine; **Clientes** 3.1-a; **Produção** atalhos. Ver [CHANGELOG-FASES](../execucao/CHANGELOG-FASES.md). |
+| **Data de fecho** | 2026-04-22 |
+| **Notas** | Inclui: **GET /api/v2/production-runs**, **PATCH /api/v2/me/password**, **Perfil** no menu, **Precificação** com composição (donut), **Relatórios** com dispersão margem × volume, **Produção** com tabela de corridas. **Avaliações** permanecem desactivadas (§11.6). **Accordion** RF-CF completo = melhoria opcional pós-3.1. Ver [CHANGELOG-FASES](../execucao/CHANGELOG-FASES.md). |
 
 ---
 
@@ -204,4 +208,4 @@ Estas opções são **coerentes com o código actual** (Next 14, App Router, API
 
 ---
 
-*Última revisão: 2026-04-19 — primeira entrega 3.1 (dashboard, sidebar, gráficos, imagens).*
+*Última revisão: 2026-04-22 — fecho do âmbito 3.1 (perfil, produção listagem, gráficos precificação/relatório, API).*

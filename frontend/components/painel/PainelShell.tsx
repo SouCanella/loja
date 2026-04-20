@@ -50,6 +50,10 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
     ],
   },
   {
+    title: "Conta",
+    items: [{ href: "/painel/conta", label: "Perfil e segurança" }],
+  },
+  {
     title: "Qualidade",
     items: [
       {

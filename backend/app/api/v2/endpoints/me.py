@@ -10,7 +10,7 @@ from app.api.handlers import me as me_handlers
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.envelope import UserMeEnvelope
-from app.schemas.user import StorePricingPatch, StoreSettingsPatch
+from app.schemas.user import StorePricingPatch, StoreSettingsPatch, UserPasswordPatch
 
 router = APIRouter(tags=["me-v2"])
 
@@ -21,6 +21,16 @@ def read_me_v2(
     db: Annotated[Session, Depends(get_db)],
 ) -> UserMeEnvelope:
     data = me_handlers.read_me(db, current)
+    return UserMeEnvelope(success=True, data=data, errors=None)
+
+
+@router.patch("/me/password", response_model=UserMeEnvelope)
+def patch_user_password_v2(
+    body: UserPasswordPatch,
+    current: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> UserMeEnvelope:
+    data = me_handlers.patch_user_password(db, current, body)
     return UserMeEnvelope(success=True, data=data, errors=None)
 
 

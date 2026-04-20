@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (Fase 3.1 — fecho: perfil, produção API, gráficos precificação/relatório)
+
+- **API v2:** `PATCH /api/v2/me/password` (alterar palavra-passe do lojista); `GET /api/v2/production-runs` (lista corridas de produção com `date_from` / `date_to` / `limit`). Testes em `test_me_password_v2.py`, `test_production_runs_list_v2.py`.
+- **Painel:** página **`/painel/conta`** (Perfil e segurança); menu **Conta** no `PainelShell`; **Precificação** — gráfico donut composição custo/margem (`PricingCompositionChart`); **Relatórios** — dispersão **margem × volume** por produto (`MarginVolumeScatter`); **Produção** — tabela de corridas com filtro de datas.
+- **Documentação:** [fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) (critérios §7, status concluída); `doc/api/openapi.json` regenerado.
+
 ## 2026-04-22 (Painel — redes sociais na configuração, filtro em Clientes, dicas e menu)
 
 - **Configuração da loja:** em **`/painel/configuracao`**, secção **Redes sociais (vitrine)** — lista `label` / `url` / `icon` (preset Instagram, Facebook, etc.), persistida em `stores.theme.vitrine.social_networks` (alinhado ao hero `catalog-hero.tsx` e à API pública).
