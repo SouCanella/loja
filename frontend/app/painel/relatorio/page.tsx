@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { FieldTip } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
 import {
   apiPainelJson,
@@ -461,12 +462,17 @@ export default function RelatorioPage() {
 
   return (
     <div className="relatorio-print">
-      <h1 className="text-2xl font-semibold text-slate-900">
-        Relatório financeiro
-        {loading && data ? (
-          <span className="ml-2 text-base font-normal text-slate-400">A actualizar…</span>
-        ) : null}
-      </h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Relatório financeiro
+          {loading && data ? (
+            <span className="ml-2 text-base font-normal text-slate-400">A actualizar…</span>
+          ) : null}
+        </h1>
+        <span className="print:hidden inline-flex items-center">
+          <FieldTip text="Receita de pedidos no período (exclui estados ignorados pela API, p.ex. rascunho e cancelados). Custo de insumos refere-se a produções no intervalo. Tabelas por produto/categoria são agregados do período — aproximação contabilística, não custo por lote (COGS) detalhado." />
+        </span>
+      </div>
       <p className="mt-1 text-sm text-slate-500">
         Receita de pedidos (exceto rascunho e cancelados), custo de insumos em produções no período e
         repartição por produto e categoria (aproximação período-a-período; não é COGS por lote).
@@ -525,10 +531,13 @@ export default function RelatorioPage() {
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-300"
+          className="rounded-md bg-painel-secondary px-4 py-2 text-sm font-semibold text-neutral-950 shadow-sm hover:bg-painel-secondary-hover"
         >
           Atualizar
         </button>
+        <span className="print:hidden inline-flex items-center self-end pb-2">
+          <FieldTip text="Escolha datas manualmente ou use um atalho (Hoje, 7 dias, etc.). Se «De» for depois de «Até», o intervalo é corrigido automaticamente na consulta. «Atualizar» recarrega os dados do servidor." />
+        </span>
       </div>
       {rangeSwapped ? (
         <p className="mt-2 text-xs text-amber-700 print:hidden">
@@ -542,9 +551,14 @@ export default function RelatorioPage() {
       {data ? (
         <div className="mt-8 space-y-8">
           <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs text-slate-500">
-              {data.date_from} → {data.date_to}
-            </p>
+            <div className="flex flex-wrap items-start gap-2">
+              <p className="text-xs text-slate-500">
+                {data.date_from} → {data.date_to}
+              </p>
+              <span className="print:hidden inline-flex items-center">
+                <FieldTip text="Resumo: totais de receita, pedidos e corridas de produção no período; custo de insumos das produções contabilizadas; margem estimada e percentual sobre a receita, conforme cálculo da API." />
+              </span>
+            </div>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div>
                 <dt className="text-sm text-slate-500">Receita (pedidos)</dt>
@@ -598,6 +612,10 @@ export default function RelatorioPage() {
           </div>
 
           <div className="print:hidden">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <h2 className="text-sm font-semibold text-slate-800">Gráficos</h2>
+              <FieldTip text="Barras: receita por estado do pedido. Circular: partilha por categoria. Use o «?» em cada cartão para explicação; no gráfico, toque numa barra ou fatia para valores (tooltip do gráfico)." />
+            </div>
             <FinancialReportCharts
               byOrderStatus={data.by_order_status}
               byCategory={data.by_category}
@@ -607,7 +625,12 @@ export default function RelatorioPage() {
 
           <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
-              <h2 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h2>
+              <div className="flex flex-wrap items-center gap-1">
+                <h2 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h2>
+                <span className="print:hidden inline-flex items-center">
+                  <FieldTip text="Mesma lógica do gráfico de barras: receita atribuída a cada estado (pago, enviado, etc.). A coluna «Partilha» compara visualmente cada linha com o maior valor da tabela." />
+                </span>
+              </div>
               <p className="mt-0.5 text-xs text-slate-500">
                 Distribuição da receita contabilizada no período (mesmos filtros do resumo).
               </p>
@@ -655,7 +678,12 @@ export default function RelatorioPage() {
 
           <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
-              <h2 className="text-sm font-semibold text-slate-800">Por categoria</h2>
+              <div className="flex flex-wrap items-center gap-1">
+                <h2 className="text-sm font-semibold text-slate-800">Por categoria</h2>
+                <span className="print:hidden inline-flex items-center">
+                  <FieldTip text="Totais por categoria de produto no catálogo. Quantidade vendida, receita, custo de produção (insumos) e margens são somas do período por essa categoria." />
+                </span>
+              </div>
               <p className="mt-0.5 text-xs text-slate-500">
                 Agregado pela categoria do produto no catálogo (produtos sem categoria aparecem como
                 &quot;Sem categoria&quot;).
@@ -703,7 +731,12 @@ export default function RelatorioPage() {
 
           <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
-              <h2 className="text-sm font-semibold text-slate-800">Por produto</h2>
+              <div className="flex flex-wrap items-center gap-1">
+                <h2 className="text-sm font-semibold text-slate-800">Por produto</h2>
+                <span className="print:hidden inline-flex items-center">
+                  <FieldTip text="Toque no cabeçalho para ordenar por produto, quantidade, receita, custo ou margem. Pareto % é a receita acumulada ao percorrer a lista ordenada por receita decrescente (curva ABC)." />
+                </span>
+              </div>
               <p className="mt-0.5 text-xs text-slate-500">
                 Ordenação local; coluna Pareto = receita acumulada % (curva ABC, ordenação por
                 receita decrescente).
@@ -810,8 +843,8 @@ export default function RelatorioPage() {
           </div>
 
           <p className="text-xs text-slate-500 print:hidden">
-            Dados: <code className="rounded bg-slate-100 px-1">GET /api/v2/reports/financial</code>{" "}
-            (envelope DEC-06).
+            Dados: <code className="rounded bg-slate-100 px-1">GET /api/v2/reports/financial</code>
+            {" "}(resposta no formato da API v2).
           </p>
         </div>
       ) : !error && !loading ? (

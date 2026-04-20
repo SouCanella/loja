@@ -12,7 +12,7 @@ export default function ProducaoPage() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href="/painel/receitas"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="rounded-lg bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
         >
           Receitas e produção
         </Link>

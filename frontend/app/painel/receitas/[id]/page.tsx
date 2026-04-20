@@ -156,7 +156,7 @@ export default function EditarReceitaPage() {
   if (initError) {
     return (
       <>
-        <Link href="/painel/receitas" className="text-sm text-teal-700 hover:underline">
+        <Link href="/painel/receitas" className="text-sm text-painel-primary hover:underline">
           ← Receitas
         </Link>
         <p className="mt-4 text-sm text-amber-800">{initError}</p>
@@ -174,7 +174,7 @@ export default function EditarReceitaPage() {
 
   return (
     <>
-      <Link href="/painel/receitas" className="text-sm text-teal-700 hover:underline">
+      <Link href="/painel/receitas" className="text-sm text-painel-primary hover:underline">
         ← Receitas
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-slate-900">Editar receita</h1>
@@ -254,7 +254,7 @@ export default function EditarReceitaPage() {
         <div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-700">Insumos por lote</span>
-            <button type="button" onClick={addLine} className="text-sm text-teal-700 hover:underline">
+            <button type="button" onClick={addLine} className="text-sm text-painel-primary hover:underline">
               + Linha
             </button>
           </div>
@@ -298,7 +298,7 @@ export default function EditarReceitaPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
         >
           {loading ? "A guardar…" : "Guardar alterações"}
         </button>

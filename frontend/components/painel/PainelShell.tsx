@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { createPortal } from "react-dom";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { PainelNotificationsBell } from "@/components/painel/PainelNotificationsBell";
 
 type NavItem = { href: string; label: string; disabled?: boolean; hint?: string };
+
+/** Fallback sólido; por cima aplica-se gradiente em tons da marca (roxo). */
+const SIDEBAR_SOLID = "#1a1522" as const;
+const SIDEBAR_GRADIENT =
+  "linear-gradient(165deg, #231633 0%, #1a1522 42%, #120c18 100%)" as const;
 
 const GROUPS: { title: string; items: NavItem[] }[] = [
   { title: "Visão geral", items: [{ href: "/painel", label: "Dashboard" }] },
@@ -50,13 +56,13 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
         href: "#",
         label: "Avaliações",
         disabled: true,
-        hint: "Previsto no backlog (RN-025–027)",
+        hint: "Funcionalidade prevista para uma versão futura.",
       },
     ],
   },
 ];
 
-function NavLink({ item }: { item: NavItem }) {
+function NavLink({ item, onPress }: { item: NavItem; onPress?: () => void }) {
   const pathname = usePathname();
   const active =
     !item.disabled &&
@@ -66,7 +72,7 @@ function NavLink({ item }: { item: NavItem }) {
   if (item.disabled) {
     return (
       <span
-        className="flex cursor-not-allowed items-center rounded-lg px-3 py-2 text-sm text-slate-500 opacity-60"
+        className="flex cursor-not-allowed items-center rounded-lg px-3 py-2 text-sm text-painel-nav-label/45"
         title={item.hint}
       >
         {item.label}
@@ -76,50 +82,95 @@ function NavLink({ item }: { item: NavItem }) {
   return (
     <Link
       href={item.href}
-      className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-        active ? "bg-indigo-600/90 text-white" : "text-slate-200 hover:bg-white/10"
+      className={`relative z-10 block min-h-[44px] rounded-lg px-3 py-2.5 text-sm font-medium leading-snug no-underline transition [-webkit-tap-highlight-color:transparent] touch-manipulation ${
+        active
+          ? "bg-painel-primary text-white shadow-[inset_4px_0_0_0_#FFDE21,0_6px_18px_-6px_rgba(138,5,190,0.55)] hover:text-white"
+          : "text-violet-100/95 visited:text-violet-100 hover:bg-painel-primary/20 hover:text-white"
       }`}
+      onClick={() => onPress?.()}
     >
       {item.label}
     </Link>
   );
 }
 
+function NavGroup({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`rounded-xl border border-painel-primary/25 bg-painel-primary/[0.08] p-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_1px_12px_rgba(138,5,190,0.12)] ${className}`}
+    >
+      <p className="select-none px-1.5 pb-2 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-painel-nav-label">
+        {title}
+      </p>
+      <div className="flex flex-col gap-0.5">{children}</div>
+    </div>
+  );
+}
+
 export function PainelShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [navMounted, setNavMounted] = useState(false);
+
+  useEffect(() => setNavMounted(true), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => {
+      if (mq.matches) setOpen(false);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 print:bg-white">
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px] print:max-w-none">
         {/* Desktop sidebar */}
-        <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-slate-900 text-slate-100 md:flex print:hidden">
-          <div className="flex items-start justify-between gap-2 border-b border-white/10 px-4 py-4">
+        <aside
+          className="hidden w-60 shrink-0 flex-col border-r border-painel-sidebar-border text-neutral-100 [color-scheme:dark] md:flex print:hidden"
+          style={{ backgroundColor: SIDEBAR_SOLID, backgroundImage: SIDEBAR_GRADIENT }}
+        >
+          <div className="flex items-start justify-between gap-2 border-b border-painel-primary/25 bg-painel-primary/[0.07] px-4 py-4">
             <div className="min-w-0">
-              <Link href="/painel" className="text-lg font-semibold text-white">
+              <Link href="/painel" className="text-lg font-semibold tracking-tight text-white no-underline drop-shadow-sm">
                 Painel
               </Link>
-              <p className="mt-0.5 text-[0.65rem] uppercase tracking-wide text-slate-400">Gestão da loja</p>
+              <p className="mt-0.5 text-[0.65rem] uppercase tracking-wide text-painel-nav-label/90">
+                Gestão da loja
+              </p>
             </div>
             <PainelNotificationsBell />
           </div>
-          <nav className="flex-1 space-y-5 overflow-y-auto px-2 py-4">
+          <nav className="flex-1 space-y-3 overflow-y-auto px-2 py-4">
             {GROUPS.map((g) => (
-              <div key={g.title}>
-                <div className="px-3 pb-1 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">
-                  {g.title}
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  {g.items.map((item) => (
-                    <NavLink key={item.label + item.href} item={item} />
-                  ))}
-                </div>
-              </div>
+              <NavGroup key={g.title} title={g.title}>
+                {g.items.map((item) => (
+                  <NavLink key={item.label + item.href} item={item} />
+                ))}
+              </NavGroup>
             ))}
           </nav>
-          <div className="border-t border-white/10 p-3 print:hidden">
+          <div className="border-t border-painel-primary/25 bg-black/[0.12] p-3 print:hidden">
             <Link
               href="/login"
-              className="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+              className="block rounded-lg border border-painel-primary/20 px-3 py-2 text-center text-sm text-painel-nav-label no-underline transition hover:border-painel-secondary/35 hover:bg-painel-primary/15 hover:text-white"
             >
               Sessão / sair
             </Link>
@@ -137,40 +188,68 @@ export function PainelShell({ children }: { children: ReactNode }) {
             >
               Menu
             </button>
-            <Link href="/painel" className="font-semibold text-slate-900">
+            <Link href="/painel" className="font-semibold text-painel-primary-strong no-underline">
               Painel
             </Link>
             <div className="flex w-14 justify-end">
               <PainelNotificationsBell variant="light" />
             </div>
           </header>
-          {open ? (
-            <div className="fixed inset-0 z-30 md:hidden print:hidden">
-              <button
-                type="button"
-                className="absolute inset-0 bg-black/40"
-                aria-label="Fechar menu"
-                onClick={() => setOpen(false)}
-              />
-              <nav className="absolute left-0 top-0 h-full w-[min(100%,280px)] overflow-y-auto bg-slate-900 p-4 text-slate-100 shadow-xl">
-                {GROUPS.map((g) => (
-                  <div key={g.title} className="mb-4">
-                    <div className="px-2 pb-1 text-[0.65rem] font-bold uppercase text-slate-500">{g.title}</div>
-                    <div className="flex flex-col gap-0.5">
-                      {g.items.map((item) => (
-                        <div key={item.label} onClick={() => setOpen(false)}>
-                          <NavLink item={item} />
-                        </div>
+          {navMounted && open
+            ? createPortal(
+                <div
+                  className="fixed inset-0 z-[300] isolate pointer-events-none md:hidden print:hidden"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Menu do painel"
+                >
+                  <button
+                    type="button"
+                    className="pointer-events-auto absolute inset-0 z-[1] bg-black/45"
+                    aria-label="Fechar menu"
+                    onClick={() => setOpen(false)}
+                  />
+                  <nav
+                    className="pointer-events-auto absolute left-0 top-0 z-[2] flex h-full min-h-0 w-[min(100%,280px)] max-w-[85vw] touch-manipulation flex-col overflow-y-auto overscroll-contain border-r border-painel-sidebar-border p-3 text-neutral-100 shadow-2xl shadow-painel-primary/20 [color-scheme:dark]"
+                    style={{ backgroundColor: SIDEBAR_SOLID, backgroundImage: SIDEBAR_GRADIENT }}
+                  >
+                    <div className="mb-3 shrink-0 rounded-lg border border-painel-primary/20 bg-painel-primary/[0.08] px-3 py-2.5">
+                      <Link
+                        href="/painel"
+                        className="inline-block min-h-[44px] text-lg font-semibold leading-tight text-white no-underline drop-shadow-sm [-webkit-tap-highlight-color:transparent] touch-manipulation"
+                        onClick={() => setOpen(false)}
+                      >
+                        Painel
+                      </Link>
+                      <p className="mt-0.5 text-[0.65rem] uppercase tracking-wide text-painel-nav-label/90">
+                        Gestão da loja
+                      </p>
+                    </div>
+                    <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-0.5">
+                      {GROUPS.map((g) => (
+                        <NavGroup key={g.title} title={g.title}>
+                          {g.items.map((item) => (
+                            <NavLink
+                              key={item.label + item.href}
+                              item={item}
+                              onPress={() => setOpen(false)}
+                            />
+                          ))}
+                        </NavGroup>
                       ))}
                     </div>
-                  </div>
-                ))}
-                <Link href="/login" className="mt-4 block rounded-lg px-3 py-2 text-sm text-slate-300">
-                  Sessão
-                </Link>
-              </nav>
-            </div>
-          ) : null}
+                    <Link
+                      href="/login"
+                      className="mt-3 flex min-h-[44px] shrink-0 items-center justify-center rounded-lg border border-painel-primary/25 bg-black/[0.15] px-3 py-2.5 text-center text-sm text-painel-nav-label no-underline transition [-webkit-tap-highlight-color:transparent] touch-manipulation hover:border-painel-secondary/40 hover:bg-painel-primary/15 hover:text-white"
+                      onClick={() => setOpen(false)}
+                    >
+                      Sessão / sair
+                    </Link>
+                  </nav>
+                </div>,
+                document.body,
+              )
+            : null}
           <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 print:p-0">{children}</main>
         </div>
       </div>

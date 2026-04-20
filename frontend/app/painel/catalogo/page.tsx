@@ -233,7 +233,7 @@ export default function CatalogoPage() {
         <div className="mt-3 flex flex-wrap gap-4">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psp">
-              Destaque na vitrine (RF-CA-11)
+              Destaque na vitrine
               <FieldTip text="Opcional: aparece na secção «Em destaque» e como fita no card." />
             </label>
             <select
@@ -250,7 +250,7 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psm">
-              Disponibilidade (RF-CA-05)
+              Disponibilidade
               <FieldTip text="Sob encomenda: fita e ainda encomendável; indisponível: bloqueia adicionar ao carrinho." />
             </label>
             <select
@@ -268,7 +268,7 @@ export default function CatalogoPage() {
         <button
           type="submit"
           disabled={creating}
-          className="mt-4 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          className="mt-4 rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
         >
           {creating ? "A criar…" : "Criar produto"}
         </button>

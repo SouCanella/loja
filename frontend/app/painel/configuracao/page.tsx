@@ -187,8 +187,8 @@ export default function ConfiguracaoLojaPage() {
 
       {me ? (
         <>
-          <div className="mt-6 max-w-xl rounded-xl border border-indigo-200 bg-indigo-50/90 px-4 py-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-indigo-950">Pré-visualização da vitrine</h2>
+          <div className="mt-6 max-w-xl rounded-xl border border-painel-border bg-painel-soft/90 px-4 py-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-painel-primary-strong">Pré-visualização da vitrine</h2>
             <p className="mt-1 text-xs text-slate-600">
               Abre a loja pública como o cliente vê (novo separador). Útil para validar tema, textos e checkout após
               guardar.
@@ -198,7 +198,7 @@ export default function ConfiguracaoLojaPage() {
                 href={`/loja/${(slug.trim() || me.store_slug).replace(/^\/+|\/+$/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+                className="inline-flex items-center justify-center rounded-lg bg-painel-cta px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
               >
                 Abrir vitrine
               </Link>
@@ -295,7 +295,7 @@ export default function ConfiguracaoLojaPage() {
                     step={1}
                     value={bgOverlayPercent}
                     onChange={(e) => setBgOverlayPercent(Number(e.target.value))}
-                    className="h-2 w-full max-w-xs cursor-pointer accent-indigo-600"
+                    className="h-2 w-full max-w-xs cursor-pointer accent-painel-primary"
                   />
                   <span className="text-sm tabular-nums text-slate-600">{bgOverlayPercent}%</span>
                 </div>
@@ -335,7 +335,7 @@ export default function ConfiguracaoLojaPage() {
           </div>
           <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Vitrine e checkout (RF-CF-08 / RF-CF-09 / RF-PE-08)
+              Vitrine e checkout
             </p>
             <div className="mt-3 space-y-3">
               <div>
@@ -356,7 +356,7 @@ export default function ConfiguracaoLojaPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="og">
                   Saudação no WhatsApp (opcional)
-                  <FieldTip text="Texto no início da mensagem do pedido (RF-CF-06)." />
+                  <FieldTip text="Texto no início da mensagem do pedido." />
                 </label>
                 <textarea
                   id="og"
@@ -374,7 +374,7 @@ export default function ConfiguracaoLojaPage() {
                   checked={hideUnavailable}
                   onChange={(e) => setHideUnavailable(e.target.checked)}
                 />
-                Ocultar produtos indisponíveis na listagem (RF-CA-04)
+                Ocultar produtos indisponíveis na listagem
               </label>
               <div>
                 <span className="text-sm font-medium text-slate-700">Modos de recebimento na vitrine</span>
@@ -460,7 +460,7 @@ export default function ConfiguracaoLojaPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="submit"
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+              className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
             >
               Guardar
             </button>
@@ -468,7 +468,7 @@ export default function ConfiguracaoLojaPage() {
               href={`/loja/${(slug.trim() || me.store_slug).replace(/^\/+|\/+$/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-indigo-700 hover:underline"
+              className="text-sm font-medium text-painel-primary hover:underline"
             >
               Ver vitrine após guardar →
             </Link>

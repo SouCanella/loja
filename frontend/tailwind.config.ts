@@ -5,6 +5,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        /** Identidade do painel de administração (primária / secundária planejadas). */
+        painel: {
+          primary: "#8A05BE",
+          "primary-hover": "#7311a3",
+          /** Botões preenchidos (Guardar, Novo pedido, etc.): mais escuro que o brand para contraste com branco */
+          cta: "#5c0d73",
+          "cta-hover": "#4a0a5e",
+          "primary-strong": "#4a0d5c",
+          soft: "#f4e9fb",
+          "soft-hover": "#ebd4f7",
+          border: "#e4c7f2",
+          secondary: "#FFDE21",
+          "secondary-hover": "#e6c81e",
+          "secondary-soft": "#fff9d6",
+          "on-secondary": "#1a1512",
+          /** Menu lateral — base e variações da marca (harmonia roxo + toques de amarelo) */
+          "sidebar-bg": "#1a1522",
+          "sidebar-border": "#3d2f52",
+          "sidebar-text": "#f4f1f8",
+          "sidebar-muted": "#9488a3",
+          /** Rótulos de grupo no menu (lavanda, legível sobre fundo escuro) */
+          "nav-label": "#c9b3dd",
+        },
         loja: {
           bg: "#faf6f2",
           surface: "#ffffff",

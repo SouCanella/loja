@@ -132,7 +132,7 @@ export default function ReceitasPage() {
         </div>
         <Link
           href="/painel/receitas/nova"
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
         >
           Nova receita
         </Link>
@@ -173,7 +173,7 @@ export default function ReceitasPage() {
         {filtered.length === 0 && !error ? (
           <li className="rounded-lg border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
             Nenhuma receita neste filtro.{" "}
-            <Link href="/painel/receitas/nova" className="font-medium text-teal-700 underline">
+            <Link href="/painel/receitas/nova" className="font-medium text-painel-primary underline">
               Criar
             </Link>
           </li>
@@ -241,7 +241,7 @@ export default function ReceitasPage() {
                     disabled={busyId === r.id || !r.is_active}
                     onClick={() => void produzir(r.id)}
                     title={!r.is_active ? "Active a receita para produzir." : undefined}
-                    className="rounded-md bg-teal-700 px-3 py-2 text-sm font-medium text-white hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-md bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
                   >
                     {busyId === r.id ? "A processar…" : "Produzir lote"}
                   </button>

@@ -111,7 +111,7 @@ export default function NovaReceitaPage() {
 
   return (
     <>
-      <Link href="/painel/receitas" className="text-sm text-teal-700 hover:underline">
+      <Link href="/painel/receitas" className="text-sm text-painel-primary hover:underline">
         ← Receitas
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-slate-900">Nova receita</h1>
@@ -190,7 +190,7 @@ export default function NovaReceitaPage() {
             <button
               type="button"
               onClick={addLine}
-              className="text-sm text-teal-700 hover:underline"
+              className="text-sm text-painel-primary hover:underline"
             >
               + Linha
             </button>
@@ -235,7 +235,7 @@ export default function NovaReceitaPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
         >
           {loading ? "A guardar…" : "Guardar receita"}
         </button>

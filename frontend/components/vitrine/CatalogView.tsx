@@ -112,7 +112,7 @@ export function CatalogView({ store, categories, products }: Props) {
 
       <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 py-2">
         <p className="max-w-[42ch] text-[0.68rem] leading-snug text-[#9a8b80]">
-          Layout (RF-CF-08): o padrão vem da loja; pode alternar entre grade e lista.
+          O padrão de layout vem da loja; o cliente pode alternar entre grade e lista.
         </p>
         <div
           className="inline-flex overflow-hidden rounded-xl border border-loja-ink/10 bg-loja-surface shadow-loja"
@@ -248,7 +248,7 @@ export function CatalogView({ store, categories, products }: Props) {
           </ul>
         ) : (
           <p className="mt-3 text-[0.78rem] text-[#9a8b80]">
-            Nenhuma rede configurada no tema da loja (`theme.vitrine.social_networks`).
+            Nenhuma rede social configurada na aparência da loja.
           </p>
         )}
       </section>

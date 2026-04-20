@@ -4,6 +4,8 @@ Documento de **síntese** do que está implementado (painel do lojista → loja 
 
 **Última actualização:** 2026-04-21.
 
+Para a **paleta da plataforma (painel de administração)** e **gráficos**, ver [identidade-visual-e-paletas.md](identidade-visual-e-paletas.md).
+
 ---
 
 ## 1. Onde se configura

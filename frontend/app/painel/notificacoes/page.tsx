@@ -37,7 +37,7 @@ export default function PainelNotificacoesPage() {
           ) : null}
           <Link
             href="/painel/pedidos"
-            className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-teal-800"
+            className="rounded-lg bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
           >
             Ir para pedidos
           </Link>
@@ -80,7 +80,7 @@ export default function PainelNotificacoesPage() {
                     ) : null}
                   </p>
                 </div>
-                <span className="text-xs font-medium text-teal-700">
+                <span className="text-xs font-medium text-painel-primary">
                   {n.order_id ? "Abrir pedido →" : "Marcar lida"}
                 </span>
               </button>

@@ -160,7 +160,7 @@ export default function PainelPedidoDetalhePage() {
         <div className="flex flex-wrap gap-2">
           <Link
             href="/painel/pedidos"
-            className="text-sm font-medium text-teal-700 hover:text-teal-800"
+            className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
           >
             ← Lista
           </Link>
@@ -200,7 +200,7 @@ export default function PainelPedidoDetalhePage() {
               </label>
               <select
                 id="status"
-                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:opacity-50"
+                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary disabled:opacity-50"
                 value={pendingStatus ?? order.status}
                 disabled={saving}
                 onChange={(e) => {
@@ -218,7 +218,7 @@ export default function PainelPedidoDetalhePage() {
               {saving ? <span className="text-xs text-slate-500">A guardar…</span> : null}
             </div>
             {order.source === "vitrine" ? (
-              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-teal-800">
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-painel-primary-strong">
                 Origem: vitrine
               </p>
             ) : null}
@@ -249,14 +249,13 @@ export default function PainelPedidoDetalhePage() {
                   WhatsApp — partilhar resumo do pedido
                 </a>
                 <span className="mt-1 block text-xs text-slate-500">
-                  Usa o número configurado em <code className="rounded bg-slate-100 px-1">theme.vitrine.whatsapp</code> da loja.
-                  Abre o WhatsApp Web ou a app com uma mensagem de rascunho (pode editar antes de enviar).
+                  Usa o telefone da vitrine definido em Configuração da loja. Abre o WhatsApp Web ou a app com uma
+                  mensagem de rascunho (pode editar antes de enviar).
                 </span>
               </p>
             ) : me && !me.vitrine_whatsapp ? (
               <p className="mt-4 text-xs text-slate-500">
-                Para atalho WhatsApp, defina o telefone da vitrine em{" "}
-                <code className="rounded bg-slate-100 px-1">stores.theme</code> (ver README).
+                Para atalho WhatsApp, defina o telefone da vitrine em Configuração da loja.
               </p>
             ) : null}
           </section>

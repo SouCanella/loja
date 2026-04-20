@@ -104,7 +104,7 @@ export default function RelatorioEstoquePage() {
           >
             Exportar CSV
           </button>
-          <Link href="/painel/insumos" className="text-sm text-teal-700 hover:underline">
+          <Link href="/painel/insumos" className="text-sm text-painel-primary hover:underline">
             ← Insumos
           </Link>
         </div>

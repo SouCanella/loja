@@ -17,6 +17,8 @@ type OrderRow = {
   source: string | null;
   stock_committed: boolean;
   created_at: string;
+  contact_name: string | null;
+  contact_phone: string | null;
 };
 
 export default function PainelPedidosPage() {
@@ -59,13 +61,13 @@ export default function PainelPedidosPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/painel/pedidos/novo"
-            className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-teal-800"
+            className="rounded-lg bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
           >
             Novo pedido
           </Link>
           <Link
             href="/painel"
-            className="text-sm font-medium text-teal-700 hover:text-teal-800"
+            className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
           >
             ← Painel
           </Link>
@@ -80,7 +82,7 @@ export default function PainelPedidosPage() {
             </label>
             <select
               id="filtro-origem"
-              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as "all" | "vitrine" | "painel")}
             >
@@ -99,7 +101,7 @@ export default function PainelPedidosPage() {
             </label>
             <select
               id="filtro-estado"
-              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             >
@@ -146,11 +148,16 @@ export default function PainelPedidosPage() {
                   <p className="text-sm font-medium text-slate-900">
                     {orderStatusLabel(o.status)}
                     {o.source === "vitrine" ? (
-                      <span className="ml-2 rounded bg-teal-100 px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-teal-900">
+                      <span className="ml-2 rounded bg-painel-secondary px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-painel-on-secondary">
                         Vitrine
                       </span>
                     ) : null}
                   </p>
+                  {o.contact_name?.trim() || o.contact_phone?.trim() ? (
+                    <p className="mt-0.5 text-xs text-slate-700">
+                      {[o.contact_name?.trim(), o.contact_phone?.trim()].filter(Boolean).join(" · ")}
+                    </p>
+                  ) : null}
                   {o.customer_note ? (
                     <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{o.customer_note}</p>
                   ) : null}

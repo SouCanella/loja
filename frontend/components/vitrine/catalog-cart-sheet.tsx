@@ -124,7 +124,7 @@ export function CatalogCartSheet({ open, onClose, store, cart, co, onPreviewMess
                 Seus dados e entrega
               </h3>
               <p className="mb-3 text-[0.7rem] leading-snug text-[#9a8b80]">
-                As opções abaixo alimentam a mensagem enviada ao WhatsApp da loja (RF-CF-09 / RF-PE-08).
+                As opções abaixo alimentam a mensagem enviada ao WhatsApp da loja.
               </p>
               <label className="mb-3 block">
                 <span className="mb-1 block text-[0.78rem] font-semibold text-loja-muted">Nome completo</span>

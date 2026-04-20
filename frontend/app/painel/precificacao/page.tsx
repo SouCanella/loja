@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { FieldTip } from "@/components/painel/FieldTip";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 
 type Recipe = {
@@ -38,7 +39,10 @@ export default function PrecificacaoPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-slate-900">Precificação</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <h1 className="text-2xl font-semibold text-slate-900">Precificação</h1>
+        <FieldTip text="Custo unitário estimado usa insumos e rendimento da receita. A margem % reflecte a configuração efectiva do produto/receita. O preço sugerido é orientador — o preço de venda real define-se em Produtos / catálogo. «—» indica dado ausente ou não calculável." />
+      </div>
       <p className="mt-1 text-sm text-slate-500">
         Custo estimado por insumos, margem efectiva e preço sugerido — alinhe o preço de venda em{" "}
         <span className="font-medium">Produtos</span> / catálogo.
@@ -69,7 +73,7 @@ export default function PrecificacaoPage() {
                   {r.estimated_unit_cost != null ? formatBRL(r.estimated_unit_cost) : "—"}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">{formatPercent(r.effective_margin_percent)}</td>
-                <td className="px-4 py-3 text-right font-semibold tabular-nums text-indigo-900">
+                <td className="px-4 py-3 text-right font-semibold tabular-nums text-painel-primary-strong">
                   {r.suggested_unit_price != null ? formatBRL(r.suggested_unit_price) : "—"}
                 </td>
               </tr>

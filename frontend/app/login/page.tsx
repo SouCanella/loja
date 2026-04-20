@@ -69,7 +69,7 @@ export default function LoginPage() {
             id="email"
             type="email"
             autoComplete="username"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
             required
@@ -83,7 +83,7 @@ export default function LoginPage() {
             id="password"
             type="password"
             autoComplete="current-password"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
             required
@@ -92,7 +92,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          className="w-full rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
         >
           {loading ? "A enviar…" : "Entrar"}
         </button>
@@ -100,16 +100,16 @@ export default function LoginPage() {
       {message ? <p className="mt-4 text-sm text-slate-700">{message}</p> : null}
       <p className="mt-8 text-center text-sm text-slate-500">
         Ainda não tens loja?{" "}
-        <Link href="/registo" className="text-slate-800 underline">
+        <Link href="/registo" className="font-medium text-painel-primary underline hover:text-painel-primary-strong">
           Criar conta
         </Link>
       </p>
       <p className="mt-3 text-center text-sm text-slate-500">
-        <Link href="/painel" className="text-slate-800 underline">
+        <Link href="/painel" className="font-medium text-painel-primary underline hover:text-painel-primary-strong">
           Painel
         </Link>
         {" · "}
-        <Link href="/" className="text-slate-800 underline">
+        <Link href="/" className="font-medium text-painel-primary underline hover:text-painel-primary-strong">
           Início
         </Link>
       </p>

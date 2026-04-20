@@ -133,7 +133,7 @@ export default function PainelDashboardPage() {
             {meSlug ? (
               <Link
                 href={`/loja/${meSlug}`}
-                className="rounded-lg border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-900 hover:bg-teal-100"
+                className="rounded-lg border border-painel-border bg-painel-soft px-4 py-2 text-sm font-medium text-painel-primary-strong hover:bg-painel-soft-hover"
               >
                 Ver vitrine
               </Link>

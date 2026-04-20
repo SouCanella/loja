@@ -125,7 +125,7 @@ export function PainelNotificationsBell({ variant = "dark" }: Props) {
           <div className="border-t border-slate-100 px-2 pt-2">
             <Link
               href="/painel/notificacoes"
-              className="block rounded-md px-2 py-1.5 text-center text-xs font-medium text-teal-700 hover:bg-teal-50"
+              className="block rounded-md px-2 py-1.5 text-center text-xs font-medium text-painel-primary hover:bg-painel-soft"
               onClick={() => setOpen(false)}
             >
               Ver todas

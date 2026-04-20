@@ -5,3 +5,9 @@
 body {
   font-family: system-ui, sans-serif;
 }
+
+/* Evita que o estilo nativo de :disabled reduza opacidade do botão inteiro (texto ilegível com `text-white`). */
+button:disabled,
+button[disabled] {
+  opacity: 1;
+}

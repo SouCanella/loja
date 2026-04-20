@@ -134,7 +134,7 @@ export default function CategoriasPage() {
         </div>
         <button
           type="submit"
-          className="mt-4 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          className="mt-4 rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
         >
           Criar
         </button>

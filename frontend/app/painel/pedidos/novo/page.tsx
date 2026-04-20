@@ -102,7 +102,7 @@ export default function PainelPedidoNovoPage() {
         </div>
         <Link
           href="/painel/pedidos"
-          className="text-sm font-medium text-teal-700 hover:text-teal-800"
+          className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
         >
           ← Pedidos
         </Link>
@@ -166,7 +166,7 @@ export default function PainelPedidoNovoPage() {
             <button
               type="button"
               onClick={addLine}
-              className="text-sm font-medium text-teal-700 hover:text-teal-800"
+              className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
             >
               + Adicionar linha
             </button>
@@ -187,7 +187,7 @@ export default function PainelPedidoNovoPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-teal-800 disabled:opacity-50"
+              className="rounded-lg bg-painel-cta px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
             >
               {saving ? "A criar…" : "Criar pedido"}
             </button>

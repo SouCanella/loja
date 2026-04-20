@@ -28,7 +28,7 @@ export function WhatsAppOrderPreviewModal({ open, onClose, messageText, waUrl }:
           </button>
         </div>
         <p className="border-b border-loja-ink/5 px-4 py-2 text-[0.75rem] text-loja-muted">
-          Será enviada para o WhatsApp da loja com o texto abaixo (RF-PE-08).
+          Será enviada para o WhatsApp da loja com o texto abaixo.
         </p>
         <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap break-words px-4 py-3 text-[0.82rem] text-loja-ink">
           {messageText || "—"}
