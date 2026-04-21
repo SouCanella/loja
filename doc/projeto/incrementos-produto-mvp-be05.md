@@ -26,8 +26,8 @@ Documento de **planeamento**: critérios mínimos sugeridos antes de implementa�
 
 | Critério | Notas |
 |----------|--------|
-| Dados | Já existe `customer-order-stats`; estender API ou materializar vistas. |
-| UI | Segmentos em Clientes ou relatório dedicado; definir «inactivo» (ex.: sem pedidos em N dias). |
+| Dados | **`GET /api/v2/dashboard/customer-order-stats`** devolve `registered_accounts_count`, `accounts_with_orders_in_period`, `accounts_without_orders_in_period` (sem pedidos no intervalo seleccionado). |
+| UI | **Clientes** — bloco «Resumo no período» acima da tabela. **Pendente:** recompra, frequência, segmentos exportáveis. |
 
 ## IP-09 / IP-10 — Avaliações (media + resposta do lojista)
 

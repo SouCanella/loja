@@ -4581,11 +4581,29 @@
             },
             "type": "array",
             "title": "Stats"
+          },
+          "registered_accounts_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Registered Accounts Count"
+          },
+          "accounts_with_orders_in_period": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Accounts With Orders In Period"
+          },
+          "accounts_without_orders_in_period": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Accounts Without Orders In Period"
           }
         },
         "type": "object",
         "required": [
-          "stats"
+          "stats",
+          "registered_accounts_count",
+          "accounts_with_orders_in_period",
+          "accounts_without_orders_in_period"
         ],
         "title": "CustomerOrderStatsOut"
       },

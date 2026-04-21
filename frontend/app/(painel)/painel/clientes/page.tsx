@@ -42,6 +42,13 @@ type CustomerOrderStatRow = {
   last_order_at: string;
 };
 
+type CustomerOrderStatsPayload = {
+  stats: CustomerOrderStatRow[];
+  registered_accounts_count: number;
+  accounts_with_orders_in_period: number;
+  accounts_without_orders_in_period: number;
+};
+
 function formatLocalIsoDate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -68,9 +75,7 @@ export default function ClientesPage() {
   const [vitrineMsg, setVitrineMsg] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [statsRange, setStatsRange] = useState(defaultCustomerStatsRange);
-  const [custOrderStats, setCustOrderStats] = useState<{ stats: CustomerOrderStatRow[] } | null>(
-    null,
-  );
+  const [custOrderStats, setCustOrderStats] = useState<CustomerOrderStatsPayload | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
 
   const loadVitrineCustomers = useCallback(() => {
@@ -100,7 +105,7 @@ export default function ClientesPage() {
       date_from: statsRange.from,
       date_to: statsRange.to,
     });
-    void apiPainelJson<{ stats: CustomerOrderStatRow[] }>(
+    void apiPainelJson<CustomerOrderStatsPayload>(
       `/api/v2/dashboard/customer-order-stats?${q.toString()}`,
     )
       .then(setCustOrderStats)
@@ -209,9 +214,34 @@ export default function ClientesPage() {
       ) : null}
 
       <PanelCard className="mt-8">
-        <PainelTitleHelp tip="Número de pedidos no intervalo de datas (calendário) para cada cliente com login na vitrine. Ordenação: mais pedidos em primeiro. As datas seguem o calendário local e são enviadas como dia civil (AAAA-MM-DD).">
+        <PainelTitleHelp tip="Número de pedidos no intervalo de datas (calendário) para cada cliente com login na vitrine. Ordenação: mais pedidos em primeiro (até 100 linhas). O resumo indica contas registadas e quantas não tiveram pedidos no período (IP-06). As datas seguem o calendário local e são enviadas como dia civil (AAAA-MM-DD).">
           <h2 className="text-sm font-semibold text-slate-800">Actividade por conta (vitrine)</h2>
         </PainelTitleHelp>
+        {custOrderStats && !statsError ? (
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/90 px-4 py-3 text-sm text-slate-700">
+            <p className="font-medium text-slate-800">Resumo no período</p>
+            <ul className="mt-2 list-inside list-disc space-y-0.5 text-slate-600">
+              <li>
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.registered_accounts_count}
+                </span>{" "}
+                conta(s) de vitrine registada(s)
+              </li>
+              <li>
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.accounts_with_orders_in_period}
+                </span>{" "}
+                com pelo menos um pedido
+              </li>
+              <li>
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.accounts_without_orders_in_period}
+                </span>{" "}
+                sem pedidos neste intervalo
+              </li>
+            </ul>
+          </div>
+        ) : null}
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <PainelDateRangeFields
             bare

@@ -122,3 +122,29 @@ def test_customer_order_stats_empty(client: TestClient) -> None:
     assert r.status_code == 200
     data = r.json()["data"]
     assert data["stats"] == []
+    assert data["registered_accounts_count"] == 0
+    assert data["accounts_with_orders_in_period"] == 0
+    assert data["accounts_without_orders_in_period"] == 0
+
+
+def test_customer_order_stats_inactive_counts(client: TestClient) -> None:
+    """IP-06: contas registadas vs sem pedidos no período."""
+    ctx = register_random_store(client)
+    h = ctx["headers"]
+    for em in ["c1@example.com", "c2@example.com"]:
+        cr = client.post(
+            "/api/v2/customers",
+            json={"email": em, "password": "12345678"},
+            headers=h,
+        )
+        assert cr.status_code == 201, cr.text
+    r = client.get(
+        "/api/v2/dashboard/customer-order-stats?date_from=2020-01-01&date_to=2030-12-31",
+        headers=h,
+    )
+    assert r.status_code == 200
+    data = r.json()["data"]
+    assert data["registered_accounts_count"] == 2
+    assert data["accounts_with_orders_in_period"] == 0
+    assert data["accounts_without_orders_in_period"] == 2
+    assert data["stats"] == []

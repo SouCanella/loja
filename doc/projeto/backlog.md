@@ -122,7 +122,7 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | IP-03 | Promoções: combos, desconto por quantidade, produto promocional | ideia | P1 — não iniciado |
 | IP-04 | Disponibilidade por dia/horário (ex.: só fim de semana) | ideia | P1 — não iniciado |
 | IP-05 | Observações por item de pedido (sem granulado, embalagem especial) | convertido | `line_note`; vitrine + painel + WA — §8.1 fase 3.2 |
-| IP-06 | Métricas de recompra, clientes inativos, frequência | parcial | API `customer-order-stats` + secção Clientes; recompra/inactivos — futuro |
+| IP-06 | Métricas de recompra, clientes inativos, frequência | parcial | API + resumo em Clientes (`registered_*`, `accounts_without_orders_in_period`); recompra/frequência — futuro |
 | IP-07 | WhatsApp: template rico (nome, itens, total, endereço) | convertido | Texto por linhas e observações — §8.1 |
 | IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap — não iniciado |
 | IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |

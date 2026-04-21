@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (IP-06 — resumo de contas vitrine no período)
+
+- **API:** `CustomerOrderStatsOut` com `registered_accounts_count`, `accounts_with_orders_in_period`, `accounts_without_orders_in_period` (`customer_order_stats.py`).
+- **Painel:** `/painel/clientes` — bloco «Resumo no período» (contas registadas, com pedido, sem pedidos no intervalo).
+- **Testes:** `test_customer_order_stats_inactive_counts` em `test_ip_demands_product.py`.
+
 ## 2026-04-21 (Engenharia — MA-08, DT-03, IP-02, BE-05 enum, MA-05 doc, plano IP/MVP)
 
 - **MA-08:** alvos `make frontend-audit` e `make security-audit`; guia [seguranca-dependencias-ma08.md](seguranca-dependencias-ma08.md).

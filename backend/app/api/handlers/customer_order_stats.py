@@ -50,4 +50,27 @@ def customer_order_stats_for_store(
         )
         for r in rows
     ]
-    return CustomerOrderStatsOut(stats=stats)
+
+    registered_total = db.scalar(
+        select(func.count()).select_from(Customer).where(Customer.store_id == current.store_id)
+    )
+    registered_total = int(registered_total or 0)
+
+    with_orders = db.scalar(
+        select(func.count(func.distinct(Order.customer_id))).where(
+            Order.store_id == current.store_id,
+            Order.customer_id.isnot(None),
+            Order.created_at >= start,
+            Order.created_at < end_excl,
+        )
+    )
+    with_orders = int(with_orders or 0)
+
+    without_orders = max(0, registered_total - with_orders)
+
+    return CustomerOrderStatsOut(
+        stats=stats,
+        registered_accounts_count=registered_total,
+        accounts_with_orders_in_period=with_orders,
+        accounts_without_orders_in_period=without_orders,
+    )
