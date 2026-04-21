@@ -1,12 +1,27 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import {
+  painelTableCellClass,
+  painelTableClassWide,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+  painelTableWrapClass,
+} from "@/lib/painel-table-classes";
+import {
+  painelFilterBarClass,
+  painelFilterFieldColClass,
+  painelFilterLabelClass,
+  painelFilterSearchInputClass,
+  painelFilterSelectClass,
+} from "@/lib/painel-filter-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type Product = {
   id: string;
@@ -38,6 +53,25 @@ export default function CatalogoPage() {
   const [newSpot, setNewSpot] = useState("");
   const [newSale, setNewSale] = useState("in_stock");
   const [creating, setCreating] = useState(false);
+  const [filterQuery, setFilterQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [categoryFilter, setCategoryFilter] = useState("");
+
+  const displayRows = useMemo(() => {
+    let list = rows;
+    const q = filterQuery.trim().toLowerCase();
+    if (q) {
+      list = list.filter((p) => {
+        const name = p.name.toLowerCase();
+        const desc = (p.description ?? "").toLowerCase();
+        return name.includes(q) || desc.includes(q);
+      });
+    }
+    if (statusFilter === "active") list = list.filter((p) => p.active);
+    else if (statusFilter === "inactive") list = list.filter((p) => !p.active);
+    if (categoryFilter) list = list.filter((p) => p.category_id === categoryFilter);
+    return list;
+  }, [rows, filterQuery, statusFilter, categoryFilter]);
 
   const load = useCallback(() => {
     setErr(null);
@@ -142,7 +176,7 @@ export default function CatalogoPage() {
 
       <form
         onSubmit={(e) => void onCreateProduct(e)}
-        className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        className={`mt-6 ${painelPageContentWidthClass} rounded-xl border border-slate-200 bg-white p-4 shadow-sm`}
       >
         <h2 className="text-sm font-semibold text-slate-800">Novo produto</h2>
         <p className="mt-1 text-xs text-slate-500">
@@ -283,23 +317,80 @@ export default function CatalogoPage() {
         </button>
       </form>
 
-      <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-[1100px] text-left text-sm">
-          <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+      <div className={painelFilterBarClass}>
+        <div className={`min-w-0 flex-1 sm:max-w-md ${painelFilterFieldColClass}`}>
+          <label className={painelFilterLabelClass} htmlFor="catalogo-search">
+            Pesquisar produto
+          </label>
+          <input
+            id="catalogo-search"
+            type="search"
+            autoComplete="off"
+            placeholder="Nome ou descrição…"
+            value={filterQuery}
+            onChange={(e) => setFilterQuery(e.target.value)}
+            className={painelFilterSearchInputClass}
+          />
+        </div>
+        <div className={painelFilterFieldColClass}>
+          <label className={painelFilterLabelClass} htmlFor="catalogo-cat">
+            Categoria
+          </label>
+          <select
+            id="catalogo-cat"
+            className={painelFilterSelectClass}
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="">Todas</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className={painelFilterFieldColClass}>
+          <label className={painelFilterLabelClass} htmlFor="catalogo-act">
+            Estado
+          </label>
+          <select
+            id="catalogo-act"
+            className={painelFilterSelectClass}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
+          >
+            <option value="all">Todos</option>
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+          </select>
+        </div>
+      </div>
+
+      <div className={`mt-8 ${painelTableWrapClass}`}>
+        <table className={painelTableClassWide}>
+          <thead className={painelTableTheadClass}>
             <tr>
-              <th className="px-4 py-3">Produto</th>
-              <th className="px-4 py-3">Categoria</th>
-              <th className="px-4 py-3">Destaque</th>
-              <th className="px-4 py-3">Venda</th>
-              <th className="px-4 py-3">URL da imagem</th>
-              <th className="px-4 py-3 text-right">Preço</th>
-              <th className="px-4 py-3 text-center">Activo</th>
+              <th className={painelTableCellClass}>Produto</th>
+              <th className={painelTableCellClass}>Categoria</th>
+              <th className={painelTableCellClass}>Destaque</th>
+              <th className={painelTableCellClass}>Venda</th>
+              <th className={painelTableCellClass}>URL da imagem</th>
+              <th className={`${painelTableCellClass} text-right`}>Preço</th>
+              <th className={`${painelTableCellClass} text-center`}>Activo</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {rows.map((p) => (
+          <tbody className={painelTableTbodyClass}>
+            {rows.length > 0 && displayRows.length === 0 ? (
+              <tr>
+                <td colSpan={7} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
+                  Nenhum produto corresponde aos filtros.
+                </td>
+              </tr>
+            ) : null}
+            {displayRows.map((p) => (
               <tr key={p.id} className={saving === p.id ? "opacity-60" : undefined}>
-                <td className="max-w-[12rem] px-4 py-3 align-top">
+                <td className={`max-w-[12rem] ${painelTableCellClass} align-top`}>
                   <input
                     className="w-full rounded border border-slate-200 px-2 py-1 font-medium text-slate-900"
                     defaultValue={p.name}
@@ -322,7 +413,7 @@ export default function CatalogoPage() {
                     }}
                   />
                 </td>
-                <td className="px-4 py-3 align-top">
+                <td className={`${painelTableCellClass} align-top`}>
                   <select
                     className="max-w-[10rem] rounded border border-slate-200 px-2 py-1 text-xs"
                     value={p.category_id ?? ""}
@@ -342,7 +433,7 @@ export default function CatalogoPage() {
                     ))}
                   </select>
                 </td>
-                <td className="px-4 py-3 align-top">
+                <td className={`${painelTableCellClass} align-top`}>
                   <select
                     className="max-w-[9rem] rounded border border-slate-200 px-2 py-1 text-xs"
                     value={p.catalog_spotlight ?? ""}
@@ -360,7 +451,7 @@ export default function CatalogoPage() {
                     <option value="bestseller">Mais vendido</option>
                   </select>
                 </td>
-                <td className="px-4 py-3 align-top">
+                <td className={`${painelTableCellClass} align-top`}>
                   <select
                     className="max-w-[9rem] rounded border border-slate-200 px-2 py-1 text-xs"
                     value={p.catalog_sale_mode ?? "in_stock"}
@@ -372,7 +463,7 @@ export default function CatalogoPage() {
                     <option value="unavailable">Indisponível</option>
                   </select>
                 </td>
-                <td className="max-w-md px-4 py-3 align-top">
+                <td className={`max-w-md ${painelTableCellClass} align-top`}>
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
                     <input
                       key={`${p.id}-img-${p.image_url ?? ""}`}
@@ -394,7 +485,7 @@ export default function CatalogoPage() {
                     />
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right align-top">
+                <td className={`${painelTableCellClass} text-right align-top`}>
                   <input
                     className="w-24 rounded border border-slate-200 px-2 py-1 text-right tabular-nums"
                     defaultValue={p.price}
@@ -409,7 +500,7 @@ export default function CatalogoPage() {
                   />
                   <div className="mt-1 text-xs text-slate-500">{formatBRL(p.price)}</div>
                 </td>
-                <td className="px-4 py-3 text-center align-top">
+                <td className={`${painelTableCellClass} text-center align-top`}>
                   <input
                     key={`${p.id}-${p.active ? "1" : "0"}`}
                     type="checkbox"

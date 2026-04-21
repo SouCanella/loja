@@ -58,7 +58,7 @@ export default function RegistoLojaPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center px-4 sm:px-6 py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col justify-center px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-semibold text-slate-900">Criar loja</h1>
       <p className="mt-1 text-sm text-slate-500">
         Regista a tua loja e o utilizador administrador. O slug identifica a vitrine pública.

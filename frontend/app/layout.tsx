@@ -15,8 +15,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
+    <html lang="pt-BR" className="h-full">
+      {/* min-h-dvh: viewport estável (melhor que 100vh em mobile); páginas herdam altura mínima coerente */}
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }

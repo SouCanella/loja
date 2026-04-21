@@ -7,6 +7,13 @@ import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
+import {
+  painelFilterBarClass,
+  painelFilterCheckboxClass,
+  painelFilterFieldColClass,
+  painelFilterLabelClass,
+  painelFilterSearchInputClass,
+} from "@/lib/painel-filter-classes";
 
 type RecipeOut = {
   id: string;
@@ -140,28 +147,34 @@ export default function ReceitasPage() {
           </Link>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-end gap-4">
-        <label className="text-xs text-slate-600">
-          Filtrar por nome do produto
-          <input
-            type="search"
-            className="ml-2 mt-1 block rounded border border-slate-200 px-2 py-1 text-sm"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            placeholder="Comece a escrever…"
-          />
-        </label>
-        <label className="flex items-start gap-2 text-xs text-slate-600">
-          <input
-            type="checkbox"
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300"
-            checked={includeInactive}
-            onChange={(e) => setIncludeInactive(e.target.checked)}
-          />
-          <FieldTipBeside tip="Receitas inactivas ficam ocultas na produção até serem reactivadas.">
-            Mostrar inactivas
-          </FieldTipBeside>
-        </label>
+        <div className={painelFilterBarClass}>
+          <div className={`min-w-0 flex-1 sm:max-w-md ${painelFilterFieldColClass}`}>
+            <label className={painelFilterLabelClass} htmlFor="receitas-filter">
+              Filtrar por nome do produto
+            </label>
+            <input
+              id="receitas-filter"
+              type="search"
+              autoComplete="off"
+              className={painelFilterSearchInputClass}
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              placeholder="Comece a escrever…"
+            />
+          </div>
+          <label className="flex items-start gap-2 sm:pb-2">
+            <input
+              type="checkbox"
+              className={painelFilterCheckboxClass}
+              checked={includeInactive}
+              onChange={(e) => setIncludeInactive(e.target.checked)}
+            />
+            <span className="text-sm text-slate-600">
+              <FieldTipBeside tip="Receitas inactivas ficam ocultas na produção até serem reactivadas.">
+                Mostrar inactivas
+              </FieldTipBeside>
+            </span>
+          </label>
         </div>
       </PainelStickyHeading>
 

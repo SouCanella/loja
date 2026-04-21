@@ -7,6 +7,19 @@ import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import {
+  painelTableCellClass,
+  painelTableCellDenseClass,
+  painelTableClass,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+  painelTableWrapClass,
+} from "@/lib/painel-table-classes";
+import {
+  painelFilterLabelClass,
+  painelFilterSearchInputClass,
+} from "@/lib/painel-filter-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type OrderRow = {
   id: string;
@@ -192,7 +205,7 @@ export default function ClientesPage() {
       </PainelStickyHeading>
       <form
         onSubmit={(e) => void onCreateVitrineCustomer(e)}
-        className="mt-6 max-w-xl rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        className={`mt-6 ${painelPageContentWidthClass} rounded-xl border border-slate-200 bg-white p-4 shadow-sm`}
       >
         <h2 className="text-sm font-semibold text-slate-800">
           <FieldTipBeside tip="Conta de login na vitrine: o cliente usa este e-mail e palavra-passe na loja pública (área de cliente).">
@@ -262,22 +275,22 @@ export default function ClientesPage() {
       {vitrineError ? <p className="mt-4 text-sm text-amber-800">{vitrineError}</p> : null}
 
       {vitrineCustomers && vitrineCustomers.length > 0 ? (
-        <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full text-left text-sm">
+        <div className={`mt-6 ${painelTableWrapClass}`}>
+          <table className={painelTableClass}>
             <caption className="border-b border-slate-100 bg-slate-50 px-4 py-2 text-left text-xs font-semibold text-slate-700">
               Contas na vitrine
             </caption>
-            <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+            <thead className={painelTableTheadClass}>
               <tr>
-                <th className="px-4 py-2">E-mail</th>
-                <th className="px-4 py-2 text-right">Registado em</th>
+                <th className={painelTableCellDenseClass}>E-mail</th>
+                <th className={`${painelTableCellDenseClass} text-right`}>Registado em</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className={painelTableTbodyClass}>
               {vitrineCustomers.map((c) => (
                 <tr key={c.id}>
-                  <td className="px-4 py-2 font-medium text-slate-900">{c.email}</td>
-                  <td className="px-4 py-2 text-right text-xs text-slate-600 tabular-nums">
+                  <td className={`${painelTableCellDenseClass} font-medium text-slate-900`}>{c.email}</td>
+                  <td className={`${painelTableCellDenseClass} text-right text-xs text-slate-600 tabular-nums`}>
                     {new Date(c.created_at).toLocaleString("pt-BR", {
                       dateStyle: "short",
                       timeStyle: "short",
@@ -315,8 +328,8 @@ export default function ClientesPage() {
         <div className="mt-8 space-y-3">
           <h2 className="text-sm font-semibold text-slate-800">Por pedidos</h2>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-            <div className="max-w-md flex-1">
-              <label className="block text-xs font-medium text-slate-600" htmlFor="clientes-filter">
+            <div className="min-w-0 flex-1">
+              <label className={painelFilterLabelClass} htmlFor="clientes-filter">
                 Filtrar por nome ou telefone
               </label>
               <input
@@ -326,7 +339,7 @@ export default function ClientesPage() {
                 placeholder="Ex.: Maria, 11999…"
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
-                className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+                className={painelFilterSearchInputClass}
               />
             </div>
             <p className="text-xs text-slate-500">
@@ -336,36 +349,36 @@ export default function ClientesPage() {
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+          <div className={painelTableWrapClass}>
+            <table className={painelTableClass}>
+              <thead className={painelTableTheadClass}>
                 <tr>
-                  <th className="px-4 py-3">Contacto</th>
-                  <th className="px-4 py-3 text-right">Pedidos</th>
-                  <th className="px-4 py-3 text-right">Último pedido</th>
-                  <th className="px-4 py-3 text-right">Acções</th>
+                  <th className={painelTableCellClass}>Contacto</th>
+                  <th className={`${painelTableCellClass} text-right`}>Pedidos</th>
+                  <th className={`${painelTableCellClass} text-right`}>Último pedido</th>
+                  <th className={`${painelTableCellClass} text-right`}>Acções</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className={painelTableTbodyClass}>
                 {filteredGroups.map(({ key, orders, label }) => {
                   const latest = orders[0];
                   const n = orders.length;
                   return (
                     <tr key={key} className="text-slate-800">
-                      <td className="px-4 py-3">
+                      <td className={painelTableCellClass}>
                         <div className="font-medium text-slate-900">{label.title}</div>
                         {label.subtitle ? (
                           <div className="mt-0.5 text-xs text-slate-500">{label.subtitle}</div>
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 text-right tabular-nums">{n}</td>
-                      <td className="px-4 py-3 text-right text-xs text-slate-600">
+                      <td className={`${painelTableCellClass} text-right tabular-nums`}>{n}</td>
+                      <td className={`${painelTableCellClass} text-right text-xs text-slate-600`}>
                         {new Date(latest.created_at).toLocaleString("pt-BR", {
                           dateStyle: "short",
                           timeStyle: "short",
                         })}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className={`${painelTableCellClass} text-right`}>
                         <Link
                           href={`/painel/pedidos/${latest.id}`}
                           className="font-medium text-painel-primary hover:text-painel-primary-strong"

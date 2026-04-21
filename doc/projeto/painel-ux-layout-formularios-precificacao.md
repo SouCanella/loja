@@ -28,6 +28,15 @@
 - Componente base: **`FieldTip`** (`frontend/components/painel/FieldTip.tsx`) — ícone «?» que abre texto num painel (portal); **`FieldTipBeside`** para rótulos de campo; **`PainelTitleHelp`** para títulos de página/secção; **`FilterBarFieldTip`** para o «?» alinhado a filtros de **De/Até** (Relatórios, Financeiro).
 - Comportamento unificado: propagação interrompida dentro de **acordeões** (`<details>` / `<summary>`) para o clique não alternar a secção ao abrir a ajuda; posicionamento do painel com ajuste vertical; `z-index` elevado para ficar acima do overlay móvel do menu.
 
+### 1.3 Tabelas, largura de página, filtros e viewport (Fase 3.2 — iteração)
+
+| Ficheiro | Uso |
+|----------|-----|
+| **`frontend/lib/painel-table-classes.ts`** | Classes partilhadas para `<table>` do painel (`thead`/`tbody`, células, *wrap* com scroll). |
+| **`frontend/lib/painel-layout-classes.ts`** | Largura máxima do bloco principal em páginas que precisam alinhar ao mesmo *grid* (ex.: `painelPageContentWidthClass`). |
+| **`frontend/lib/painel-filter-classes.ts`** | Barra de filtros: pesquisa, `select`, datas (`De`/`Até`), checkbox — reutilizado em pedidos, clientes, receitas, insumos, catálogo, precificação, produção, relatório de stock, notificações, analytics vitrine e relatório financeiro (inputs de data). |
+| **`globals.css` / `app/layout.tsx` / `PainelShell`** | Altura mínima da app (`min-h-dvh`) e coluna do painel para evitar «saltos» de layout em mobile/desktop. |
+
 ---
 
 ## 2. Botão «Guardar» sempre visível
@@ -82,6 +91,7 @@ Resposta **`RecipeOut`** inclui ainda `estimated_material_unit_cost` e `estimate
 | Tema | Local |
 |------|--------|
 | Shell do painel (sidebar, header móvel) | `frontend/components/painel/PainelShell.tsx` |
+| Tabelas / largura / filtros (classes) | `frontend/lib/painel-table-classes.ts`, `painel-layout-classes.ts`, `painel-filter-classes.ts` |
 | Título sticky + barra guardar | `PainelStickyHeading.tsx`, `PainelFormSaveBar.tsx` |
 | Taxa MO + margem (serviço) | `backend/app/services/store_pricing.py` |
 | Custo MP + MO | `backend/app/services/pricing.py`, `backend/app/api/handlers/recipes.py` |

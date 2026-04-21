@@ -9,6 +9,7 @@ import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnDangerCompactClass, painelBtnLinkClass } from "@/lib/painel-button-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type ProductOut = {
   id: string;
@@ -210,7 +211,7 @@ export default function EditarReceitaPage() {
 
       <form
         id="editar-receita-form"
-        className="mt-4 max-w-lg space-y-4 pb-28 md:pb-32"
+        className={`mt-4 ${painelPageContentWidthClass} space-y-4 pb-28 md:pb-32`}
         onSubmit={onSubmit}
       >
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">

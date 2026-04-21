@@ -145,8 +145,8 @@ export function PainelShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 print:bg-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] print:max-w-none">
+    <div className="min-h-dvh bg-slate-50 print:bg-white">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[1600px] print:max-w-none">
         {/* Desktop sidebar */}
         <aside
           className="hidden w-60 shrink-0 flex-col border-r border-painel-sidebar-border text-neutral-100 [color-scheme:dark] md:flex print:hidden"
@@ -183,7 +183,7 @@ export function PainelShell({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Main */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-3 md:hidden print:hidden">
             <button
               type="button"
@@ -255,7 +255,9 @@ export function PainelShell({ children }: { children: ReactNode }) {
                 document.body,
               )
             : null}
-          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 print:p-0">{children}</main>
+          <main className="flex min-h-0 flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 print:p-0">
+            {children}
+          </main>
         </div>
       </div>
     </div>

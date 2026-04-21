@@ -24,6 +24,8 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       reportsDirectory: "./coverage",
+      /** Foco em lógica testável; páginas Next cobrem-se sobretudo com E2E. */
+      include: ["lib/**/*.ts"],
     },
   },
 });

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-dvh bg-white text-slate-900">
       <SiteHeader />
       <main>
         <section className="border-b border-slate-100 bg-gradient-to-b from-emerald-50/60 to-white">

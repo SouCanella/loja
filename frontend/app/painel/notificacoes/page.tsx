@@ -2,14 +2,29 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
 import { usePainelNotifications } from "@/components/painel/PainelNotificationsContext";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
+import {
+  painelFilterBarClass,
+  painelFilterFieldColClass,
+  painelFilterLabelClass,
+  painelFilterSelectClass,
+} from "@/lib/painel-filter-classes";
 
 export default function PainelNotificacoesPage() {
   const { inbox, loading, error, markRead, markAllRead } = usePainelNotifications();
   const router = useRouter();
+  const [readFilter, setReadFilter] = useState<"all" | "unread" | "read">("all");
+
+  const filteredItems = useMemo(() => {
+    if (!inbox?.items.length) return [];
+    if (readFilter === "all") return inbox.items;
+    if (readFilter === "unread") return inbox.items.filter((n) => !n.read_at);
+    return inbox.items.filter((n) => n.read_at);
+  }, [inbox, readFilter]);
 
   async function onOpen(id: string, orderId: string | null) {
     await markRead([id]);
@@ -46,6 +61,28 @@ export default function PainelNotificacoesPage() {
             </Link>
           </div>
         </div>
+
+        {inbox && inbox.items.length > 0 ? (
+          <div className={painelFilterBarClass}>
+            <div className={painelFilterFieldColClass}>
+              <label className={painelFilterLabelClass} htmlFor="notif-filter">
+                Mostrar
+              </label>
+              <select
+                id="notif-filter"
+                className={painelFilterSelectClass}
+                value={readFilter}
+                onChange={(e) => setReadFilter(e.target.value as "all" | "unread" | "read")}
+              >
+                <option value="all">Todas ({inbox.items.length})</option>
+                <option value="unread">
+                  Não lidas ({inbox.items.filter((n) => !n.read_at).length})
+                </option>
+                <option value="read">Lidas ({inbox.items.filter((n) => n.read_at).length})</option>
+              </select>
+            </div>
+          </div>
+        ) : null}
       </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
@@ -58,9 +95,13 @@ export default function PainelNotificacoesPage() {
         <p className="mt-8 text-sm text-slate-600">Não há notificações.</p>
       ) : null}
 
-      {inbox && inbox.items.length > 0 ? (
+      {inbox && inbox.items.length > 0 && filteredItems.length === 0 ? (
+        <p className="mt-6 text-sm text-slate-600">Nenhuma notificação neste filtro.</p>
+      ) : null}
+
+      {inbox && filteredItems.length > 0 ? (
         <ul className="mt-6 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-sm">
-          {inbox.items.map((n) => (
+          {filteredItems.map((n) => (
             <li key={n.id}>
               <button
                 type="button"

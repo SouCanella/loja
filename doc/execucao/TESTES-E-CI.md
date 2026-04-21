@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-22.
+**Última actualização:** 2026-04-21.
 
 **Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
@@ -22,7 +22,7 @@
 
 A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
 
-**Fase 3.2 (impressão + landing + analytics vitrine):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md). Contrato de impressão: `test_order_print_v2.py`; Vitest `__tests__/escpos.test.ts`; E2E smoke `e2e/smoke.spec.ts` (landing, termos, privacidade); analytics: `test_vitrine_analytics_v2.py`.
+**Fase 3.2 (impressão + landing + analytics vitrine + UX painel):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md). Contrato de impressão: `test_order_print_v2.py`; Vitest `__tests__/escpos.test.ts`, `__tests__/painel-filter-classes.test.ts` (classes Tailwind de filtros); E2E smoke `e2e/smoke.spec.ts` (landing, termos, privacidade); analytics: `test_vitrine_analytics_v2.py`.
 
 ## 2. Backend (pytest)
 
@@ -45,7 +45,7 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 |------|--------|
 | Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
-| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine) |
+| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts` (exports de `lib/painel-filter-classes.ts`) |
 
 Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). O `make test` na raiz depende deste comando concluir com **exit 0**.
 

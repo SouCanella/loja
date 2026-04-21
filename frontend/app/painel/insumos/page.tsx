@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
@@ -12,6 +12,19 @@ import {
   PainelApiError,
 } from "@/lib/painel-api";
 import { painelBtnDangerCompactClass, painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import {
+  painelFilterBarClass,
+  painelFilterFieldColClass,
+  painelFilterLabelClass,
+  painelFilterSearchInputClass,
+} from "@/lib/painel-filter-classes";
+import {
+  painelTableCellClass,
+  painelTableClass,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+  painelTableWrapClass,
+} from "@/lib/painel-table-classes";
 
 type InvRow = {
   id: string;
@@ -33,6 +46,13 @@ export default function InsumosPage() {
   const [cost, setCost] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [filterQuery, setFilterQuery] = useState("");
+
+  const displayRows = useMemo(() => {
+    const q = filterQuery.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter((r) => r.name.toLowerCase().includes(q) || r.unit.toLowerCase().includes(q));
+  }, [rows, filterQuery]);
 
   const load = useCallback(() => {
     setError(null);
@@ -128,6 +148,23 @@ export default function InsumosPage() {
             <Link href="/painel" className="text-sm text-painel-primary hover:underline">
               ← Painel
             </Link>
+          </div>
+        </div>
+
+        <div className={painelFilterBarClass}>
+          <div className={`min-w-[12rem] flex-1 sm:max-w-md ${painelFilterFieldColClass}`}>
+            <label className={painelFilterLabelClass} htmlFor="insumos-filter">
+              Pesquisar insumo
+            </label>
+            <input
+              id="insumos-filter"
+              type="search"
+              autoComplete="off"
+              placeholder="Nome ou unidade…"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              className={painelFilterSearchInputClass}
+            />
           </div>
         </div>
       </PainelStickyHeading>
@@ -227,40 +264,47 @@ export default function InsumosPage() {
         </button>
       </form>
 
-      <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+      <div className={`mt-8 ${painelTableWrapClass}`}>
+        <table className={painelTableClass}>
+          <thead className={painelTableTheadClass}>
             <tr>
-              <th className="px-4 py-3">Insumo</th>
-              <th className="px-4 py-3 text-right">
+              <th className={painelTableCellClass}>Insumo</th>
+              <th className={`${painelTableCellClass} text-right`}>
                 <FieldTipBeside align="end" tip="Soma das quantidades em todos os lotes deste insumo.">
                   Qtd disponível
                 </FieldTipBeside>
               </th>
-              <th className="px-4 py-3 text-right">
+              <th className={`${painelTableCellClass} text-right`}>
                 <FieldTipBeside align="end" tip="Custo médio ponderado pelos lotes (quando há stock).">
                   Custo médio / un.
                 </FieldTipBeside>
               </th>
-              <th className="px-4 py-3 text-right">
+              <th className={`${painelTableCellClass} text-right`}>
                 <FieldTipBeside align="end" tip="Quantidade × custo por lote (aproximação do valor inventariado).">
                   Valor em stock
                 </FieldTipBeside>
               </th>
-              <th className="px-4 py-3 text-right"> </th>
+              <th className={`${painelTableCellClass} text-right`}> </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className={painelTableTbodyClass}>
             {rows.length === 0 && !error ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={5} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
                   Nenhum insumo ainda.
                 </td>
               </tr>
             ) : null}
-            {rows.map((r) => (
+            {rows.length > 0 && displayRows.length === 0 ? (
+              <tr>
+                <td colSpan={5} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
+                  Nenhum insumo corresponde a «{filterQuery.trim()}».
+                </td>
+              </tr>
+            ) : null}
+            {displayRows.map((r) => (
               <tr key={r.id}>
-                <td className="max-w-[14rem] px-4 py-3">
+                <td className={`max-w-[14rem] ${painelTableCellClass}`}>
                   <span className="font-medium text-slate-900">{r.name}</span>
                   <span className="text-slate-500"> ({r.unit})</span>
                   {r.has_sale_product ? (
@@ -269,16 +313,16 @@ export default function InsumosPage() {
                     </span>
                   ) : null}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums text-slate-800">
+                <td className={`${painelTableCellClass} text-right tabular-nums text-slate-800`}>
                   {formatQty(r.quantity_available)}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                <td className={`${painelTableCellClass} text-right tabular-nums text-slate-700`}>
                   {r.weighted_avg_unit_cost != null ? formatBRL(r.weighted_avg_unit_cost) : "—"}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums text-slate-800">
+                <td className={`${painelTableCellClass} text-right tabular-nums text-slate-800`}>
                   {formatBRL(r.inventory_value)}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className={`${painelTableCellClass} text-right`}>
                   <button
                     type="button"
                     disabled={busyId === r.id}

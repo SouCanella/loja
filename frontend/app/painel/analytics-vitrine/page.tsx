@@ -4,6 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import {
+  painelFilterBarBoxClass,
+  painelFilterDateInputClass,
+  painelFilterLabelCompactClass,
+} from "@/lib/painel-filter-classes";
 
 type Summary = {
   date_from: string;
@@ -53,31 +58,31 @@ export default function PainelAnalyticsVitrinePage() {
           estimadas por identificador anónimo no navegador.
         </p>
 
-        <div className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div>
-          <label className="block text-xs font-medium text-slate-600" htmlFor="af">
-            De
-          </label>
-          <input
-            id="af"
-            type="date"
-            className="mt-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-slate-600" htmlFor="at">
-            Até
-          </label>
-          <input
-            id="at"
-            type="date"
-            className="mt-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-          />
-        </div>
+        <div className={painelFilterBarBoxClass}>
+          <div>
+            <label className={painelFilterLabelCompactClass} htmlFor="af">
+              De
+            </label>
+            <input
+              id="af"
+              type="date"
+              className={painelFilterDateInputClass}
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className={painelFilterLabelCompactClass} htmlFor="at">
+              Até
+            </label>
+            <input
+              id="at"
+              type="date"
+              className={painelFilterDateInputClass}
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
+          </div>
         </div>
       </PainelStickyHeading>
 

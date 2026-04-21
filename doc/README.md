@@ -43,7 +43,7 @@
 | Fase 2 — Operação | Concluída (inventário [fases/fase-02-operacao.md](fases/fase-02-operacao.md) §10) |
 | **Fase 3 — Gestão** | **Concluída** (API + painel receitas/produção/relatório CSV): [fases/fase-03-gestao.md](fases/fase-03-gestao.md) **§8–§10** |
 | **Fase 3.1 — Paridade mockup** | **Concluída** (shell, gráficos, paridade UX; ver §7–§10): [fases/fase-03-1-paridade-mockup.md](fases/fase-03-1-paridade-mockup.md) |
-| **Fase 3.2 — Experiência lojista** | **Concluída** — impressão (`/print`, `print_config`, recibo HTML/USB experimental) + landing + analytics vitrine; **incrementos UX do painel** (sticky, botões, tips, ordem «Redes sociais»): [fases/fase-03-2-impressao-termica.md](fases/fase-03-2-impressao-termica.md) §8, [execucao/fase-3-2-implementacao-resumo.md](execucao/fase-3-2-implementacao-resumo.md) §7 |
+| **Fase 3.2 — Experiência lojista** | **Concluída** — impressão (`/print`, `print_config`, recibo HTML/USB experimental) + landing + analytics vitrine; **incrementos UX do painel** (sticky, botões, tips, ordem «Redes sociais», tabelas/layout viewport, **filtros padronizados**): [fases/fase-03-2-impressao-termica.md](fases/fase-03-2-impressao-termica.md) §8, [execucao/fase-3-2-implementacao-resumo.md](execucao/fase-3-2-implementacao-resumo.md) §7–§8 |
 
 ## Checklist pré-desenvolvimento
 

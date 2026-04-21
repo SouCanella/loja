@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Fase 3.2 — tabelas, layout, filtros padronizados, testes Vitest)
+
+- **Frontend — consistência:** `frontend/lib/painel-table-classes.ts`, `painel-layout-classes.ts`, `painel-filter-classes.ts`; filtros de pesquisa/seleção/datas nas páginas do painel (pedidos, clientes, receitas, insumos, catálogo, precificação, produção, relatório de stock, notificações, analytics vitrine, relatório financeiro — datas).
+- **Testes:** `frontend/__tests__/painel-filter-classes.test.ts` (Vitest).
+- **Documentação:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8; [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §8; [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3; [TESTES-E-CI.md](TESTES-E-CI.md).
+
 ## 2026-04-20 (Fase 3.2 — UX do painel: sticky, botões, tips, configuração)
 
 - **Frontend — consistência:** classes partilhadas em `frontend/lib/painel-button-classes.ts`; `FieldTip` / `FilterBarFieldTip` (comportamento unificado do «?», inclusive dentro de acordeões); `PainelStickyHeading` com `children` e uso alargado às páginas do painel (cabeçalho fixo ao scroll como em Configuração).

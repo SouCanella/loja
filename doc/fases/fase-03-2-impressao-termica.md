@@ -148,9 +148,13 @@ Entregues como **continuidade da experiência lojista** no painel (consistência
 | **Botões** | Classes canónicas em `frontend/lib/painel-button-classes.ts` (primário, secundário, perigo, links) reutilizadas nas páginas e componentes (`PainelFormSaveBar`, `ImageUploadButton`, `OrderPrintPanel`, etc.). |
 | **Ajuda contextual («?»)** | `FieldTip`: `stopPropagation` dentro de `<summary>`/acordeões, posicionamento do painel com flip vertical, `z-index` elevado, `aria-label` único; `FilterBarFieldTip` para o «?» junto a filtros de datas (ex.: Financeiro, Relatórios). |
 | **Configuração — redes sociais** | Secção **Redes sociais** separada de **Aparência da vitrine**, colocada **depois de Identidade da loja** (`/painel/configuracao`); persistência inalterada (`theme.vitrine.social_networks`). |
+| **Tabelas do painel** | Classes partilhadas em `frontend/lib/painel-table-classes.ts` (cabeçalhos, células, *wrap*); uso nas listagens com `<table>` (insumos, catálogo, pedidos, relatórios, etc.). |
+| **Largura do conteúdo** | `frontend/lib/painel-layout-classes.ts` — alinhamento de blocos principais (`painelPageContentWidthClass`, …) em páginas que devem partilhar a mesma largura útil. |
+| **Viewport / altura** | `min-h-dvh` no *shell* e páginas públicas (login, registo, landing, termos, privacidade) para coluna estável em mobile. |
+| **Filtros padronizados** | `frontend/lib/painel-filter-classes.ts` — barra de filtros, pesquisa, `select`, datas; páginas: pedidos, clientes, receitas, insumos, catálogo (pesquisa + categoria + estado), precificação, produção (datas + texto), relatório de stock, notificações (lidas/não lidas), analytics vitrine e datas no relatório financeiro. |
 
-Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7.
+Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§8; UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
 
 ---
 
-*Última revisão: 2026-04-20 — Marco 3.2 no repositório: impressão, landing, analytics de vitrine, OpenAPI e testes; **§8** — incrementos UX do painel (sticky, botões, tips, ordem «Redes sociais» na configuração).*
+*Última revisão: 2026-04-21 — **§8** alargado: tabelas, largura de conteúdo, viewport, filtros padronizados e referência a testes Vitest (`painel-filter-classes.test.ts`). Revisão anterior 2026-04-20: marco 3.2 (impressão, landing, analytics, OpenAPI); incrementos UX (sticky, botões, tips, redes sociais).*

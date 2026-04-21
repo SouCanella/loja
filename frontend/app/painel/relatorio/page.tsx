@@ -18,6 +18,14 @@ import {
   painelBtnSecondaryClass,
   painelBtnSecondaryCompactClass,
 } from "@/lib/painel-button-classes";
+import { painelFilterDateInputClass } from "@/lib/painel-filter-classes";
+import {
+  painelTableCellDenseClass,
+  painelTableClass,
+  painelTableScrollInnerClass,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+} from "@/lib/painel-table-classes";
 
 type ProductRow = {
   product_id: string;
@@ -122,7 +130,7 @@ function SortTh({
 }) {
   return (
     <th
-      className={`px-4 py-2 ${align === "right" ? "text-right" : "text-left"} cursor-pointer select-none hover:bg-slate-100`}
+      className={`${painelTableCellDenseClass} ${align === "right" ? "text-right" : "text-left"} cursor-pointer select-none hover:bg-slate-100`}
       onClick={onClick}
       aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : undefined}
     >
@@ -491,7 +499,7 @@ export default function RelatorioPage() {
           <input
             id="df"
             type="date"
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className={painelFilterDateInputClass}
             value={from}
             onChange={(e) => setFrom(e.target.value)}
           />
@@ -503,7 +511,7 @@ export default function RelatorioPage() {
           <input
             id="dt"
             type="date"
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className={painelFilterDateInputClass}
             value={to}
             onChange={(e) => setTo(e.target.value)}
           />
@@ -631,7 +639,7 @@ export default function RelatorioPage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
                 <PainelTitleHelp tip="Mesma lógica do gráfico de barras: receita atribuída a cada estado (pago, enviado, etc.). A coluna «Partilha» compara visualmente cada linha com o maior valor da tabela.">
@@ -645,28 +653,34 @@ export default function RelatorioPage() {
             {data.by_order_status.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem pedidos neste período.</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+              <div className={painelTableScrollInnerClass}>
+                <table className={painelTableClass}>
+                  <thead className={painelTableTheadClass}>
                     <tr>
-                      <th className="px-4 py-2">Estado</th>
-                      <th className="px-4 py-2 text-right">Pedidos</th>
-                      <th className="px-4 py-2 text-right">Receita</th>
-                      <th className="hidden min-w-[120px] px-4 py-2 sm:table-cell">Partilha</th>
+                      <th className={painelTableCellDenseClass}>Estado</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Pedidos</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Receita</th>
+                      <th className={`hidden min-w-[120px] ${painelTableCellDenseClass} sm:table-cell`}>
+                        Partilha
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className={painelTableTbodyClass}>
                     {data.by_order_status.map((s) => {
                       const rev = num(s.orders_revenue);
                       const w = maxStatusRev > 0 ? Math.round((rev / maxStatusRev) * 100) : 0;
                       return (
                         <tr key={s.status} className="text-slate-800">
-                          <td className="px-4 py-2 font-medium">{orderStatusLabel(s.status)}</td>
-                          <td className="px-4 py-2 text-right tabular-nums">{s.orders_count}</td>
-                          <td className="px-4 py-2 text-right tabular-nums">
+                          <td className={`${painelTableCellDenseClass} font-medium`}>
+                            {orderStatusLabel(s.status)}
+                          </td>
+                          <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
+                            {s.orders_count}
+                          </td>
+                          <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                             {formatBRL(s.orders_revenue)}
                           </td>
-                          <td className="hidden px-4 py-2 sm:table-cell">
+                          <td className={`hidden ${painelTableCellDenseClass} sm:table-cell`}>
                             <div className="h-2 w-full max-w-[140px] rounded-full bg-slate-100">
                               <div
                                 className="h-2 rounded-full bg-slate-400"
@@ -683,7 +697,7 @@ export default function RelatorioPage() {
             )}
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
                 <PainelTitleHelp tip="Totais por categoria de produto no catálogo. Quantidade vendida, receita, custo de produção (insumos) e margens são somas do período por essa categoria.">
@@ -698,33 +712,35 @@ export default function RelatorioPage() {
             {data.by_category.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem movimento por categoria neste período.</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+              <div className={painelTableScrollInnerClass}>
+                <table className={painelTableClass}>
+                  <thead className={painelTableTheadClass}>
                     <tr>
-                      <th className="px-4 py-2">Categoria</th>
-                      <th className="px-4 py-2 text-right">Qtd vendida</th>
-                      <th className="px-4 py-2 text-right">Receita</th>
-                      <th className="px-4 py-2 text-right">Custo produção</th>
-                      <th className="px-4 py-2 text-right">Margem</th>
-                      <th className="px-4 py-2 text-right">Margem %</th>
+                      <th className={painelTableCellDenseClass}>Categoria</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Qtd vendida</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Receita</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Custo produção</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Margem</th>
+                      <th className={`${painelTableCellDenseClass} text-right`}>Margem %</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className={painelTableTbodyClass}>
                     {data.by_category.map((r) => (
                       <tr key={r.category_id ?? "none"} className="text-slate-800">
-                        <td className="px-4 py-2 font-medium">{r.category_name}</td>
-                        <td className="px-4 py-2 text-right tabular-nums">{r.quantity_sold}</td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} font-medium`}>{r.category_name}</td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
+                          {r.quantity_sold}
+                        </td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.orders_revenue)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.production_input_cost)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.margin_amount)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums text-slate-600">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums text-slate-600`}>
                           {formatPercent(r.margin_percent)}
                         </td>
                       </tr>
@@ -735,7 +751,7 @@ export default function RelatorioPage() {
             )}
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
                 <PainelTitleHelp tip="Toque no cabeçalho para ordenar por produto, quantidade, receita, custo ou margem. Pareto % é a receita acumulada ao percorrer a lista ordenada por receita decrescente (curva ABC).">
@@ -750,9 +766,9 @@ export default function RelatorioPage() {
             {sortedProducts.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem movimento neste período.</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+              <div className={painelTableScrollInnerClass}>
+                <table className={painelTableClass}>
+                  <thead className={painelTableTheadClass}>
                     <tr>
                       <SortTh
                         label="Produto"
@@ -795,50 +811,56 @@ export default function RelatorioPage() {
                         dir={sortDir}
                         onClick={() => toggleSort("marginPct")}
                       />
-                      <th className="px-4 py-2 text-right text-xs font-medium text-slate-600">
+                      <th
+                        className={`${painelTableCellDenseClass} text-right text-xs font-medium text-slate-600`}
+                      >
                         Pareto %
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className={painelTableTbodyClass}>
                     {sortedProducts.map((r) => (
                       <tr key={r.product_id} className="text-slate-800">
-                        <td className="px-4 py-2 font-medium">{r.product_name}</td>
-                        <td className="px-4 py-2 text-right tabular-nums">{r.quantity_sold}</td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} font-medium`}>{r.product_name}</td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
+                          {r.quantity_sold}
+                        </td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.orders_revenue)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.production_input_cost)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(r.margin_amount)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums text-slate-600">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums text-slate-600`}>
                           {formatPercent(r.margin_percent)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums text-slate-500">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums text-slate-500`}>
                           {paretoByProduct.get(r.product_id) ?? "—"}%
                         </td>
                       </tr>
                     ))}
                     {productTotals ? (
                       <tr className="border-t-2 border-slate-200 bg-slate-50 font-medium text-slate-900">
-                        <td className="px-4 py-2">Totais</td>
-                        <td className="px-4 py-2 text-right tabular-nums">{productTotals.qty}</td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={painelTableCellDenseClass}>Totais</td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
+                          {productTotals.qty}
+                        </td>
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(productTotals.rev)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(productTotals.cost)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {formatBRL(productTotals.margin)}
                         </td>
-                        <td className="px-4 py-2 text-right tabular-nums">
+                        <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
                           {productTotals.mPct != null ? `${productTotals.mPct}%` : "—"}
                         </td>
-                        <td className="px-4 py-2 text-right text-slate-400">—</td>
+                        <td className={`${painelTableCellDenseClass} text-right text-slate-400`}>—</td>
                       </tr>
                     ) : null}
                   </tbody>

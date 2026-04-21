@@ -2,7 +2,7 @@
 
 **Marco:** Fase 3.2 (experiência lojista) entregue no código conforme [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md), [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md) e extensão **analytics de vitrine** alinhada a [relatorios-analytics-roadmap.md](../projeto/relatorios-analytics-roadmap.md).
 
-**Data de referência:** 2026-04-20.
+**Datas de referência:** 2026-04-20 (marco principal); 2026-04-21 (§8 — tabelas, layout, filtros, testes Vitest).
 
 ---
 
@@ -89,6 +89,20 @@ make openapi-export   # actualiza doc/api/openapi.json
 | **Cabeçalho sticky global** | `PainelStickyHeading` — suporta `title` + `description` **ou** `children` (layouts com `PainelTitleHelp`, filtros, CTAs). Aplicado às rotas sob `/painel/*` (dashboard, vendas, operação, relatórios, conta, etc.), alinhado a [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1. |
 | **Configuração — ordem das secções** | `frontend/app/painel/configuracao/page.tsx` — **Identidade da loja** → **Redes sociais** → **Aparência da vitrine** (demais secções inalteradas). Dados: `social_networks` dentro de `theme.vitrine` como antes. |
 | **Vitrine (doc)** | [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md) — referência à ordem no painel e ao contrato público. |
+
+---
+
+## 8. Tabelas, layout, viewport e filtros (encerramento Fase 3.2 — 2026-04-21)
+
+| Área | Ficheiros / notas |
+|------|-------------------|
+| **Tabelas** | `frontend/lib/painel-table-classes.ts` — classes canónicas para `<table>` do painel; aplicado às páginas com listagens tabulares. |
+| **Largura de conteúdo** | `frontend/lib/painel-layout-classes.ts` — `painelPageContentWidthClass` e derivados para alinhar formulários e blocos principais. |
+| **Altura / coluna** | `globals.css`, `app/layout.tsx`, `PainelStickyHeading`, `PainelShell` — `min-h-dvh` e estrutura de coluna para evitar saltos de layout. |
+| **Filtros** | `frontend/lib/painel-filter-classes.ts` — barra (`painelFilterBarClass`), pesquisa, `select`, datas, checkbox; integrado nas páginas listadas em [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8. |
+| **Testes frontend** | Vitest: `frontend/__tests__/painel-filter-classes.test.ts` (contrato das *strings* de classe); cobertura configurada em `vitest.config.ts` com `include: ["lib/**/*.ts"]`. |
+
+Documentação de UX: [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
 
 ---
 

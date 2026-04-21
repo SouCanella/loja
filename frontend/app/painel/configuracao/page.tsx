@@ -11,6 +11,7 @@ import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
 import { VitrinePreviewCard } from "@/components/painel/VitrinePreviewCard";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnDangerClass, painelBtnLinkClass } from "@/lib/painel-button-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type Me = {
   store_name: string;
@@ -303,7 +304,7 @@ export default function ConfiguracaoLojaPage() {
 
       {me ? (
         <>
-          <div className="mt-6 max-w-xl">
+          <div className={`mt-6 ${painelPageContentWidthClass}`}>
             <div className="mb-2 text-xs font-medium text-slate-600">
               <FieldTipBeside tip="Abre a loja pública num novo separador. Guarde as alterações na página para reflectir tema e textos na vitrine. Copiar coloca o URL completo na área de transferência; Partilhar usa a folha nativa do sistema ou copia o link.">
                 Pré-visualização da vitrine
@@ -314,7 +315,7 @@ export default function ConfiguracaoLojaPage() {
           <form
             id="config-loja-form"
             onSubmit={saveProfile}
-            className="mt-6 max-w-xl space-y-4 pb-28 md:pb-32"
+            className={`mt-6 ${painelPageContentWidthClass} space-y-4 pb-28 md:pb-32`}
           >
           <ConfigFormSection title="Identidade da loja" defaultOpen>
           <div>

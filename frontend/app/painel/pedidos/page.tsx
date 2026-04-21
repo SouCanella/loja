@@ -11,6 +11,12 @@ import {
   PainelApiError,
 } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import {
+  painelFilterBarClass,
+  painelFilterFieldColClass,
+  painelFilterLabelClass,
+  painelFilterSelectClass,
+} from "@/lib/painel-filter-classes";
 
 type OrderRow = {
   id: string;
@@ -79,14 +85,14 @@ export default function PainelPedidosPage() {
       </PainelStickyHeading>
 
       {rows && rows.length > 0 && bySource ? (
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="filtro-origem" className="text-sm text-slate-600">
+        <div className={painelFilterBarClass}>
+          <div className={painelFilterFieldColClass}>
+            <label htmlFor="filtro-origem" className={painelFilterLabelClass}>
               Origem
             </label>
             <select
               id="filtro-origem"
-              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+              className={painelFilterSelectClass}
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as "all" | "vitrine" | "painel")}
             >
@@ -99,13 +105,13 @@ export default function PainelPedidosPage() {
               </option>
             </select>
           </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="filtro-estado" className="text-sm text-slate-600">
+          <div className={painelFilterFieldColClass}>
+            <label htmlFor="filtro-estado" className={painelFilterLabelClass}>
               Estado
             </label>
             <select
               id="filtro-estado"
-              className="max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+              className={painelFilterSelectClass}
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             >

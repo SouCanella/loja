@@ -12,6 +12,7 @@ import {
   painelBtnPrimaryCompactClass,
   painelBtnSecondaryCompactClass,
 } from "@/lib/painel-button-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type Category = { id: string; name: string; slug: string };
 
@@ -129,10 +130,10 @@ export default function CategoriasPage() {
 
       <form
         onSubmit={(e) => void onCreate(e)}
-        className="mt-6 max-w-xl rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        className={`mt-6 ${painelPageContentWidthClass} rounded-xl border border-slate-200 bg-white p-4 shadow-sm`}
       >
         <h2 className="text-sm font-semibold text-slate-800">Nova categoria</h2>
-        <div className="mt-3 max-w-md">
+        <div className="mt-3 w-full">
           <label className="text-xs font-medium text-slate-600" htmlFor="cn">
             <FieldTipBeside tip="Nome visível para clientes e no painel (ex.: Bolos, Bebidas).">Nome</FieldTipBeside>
           </label>
@@ -168,7 +169,7 @@ export default function CategoriasPage() {
                 {isEditing ? (
                   <input
                     autoFocus
-                    className="w-full max-w-md rounded border border-slate-300 px-2 py-1.5 font-medium text-slate-900"
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 font-medium text-slate-900"
                     value={editDraft}
                     disabled={disabled}
                     onChange={(e) => setEditDraft(e.target.value)}

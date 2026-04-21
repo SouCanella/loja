@@ -7,6 +7,20 @@ import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatQty, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
+import {
+  painelFilterBarClass,
+  painelFilterDateInputClass,
+  painelFilterFieldColClass,
+  painelFilterLabelCompactClass,
+  painelFilterSearchInputClass,
+} from "@/lib/painel-filter-classes";
+import {
+  painelTableCellClass,
+  painelTableClass,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+  painelTableWrapClass,
+} from "@/lib/painel-table-classes";
 
 type ProductionRun = {
   id: string;
@@ -39,6 +53,7 @@ export default function ProducaoPage() {
   const [runs, setRuns] = useState<ProductionRun[] | null>(null);
   const [recipeNames, setRecipeNames] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+  const [textFilter, setTextFilter] = useState("");
 
   const load = useCallback(() => {
     setError(null);
@@ -77,6 +92,15 @@ export default function ProducaoPage() {
     return [...runs].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
   }, [runs]);
 
+  const displayed = useMemo(() => {
+    const q = textFilter.trim().toLowerCase();
+    if (!q) return sorted;
+    return sorted.filter((r) => {
+      const label = (recipeNames[r.recipe_id] ?? "").toLowerCase();
+      return label.includes(q) || r.recipe_id.toLowerCase().includes(q);
+    });
+  }, [sorted, recipeNames, textFilter]);
+
   return (
     <>
       <PainelStickyHeading>
@@ -91,25 +115,45 @@ export default function ProducaoPage() {
           → «Produzir lote».
         </p>
 
-        <div className="mt-6 flex flex-wrap items-end gap-3">
-          <label className="text-xs text-slate-500">
-            De
+        <div className={painelFilterBarClass}>
+          <div className={painelFilterFieldColClass}>
+            <label className={painelFilterLabelCompactClass} htmlFor="prod-from">
+              De
+            </label>
             <input
+              id="prod-from"
               type="date"
               value={range.from}
               onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+              className={painelFilterDateInputClass}
             />
-          </label>
-          <label className="text-xs text-slate-500">
-            Até
+          </div>
+          <div className={painelFilterFieldColClass}>
+            <label className={painelFilterLabelCompactClass} htmlFor="prod-to">
+              Até
+            </label>
             <input
+              id="prod-to"
               type="date"
               value={range.to}
               onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+              className={painelFilterDateInputClass}
             />
-          </label>
+          </div>
+          <div className={`min-w-0 flex-1 sm:max-w-xs ${painelFilterFieldColClass}`}>
+            <label className={painelFilterLabelCompactClass} htmlFor="prod-search">
+              Receita / produto
+            </label>
+            <input
+              id="prod-search"
+              type="search"
+              autoComplete="off"
+              placeholder="Filtrar na lista…"
+              value={textFilter}
+              onChange={(e) => setTextFilter(e.target.value)}
+              className={painelFilterSearchInputClass}
+            />
+          </div>
           <button
             type="button"
             onClick={() => void load()}
@@ -130,33 +174,45 @@ export default function ProducaoPage() {
         <p className="mt-8 text-sm text-slate-600">Nenhuma corrida neste intervalo.</p>
       ) : null}
 
-      {sorted.length > 0 ? (
-        <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-slate-100 bg-slate-50 text-xs font-medium text-slate-600">
+      {sorted.length > 0 && displayed.length === 0 ? (
+        <p className="mt-8 text-sm text-slate-600">
+          Nenhuma corrida corresponde a «{textFilter.trim()}». Limpe a pesquisa ou ajuste o texto.
+        </p>
+      ) : null}
+
+      {displayed.length > 0 ? (
+        <div className={`mt-8 ${painelTableWrapClass}`}>
+          <table className={painelTableClass}>
+            <thead className={painelTableTheadClass}>
               <tr>
-                <th className="px-4 py-3">Data (UTC)</th>
-                <th className="px-4 py-3">Receita / produto</th>
-                <th className="px-4 py-3 text-right">Quantidade produzida</th>
-                <th className="px-4 py-3 text-right">Custo insumos</th>
-                <th className="px-4 py-3 text-right">Custo unit. saída</th>
+                <th className={painelTableCellClass}>Data (UTC)</th>
+                <th className={painelTableCellClass}>Receita / produto</th>
+                <th className={`${painelTableCellClass} text-right`}>Quantidade produzida</th>
+                <th className={`${painelTableCellClass} text-right`}>Custo insumos</th>
+                <th className={`${painelTableCellClass} text-right`}>Custo unit. saída</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {sorted.map((r) => (
+            <tbody className={painelTableTbodyClass}>
+              {displayed.map((r) => (
                 <tr key={r.id} className="text-slate-800">
-                  <td className="px-4 py-3 text-xs text-slate-600">
+                  <td className={`${painelTableCellClass} text-xs text-slate-600`}>
                     {new Date(r.created_at).toLocaleString("pt-BR", {
                       dateStyle: "short",
                       timeStyle: "short",
                     })}
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-900">
+                  <td className={`${painelTableCellClass} font-medium text-slate-900`}>
                     {recipeNames[r.recipe_id] ?? r.recipe_id.slice(0, 8) + "…"}
                   </td>
-                  <td className="px-4 py-3 text-right tabular-nums">{formatQty(r.output_quantity)}</td>
-                  <td className="px-4 py-3 text-right tabular-nums">{formatBRL(r.total_input_cost)}</td>
-                  <td className="px-4 py-3 text-right tabular-nums">{formatBRL(r.unit_output_cost)}</td>
+                  <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                    {formatQty(r.output_quantity)}
+                  </td>
+                  <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                    {formatBRL(r.total_input_cost)}
+                  </td>
+                  <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                    {formatBRL(r.unit_output_cost)}
+                  </td>
                 </tr>
               ))}
             </tbody>

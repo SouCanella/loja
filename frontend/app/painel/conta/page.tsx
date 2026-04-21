@@ -6,6 +6,7 @@ import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type Me = { email: string };
 
@@ -62,7 +63,7 @@ export default function ContaPage() {
         <PainelTitleHelp tip="Altere a palavra-passe da sua conta de lojista. Mantenha uma palavra-passe forte e única; após alterar, o login anterior deixa de ser válido.">
           <h1 className="text-2xl font-semibold text-slate-900">Perfil e segurança</h1>
         </PainelTitleHelp>
-        <p className="mt-2 max-w-xl text-sm text-slate-600">
+        <p className={`mt-2 ${painelPageContentWidthClass} text-sm text-slate-600`}>
           Conta de acesso ao painel (RF-AU). O e-mail não pode ser alterado aqui.
         </p>
       </PainelStickyHeading>
@@ -78,7 +79,7 @@ export default function ContaPage() {
 
       <form
         onSubmit={(e) => void onSubmit(e)}
-        className="mt-8 max-w-md space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+        className={`mt-8 ${painelPageContentWidthClass} space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm`}
       >
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="cur-pw">

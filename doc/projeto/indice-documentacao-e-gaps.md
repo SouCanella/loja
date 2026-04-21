@@ -13,7 +13,7 @@
 | Visão | [documento_enterprise.md](../documento_enterprise.md) | Canónico: arquitectura, MVP, backlog enterprise |
 | Roadmap | [fases/PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) | Fases 0–4, 3.1, 3.2 |
 | Fase 3.1 | [fases/fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) | Paridade painel — concluída |
-| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional + analytics vitrine — **concluída**; incrementos UX painel em **§8** / [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) **§7** |
+| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional + analytics vitrine — **concluída**; incrementos UX painel em **§8** (tabelas, layout, filtros) / [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) **§7–§8** |
 | Fase 4 | [fases/fase-04-escala.md](../fases/fase-04-escala.md) | Escala, CI, observabilidade |
 | Decisões | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) | DEC-01 … DEC-23 |
 | Backlog | [backlog.md](backlog.md) | MA-*, FR-* (refactor painel), BE-*, MVP-* |

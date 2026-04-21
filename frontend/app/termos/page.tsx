@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermosPage() {
   return (
-    <div className="min-h-screen bg-white px-4 py-12 text-slate-800">
+    <div className="min-h-dvh bg-white px-4 py-12 text-slate-800">
       <article className="mx-auto max-w-2xl">
         <p className="text-sm font-medium text-amber-800">
           Revisão jurídica pendente — texto placeholder para desenvolvimento e testes.
