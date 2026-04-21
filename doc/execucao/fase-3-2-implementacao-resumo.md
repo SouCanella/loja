@@ -22,7 +22,7 @@
 
 | Área | Entrega |
 |------|---------|
-| **Landing** | `frontend/app/page.tsx` — hero, passos, funcionalidades, segmentos, preços “em definição”, FAQ, CTA; componentes em `frontend/components/marketing/`. |
+| **Landing** | `frontend/app/(public)/page.tsx` — hero, passos, funcionalidades, segmentos, preços “em definição”, FAQ, CTA; componentes em `frontend/components/marketing/`. |
 | **Legal** | `/termos`, `/privacidade` — texto placeholder com aviso de revisão jurídica. |
 | **SEO** | `metadata` na home; `NEXT_PUBLIC_SITE_URL` opcional para OG (ver `.env.example` e README raiz). |
 | **E2E** | `frontend/e2e/smoke.spec.ts` — smoke para `/`, `/termos`, `/privacidade`. |
@@ -64,7 +64,7 @@ make test             # pytest (backend) + Vitest (frontend)
 make openapi-export   # actualiza doc/api/openapi.json
 ```
 
-**Backend:** `backend/tests/` — 179+ testes na última execução completa do `make test`.  
+**Backend:** `backend/tests/` — 221+ testes na última execução completa do `make test`.  
 **Frontend:** Vitest em `frontend/__tests__/` (inclui `escpos.test.ts`).
 
 ---
@@ -118,6 +118,23 @@ Documentação de UX: [painel-ux-layout-formularios-precificacao.md](../projeto/
 | **FR-06** | `PanelCard`, `painelCardClass` / `painelCardSubtleClass`; uso em dashboard e formulários extraídos. |
 
 Rastreio: [backlog.md](../projeto/backlog.md) — linhas **FR-01…FR-06** com estado **convertido**.
+
+---
+
+## 10. Engenharia (MA/DT) — 2026-04-21
+
+| Tema | Entrega |
+|------|---------|
+| **MA-08** | `next@14.2.35`, `eslint-config-next@14.2.35`, `@playwright/test` actualizado; **Vitest 3** (`vitest`, `@vitest/coverage-v8`); `overrides.glob@^13` para fechar GHSA do `glob` transitivo; `npm audit` pode ainda listar **Next** até major — ver notas em [backlog.md](../projeto/backlog.md). |
+| **MA-01** | `backend/tests/test_ma01_store_isolation.py` — pedidos/produtos v1 e envelope v2 não vazam entre lojas. |
+| **MA-04** | Migração `20260426_0013_ma04_composite_indexes.py` + índices em modelos: `orders (store_id, created_at)`, `products (store_id, active, name)`, `stock_movements (store_id, created_at)`. |
+| **MA-07** | Route groups Next: `app/(public)/` (landing, login, registo, termos, privacidade, vitrine `loja/`) e `app/(painel)/painel/` — URLs inalteradas. |
+| **MA-09** | Vitest 3.x (alinha com ecossistema Vite mais recente; ver `frontend/vitest.config.ts`). |
+| **DT-01** | [deploy-docker.md](deploy-docker.md); job **docker-images** em [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). |
+| **DT-02** | `RequestIdMiddleware` — resposta com cabeçalho `X-Request-Id`; testes em `test_request_id_middleware.py`. |
+| **DT-03** | Cobertura de serviços mantida pelo gate existente; reforço de confiança multi-tenant via MA-01. |
+
+**Fora deste incremento (rastreado no backlog):** **MA-05** (RLS Postgres); meta global de cobertura em todo o `app`; push de imagens e CD — ver [backlog.md](../projeto/backlog.md).
 
 ---
 

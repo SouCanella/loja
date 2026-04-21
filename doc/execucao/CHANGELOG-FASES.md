@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Engenharia MA/DT — índices, isolamento, route groups, CI Docker, observabilidade mínima)
+
+- **Backend:** migração `20260426_0013_ma04_composite_indexes` (índices `store_id` + colunas de listagem); `RequestIdMiddleware` (`X-Request-Id`); testes `test_ma01_store_isolation.py`, `test_request_id_middleware.py`.
+- **Frontend:** route groups `app/(public)/` e `app/(painel)/painel/`; dependências (Next 14.2.35, Vitest 3, Playwright, overrides `glob`).
+- **CI:** job `docker-images` em [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+- **Documentação:** [deploy-docker.md](deploy-docker.md); [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §9; [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §10; [backlog.md](../projeto/backlog.md) (MA-01, MA-04, MA-07, MA-09 **convertido**; MA-08, DT-* actualizados).
+
 ## 2026-04-22 (Refactor painel — FR-01 a FR-06)
 
 - **Frontend:** secções extraídas em `components/painel/config-loja/`; `PainelDateRangeFields`; `PanelCard` + `painel-surface-classes` (login/registo); `types/webusb.d.ts`; clientes (`clientes/*`, `painel-clientes-helpers.ts`); catálogo (`catalogo/*`).

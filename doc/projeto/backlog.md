@@ -41,15 +41,15 @@ Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md]
 
 | ID | Item | Estado | Fase alvo | Notas |
 |----|------|--------|-----------|--------|
-| MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | parcial | 1 | Cobertura inicial em pytest (BD em memória); reforço com Postgres real em CI — ver testes em `backend/tests/test_auth.py` |
+| MA-01 | Testes de **integração** que provam **isolamento por `store_id`** (não vazar dados entre lojas) | convertido | 1 | `test_auth.py` (duas lojas); **`test_ma01_store_isolation.py`** (pedidos/produtos v1+v2, listas); reforço opcional: Postgres real em CI |
 | MA-02 | Contrato HTTP com prefixo versionado (**ex. `/api/v1`**) desde o primeiro conjunto de rotas de negócio | convertido | 1 | Rotas sob `/api/v1`; OpenAPI em [doc/api/openapi.json](../api/openapi.json) |
 | MA-03 | **Storage** de ficheiros (imagens, logos) com **prefixo por `store_id`** ou tenant no bucket (S3-compatível) | convertido | 2+ | Implementado: `media_storage`, `POST /api/v2/media/upload`, `GET /media/...` local; S3 em config — ver código e [indice-documentacao-e-gaps.md](indice-documentacao-e-gaps.md) |
-| MA-04 | **Índices compostos** `(store_id, …)` nas tabelas mais consultadas (produtos, pedidos, etc.) | nao_iniciado | 1–2 | Performance e clareza de modelo multi-tenant |
+| MA-04 | **Índices compostos** `(store_id, …)` nas tabelas mais consultadas (produtos, pedidos, etc.) | convertido | 1–2 | Migração `20260426_0013_ma04_composite_indexes.py` — `orders`, `products`, `stock_movements`; modelos SQLAlchemy alinhados |
 | MA-05 | **Row Level Security (RLS)** no Postgres como reforço opcional de isolamento | nao_iniciado | 4 / hardening | Avaliar custo operacional vs benefício; alternativa ao erro de aplicação |
 | MA-06 | **Read replicas** ou **sharding** por tenant | nao_iniciado | pós-MVP | Só se o monólito + uma BD deixarem de chegar; documentar gatilho |
-| MA-07 | **Next.js:** `route groups` separando **vitrine** `(public)/loja/[slug]` e **painel** `(painel)` / admin | nao_iniciado | 1 | Alinha **RF-AR-01** e reduz mistura de contextos |
-| MA-08 | Ciclo de **atualização de dependências** (npm / Next) e resposta a **audit/CVE** | parcial | contínuo | Liga às pendências P1 em [fase-00-kickoff.md](../fases/fase-00-kickoff.md) Parte C |
-| MA-09 | **Vitest:** migrar config para **ESM** (fim do aviso CJS da API Vite) | nao_iniciado | técnico | Liga à pendência P2 (fase-00 Parte C) |
+| MA-07 | **Next.js:** `route groups` separando **vitrine** `(public)/loja/[slug]` e **painel** `(painel)` / admin | convertido | 1 | Pastas `frontend/app/(public)/` e `frontend/app/(painel)/painel/` — URLs inalteradas; ver [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §9 |
+| MA-08 | Ciclo de **atualização de dependências** (npm / Next) e resposta a **audit/CVE** | parcial | contínuo | Patches **Next 14.2.35**, Playwright, **Vitest 3**, `overrides` para **glob**; `npm audit` pode ainda listar **Next** até major (aceite documentado) — ritmo contínuo |
+| MA-09 | **Vitest:** migrar config para **ESM** (fim do aviso CJS da API Vite) | convertido | técnico | **Vitest 3.x** + dependências alinhadas; `vitest.config.ts` inalterado na essência |
 
 **Relação com itens existentes:** **BE-05** (multi-usuário por loja) e **MVP-01** cobrem parte do modelo; MA-01 e MA-07 explicitam **teste de isolamento** e **estrutura de rotas** no front.
 
@@ -61,11 +61,11 @@ Melhorias de **estrutura e consistência** no painel; não bloqueiam funcionalid
 
 | ID | Item | Estado | Fase alvo | Notas |
 |----|------|--------|-----------|--------|
-| **FR-01** | **Partir** `frontend/app/painel/configuracao/page.tsx` **em componentes por secção** (Identidade, Redes sociais, Aparência, checkout, impressão, etc.), mantendo estado e `saveProfile` na página ou num hook | convertido | técnico / 3.x | Secções em `frontend/components/painel/config-loja/` (`ConfigIdentitySection`, `ConfigSocialSection`, …); tipos/helpers em `types.ts` e `constants.ts`. |
+| **FR-01** | **Partir** `frontend/app/(painel)/painel/configuracao/page.tsx` **em componentes por secção** (Identidade, Redes sociais, Aparência, checkout, impressão, etc.), mantendo estado e `saveProfile` na página ou num hook | convertido | técnico / 3.x | Secções em `frontend/components/painel/config-loja/` (`ConfigIdentitySection`, `ConfigSocialSection`, …); tipos/helpers em `types.ts` e `constants.ts`. |
 | **FR-02** | **Componente reutilizável** para filtros **De / Até** (e variantes com botão «Actualizar» ou só datas), p.ex. `PainelDateRangeFields`, usado em Dashboard, Financeiro, Produção, Relatório financeiro, Analytics vitrine | convertido | técnico | `frontend/components/painel/PainelDateRangeFields.tsx` — props `bare` \| `bar` \| `boxed`. |
 | **FR-03** | **TypeScript:** tipar `Navigator.usb` (ou helper) para `OrderPrintPanel` e eliminar erro `tsc` sobre Web USB | convertido | técnico | `frontend/types/webusb.d.ts`; guarda `if (!usb)` em `OrderPrintPanel`. |
-| **FR-04** | **Partir** `frontend/app/painel/clientes/page.tsx` e **`catalogo/page.tsx`** em sub-componentes (formulários, tabelas, edição) | convertido | técnico | Clientes: `components/painel/clientes/*`, `lib/painel-clientes-helpers.ts`. Catálogo: `components/painel/catalogo/*`. |
-| **FR-05** | **Alinhar** páginas **login** e **registo** (`frontend/app/login`, `frontend/app/registo`) às classes **`painel-button-classes`** (CTA `w-full`), como no painel | convertido | técnico | `painelBtnPrimaryClass` + `painelAuthInputClass` (`lib/painel-surface-classes.ts`). |
+| **FR-04** | **Partir** `frontend/app/(painel)/painel/clientes/page.tsx` e **`catalogo/page.tsx`** em sub-componentes (formulários, tabelas, edição) | convertido | técnico | Clientes: `components/painel/clientes/*`, `lib/painel-clientes-helpers.ts`. Catálogo: `components/painel/catalogo/*`. |
+| **FR-05** | **Alinhar** páginas **login** e **registo** (`frontend/app/(public)/login`, `frontend/app/(public)/registo`) às classes **`painel-button-classes`** (CTA `w-full`), como no painel | convertido | técnico | `painelBtnPrimaryClass` + `painelAuthInputClass` (`lib/painel-surface-classes.ts`). |
 | **FR-06** | **Opcional:** componente **`PanelCard`** (ou tokens Tailwind partilhados) para cartões `rounded-lg border border-slate-200 bg-white …` repetidos no painel | convertido | técnico | `painelCardClass` + `PanelCard` em `lib/painel-surface-classes.ts` e `components/painel/PanelCard.tsx`; uso no dashboard e formulários extraídos. |
 
 Ao concluir um FR-*, actualizar esta tabela e, se aplicável, [indice-documentacao-e-gaps.md](indice-documentacao-e-gaps.md).
@@ -105,9 +105,9 @@ Atualizar esta tabela ao fechar cada fase.
 
 | ID | Item | Estado | Origem |
 |----|------|--------|--------|
-| DT-01 | CI/CD (pipeline Git, build Docker, deploy) | parcial | GitHub Actions: lint + pytest (cobertura `app/services`) + frontend lint/build — ver [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml); deploy Docker pendente |
-| DT-02 | Observabilidade (métricas/dashboards além de logs MVP) | nao_iniciado | §20 / §4 |
-| DT-03 | Cobertura de testes ≥ 90% | parcial | §21 — meta progressiva; ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md) |
+| DT-01 | CI/CD (pipeline Git, build Docker, deploy) | parcial | CI: job **`docker-images`** (build imagens backend/frontend) + [deploy-docker.md](../execucao/deploy-docker.md); **push a registry / CD automático** ainda por definir |
+| DT-02 | Observabilidade (métricas/dashboards além de logs MVP) | parcial | Cabeçalho **`X-Request-Id`** em todas as respostas (`RequestIdMiddleware`); métricas/dashboards e tracing — pendente |
+| DT-03 | Cobertura de testes ≥ 90% | parcial | Gate **CI** em `app/services` (~99%); meta **≥90% em todo o `app`** — ver [qualidade-e-conformidade.md](qualidade-e-conformidade.md); reforço MA-01 em testes de isolamento |
 
 ## Ideias de produto (origem `inicio_planejamento.txt`)
 

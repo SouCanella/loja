@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-22.
+**Última actualização:** 2026-04-21.
 
 **Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
@@ -35,7 +35,7 @@ A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Make
 
 Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_pricing.py`, `test_services_production.py`, `test_services_dec12_coverage.py` (lacunas DEC-12 / refresh / dashboard / stock).
 
-**Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md).
+**Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md). **Isolamento multi-tenant (MA-01):** `test_ma01_store_isolation.py`. **Request id (DT-02):** `test_request_id_middleware.py`.
 
 **Cobertura alargada de rotas e auth:** `test_coverage_gaps.py` (JWT, refresh, rate limit, receitas, vitrine, v2). Referência global: `pytest --cov=app` ~**97%** — [qualidade-e-conformidade §1](../projeto/qualidade-e-conformidade.md#1-verificações-automáticas-gate-local-e-ci).
 
@@ -43,7 +43,7 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 
 | Item | Valor |
 |------|--------|
-| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
+| Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **Vitest 3.x**; **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
 | Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts` (exports de `lib/painel-filter-classes.ts`) |
 
@@ -73,7 +73,7 @@ Primeira instalação dos browsers: `cd frontend && npx playwright install chrom
 
 | Ficheiro | Conteúdo |
 |----------|----------|
-| [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) | Job **backend:** Python 3.12, Ruff, pytest com `--cov=app/services --cov-fail-under=90`. Job **frontend:** `npm ci`, ESLint, Vitest, `next build`, instalação Chromium, `npm run test:e2e` com `PW_SERVER_ONLY=1`. |
+| [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) | Job **`docker-images`:** `docker build` backend + frontend (valida Dockerfiles). Job **backend:** Python 3.12, Ruff, pytest com `--cov=app/services --cov-fail-under=90`. Job **frontend:** `npm ci`, ESLint, Vitest, `next build`, instalação Chromium, `npm run test:e2e` com `PW_SERVER_ONLY=1`. |
 
 Disparo: **push** e **pull_request** para `main`.
 

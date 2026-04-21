@@ -135,6 +135,7 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 - [backlog.md](../projeto/backlog.md) — se surgirem débitos (novos modelos, agente nativo).
 - [landing-site-produto.md](../projeto/landing-site-produto.md) — copy e checklist da Parte B.
 - [indice-documentacao-e-gaps.md](../projeto/indice-documentacao-e-gaps.md) — rastreio global.
+- [deploy-docker.md](../execucao/deploy-docker.md) — builds de imagem e notas de deploy (DT-01).
 
 ---
 
@@ -153,8 +154,25 @@ Entregues como **continuidade da experiência lojista** no painel (consistência
 | **Viewport / altura** | `min-h-dvh` no *shell* e páginas públicas (login, registo, landing, termos, privacidade) para coluna estável em mobile. |
 | **Filtros padronizados** | `frontend/lib/painel-filter-classes.ts` — barra de filtros, pesquisa, `select`, datas; páginas: pedidos, clientes, receitas, insumos, catálogo (pesquisa + categoria + estado), precificação, produção (datas + texto), relatório de stock, notificações (lidas/não lidas), analytics vitrine e datas no relatório financeiro. |
 
-Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§9 (§9 — refactor **FR-01…FR-06**: componentes config-loja, `PainelDateRangeFields`, `PanelCard`, divisão clientes/catálogo); UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
+Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§10 (§9 — refactor **FR-01…FR-06**; §10 — MA/DT); UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
 
 ---
 
-*Última revisão: 2026-04-21 — **§8** alargado: tabelas, largura de conteúdo, viewport, filtros padronizados e referência a testes Vitest (`painel-filter-classes.test.ts`). Revisão anterior 2026-04-20: marco 3.2 (impressão, landing, analytics, OpenAPI); incrementos UX (sticky, botões, tips, redes sociais).*
+## 9. Engenharia (MA/DT) — alinhamento backlog
+
+Incrementos de **qualidade, isolamento multi-tenant, índices, front e CI** documentados em [fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) **§10** e no [backlog.md](../projeto/backlog.md) (estados actualizados por ID).
+
+| ID | Resumo |
+|----|--------|
+| **MA-01** | Testes de isolamento `store_id` alargados (`test_ma01_store_isolation.py`). |
+| **MA-04** | Índices compostos em `orders`, `products`, `stock_movements` (migração Alembic `20260426_0013`). |
+| **MA-07** | Route groups `(public)` / `(painel)` no App Router — rotas públicas e painel separados por pasta; URLs inalteradas. |
+| **MA-08** | Ritmo de dependências: patches **Next/eslint-config-next**; **Vitest 3**; `overrides` npm para **glob**; residual possível em **Next** até major — ver backlog. |
+| **MA-09** | Vitest 3.x no frontend. |
+| **DT-01** | Job CI `docker-images` + guia [deploy-docker.md](../execucao/deploy-docker.md); push a registry/CD continua pendente no backlog. |
+| **DT-02** | `X-Request-Id` em todas as respostas HTTP (middleware); métricas/dashboards fora do âmbito deste incremento. |
+| **MA-05** | RLS Postgres — **não** implementado; permanece `nao_iniciado` no backlog. |
+
+---
+
+*Última revisão: 2026-04-21 — **§9** (engenharia MA/DT); **§8** alargado (tabelas, largura, viewport, filtros). Revisão anterior 2026-04-20: marco 3.2 (impressão, landing, analytics, OpenAPI); incrementos UX (sticky, botões, tips, redes sociais).*

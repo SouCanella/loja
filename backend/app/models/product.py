@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     ForeignKey,
+    Index,
     Numeric,
     String,
     Text,
@@ -30,7 +31,10 @@ if TYPE_CHECKING:
 
 class Product(Base):
     __tablename__ = "products"
-    __table_args__ = (UniqueConstraint("inventory_item_id", name="uq_products_inventory_item_id"),)
+    __table_args__ = (
+        UniqueConstraint("inventory_item_id", name="uq_products_inventory_item_id"),
+        Index("ix_products_store_active_name", "store_id", "active", "name"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     store_id: Mapped[uuid.UUID] = mapped_column(

@@ -1,3 +1,4 @@
+/** Vitest 3 — alinhado ao ecossistema Vite; config em ESM (`import.meta.url`). */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";

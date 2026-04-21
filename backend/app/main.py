@@ -3,18 +3,18 @@
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse
 from fastapi.exception_handlers import (
     http_exception_handler,
     request_validation_exception_handler,
 )
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from app.api.v1.router import api_router as api_router_v1
 from app.api.v2.router import api_router as api_router_v2
 from app.core.config import get_settings
+from app.middleware.request_id import RequestIdMiddleware
 from app.services.media_storage import local_file_path
 
 settings = get_settings()
@@ -47,6 +47,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(RequestIdMiddleware)
 
 
 @app.exception_handler(HTTPException)
