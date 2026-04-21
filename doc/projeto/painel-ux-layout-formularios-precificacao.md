@@ -39,15 +39,25 @@
 | **`PainelDateRangeFields`** | `frontend/components/painel/PainelDateRangeFields.tsx` — intervalo **De/Até** reutilizável (`bare`, `bar`, `boxed`). |
 | **`PanelCard` / `painel-surface-classes`** | `PanelCard.tsx`, `painelCardClass`, `painelAuthInputClass` — cartões e inputs públicos alinhados ao painel. |
 
+### 1.4 Paginação de listagens (painel)
+
+- **Ficheiros:** `frontend/lib/painel-pagination.ts` — `PAINEL_DEFAULT_PAGE_SIZE` (20), `slicePage`, `paginationRangeLabel`, `usePainelPagination(totalCount, { pageSize?, resetKey? })` (repõe a página quando `resetKey` muda, p.ex. filtros ou datas).
+- **UI:** `frontend/components/painel/PainelPaginationBar.tsx` — texto «a–b de n», «Página x de y», botões Anterior / Seguinte; não renderiza se `totalItems <= 0`.
+- **Modelo:** paginação **no cliente** sobre arrays já filtrados (sem alterar APIs). Cada ecrã define `resetKey` adequado (pesquisa, intervalo de datas, etc.).
+- **Relatório financeiro — «Por produto»:** linha **Totais** em `<tfoot>` para permanecer visível em todas as páginas; apenas as linhas de dados são fatiadas.
+
 ---
 
 ## 2. Botão «Guardar» sempre visível
 
 - Formulários longos (ex.: **Configuração da loja**, **Nova / Editar receita**) usam **`PainelFormSaveBar`** (`frontend/components/painel/PainelFormSaveBar.tsx`):
-  - Barra **fixa** no fundo do ecrã (`fixed bottom-0`), com `md:left-60` para alinhar à **coluna principal** (à direita da sidebar em desktop).
+  - Barra **fixa** no fundo do ecrã (`fixed bottom-0`), renderizada com **portal** em `document.body` (`z-[280]`).
+  - **Alinhamento horizontal:** a classe **`.painel-form-save-bar-inset`** em `frontend/app/globals.css` reproduz o recuo do contentor centrado do painel (`max-width: 1600px`, igual a `PainelShell`) e, a partir de `md`, soma **15rem** ao `left` para começar após o aside. Sem isto, `fixed` com `right: 0` na viewport fazia o botão ultrapassar a margem direita do conteúdo em ecrãs largos.
+  - Padding horizontal da barra: `px-4 sm:px-6 lg:px-8` (alinhado ao `<main>` do shell).
   - O `<form>` tem um **`id`**; o botão usa o atributo HTML **`form={id}`** para submeter mesmo estando **fora** do `<form>` no DOM.
   - O conteúdo do formulário leva **`padding-bottom`** generoso (`pb-28` / `pb-32`) para o último campo não ficar tapado pela barra.
   - Respeita **`safe-area-inset-bottom`** em dispositivos com barra de gestos.
+- Em **Configuração da loja** existe também o botão **Guardar alterações** no fim do formulário (mesma submissão); não há texto explicativo extra sobre a barra fixa.
 - Impressão: a barra leva `print:hidden`.
 
 ---

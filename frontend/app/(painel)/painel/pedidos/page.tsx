@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
@@ -18,6 +19,7 @@ import {
   painelFilterLabelClass,
   painelFilterSelectClass,
 } from "@/lib/painel-filter-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type OrderRow = {
   id: string;
@@ -56,6 +58,15 @@ export default function PainelPedidosPage() {
     if (filter === "all") return bySource;
     return bySource.filter((o) => o.status === filter);
   }, [bySource, filter]);
+
+  const filteredList = filtered ?? [];
+  const pedidosPagination = usePainelPagination(filteredList.length, {
+    resetKey: `${sourceFilter}:${filter}`,
+  });
+  const pagedPedidos = useMemo(
+    () => slicePage(filteredList, pedidosPagination.page, pedidosPagination.pageSize),
+    [filteredList, pedidosPagination.page, pedidosPagination.pageSize],
+  );
 
   return (
     <>
@@ -141,8 +152,9 @@ export default function PainelPedidosPage() {
       ) : null}
 
       {filtered && filtered.length > 0 ? (
-        <ul className="mt-4 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-sm">
-          {filtered.map((o) => (
+        <div className="mt-4 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <ul className="divide-y divide-slate-200">
+            {pagedPedidos.map((o) => (
             <li key={o.id}>
               <Link
                 href={`/painel/pedidos/${o.id}`}
@@ -183,7 +195,15 @@ export default function PainelPedidosPage() {
               </Link>
             </li>
           ))}
-        </ul>
+          </ul>
+          <PainelPaginationBar
+            page={pedidosPagination.page}
+            pageCount={pedidosPagination.pageCount}
+            totalItems={filteredList.length}
+            pageSize={pedidosPagination.pageSize}
+            onPageChange={pedidosPagination.setPage}
+          />
+        </div>
       ) : null}
     </>
   );

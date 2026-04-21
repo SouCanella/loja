@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { usePainelNotifications } from "@/components/painel/PainelNotificationsContext";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
@@ -14,6 +15,7 @@ import {
   painelFilterLabelClass,
   painelFilterSelectClass,
 } from "@/lib/painel-filter-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 export default function PainelNotificacoesPage() {
   const { inbox, loading, error, markRead, markAllRead } = usePainelNotifications();
@@ -26,6 +28,12 @@ export default function PainelNotificacoesPage() {
     if (readFilter === "unread") return inbox.items.filter((n) => !n.read_at);
     return inbox.items.filter((n) => n.read_at);
   }, [inbox, readFilter]);
+
+  const notifPagination = usePainelPagination(filteredItems.length, { resetKey: readFilter });
+  const pagedNotifs = useMemo(
+    () => slicePage(filteredItems, notifPagination.page, notifPagination.pageSize),
+    [filteredItems, notifPagination.page, notifPagination.pageSize],
+  );
 
   async function onOpen(id: string, orderId: string | null) {
     await markRead([id]);
@@ -98,8 +106,9 @@ export default function PainelNotificacoesPage() {
       ) : null}
 
       {inbox && filteredItems.length > 0 ? (
-        <ul className="mt-6 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-sm">
-          {filteredItems.map((n) => (
+        <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <ul className="divide-y divide-slate-200">
+          {pagedNotifs.map((n) => (
             <li key={n.id}>
               <button
                 type="button"
@@ -129,7 +138,15 @@ export default function PainelNotificacoesPage() {
               </button>
             </li>
           ))}
-        </ul>
+          </ul>
+          <PainelPaginationBar
+            page={notifPagination.page}
+            pageCount={notifPagination.pageCount}
+            totalItems={filteredItems.length}
+            pageSize={notifPagination.pageSize}
+            onPageChange={notifPagination.setPage}
+          />
+        </div>
       ) : null}
     </>
   );

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { FieldTip, FilterBarFieldTip, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { MarginVolumeScatter } from "@/components/painel/MarginVolumeScatter";
 import {
@@ -26,6 +27,7 @@ import {
   painelTableTbodyClass,
   painelTableTheadClass,
 } from "@/lib/painel-table-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type ProductRow = {
   product_id: string;
@@ -255,6 +257,29 @@ export default function RelatorioPage() {
     const mPct = rev > 0 ? ((margin / rev) * 100).toFixed(1) : null;
     return { qty, rev, cost, margin, mPct };
   }, [data]);
+
+  const reportRangeKey = `${normalizedRange.from}:${normalizedRange.to}`;
+  const byOrderStatusRows = data?.by_order_status ?? [];
+  const statusPagination = usePainelPagination(byOrderStatusRows.length, { resetKey: reportRangeKey });
+  const pagedByOrderStatus = useMemo(
+    () => slicePage(byOrderStatusRows, statusPagination.page, statusPagination.pageSize),
+    [byOrderStatusRows, statusPagination.page, statusPagination.pageSize],
+  );
+
+  const byCategoryRows = data?.by_category ?? [];
+  const categoryPagination = usePainelPagination(byCategoryRows.length, { resetKey: reportRangeKey });
+  const pagedByCategory = useMemo(
+    () => slicePage(byCategoryRows, categoryPagination.page, categoryPagination.pageSize),
+    [byCategoryRows, categoryPagination.page, categoryPagination.pageSize],
+  );
+
+  const productPagination = usePainelPagination(sortedProducts.length, {
+    resetKey: `${reportRangeKey}:${sortKey}:${sortDir}`,
+  });
+  const pagedSortedProducts = useMemo(
+    () => slicePage(sortedProducts, productPagination.page, productPagination.pageSize),
+    [sortedProducts, productPagination.page, productPagination.pageSize],
+  );
 
   function downloadCsv() {
     if (!data) return;
@@ -634,6 +659,7 @@ export default function RelatorioPage() {
             {data.by_order_status.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem pedidos neste período.</p>
             ) : (
+              <>
               <div className={painelTableScrollInnerClass}>
                 <table className={painelTableClass}>
                   <thead className={painelTableTheadClass}>
@@ -647,7 +673,7 @@ export default function RelatorioPage() {
                     </tr>
                   </thead>
                   <tbody className={painelTableTbodyClass}>
-                    {data.by_order_status.map((s) => {
+                    {pagedByOrderStatus.map((s) => {
                       const rev = num(s.orders_revenue);
                       const w = maxStatusRev > 0 ? Math.round((rev / maxStatusRev) * 100) : 0;
                       return (
@@ -675,6 +701,14 @@ export default function RelatorioPage() {
                   </tbody>
                 </table>
               </div>
+              <PainelPaginationBar
+                page={statusPagination.page}
+                pageCount={statusPagination.pageCount}
+                totalItems={byOrderStatusRows.length}
+                pageSize={statusPagination.pageSize}
+                onPageChange={statusPagination.setPage}
+              />
+              </>
             )}
           </div>
 
@@ -693,6 +727,7 @@ export default function RelatorioPage() {
             {data.by_category.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem movimento por categoria neste período.</p>
             ) : (
+              <>
               <div className={painelTableScrollInnerClass}>
                 <table className={painelTableClass}>
                   <thead className={painelTableTheadClass}>
@@ -706,7 +741,7 @@ export default function RelatorioPage() {
                     </tr>
                   </thead>
                   <tbody className={painelTableTbodyClass}>
-                    {data.by_category.map((r) => (
+                    {pagedByCategory.map((r) => (
                       <tr key={r.category_id ?? "none"} className="text-slate-800">
                         <td className={`${painelTableCellDenseClass} font-medium`}>{r.category_name}</td>
                         <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
@@ -729,6 +764,14 @@ export default function RelatorioPage() {
                   </tbody>
                 </table>
               </div>
+              <PainelPaginationBar
+                page={categoryPagination.page}
+                pageCount={categoryPagination.pageCount}
+                totalItems={byCategoryRows.length}
+                pageSize={categoryPagination.pageSize}
+                onPageChange={categoryPagination.setPage}
+              />
+              </>
             )}
           </div>
 
@@ -747,6 +790,7 @@ export default function RelatorioPage() {
             {sortedProducts.length === 0 ? (
               <p className="p-4 text-sm text-slate-500">Sem movimento neste período.</p>
             ) : (
+              <>
               <div className={painelTableScrollInnerClass}>
                 <table className={painelTableClass}>
                   <thead className={painelTableTheadClass}>
@@ -800,7 +844,7 @@ export default function RelatorioPage() {
                     </tr>
                   </thead>
                   <tbody className={painelTableTbodyClass}>
-                    {sortedProducts.map((r) => (
+                    {pagedSortedProducts.map((r) => (
                       <tr key={r.product_id} className="text-slate-800">
                         <td className={`${painelTableCellDenseClass} font-medium`}>{r.product_name}</td>
                         <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
@@ -823,7 +867,9 @@ export default function RelatorioPage() {
                         </td>
                       </tr>
                     ))}
-                    {productTotals ? (
+                  </tbody>
+                  {productTotals ? (
+                    <tfoot>
                       <tr className="border-t-2 border-slate-200 bg-slate-50 font-medium text-slate-900">
                         <td className={painelTableCellDenseClass}>Totais</td>
                         <td className={`${painelTableCellDenseClass} text-right tabular-nums`}>
@@ -843,10 +889,18 @@ export default function RelatorioPage() {
                         </td>
                         <td className={`${painelTableCellDenseClass} text-right text-slate-400`}>—</td>
                       </tr>
-                    ) : null}
-                  </tbody>
+                    </tfoot>
+                  ) : null}
                 </table>
               </div>
+              <PainelPaginationBar
+                page={productPagination.page}
+                pageCount={productPagination.pageCount}
+                totalItems={sortedProducts.length}
+                pageSize={productPagination.pageSize}
+                onPageChange={productPagination.setPage}
+              />
+              </>
             )}
           </div>
 

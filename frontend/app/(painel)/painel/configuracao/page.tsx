@@ -281,12 +281,8 @@ export default function ConfiguracaoLojaPage() {
               shippingLabelSize={shippingLabelSize}
               onShippingLabelSizeChange={setShippingLabelSize}
             />
-            <div className="flex flex-col gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="max-w-xl text-xs text-slate-500 print:hidden">
-                O botão «Guardar» no fundo do ecrã repete a mesma acção e mantém-se visível ao percorrer o
-                formulário.
-              </p>
-              <button type="submit" className={`min-h-[44px] shrink-0 self-end sm:self-auto ${painelBtnPrimaryClass}`}>
+            <div className="flex flex-col gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end">
+              <button type="submit" className={`min-h-[44px] shrink-0 ${painelBtnPrimaryClass}`}>
                 Guardar alterações
               </button>
             </div>

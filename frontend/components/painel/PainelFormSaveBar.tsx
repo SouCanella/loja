@@ -11,7 +11,8 @@ import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
  * Renderizado com **portal** em `document.body` + `z-[280]` (abaixo do menu móvel do painel, z-[300])
  * para não ficar atrás de cabeçalhos sticky nem de dropdowns (`z-50`).
  * `useLayoutEffect` monta o portal antes da pintura, evitando o botão «invisível» no primeiro frame.
- * Em desktop, a barra ocupa só a coluna principal (`md:left-60` = mesma largura que `aside.w-60`), sem cobrir o menu lateral.
+ * Em desktop, a barra alinha-se à coluna principal (sidebar `w-60`) **e** ao mesmo bloco centrado que o
+ * `PainelShell` (`max-w-[1600px]`), para não ultrapassar as margens quando a viewport é mais larga que 1600px.
  */
 export function PainelFormSaveBar({
   formId,
@@ -33,7 +34,7 @@ export function PainelFormSaveBar({
   const bar = (
     <div
       className={
-        "pointer-events-auto fixed bottom-0 left-0 right-0 z-[280] border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.07)] backdrop-blur md:left-60 md:right-0 print:hidden " +
+        "painel-form-save-bar-inset pointer-events-auto fixed bottom-0 z-[280] border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.07)] backdrop-blur sm:px-6 lg:px-8 print:hidden " +
         className
       }
       style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom, 0px))" }}

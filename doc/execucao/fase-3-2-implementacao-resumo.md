@@ -168,4 +168,15 @@ Rastreio: [backlog.md](../projeto/backlog.md) — linhas **FR-01…FR-06** com e
 
 ---
 
+## 13. Paginação do painel, barra Guardar alinhada, WhatsApp na pré-visualização (2026-04-21)
+
+| Tema | Entrega |
+|------|---------|
+| **Paginação** | `frontend/lib/painel-pagination.ts`, `PainelPaginationBar.tsx`; listagens principais do painel com 20 linhas por página (cliente); ver [CHANGELOG-FASES.md](CHANGELOG-FASES.md) entrada **2026-04-21** e [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.4. |
+| **PainelFormSaveBar** | `.painel-form-save-bar-inset` em `globals.css` — alinhamento ao contentor `max-w-[1600px]` + aside; §2 do mesmo documento UX. |
+| **VitrinePreviewCard** | Botão **WhatsApp** (`wa.me/?text=`) em Dashboard e Configuração; `shareStoreMessage` / `whatsAppShareUrl`. |
+| **Configuração** | Removido parágrafo duplicado sobre a barra Guardar; mantidos botão inline e `PainelFormSaveBar`. |
+
+---
+
 *Documento de arquivo técnico; critérios normativos completos continuam nos ficheiros de fase e roadmap citados.*

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
@@ -14,6 +15,7 @@ import {
   painelFilterLabelClass,
   painelFilterSearchInputClass,
 } from "@/lib/painel-filter-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type RecipeOut = {
   id: string;
@@ -77,6 +79,14 @@ export default function ReceitasPage() {
       return name.toLowerCase().includes(t) || r.id.toLowerCase().includes(t);
     });
   }, [recipes, products, filterText]);
+
+  const receitasPagination = usePainelPagination(filtered.length, {
+    resetKey: `${filterText}:${includeInactive ? "1" : "0"}`,
+  });
+  const pagedFiltered = useMemo(
+    () => slicePage(filtered, receitasPagination.page, receitasPagination.pageSize),
+    [filtered, receitasPagination.page, receitasPagination.pageSize],
+  );
 
   function productName(id: string): string {
     return products.find((x) => x.id === id)?.name ?? id.slice(0, 8);
@@ -192,7 +202,7 @@ export default function ReceitasPage() {
             </Link>
           </li>
         ) : null}
-        {filtered.map((r) => {
+        {pagedFiltered.map((r) => {
           const effLabel = formatPercent(r.effective_margin_percent);
           return (
             <li
@@ -281,6 +291,13 @@ export default function ReceitasPage() {
           );
         })}
       </ul>
+      <PainelPaginationBar
+        page={receitasPagination.page}
+        pageCount={receitasPagination.pageCount}
+        totalItems={filtered.length}
+        pageSize={receitasPagination.pageSize}
+        onPageChange={receitasPagination.setPage}
+      />
     </>
   );
 }

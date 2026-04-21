@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
@@ -25,6 +26,7 @@ import {
   painelTableTheadClass,
   painelTableWrapPrintClass,
 } from "@/lib/painel-table-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type InvRow = {
   id: string;
@@ -51,6 +53,12 @@ export default function RelatorioEstoquePage() {
     if (!q) return rows;
     return rows.filter((r) => r.name.toLowerCase().includes(q) || r.unit.toLowerCase().includes(q));
   }, [rows, filterQuery]);
+
+  const relEstoquePagination = usePainelPagination(displayRows.length, { resetKey: filterQuery });
+  const pagedDisplayRows = useMemo(
+    () => slicePage(displayRows, relEstoquePagination.page, relEstoquePagination.pageSize),
+    [displayRows, relEstoquePagination.page, relEstoquePagination.pageSize],
+  );
 
   const load = useCallback(() => {
     setError(null);
@@ -178,7 +186,7 @@ export default function RelatorioEstoquePage() {
                 </td>
               </tr>
             ) : null}
-            {displayRows.map((r) => (
+            {pagedDisplayRows.map((r) => (
               <tr key={r.id}>
                 <td className={painelTableCellClass}>
                   <span className="font-medium">{r.name}</span>{" "}
@@ -200,6 +208,13 @@ export default function RelatorioEstoquePage() {
         {rows.length === 0 && !error ? (
           <p className="p-6 text-center text-sm text-slate-500">Sem dados.</p>
         ) : null}
+        <PainelPaginationBar
+          page={relEstoquePagination.page}
+          pageCount={relEstoquePagination.pageCount}
+          totalItems={displayRows.length}
+          pageSize={relEstoquePagination.pageSize}
+          onPageChange={relEstoquePagination.setPage}
+        />
       </div>
     </>
   );

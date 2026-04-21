@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
@@ -20,6 +21,7 @@ import {
   painelTableTheadClass,
   painelTableWrapClass,
 } from "@/lib/painel-table-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type ProductionRun = {
   id: string;
@@ -112,6 +114,14 @@ export default function ProducaoPage() {
     });
   }, [sorted, recipeNames, textFilter]);
 
+  const producaoPagination = usePainelPagination(displayed.length, {
+    resetKey: `${range.from}:${range.to}:${textFilter}`,
+  });
+  const pagedDisplayed = useMemo(
+    () => slicePage(displayed, producaoPagination.page, producaoPagination.pageSize),
+    [displayed, producaoPagination.page, producaoPagination.pageSize],
+  );
+
   return (
     <>
       <PainelStickyHeading>
@@ -197,7 +207,7 @@ export default function ProducaoPage() {
               </tr>
             </thead>
             <tbody className={painelTableTbodyClass}>
-              {displayed.map((r) => (
+              {pagedDisplayed.map((r) => (
                 <tr key={r.id} className="text-slate-800">
                   <td className={`${painelTableCellClass} text-xs text-slate-600`}>
                     {new Date(r.created_at).toLocaleString("pt-BR", {
@@ -221,6 +231,13 @@ export default function ProducaoPage() {
               ))}
             </tbody>
           </table>
+          <PainelPaginationBar
+            page={producaoPagination.page}
+            pageCount={producaoPagination.pageCount}
+            totalItems={displayed.length}
+            pageSize={producaoPagination.pageSize}
+            onPageChange={producaoPagination.setPage}
+          />
         </div>
       ) : null}
 

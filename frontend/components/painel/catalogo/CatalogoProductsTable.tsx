@@ -1,7 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { formatBRL } from "@/lib/painel-api";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 import {
   painelTableCellClass,
   painelTableClassWide,
@@ -15,6 +19,8 @@ import type { CatalogoCategory, CatalogoProduct } from "./types";
 type Props = {
   rows: CatalogoProduct[];
   displayRows: CatalogoProduct[];
+  /** Muda quando filtros/pesquisa mudam — repõe a página 1. */
+  filterResetKey: string;
   categories: CatalogoCategory[];
   err: string | null;
   saving: string | null;
@@ -24,11 +30,18 @@ type Props = {
 export function CatalogoProductsTable({
   rows,
   displayRows,
+  filterResetKey,
   categories,
   err,
   saving,
   patchProduct,
 }: Props) {
+  const pagination = usePainelPagination(displayRows.length, { resetKey: filterResetKey });
+  const pagedRows = useMemo(
+    () => slicePage(displayRows, pagination.page, pagination.pageSize),
+    [displayRows, pagination.page, pagination.pageSize],
+  );
+
   return (
     <div className={`mt-8 ${painelTableWrapClass}`}>
       <table className={painelTableClassWide}>
@@ -52,7 +65,7 @@ export function CatalogoProductsTable({
               </td>
             </tr>
           ) : null}
-          {displayRows.map((p) => (
+          {pagedRows.map((p) => (
             <tr key={p.id} className={saving === p.id ? "opacity-60" : undefined}>
               <td className={`max-w-[12rem] ${painelTableCellClass} align-top`}>
                 <input
@@ -184,6 +197,13 @@ export function CatalogoProductsTable({
         </tbody>
       </table>
       {rows.length === 0 && !err ? <p className="p-6 text-sm text-slate-500">Sem produtos.</p> : null}
+      <PainelPaginationBar
+        page={pagination.page}
+        pageCount={pagination.pageCount}
+        totalItems={displayRows.length}
+        pageSize={pagination.pageSize}
+        onPageChange={pagination.setPage}
+      />
     </div>
   );
 }

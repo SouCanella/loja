@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import {
   painelFilterFieldColClass,
   painelFilterLabelClass,
   painelFilterSearchInputClass,
 } from "@/lib/painel-filter-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 import type { ContactGroup } from "@/lib/painel-clientes-helpers";
 import {
   painelTableCellClass,
@@ -29,6 +32,14 @@ export function ClientesOrdersByContactSection({
   filterQuery,
   onFilterQueryChange,
 }: Props) {
+  const pagination = usePainelPagination(filteredGroups.length, {
+    resetKey: filterQuery,
+  });
+  const pageGroups = useMemo(
+    () => slicePage(filteredGroups, pagination.page, pagination.pageSize),
+    [filteredGroups, pagination.page, pagination.pageSize],
+  );
+
   if (groups.length === 0) return null;
 
   return (
@@ -67,7 +78,7 @@ export function ClientesOrdersByContactSection({
             </tr>
           </thead>
           <tbody className={painelTableTbodyClass}>
-            {filteredGroups.map(({ key, orders, label }) => {
+            {pageGroups.map(({ key, orders, label }) => {
               const latest = orders[0];
               const n = orders.length;
               return (
@@ -123,6 +134,13 @@ export function ClientesOrdersByContactSection({
             })}
           </tbody>
         </table>
+        <PainelPaginationBar
+          page={pagination.page}
+          pageCount={pagination.pageCount}
+          totalItems={filteredGroups.length}
+          pageSize={pagination.pageSize}
+          onPageChange={pagination.setPage}
+        />
         {filterQuery.trim() && filteredGroups.length === 0 ? (
           <p className="border-t border-slate-100 px-4 py-6 text-center text-sm text-slate-600">
             Nenhum contacto corresponde a «{filterQuery.trim()}».{" "}

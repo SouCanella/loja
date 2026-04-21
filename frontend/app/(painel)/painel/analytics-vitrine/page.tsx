@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type Summary = {
   date_from: string;
@@ -45,6 +47,15 @@ export default function PainelAnalyticsVitrinePage() {
       )
       .finally(() => setLoading(false));
   }, [from, to]);
+
+  const topProducts = data?.top_products_by_view ?? [];
+  const topProductsPagination = usePainelPagination(topProducts.length, {
+    resetKey: `${from}:${to}`,
+  });
+  const pagedTopProducts = useMemo(
+    () => slicePage(topProducts, topProductsPagination.page, topProductsPagination.pageSize),
+    [topProducts, topProductsPagination.page, topProductsPagination.pageSize],
+  );
 
   return (
     <>
@@ -98,14 +109,23 @@ export default function PainelAnalyticsVitrinePage() {
             {data.top_products_by_view.length === 0 ? (
               <p className="px-4 py-6 text-sm text-slate-500">Sem dados neste período.</p>
             ) : (
-              <ul className="divide-y divide-slate-100">
-                {data.top_products_by_view.map((row) => (
-                  <li key={row.product_id} className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="font-medium text-slate-900">{row.name}</span>
-                    <span className="tabular-nums text-slate-600">{row.views} vistas</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="overflow-hidden">
+                <ul className="divide-y divide-slate-100">
+                  {pagedTopProducts.map((row) => (
+                    <li key={row.product_id} className="flex items-center justify-between px-4 py-3 text-sm">
+                      <span className="font-medium text-slate-900">{row.name}</span>
+                      <span className="tabular-nums text-slate-600">{row.views} vistas</span>
+                    </li>
+                  ))}
+                </ul>
+                <PainelPaginationBar
+                  page={topProductsPagination.page}
+                  pageCount={topProductsPagination.pageCount}
+                  totalItems={topProducts.length}
+                  pageSize={topProductsPagination.pageSize}
+                  onPageChange={topProductsPagination.setPage}
+                />
+              </div>
             )}
           </section>
         </div>

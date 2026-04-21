@@ -6,6 +6,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { ClientesOrdersByContactSection } from "@/components/painel/clientes/ClientesOrdersByContactSection";
 import { ClientesVitrineAccountForm } from "@/components/painel/clientes/ClientesVitrineAccountForm";
 import { ClientesVitrineAccountsTable } from "@/components/painel/clientes/ClientesVitrineAccountsTable";
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PanelCard } from "@/components/painel/PanelCard";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
@@ -23,10 +24,10 @@ import {
   contactLabel,
   groupKey,
   groupMatchesFilter,
-  type ContactGroup,
   type OrderRow,
   sortOrdersDesc,
 } from "@/lib/painel-clientes-helpers";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type VitrineCustomer = {
   id: string;
@@ -136,6 +137,15 @@ export default function ClientesPage() {
     return groups.filter((g) => groupMatchesFilter(g, filterQuery));
   }, [groups, filterQuery]);
 
+  const customerOrderStatRows = custOrderStats?.stats ?? [];
+  const statsPagination = usePainelPagination(customerOrderStatRows.length, {
+    resetKey: `${statsRange.from}:${statsRange.to}`,
+  });
+  const pagedCustomerOrderStats = useMemo(
+    () => slicePage(customerOrderStatRows, statsPagination.page, statsPagination.pageSize),
+    [customerOrderStatRows, statsPagination.page, statsPagination.pageSize],
+  );
+
   async function onCreateVitrineCustomer(e: FormEvent) {
     e.preventDefault();
     setVitrineMsg(null);
@@ -233,7 +243,7 @@ export default function ClientesPage() {
                 </tr>
               </thead>
               <tbody className={painelTableTbodyClass}>
-                {custOrderStats.stats.map((s) => (
+                {pagedCustomerOrderStats.map((s) => (
                   <tr key={s.customer_id}>
                     <td className={`${painelTableCellClass} font-medium text-slate-900`}>{s.email}</td>
                     <td className={`${painelTableCellClass} text-right tabular-nums`}>
@@ -249,6 +259,13 @@ export default function ClientesPage() {
                 ))}
               </tbody>
             </table>
+            <PainelPaginationBar
+              page={statsPagination.page}
+              pageCount={statsPagination.pageCount}
+              totalItems={customerOrderStatRows.length}
+              pageSize={statsPagination.pageSize}
+              onPageChange={statsPagination.setPage}
+            />
           </div>
         ) : null}
       </PanelCard>

@@ -1,5 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
+
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 import {
   painelTableCellDenseClass,
   painelTableClass,
@@ -19,6 +23,13 @@ type Props = {
 };
 
 export function ClientesVitrineAccountsTable({ vitrineCustomers }: Props) {
+  const resetKey = vitrineCustomers.map((c) => c.id).join(",");
+  const pagination = usePainelPagination(vitrineCustomers.length, { resetKey });
+  const pageRows = useMemo(
+    () => slicePage(vitrineCustomers, pagination.page, pagination.pageSize),
+    [vitrineCustomers, pagination.page, pagination.pageSize],
+  );
+
   return (
     <div className={`mt-6 ${painelTableWrapClass}`}>
       <table className={painelTableClass}>
@@ -32,7 +43,7 @@ export function ClientesVitrineAccountsTable({ vitrineCustomers }: Props) {
           </tr>
         </thead>
         <tbody className={painelTableTbodyClass}>
-          {vitrineCustomers.map((c) => (
+          {pageRows.map((c) => (
             <tr key={c.id}>
               <td className={`${painelTableCellDenseClass} font-medium text-slate-900`}>{c.email}</td>
               <td className={`${painelTableCellDenseClass} text-right text-xs text-slate-600 tabular-nums`}>
@@ -45,6 +56,13 @@ export function ClientesVitrineAccountsTable({ vitrineCustomers }: Props) {
           ))}
         </tbody>
       </table>
+      <PainelPaginationBar
+        page={pagination.page}
+        pageCount={pagination.pageCount}
+        totalItems={vitrineCustomers.length}
+        pageSize={pagination.pageSize}
+        onPageChange={pagination.setPage}
+      />
     </div>
   );
 }

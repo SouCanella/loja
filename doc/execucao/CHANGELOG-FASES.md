@@ -2,12 +2,19 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Painel — paginação de listas, barra Guardar alinhada, WhatsApp na vitrine)
+
+- **Paginação (cliente):** `frontend/lib/painel-pagination.ts` (`usePainelPagination`, `slicePage`, `PAINEL_DEFAULT_PAGE_SIZE = 20`) e `PainelPaginationBar.tsx`. Listagens com barra «Anterior / Seguinte» e intervalo «a–b de n»: pedidos, clientes (contactos, métricas, contas vitrine), insumos, receitas, catálogo (`filterResetKey`), categorias, notificações, produção, precificação (só a tabela; o selector do gráfico usa a lista completa), relatório de stock, relatório financeiro (três tabelas; totais «Por produto» em `<tfoot>`), analytics vitrine (top produtos).
+- **Barra fixa Guardar (`PainelFormSaveBar`):** classe `.painel-form-save-bar-inset` em `globals.css` — alinha a barra ao mesmo bloco centrado que `PainelShell` (`max-w-[1600px]`) + coluna após o aside em `md+`, evitando que o botão ultrapasse a margem direita em viewports largas. Padding horizontal da barra alinhado ao `<main>` (`px-4 sm:px-6 lg:px-8`).
+- **Pré-visualização vitrine (`VitrinePreviewCard`):** botão **WhatsApp** (antes «Partilhar») abre `wa.me/?text=` com `shareStoreMessage` + `whatsAppShareUrl` (`painel-share-store.ts`). Usado em **Dashboard** e **Configuração da loja**.
+- **Configuração da loja:** removido o parágrafo explicativo sobre o botão Guardar fixo; mantidos o botão **Guardar alterações** no formulário e `PainelFormSaveBar`.
+
 ## 2026-04-22 (Painel — UX copy, pré-visualização vitrine, barra Guardar)
 
 - **Dashboard:** bloco de partilha alinhado à **Configuração da loja** (`VitrinePreviewCard`); removidos subtítulo do cabeçalho e nota de agregação UTC; removido `ShareStoreBar` (URL e acções passam pelo cartão unificado).
 - **Textos de ajuda:** revisão dos conteúdos dos «?» (`PainelTitleHelp`, `FieldTipBeside`, `FilterBarFieldTip`, `summaryTip` em secções) — linguagem para o lojista, sem jargão de API/códigos internos; subtítulos longos movidos para tooltips onde fazia sentido.
-- **Configuração da loja:** nota sobre o botão **Guardar** fixo no fundo do ecrã em texto visível (sem ícone de interrogação).
-- **Barra fixa Guardar (`PainelFormSaveBar`):** posicionamento explícito `left-0 right-0 md:left-60 md:right-0` para não cobrir o menu lateral; **sidebar** com `relative z-[290]` por cima da barra (`z-[280]`) em desktop.
+- **Configuração da loja:** nota sobre o botão **Guardar** fixo no fundo do ecrã em texto visível (sem ícone de interrogação) — **removida** na entrada **2026-04-21** abaixo.
+- **Barra fixa Guardar (`PainelFormSaveBar`):** posicionamento explícito `left-0 right-0 md:left-60 md:right-0` para não cobrir o menu lateral; **sidebar** com `relative z-[290]` por cima da barra (`z-[280]`) em desktop. **Actualização 2026-04-21:** alinhamento ao contentor `max-w-[1600px]` via `.painel-form-save-bar-inset` (ver entrada seguinte).
 
 ## 2026-04-21 (Fase 3.2 — E2E, Tailwind `lib/`, regressão de cor CTA, QA painel)
 

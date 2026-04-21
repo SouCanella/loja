@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
@@ -25,6 +26,7 @@ import {
   painelTableTheadClass,
   painelTableWrapClass,
 } from "@/lib/painel-table-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type InvRow = {
   id: string;
@@ -53,6 +55,12 @@ export default function InsumosPage() {
     if (!q) return rows;
     return rows.filter((r) => r.name.toLowerCase().includes(q) || r.unit.toLowerCase().includes(q));
   }, [rows, filterQuery]);
+
+  const insumosPagination = usePainelPagination(displayRows.length, { resetKey: filterQuery });
+  const pagedDisplayRows = useMemo(
+    () => slicePage(displayRows, insumosPagination.page, insumosPagination.pageSize),
+    [displayRows, insumosPagination.page, insumosPagination.pageSize],
+  );
 
   const load = useCallback(() => {
     setError(null);
@@ -299,7 +307,7 @@ export default function InsumosPage() {
                 </td>
               </tr>
             ) : null}
-            {displayRows.map((r) => (
+            {pagedDisplayRows.map((r) => (
               <tr key={r.id}>
                 <td className={`max-w-[14rem] ${painelTableCellClass}`}>
                   <span className="font-medium text-slate-900">{r.name}</span>
@@ -333,6 +341,13 @@ export default function InsumosPage() {
             ))}
           </tbody>
         </table>
+        <PainelPaginationBar
+          page={insumosPagination.page}
+          pageCount={insumosPagination.pageCount}
+          totalItems={displayRows.length}
+          pageSize={insumosPagination.pageSize}
+          onPageChange={insumosPagination.setPage}
+        />
       </div>
       <p className="mt-6 text-xs text-slate-500">
         Dica: custo em stock vem dos lotes (entradas). O lote inicial no formulário só preenche o primeiro lote ao criar.

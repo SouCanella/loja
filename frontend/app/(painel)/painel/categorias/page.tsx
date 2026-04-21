@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
@@ -13,6 +14,7 @@ import {
   painelBtnSecondaryCompactClass,
 } from "@/lib/painel-button-classes";
 import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type Category = { id: string; name: string; slug: string };
 
@@ -37,6 +39,14 @@ export default function CategoriasPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const categoriasPagination = usePainelPagination(rows.length, {
+    resetKey: rows.map((c) => c.id).join(","),
+  });
+  const pagedRows = useMemo(
+    () => slicePage(rows, categoriasPagination.page, categoriasPagination.pageSize),
+    [rows, categoriasPagination.page, categoriasPagination.pageSize],
+  );
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -154,11 +164,12 @@ export default function CategoriasPage() {
         </button>
       </form>
 
-      <ul className="mt-8 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <ul className="divide-y divide-slate-200">
         {rows.length === 0 && !err ? (
           <li className="px-4 py-8 text-center text-sm text-slate-500">Nenhuma categoria.</li>
         ) : null}
-        {rows.map((c) => {
+        {pagedRows.map((c) => {
           const isEditing = editingId === c.id;
           const disabled = busyId === c.id;
           return (
@@ -228,7 +239,15 @@ export default function CategoriasPage() {
             </li>
           );
         })}
-      </ul>
+        </ul>
+        <PainelPaginationBar
+          page={categoriasPagination.page}
+          pageCount={categoriasPagination.pageCount}
+          totalItems={rows.length}
+          pageSize={categoriasPagination.pageSize}
+          onPageChange={categoriasPagination.setPage}
+        />
+      </div>
     </>
   );
 }

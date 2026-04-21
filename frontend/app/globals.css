@@ -294,4 +294,19 @@ button[disabled] {
   .text-loja-muted {
     color: #5c4d42;
   }
+
+  /**
+   * PainelFormSaveBar (portal em `body`): alinhar à mesma caixa que `PainelShell` (`max-width: 1600px` centrada).
+   * Sem isto, `fixed` com `right: 0` na viewport faz o botão «Guardar» ultrapassar a margem direita do conteúdo.
+   * Manter 1600px em sincronia com `PainelShell.tsx`.
+   */
+  .painel-form-save-bar-inset {
+    left: max(0px, calc((100vw - min(100vw, 1600px)) / 2));
+    right: max(0px, calc((100vw - min(100vw, 1600px)) / 2));
+  }
+  @media (min-width: 768px) {
+    .painel-form-save-bar-inset {
+      left: calc(15rem + max(0px, calc((100vw - min(100vw, 1600px)) / 2)));
+    }
+  }
 }

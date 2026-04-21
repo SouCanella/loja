@@ -279,6 +279,7 @@ export default function CatalogoPage() {
       <CatalogoProductsTable
         rows={rows}
         displayRows={displayRows}
+        filterResetKey={`${filterQuery}|${statusFilter}|${categoryFilter}`}
         categories={categories}
         err={err}
         saving={saving}

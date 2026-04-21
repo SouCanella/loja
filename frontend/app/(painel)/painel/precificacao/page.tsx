@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { PricingCompositionChart } from "@/components/painel/PricingCompositionChart";
@@ -21,6 +22,7 @@ import {
   painelFilterSelectClass,
 } from "@/lib/painel-filter-classes";
 import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
+import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
 type Recipe = {
   id: string;
@@ -74,6 +76,12 @@ export default function PrecificacaoPage() {
       );
     });
   }, [rows, names, filterQuery]);
+
+  const tablePagination = usePainelPagination(filteredRows.length, { resetKey: filterQuery });
+  const pagedTableRows = useMemo(
+    () => slicePage(filteredRows, tablePagination.page, tablePagination.pageSize),
+    [filteredRows, tablePagination.page, tablePagination.pageSize],
+  );
 
   useEffect(() => {
     if (filteredRows.length === 0) return;
@@ -138,7 +146,7 @@ export default function PrecificacaoPage() {
                 </td>
               </tr>
             ) : null}
-            {filteredRows.map((r) => (
+            {pagedTableRows.map((r) => (
               <tr key={r.id} className="text-slate-800">
                 <td className={painelTableCellClass}>
                   <span className="font-medium text-slate-900">{names[r.product_id] ?? "Produto"}</span>
@@ -163,6 +171,13 @@ export default function PrecificacaoPage() {
         {rows.length === 0 && !err ? (
           <p className="p-6 text-sm text-slate-500">Sem receitas cadastradas. Crie em Receitas.</p>
         ) : null}
+        <PainelPaginationBar
+          page={tablePagination.page}
+          pageCount={tablePagination.pageCount}
+          totalItems={filteredRows.length}
+          pageSize={tablePagination.pageSize}
+          onPageChange={tablePagination.setPage}
+        />
       </div>
 
       {filteredRows.length > 0 ? (
