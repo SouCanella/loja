@@ -14,6 +14,7 @@ type Props = {
   newName: string;
   newPrice: string;
   newCat: string;
+  newTrackInventory: boolean;
   newUnit: string;
   newQty: string;
   newCost: string;
@@ -23,6 +24,7 @@ type Props = {
   onNewNameChange: (v: string) => void;
   onNewPriceChange: (v: string) => void;
   onNewCatChange: (v: string) => void;
+  onNewTrackInventoryChange: (v: boolean) => void;
   onNewUnitChange: (v: string) => void;
   onNewQtyChange: (v: string) => void;
   onNewCostChange: (v: string) => void;
@@ -36,6 +38,7 @@ export function CatalogoNewProductForm({
   newName,
   newPrice,
   newCat,
+  newTrackInventory,
   newUnit,
   newQty,
   newCost,
@@ -45,6 +48,7 @@ export function CatalogoNewProductForm({
   onNewNameChange,
   onNewPriceChange,
   onNewCatChange,
+  onNewTrackInventoryChange,
   onNewUnitChange,
   onNewQtyChange,
   onNewCostChange,
@@ -57,8 +61,21 @@ export function CatalogoNewProductForm({
       <PanelCard>
         <h2 className="text-sm font-semibold text-slate-800">Novo produto</h2>
         <p className="mt-1 text-xs text-slate-500">
-          Cria o produto de venda e o respectivo insumo de stock com um lote inicial (custo e quantidade).
+          {newTrackInventory
+            ? "Cria o produto de venda e o respectivo insumo de stock com um lote inicial (custo e quantidade)."
+            : "Produto sem controlo de stock (serviços, encomendas externas): não há baixa de lotes em pedidos."}
         </p>
+        <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            className="rounded border-slate-300"
+            checked={newTrackInventory}
+            onChange={(e) => onNewTrackInventoryChange(e.target.checked)}
+          />
+          <FieldTipBeside tip="Se desmarcar, o produto não tem insumo nem movimentos de stock (IP-14 / DEC-23).">
+            Controlar stock deste produto
+          </FieldTipBeside>
+        </label>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pn">
@@ -112,9 +129,10 @@ export function CatalogoNewProductForm({
             </label>
             <input
               id="pu"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:opacity-50"
               value={newUnit}
               onChange={(e) => onNewUnitChange(e.target.value)}
+              disabled={!newTrackInventory}
             />
           </div>
         </div>
@@ -127,10 +145,11 @@ export function CatalogoNewProductForm({
             </label>
             <input
               id="pq"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:opacity-50"
               value={newQty}
               onChange={(e) => onNewQtyChange(e.target.value)}
               inputMode="decimal"
+              disabled={!newTrackInventory}
             />
           </div>
           <div>
@@ -141,10 +160,11 @@ export function CatalogoNewProductForm({
             </label>
             <input
               id="pco"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:opacity-50"
               value={newCost}
               onChange={(e) => onNewCostChange(e.target.value)}
               inputMode="decimal"
+              disabled={!newTrackInventory}
             />
           </div>
         </div>

@@ -82,6 +82,12 @@ def create_recipe(db: Session, current: User, body: RecipeCreate) -> RecipeOut:
             detail="Já existe receita para este produto",
         )
 
+    if not p.track_inventory or p.inventory_item_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Produto sem controlo de stock não suporta receitas",
+        )
+
     seen: set[UUID] = set()
     for it in body.items:
         if it.inventory_item_id in seen:

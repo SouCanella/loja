@@ -33,6 +33,7 @@ type OrderDetail = {
     product_id: string;
     quantity: string;
     unit_price: string;
+    line_note?: string | null;
   }[];
 };
 
@@ -107,6 +108,7 @@ export default function PainelPedidoDetalhePage() {
       productName: nameByProductId.get(it.product_id) ?? "Produto",
       qtyLabel: String(Number.parseFloat(it.quantity)),
       lineTotal: formatBRL(lineTotal(it.quantity, it.unit_price)),
+      lineNote: it.line_note,
     }));
     const text = draftOrderWhatsAppMessage({
       storeName: me.store_name,
@@ -279,6 +281,11 @@ export default function PainelPedidoDetalhePage() {
                     <p className="text-xs text-slate-500">
                       {Number.parseFloat(it.quantity)} × {formatBRL(it.unit_price)}
                     </p>
+                    {it.line_note ? (
+                      <p className="mt-1 text-xs text-slate-600">
+                        <span className="font-medium">Obs.:</span> {it.line_note}
+                      </p>
+                    ) : null}
                   </div>
                   <p className="text-sm font-medium text-slate-900">
                     {formatBRL(lineTotal(it.quantity, it.unit_price))}

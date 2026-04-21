@@ -8,6 +8,8 @@ export type CatalogoProduct = {
   active: boolean;
   catalog_spotlight: string | null;
   catalog_sale_mode: string;
+  /** IP-14 — omissão tratada como true (produtos antigos) */
+  track_inventory?: boolean;
 };
 
 export type CatalogoCategory = { id: string; name: string; slug: string };

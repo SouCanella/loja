@@ -79,6 +79,8 @@ def execute_production(
     product = db.get(Product, recipe.product_id)
     if product is None or product.store_id != store_id:
         raise ValueError("produto inválido")
+    if not product.track_inventory or product.inventory_item_id is None:
+        raise ValueError("produto sem stock acabado (sem controlo de inventário)")
 
     recipe = db.scalars(
         select(Recipe)

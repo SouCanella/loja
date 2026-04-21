@@ -18,6 +18,7 @@ type ProductRow = {
 type Line = {
   product_id: string;
   quantity: string;
+  line_note: string;
 };
 
 type OrderDetail = {
@@ -27,7 +28,7 @@ type OrderDetail = {
 export default function PainelPedidoNovoPage() {
   const router = useRouter();
   const [products, setProducts] = useState<ProductRow[] | null>(null);
-  const [lines, setLines] = useState<Line[]>([{ product_id: "", quantity: "1" }]);
+  const [lines, setLines] = useState<Line[]>([{ product_id: "", quantity: "1", line_note: "" }]);
   const [customerNote, setCustomerNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -41,7 +42,7 @@ export default function PainelPedidoNovoPage() {
   }, []);
 
   function addLine() {
-    setLines((prev) => [...prev, { product_id: "", quantity: "1" }]);
+    setLines((prev) => [...prev, { product_id: "", quantity: "1", line_note: "" }]);
   }
 
   function removeLine(index: number) {
@@ -55,7 +56,7 @@ export default function PainelPedidoNovoPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const items: { product_id: string; quantity: string }[] = [];
+    const items: { product_id: string; quantity: string; line_note?: string }[] = [];
     for (const line of lines) {
       if (!line.product_id) {
         setError("Seleccione um produto em cada linha.");
@@ -66,7 +67,12 @@ export default function PainelPedidoNovoPage() {
         setError("Quantidade inválida (use um número maior que zero).");
         return;
       }
-      items.push({ product_id: line.product_id, quantity: String(q) });
+      const note = line.line_note.trim();
+      items.push({
+        product_id: line.product_id,
+        quantity: String(q),
+        ...(note ? { line_note: note } : {}),
+      });
     }
     if (items.length === 0) {
       setError("Adicione pelo menos um item.");
@@ -155,6 +161,17 @@ export default function PainelPedidoNovoPage() {
                     className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
                     value={line.quantity}
                     onChange={(e) => updateLine(index, { quantity: e.target.value })}
+                  />
+                </label>
+                <label className="block w-full flex-1 text-sm sm:min-w-[12rem]">
+                  <span className="text-slate-600">Obs. linha (opcional)</span>
+                  <input
+                    type="text"
+                    className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                    value={line.line_note}
+                    onChange={(e) => updateLine(index, { line_note: e.target.value })}
+                    placeholder="Ex.: sem glúten"
+                    maxLength={2000}
                   />
                 </label>
                 <button

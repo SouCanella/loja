@@ -218,13 +218,18 @@ export function draftOrderWhatsAppMessage(opts: {
   orderIdShort: string;
   orderIdFull: string;
   statusLabel: string;
-  lines: { productName: string; qtyLabel: string; lineTotal: string }[];
+  lines: { productName: string; qtyLabel: string; lineTotal: string; lineNote?: string | null }[];
   total: string;
   customerNote: string | null;
 }): string {
   const head = `*${opts.storeName}*\nPedido #${opts.orderIdShort}\nEstado: ${opts.statusLabel}\n`;
   const body = opts.lines
-    .map((l) => `• ${l.productName} — ${l.qtyLabel} → ${l.lineTotal}`)
+    .map((l) => {
+      let row = `• ${l.productName} — ${l.qtyLabel} → ${l.lineTotal}`;
+      const n = l.lineNote?.trim();
+      if (n) row += `\n  Obs.: ${n}`;
+      return row;
+    })
     .join("\n");
   const tailParts = [`\n*Total:* ${opts.total}`];
   if (opts.customerNote) {

@@ -47,6 +47,18 @@ function defaultRange(): { from: string; to: string } {
   return { from: formatLocalIsoDate(from), to: formatLocalIsoDate(to) };
 }
 
+function todayRange(): { from: string; to: string } {
+  const t = formatLocalIsoDate(new Date());
+  return { from: t, to: t };
+}
+
+function last7DaysRange(): { from: string; to: string } {
+  const to = new Date();
+  const from = new Date(to);
+  from.setDate(from.getDate() - 6);
+  return { from: formatLocalIsoDate(from), to: formatLocalIsoDate(to) };
+}
+
 export default function ProducaoPage() {
   const [range, setRange] = useState(defaultRange);
   const [runs, setRuns] = useState<ProductionRun[] | null>(null);
@@ -123,6 +135,22 @@ export default function ProducaoPage() {
           onFromChange={(v) => setRange((r) => ({ ...r, from: v }))}
           onToChange={(v) => setRange((r) => ({ ...r, to: v }))}
         >
+          <div className="flex flex-wrap items-end gap-2">
+            <button
+              type="button"
+              className={painelBtnSecondaryClass}
+              onClick={() => setRange(todayRange())}
+            >
+              Hoje
+            </button>
+            <button
+              type="button"
+              className={painelBtnSecondaryClass}
+              onClick={() => setRange(last7DaysRange())}
+            >
+              Últimos 7 dias
+            </button>
+          </div>
           <div className={`min-w-0 flex-1 sm:max-w-xs ${painelFilterFieldColClass}`}>
             <label className={painelFilterLabelCompactClass} htmlFor="prod-search">
               Receita / produto

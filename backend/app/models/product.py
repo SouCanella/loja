@@ -46,12 +46,13 @@ class Product(Base):
         nullable=True,
         index=True,
     )
-    inventory_item_id: Mapped[uuid.UUID] = mapped_column(
+    inventory_item_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("inventory_items.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
+    track_inventory: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     image_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
@@ -68,7 +69,7 @@ class Product(Base):
 
     store: Mapped["Store"] = relationship("Store", back_populates="products")
     category: Mapped["Category | None"] = relationship("Category", back_populates="products")
-    inventory_item: Mapped["InventoryItem"] = relationship(
+    inventory_item: Mapped["InventoryItem | None"] = relationship(
         "InventoryItem", back_populates="product", uselist=False
     )
     order_items: Mapped[list["OrderItem"]] = relationship("OrderItem", back_populates="product")

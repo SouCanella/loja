@@ -64,7 +64,7 @@ make test             # pytest (backend) + Vitest (frontend)
 make openapi-export   # actualiza doc/api/openapi.json
 ```
 
-**Backend:** `backend/tests/` — 221+ testes na última execução completa do `make test`.  
+**Backend:** `backend/tests/` — 225 testes na última execução completa do `make test`.  
 **Frontend:** Vitest em `frontend/__tests__/` (inclui `escpos.test.ts`).
 
 ---
@@ -135,6 +135,36 @@ Rastreio: [backlog.md](../projeto/backlog.md) — linhas **FR-01…FR-06** com e
 | **DT-03** | Cobertura de serviços mantida pelo gate existente; reforço de confiança multi-tenant via MA-01. |
 
 **Fora deste incremento (rastreado no backlog):** **MA-05** (RLS Postgres); meta global de cobertura em todo o `app`; push de imagens e CD — ver [backlog.md](../projeto/backlog.md).
+
+---
+
+## 11. Demandas de produto IP-02 … IP-14 (2026-04-21)
+
+| ID | Entrega no código / produto |
+|----|-----------------------------|
+| **IP-02** | Atalhos de datas **Hoje** / **Últimos 7 dias** em `/painel/producao` (filtro do histórico de corridas). |
+| **IP-05** | `line_note` em itens; persistência API pública e painel; impressão e WhatsApp. Migração `20260427_0014` (entre outras alterações de modelo). |
+| **IP-06** | `GET /api/v2/dashboard/customer-order-stats`; UI em `/painel/clientes` — tabela por e-mail (pedidos no período, último pedido). |
+| **IP-07** | Texto de pedido / WhatsApp com blocos por linha e observações (`cart-context`, checkout, `painel-api` rascunho). |
+| **IP-11** | Mantido **parcial** — ver [ip-11-pedidos-vitrine-painel.md](ip-11-pedidos-vitrine-painel.md) (MVP + notificações). |
+| **IP-12** | `ShareStoreBar` no dashboard; `frontend/lib/painel-share-store.ts`. |
+| **IP-13** | `buildMenuCatalogText` + acção no catálogo do painel. |
+| **IP-14** | `track_inventory` + stock opcional; coluna **Stock** na tabela de produtos; serviços de stock/receita/produção alinhados. |
+| **IP-03, IP-04, IP-08, IP-09, IP-10** | Não implementados; especificação e priorização no [backlog.md](../projeto/backlog.md). |
+
+**Testes:** `backend/tests/test_ip_demands_product.py`; `frontend/__tests__/painel-menu-catalog-text.test.ts`, `frontend/__tests__/painel-share-store.test.ts`. Síntese normativa: [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) **§8.1**.
+
+---
+
+## 12. E2E Playwright, Tailwind `lib/` e regressão de cor do CTA (2026-04-21)
+
+| Tema | Entrega |
+|------|---------|
+| **Tailwind JIT** | `frontend/tailwind.config.ts` — `content` inclui `./lib/**/*.{js,ts,jsx,tsx,mdx}` para gerar utilitários referenciados só em `lib/painel-button-classes.ts` (corrige botões primários «invisíveis» / branco sobre branco). |
+| **PainelFormSaveBar** | Portal em `document.body`, `useLayoutEffect`, `z-[280]`; em **Configuração** existe também botão **Guardar alterações** no fim do formulário. |
+| **Catálogo (painel)** | Carregamento com `Promise.allSettled` e mensagens separadas (produtos vs categorias). |
+| **Playwright** | `frontend/e2e/helpers/auth.ts`, `painel-routes.ts`, `cta-contrast.ts` (`getComputedStyle` — fundo do botão ≠ branco); specs `painel-routes-smoke.spec.ts`, `painel-config-save.spec.ts`, `painel-regression.spec.ts`, `vitrine-loja-smoke.spec.ts`; `login-painel.spec.ts` alinhado ao heading **Dashboard**. |
+| **Plano E2E** | [plano-e2e-mapeamento-implementacao.md](plano-e2e-mapeamento-implementacao.md); variáveis: `frontend/e2e/README.md` e [TESTES-E-CI.md](TESTES-E-CI.md) §4. |
 
 ---
 

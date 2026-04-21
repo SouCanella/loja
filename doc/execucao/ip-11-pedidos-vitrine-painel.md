@@ -52,3 +52,7 @@ Em vez de email: **notificações dentro do painel** quando chega um pedido novo
 | API v2 | `GET /api/v2/notifications?limit=…`, `POST /api/v2/notifications/mark-read`, `POST /api/v2/notifications/read-all` |
 | Painel | `PainelNotificationsProvider` + ícone 🔔 na barra lateral e no header mobile; página `/painel/notificacoes`; polling ~22s com `document.visibilityState`. |
 | Som | Dois bipes (Web Audio API), activável/desactivável no dropdown; preferência em `localStorage` (`painel_notif_sound`); primeiro clique no painel tenta desbloquear o áudio (política dos browsers). Botão **Testar som** no mesmo menu. |
+
+## Alinhamento com a Fase 3.2
+
+O estado **parcial** de **IP-11** está consolidado na documentação da fase em [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) **§8.1** e no resumo técnico [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) **§11** (junto com as restantes demandas IP).

@@ -91,11 +91,13 @@ def create_order_from_vitrine(
             store_id=store.id,
             reject_catalog_unavailable=True,
         )
+        ln = line.line_note.strip() if line.line_note else None
         order.items.append(
             OrderItem(
                 product_id=p.id,
                 quantity=line.quantity,
                 unit_price=p.price,
+                line_note=ln,
             )
         )
 

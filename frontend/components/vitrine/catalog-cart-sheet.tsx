@@ -38,6 +38,8 @@ export function CatalogCartSheet({ open, onClose, store, cart, co, onPreviewMess
     registering,
     registerOrderWithApi,
     waUrl,
+    lineNotes,
+    setLineNote,
   } = co;
 
   return (
@@ -112,6 +114,19 @@ export function CatalogCartSheet({ open, onClose, store, cart, co, onPreviewMess
                         Remover
                       </button>
                     </div>
+                    <label className="mt-2 block">
+                      <span className="mb-0.5 block text-[0.68rem] font-medium text-loja-muted">
+                        Observação deste item (opcional)
+                      </span>
+                      <input
+                        type="text"
+                        className="w-full rounded-lg border border-loja-ink/10 bg-loja-bg px-2 py-1.5 text-[0.78rem]"
+                        placeholder="Ex.: sem cebola, embalagem para viagem…"
+                        maxLength={2000}
+                        value={lineNotes[product.id] ?? ""}
+                        onChange={(e) => setLineNote(product.id, e.target.value)}
+                      />
+                    </label>
                   </div>
                 </li>
               ))}

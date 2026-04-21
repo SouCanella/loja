@@ -31,6 +31,7 @@ export function useVitrineCheckout(
   const [orderShortCode, setOrderShortCode] = useState<string | null>(null);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [registering, setRegistering] = useState(false);
+  const [lineNotes, setLineNotes] = useState<Record<string, string>>({});
   const hpRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -38,9 +39,21 @@ export function useVitrineCheckout(
     const p = store.payment_methods?.length ? store.payment_methods : PAYMENT_FALLBACK;
     setDelivery(d[0]?.id ?? "retirada");
     setPayment(p[0]?.id ?? "pix");
+    setLineNotes({});
     // Apenas ao mudar de loja — não repor escolhas do cliente a cada render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.slug]);
+
+  useEffect(() => {
+    setLineNotes((prev) => {
+      const next = { ...prev };
+      for (const k of Object.keys(next)) {
+        const q = cart.quantities[k];
+        if (!q || q <= 0) delete next[k];
+      }
+      return next;
+    });
+  }, [cart.quantities]);
 
   const orderLines = useMemo(() => {
     const lines: { product: ProductPublic; qty: number }[] = [];
@@ -67,6 +80,7 @@ export function useVitrineCheckout(
       address: delivery !== "retirada" ? address : undefined,
       orderGreeting: store.order_greeting,
       deliveryOptionId: delivery,
+      lineNotes,
     });
   }, [
     cart,
@@ -79,6 +93,7 @@ export function useVitrineCheckout(
     deliveryLabel,
     paymentLabel,
     address,
+    lineNotes,
   ]);
 
   const orderMessageWithRef = useMemo(() => {
@@ -112,10 +127,14 @@ export function useVitrineCheckout(
     setRegisterError(null);
     setRegistering(true);
     try {
-      const items = orderLines.map((l) => ({
-        product_id: l.product.id,
-        quantity: String(l.qty),
-      }));
+      const items = orderLines.map((l) => {
+        const note = lineNotes[l.product.id]?.trim();
+        return {
+          product_id: l.product.id,
+          quantity: String(l.qty),
+          ...(note ? { line_note: note } : {}),
+        };
+      });
       const body: Record<string, unknown> = {
         items,
         customer_name: customerName.trim(),
@@ -161,7 +180,12 @@ export function useVitrineCheckout(
     delivery,
     payment,
     store.slug,
+    lineNotes,
   ]);
+
+  const setLineNote = useCallback((productId: string, note: string) => {
+    setLineNotes((prev) => ({ ...prev, [productId]: note }));
+  }, []);
 
   return {
     deliveryOpts,
@@ -189,6 +213,8 @@ export function useVitrineCheckout(
     registerError,
     registering,
     registerOrderWithApi,
+    lineNotes,
+    setLineNote,
   };
 }
 

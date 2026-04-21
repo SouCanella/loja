@@ -14,7 +14,7 @@
 | Testes backend | `pytest tests/ -q` — **155** testes | Contratos HTTP (`test_http_contracts_*`), lacunas (`test_coverage_gaps.py`), DEC-12 serviços (`test_services_dec12_coverage.py`), tema vitrine pública (`test_public_catalog_theme.py`), envelope v2 (`test_api_v2_envelope.py`), fluxos de domínio e `test_services_*`. |
 | Cobertura **camada de serviço** | `pytest --cov=app/services --cov-fail-under=90` | **~99%** agregado em `app/services` (**RNF-QA-01**). Gate **90%** no CI. |
 | Testes frontend | `npm run test` (Vitest) | `painel-api.test.ts`, `customer-session.test.ts` — helpers e mocks de `fetch` / `localStorage`. |
-| E2E | `npm run test:e2e` (Playwright) | Smoke `/login`; teste opcional login+painel com `E2E_EMAIL`/`E2E_PASSWORD` — ver `frontend/e2e/README.md` (**RNF-QA-03**). |
+| E2E | `npm run test:e2e` (Playwright) | Smoke público; login+painel opcional (`E2E_EMAIL`/`E2E_PASSWORD`); rotas do menu, configuração, vitrine (`E2E_STORE_SLUG`); helper `cta-contrast` (cor do botão ≠ branco) — ver `frontend/e2e/README.md` e [plano-e2e-mapeamento-implementacao.md](../execucao/plano-e2e-mapeamento-implementacao.md) (**RNF-QA-03**). |
 | Cobertura global `app` (referência) | `pytest --cov=app` | Total ~**97%** (referência 2026-04); restam sobretudo ramos raros (`IntegrityError` em produção, `init_db`, ramos defensivos em `stock` / `me`). |
 | Contrato HTTP | `make openapi-export` → [doc/api/openapi.json](../api/openapi.json) | **RNF-DevEx-08**. |
 | **CI (GitHub Actions)** | Workflow `CI` em push/PR para `main` | Backend: Ruff + pytest serviços ≥90%. Frontend: lint, Vitest, build, Playwright (`PW_SERVER_ONLY`). |

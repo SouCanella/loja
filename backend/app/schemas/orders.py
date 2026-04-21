@@ -12,6 +12,7 @@ from app.models.enums import OrderStatus
 class OrderItemCreate(BaseModel):
     product_id: UUID
     quantity: Decimal = Field(..., gt=0)
+    line_note: str | None = Field(None, max_length=2000)
 
 
 class OrderCreate(BaseModel):
@@ -24,6 +25,7 @@ class OrderItemOut(BaseModel):
     product_id: UUID
     quantity: Decimal
     unit_price: Decimal
+    line_note: str | None = None
 
     model_config = {"from_attributes": True}
 

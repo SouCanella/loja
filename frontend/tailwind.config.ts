@@ -1,7 +1,15 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./app/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}"],
+  /**
+   * Incluir `lib/` — classes canónicas (ex. `painelBtnPrimaryClass` em `lib/painel-button-classes.ts`)
+   * vivem em strings; sem este glob o JIT não gera `bg-painel-cta` e os botões ficam «invisíveis» (branco/branco).
+   */
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {

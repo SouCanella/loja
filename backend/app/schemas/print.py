@@ -11,6 +11,7 @@ class OrderPrintLineOut(BaseModel):
     quantity: str = Field(..., description="Quantidade como decimal string")
     unit_price: str
     line_total: str
+    line_note: str | None = None
 
 
 class OrderPrintOut(BaseModel):

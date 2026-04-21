@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 class PublicOrderItemCreate(BaseModel):
     product_id: UUID
     quantity: Decimal = Field(..., gt=0)
+    line_note: str | None = Field(None, max_length=2000)
 
 
 class PublicOrderCreate(BaseModel):

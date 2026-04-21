@@ -39,6 +39,8 @@ def allocate_stock_for_order(db: Session, order: Order, store_id: UUID) -> None:
         product = db.get(Product, product_id)
         if product is None or product.store_id != store_id:
             raise ValueError("produto inválido na linha")
+        if not product.track_inventory or product.inventory_item_id is None:
+            continue
         item_id = product.inventory_item_id
         need = need_total
         stmt = _batches_ordered_for_consumption(

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { OrdersByStatusChart, RevenueTrendChart } from "@/components/painel/DashboardCharts";
+import { ShareStoreBar } from "@/components/painel/ShareStoreBar";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PanelCard } from "@/components/painel/PanelCard";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
@@ -43,12 +44,12 @@ function defaultRange(): { from: string; to: string } {
 export default function PainelDashboardPage() {
   const [range, setRange] = useState(defaultRange);
   const [data, setData] = useState<DashboardData | null>(null);
-  const [meSlug, setMeSlug] = useState<string | null>(null);
+  const [me, setMe] = useState<{ store_slug: string; store_name: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void apiPainelJson<{ store_slug: string }>("/api/v2/me")
-      .then((m) => setMeSlug(m.store_slug))
+    void apiPainelJson<{ store_slug: string; store_name: string }>("/api/v2/me")
+      .then((m) => setMe({ store_slug: m.store_slug, store_name: m.store_name }))
       .catch(() => {});
   }, []);
 
@@ -97,6 +98,9 @@ export default function PainelDashboardPage() {
       {data ? (
         <>
           <p className="mt-6 mb-4 text-xs text-slate-400 md:mt-0">{data.aggregation_note}</p>
+          {me ? (
+            <ShareStoreBar storeSlug={me.store_slug} storeName={me.store_name} className="mb-6" />
+          ) : null}
           <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <KpiCard label="Pedidos hoje (UTC)" value={String(data.kpis.orders_today)} />
             <KpiCard label="Pedidos no período" value={String(data.kpis.orders_in_period)} />
@@ -127,9 +131,9 @@ export default function PainelDashboardPage() {
             >
               Catálogo
             </Link>
-            {meSlug ? (
+            {me ? (
               <Link
-                href={`/loja/${meSlug}`}
+                href={`/loja/${me.store_slug}`}
                 className="rounded-lg border border-painel-border bg-painel-soft px-4 py-2 text-sm font-medium text-painel-primary-strong hover:bg-painel-soft-hover"
               >
                 Ver vitrine

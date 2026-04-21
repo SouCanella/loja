@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.schemas.auth import RegisterResponse, TokenResponse
 from app.schemas.catalog import CategoryOut, ProductOut
+from app.schemas.customer_insights import CustomerOrderStatsOut
 from app.schemas.customers_painel import StaffCustomerOut
 from app.schemas.customers_public import CustomerAuthResponse, CustomerMeOut
 from app.schemas.dashboard import DashboardSummaryOut
@@ -44,6 +45,12 @@ class FinancialReportEnvelope(BaseModel):
 class DashboardSummaryEnvelope(BaseModel):
     success: bool
     data: DashboardSummaryOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class CustomerOrderStatsEnvelope(BaseModel):
+    success: bool
+    data: CustomerOrderStatsOut | None = None
     errors: list[ApiErrorDetail] | None = None
 
 

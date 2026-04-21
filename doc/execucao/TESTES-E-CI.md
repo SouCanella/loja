@@ -22,7 +22,7 @@
 
 A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Makefile` que encaminha para a raiz (ex.: `make dev`, `make openapi-export`).
 
-**Fase 3.2 (impressão + landing + analytics vitrine + UX painel):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md). Contrato de impressão: `test_order_print_v2.py`; Vitest `__tests__/escpos.test.ts`, `__tests__/painel-filter-classes.test.ts` (classes Tailwind de filtros); E2E smoke `e2e/smoke.spec.ts` (landing, termos, privacidade); analytics: `test_vitrine_analytics_v2.py`.
+**Fase 3.2 (impressão + landing + analytics vitrine + UX painel):** matriz de testes e checklist de documentação no merge — [plano-implementacao-fase-3-2.md](plano-implementacao-fase-3-2.md). Contrato de impressão: `test_order_print_v2.py`; Vitest `__tests__/escpos.test.ts`, `__tests__/painel-filter-classes.test.ts` (classes Tailwind de filtros), `__tests__/painel-menu-catalog-text.test.ts`, `__tests__/painel-share-store.test.ts`; E2E smoke `e2e/smoke.spec.ts` (landing, termos, privacidade); analytics: `test_vitrine_analytics_v2.py`; demandas IP: `test_ip_demands_product.py`.
 
 ## 2. Backend (pytest)
 
@@ -45,11 +45,13 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 |------|--------|
 | Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **Vitest 3.x**; **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
-| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts` (exports de `lib/painel-filter-classes.ts`) |
+| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts`, `painel-menu-catalog-text.test.ts`, `painel-share-store.test.ts` |
 
 Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). O `make test` na raiz depende deste comando concluir com **exit 0**.
 
 ## 4. E2E (Playwright)
+
+**Mapeamento de lacunas vs pytest/Vitest e plano por fases:** [plano-e2e-mapeamento-implementacao.md](plano-e2e-mapeamento-implementacao.md).
 
 | Item | Valor |
 |------|--------|
@@ -60,6 +62,17 @@ Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). O `make tes
 | Auth público | `auth-public.spec.ts` — `/login` (link registo) e `/registo` (formulário). |
 | Vitrine conta | `vitrine-conta.spec.ts` — `/loja/[slug]/conta` (UI; não exige API graças a `fetchStorePublic` degradado). |
 | Opcional (API + credenciais) | `login-painel.spec.ts` — preenche login e verifica `/painel`; **omitido** se `E2E_EMAIL` / `E2E_PASSWORD` não estiverem definidos. |
+| Regressão painel (opcional) | `painel-regression.spec.ts` — após login, **Guardar alterações** + barra de gravação em `/painel/configuracao`; catálogo sem erros `Produtos:` / `Categorias:`. Ver também `painel-routes-smoke.spec.ts`, `painel-config-save.spec.ts`, `vitrine-loja-smoke.spec.ts`, `helpers/auth.ts`. Requer **BD migrada** (`make migrate`) e API; `E2E_STORE_SLUG` opcional para vitrine. |
+
+### Regressão automatizada — o que é realista hoje
+
+| Camada | Comando / artefacto | Cobre |
+|--------|---------------------|--------|
+| Backend + libs | `make test` (pytest + Vitest) | Contratos, handlers, helpers; **não** UI do painel nem browser. |
+| E2E com API real | Playwright + `E2E_EMAIL` / `E2E_PASSWORD` | Fluxo login + páginas críticas; depende de stack alinhado a produção. |
+| E2E — estilo mínimo | `e2e/helpers/cta-contrast.ts` — `getComputedStyle` no botão (fundo ≠ branco) | Regressão de **cor** sem screenshot; útil quando classes Tailwind em `lib/` deixam de ser geradas. |
+| Roadmap | Screenshots pixel-diff (Playwright `toHaveScreenshot`) ou Chromatic; WCAG com axe | Contraste fino e layout; custo de manutenção maior. |
+| Roadmap | Mais E2E (criar produto, guardar config) ou testes HTTP contract em staging | Aproxima «regressivo completo»; documentar matriz em [criterios-testes-http-api.md](criterios-testes-http-api.md). |
 
 Variáveis úteis:
 

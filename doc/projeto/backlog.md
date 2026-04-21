@@ -116,19 +116,19 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | ID | Ideia | Estado | Notas |
 |----|-------|--------|-------|
 | IP-01 | Categorias e produtos em destaque / “novo” / mais vendido | convertido | Ver **RF-CA-11**; exemplo em [mockups/loja-vitrine-layout-sugestao.html](../mockups/loja-vitrine-layout-sugestao.html) |
-| IP-02 | Agenda de produção planejada por dia | ideia | P1 |
-| IP-03 | Promoções: combos, desconto por quantidade, produto promocional | ideia | P1 |
-| IP-04 | Disponibilidade por dia/horário (ex.: só fim de semana) | ideia | P1 |
-| IP-05 | Observações por item de pedido (sem granulado, embalagem especial) | ideia | P1 |
-| IP-06 | Métricas de recompra, clientes inativos, frequência | ideia | P1 |
-| IP-07 | WhatsApp: template rico (nome, itens, total, endereço) | ideia | P1 |
-| IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap |
+| IP-02 | Agenda de produção planejada por dia | parcial | Atalhos **Hoje** / **Últimos 7 dias** no histórico em `/painel/producao`; planeamento por dia — [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8.1 |
+| IP-03 | Promoções: combos, desconto por quantidade, produto promocional | ideia | P1 — não iniciado |
+| IP-04 | Disponibilidade por dia/horário (ex.: só fim de semana) | ideia | P1 — não iniciado |
+| IP-05 | Observações por item de pedido (sem granulado, embalagem especial) | convertido | `line_note`; vitrine + painel + WA — §8.1 fase 3.2 |
+| IP-06 | Métricas de recompra, clientes inativos, frequência | parcial | API `customer-order-stats` + secção Clientes; recompra/inactivos — futuro |
+| IP-07 | WhatsApp: template rico (nome, itens, total, endereço) | convertido | Texto por linhas e observações — §8.1 |
+| IP-08 | Domínio próprio / cupons / entrega (expansão P1 §4) | ideia | Alinhar a BE-06 / roadmap — não iniciado |
 | IP-09 | Avaliações com **foto** ou vídeo curto (além de nota + texto) | ideia | Depende de RF-AV base |
 | IP-10 | Resposta pública do lojista a um comentário aprovado | ideia | Moderação RF-AV |
 | **IP-11** | **Pedidos da vitrine (WhatsApp) visíveis no painel / registo em `orders`** | parcial | **MVP:** `POST` público + referência na mensagem WA; lista `/painel/pedidos` com filtro por origem; **notificações in-app** + som opcional no painel — ver [ip-11-pedidos-vitrine-painel.md](../execucao/ip-11-pedidos-vitrine-painel.md). **Evolução:** WhatsApp Business API; push/WebSockets se necessário. |
-| **IP-12** | **Partilhar loja** (painel e opcionalmente vitrine): copiar link, WhatsApp, Web Share API — URL canónica `/loja/{slug}` | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §1 |
-| **IP-13** | **Cardápio para WhatsApp / Instagram** gerado a partir do catálogo (texto, imagem ou PDF); entrada no painel (e opcional na vitrine) | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §2 |
-| **IP-14** | **Controlo de stock por produto** (`track_inventory` / `inventory_item_id` opcional): CRUD com toggle; impacto em pedidos e RN — **DEC-23** | ideia | Ver [ideias-compartilhar-cardapio-estoque-por-produto.md](ideias-compartilhar-cardapio-estoque-por-produto.md) §3 |
+| **IP-12** | **Partilhar loja** (painel e opcionalmente vitrine): copiar link, WhatsApp, Web Share API — URL canónica `/loja/{slug}` | convertido | `ShareStoreBar` no dashboard; [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8.1 |
+| **IP-13** | **Cardápio para WhatsApp / Instagram** gerado a partir do catálogo (texto, imagem ou PDF); entrada no painel (e opcional na vitrine) | convertido | Texto em `painel-menu-catalog-text.ts` + catálogo; PDF/imagem — futuro |
+| **IP-14** | **Controlo de stock por produto** (`track_inventory` / `inventory_item_id` opcional): CRUD com toggle; impacto em pedidos e RN — **DEC-23** | convertido | Migração + coluna Stock na tabela; §8.1 |
 
 Promover uma ideia: criar entrada em BE-* ou vincular a uma fase em `doc/fases/` e remover ou marcar como `convertido` aqui.
 

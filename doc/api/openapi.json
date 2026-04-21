@@ -1867,6 +1867,64 @@
         }
       }
     },
+    "/api/v2/dashboard/customer-order-stats": {
+      "get": {
+        "tags": [
+          "dashboard-v2"
+        ],
+        "summary": "Get Customer Order Stats V2",
+        "operationId": "get_customer_order_stats_v2_api_v2_dashboard_customer_order_stats_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOrderStatsEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/categories": {
       "get": {
         "tags": [
@@ -4447,6 +4505,90 @@
         ],
         "title": "CustomerMeOut"
       },
+      "CustomerOrderStatOut": {
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Customer Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "order_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Order Count"
+          },
+          "last_order_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Order At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_id",
+          "email",
+          "order_count",
+          "last_order_at"
+        ],
+        "title": "CustomerOrderStatOut"
+      },
+      "CustomerOrderStatsEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CustomerOrderStatsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "CustomerOrderStatsEnvelope"
+      },
+      "CustomerOrderStatsOut": {
+        "properties": {
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerOrderStatOut"
+            },
+            "type": "array",
+            "title": "Stats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stats"
+        ],
+        "title": "CustomerOrderStatsOut"
+      },
       "CustomerRegisterRequest": {
         "properties": {
           "email": {
@@ -5754,6 +5896,18 @@
               }
             ],
             "title": "Quantity"
+          },
+          "line_note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Note"
           }
         },
         "type": "object",
@@ -5784,6 +5938,17 @@
             "type": "string",
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Unit Price"
+          },
+          "line_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Note"
           }
         },
         "type": "object",
@@ -6016,6 +6181,17 @@
           "line_total": {
             "type": "string",
             "title": "Line Total"
+          },
+          "line_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Note"
           }
         },
         "type": "object",
@@ -6260,15 +6436,26 @@
             "title": "Catalog Sale Mode",
             "default": "in_stock"
           },
+          "track_inventory": {
+            "type": "boolean",
+            "title": "Track Inventory",
+            "default": true
+          },
           "inventory": {
-            "$ref": "#/components/schemas/InventorySeed"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InventorySeed"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
         "required": [
           "name",
-          "price",
-          "inventory"
+          "price"
         ],
         "title": "ProductCreate"
       },
@@ -6363,9 +6550,21 @@
             "title": "Store Id"
           },
           "inventory_item_id": {
-            "type": "string",
-            "format": "uuid",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Inventory Item Id"
+          },
+          "track_inventory": {
+            "type": "boolean",
+            "title": "Track Inventory",
+            "default": true
           },
           "category_id": {
             "anyOf": [
@@ -7024,6 +7223,18 @@
               }
             ],
             "title": "Quantity"
+          },
+          "line_note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Note"
           }
         },
         "type": "object",

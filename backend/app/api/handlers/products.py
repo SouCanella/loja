@@ -49,6 +49,32 @@ def create_product(db: Session, current: User, body: ProductCreate) -> Product:
                 detail="Categoria inválida",
             )
 
+    if not body.track_inventory:
+        product = Product(
+            store_id=current.store_id,
+            category_id=body.category_id,
+            inventory_item_id=None,
+            track_inventory=False,
+            name=body.name.strip(),
+            description=body.description,
+            price=body.price,
+            active=True,
+            catalog_spotlight=body.catalog_spotlight,
+            catalog_sale_mode=body.catalog_sale_mode,
+        )
+        db.add(product)
+        try:
+            db.commit()
+        except IntegrityError as exc:
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Conflito ao criar produto",
+            ) from exc
+        db.refresh(product)
+        return product
+
+    assert body.inventory is not None
     item = InventoryItem(
         store_id=current.store_id,
         name=body.name.strip(),
@@ -78,6 +104,7 @@ def create_product(db: Session, current: User, body: ProductCreate) -> Product:
         store_id=current.store_id,
         category_id=body.category_id,
         inventory_item_id=item.id,
+        track_inventory=True,
         name=body.name.strip(),
         description=body.description,
         price=body.price,

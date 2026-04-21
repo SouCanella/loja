@@ -103,6 +103,7 @@ Semana típica (ajustar):
 | [TESTES-E-CI.md](TESTES-E-CI.md) | Opcional: acrescentar linha “Fase 3.2 — E2E home + print preview”. |
 | [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md) | Se houver novos RNF testados (ex.: impressão só autenticada). |
 | [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md), [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md) | **Iteração Fase 3.2 (UX painel):** cabeçalho sticky alargado, classes de botão, `FieldTip` unificado, ordem **Redes sociais** na configuração — ver [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §7 e [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8. **Encerramento 2026-04-21:** tabelas (`painel-table-classes`), largura (`painel-layout-classes`), filtros (`painel-filter-classes`), §1.3 em painel-UX; Vitest `painel-filter-classes.test.ts`. |
+| [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) **§8.1**, [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) **§11**, [backlog.md](../projeto/backlog.md) | **Demandas IP-02 … IP-14** (observações por linha, stock por produto, métricas clientes, partilha loja, cardápio texto, atalhos produção); estados e testes registados em 2026-04-21. |
 
 ---
 
@@ -148,4 +149,4 @@ Semana típica (ajustar):
 
 ---
 
-*Última revisão: 2026-04-20 — plano mestre para execução da Fase 3.2.*
+*Última revisão: 2026-04-21 — referência às demandas IP na doc da fase (§8.1 / §11).*

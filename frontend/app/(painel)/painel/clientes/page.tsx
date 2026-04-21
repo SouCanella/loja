@@ -7,9 +7,18 @@ import { ClientesOrdersByContactSection } from "@/components/painel/clientes/Cli
 import { ClientesVitrineAccountForm } from "@/components/painel/clientes/ClientesVitrineAccountForm";
 import { ClientesVitrineAccountsTable } from "@/components/painel/clientes/ClientesVitrineAccountsTable";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { PanelCard } from "@/components/painel/PanelCard";
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
+import {
+  painelTableCellClass,
+  painelTableClass,
+  painelTableTbodyClass,
+  painelTableTheadClass,
+  painelTableWrapClass,
+} from "@/lib/painel-table-classes";
 import {
   contactLabel,
   groupKey,
@@ -25,6 +34,27 @@ type VitrineCustomer = {
   created_at: string;
 };
 
+type CustomerOrderStatRow = {
+  customer_id: string;
+  email: string;
+  order_count: number;
+  last_order_at: string;
+};
+
+function formatLocalIsoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function defaultCustomerStatsRange(): { from: string; to: string } {
+  const to = new Date();
+  const from = new Date(to);
+  from.setDate(from.getDate() - 29);
+  return { from: formatLocalIsoDate(from), to: formatLocalIsoDate(to) };
+}
+
 export default function ClientesPage() {
   const [rows, setRows] = useState<OrderRow[] | null>(null);
   const [vitrineCustomers, setVitrineCustomers] = useState<VitrineCustomer[] | null>(null);
@@ -36,6 +66,11 @@ export default function ClientesPage() {
   const [newPassword2, setNewPassword2] = useState("");
   const [vitrineMsg, setVitrineMsg] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [statsRange, setStatsRange] = useState(defaultCustomerStatsRange);
+  const [custOrderStats, setCustOrderStats] = useState<{ stats: CustomerOrderStatRow[] } | null>(
+    null,
+  );
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   const loadVitrineCustomers = useCallback(() => {
     setVitrineError(null);
@@ -57,6 +92,24 @@ export default function ClientesPage() {
       });
     void loadVitrineCustomers();
   }, [loadVitrineCustomers]);
+
+  useEffect(() => {
+    setStatsError(null);
+    const q = new URLSearchParams({
+      date_from: statsRange.from,
+      date_to: statsRange.to,
+    });
+    void apiPainelJson<{ stats: CustomerOrderStatRow[] }>(
+      `/api/v2/dashboard/customer-order-stats?${q.toString()}`,
+    )
+      .then(setCustOrderStats)
+      .catch((e: unknown) => {
+        setCustOrderStats(null);
+        setStatsError(
+          e instanceof PainelApiError ? e.message : "Não foi possível carregar métricas de clientes.",
+        );
+      });
+  }, [statsRange.from, statsRange.to]);
 
   const groups = useMemo(() => {
     if (!rows?.length) return [];
@@ -144,6 +197,65 @@ export default function ClientesPage() {
       ) : vitrineCustomers && vitrineCustomers.length === 0 && !vitrineError ? (
         <p className="mt-4 text-sm text-slate-500">Ainda não há contas de vitrine criadas pelo painel.</p>
       ) : null}
+
+      <PanelCard className="mt-8">
+        <PainelTitleHelp tip="Contagens de pedidos no período para clientes com sessão na vitrine (ligação Order.customer_id). Ordenação: mais pedidos primeiro.">
+          <h2 className="text-sm font-semibold text-slate-800">Actividade por conta (vitrine)</h2>
+        </PainelTitleHelp>
+        <p className="mt-1 text-xs text-slate-500">
+          Pedidos associados a e-mail de cliente registado — intervalo em data local (enviado como YYYY-MM-DD
+          à API).
+        </p>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <PainelDateRangeFields
+            bare
+            idFrom="cli-stats-from"
+            idTo="cli-stats-to"
+            from={statsRange.from}
+            to={statsRange.to}
+            onFromChange={(v) => setStatsRange((r) => ({ ...r, from: v }))}
+            onToChange={(v) => setStatsRange((r) => ({ ...r, to: v }))}
+          />
+        </div>
+        {statsError ? <p className="mt-3 text-sm text-amber-800">{statsError}</p> : null}
+        {custOrderStats === null && !statsError ? (
+          <p className="mt-4 text-sm text-slate-500">A carregar métricas…</p>
+        ) : null}
+        {custOrderStats && custOrderStats.stats.length === 0 ? (
+          <p className="mt-4 text-sm text-slate-600">
+            Nenhum pedido com conta na vitrine neste período.
+          </p>
+        ) : null}
+        {custOrderStats && custOrderStats.stats.length > 0 ? (
+          <div className={`mt-4 ${painelTableWrapClass}`}>
+            <table className={painelTableClass}>
+              <thead className={painelTableTheadClass}>
+                <tr>
+                  <th className={painelTableCellClass}>E-mail</th>
+                  <th className={`${painelTableCellClass} text-right`}>Pedidos</th>
+                  <th className={painelTableCellClass}>Último pedido</th>
+                </tr>
+              </thead>
+              <tbody className={painelTableTbodyClass}>
+                {custOrderStats.stats.map((s) => (
+                  <tr key={s.customer_id}>
+                    <td className={`${painelTableCellClass} font-medium text-slate-900`}>{s.email}</td>
+                    <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                      {s.order_count}
+                    </td>
+                    <td className={`${painelTableCellClass} text-xs text-slate-600`}>
+                      {new Date(s.last_order_at).toLocaleString("pt-BR", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </PanelCard>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link

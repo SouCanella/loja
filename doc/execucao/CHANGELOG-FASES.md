@@ -2,6 +2,19 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Fase 3.2 — E2E, Tailwind `lib/`, regressão de cor CTA, QA painel)
+
+- **Tailwind:** `content` inclui `./lib/**` — `bg-painel-cta` e classes de `painel-button-classes.ts` passam a ser geradas (botões primários deixam de aparecer brancos sobre fundo claro).
+- **UX:** `PainelFormSaveBar` (portal, `useLayoutEffect`, `z-[280]`); **Configuração:** botão **Guardar alterações** no fluxo do formulário; catálogo com erros por recurso (`Promise.allSettled`).
+- **Playwright:** `e2e/helpers/` (`auth`, `painel-routes`, `cta-contrast`); `painel-routes-smoke`, `painel-config-save`, `painel-regression`, `vitrine-loja-smoke`; `E2E_STORE_SLUG` opcional.
+- **Documentação:** [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §12; [TESTES-E-CI.md](TESTES-E-CI.md); [plano-e2e-mapeamento-implementacao.md](plano-e2e-mapeamento-implementacao.md); `frontend/e2e/README.md`.
+
+## 2026-04-21 (Fase 3.2 — demandas IP-02…IP-14: linhas, stock, métricas, partilha, cardápio)
+
+- **Backend:** `order_items.line_note`; `products.track_inventory` / `inventory_item_id` opcional; `GET /api/v2/dashboard/customer-order-stats`; ajustes stock/receitas/produção. Migração `20260427_0014`. Testes: `backend/tests/test_ip_demands_product.py`.
+- **Frontend:** observações por linha (vitrine/checkout); coluna **Stock** no catálogo; `ShareStoreBar` no dashboard; secção métricas em `/painel/clientes`; atalhos de data em `/painel/producao`; Vitest `painel-menu-catalog-text.test.ts`, `painel-share-store.test.ts`.
+- **Documentação:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8.1; [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §11; [backlog.md](../projeto/backlog.md) (estados IP); `doc/api/openapi.json` (`make openapi-export`).
+
 ## 2026-04-21 (Engenharia MA/DT — índices, isolamento, route groups, CI Docker, observabilidade mínima)
 
 - **Backend:** migração `20260426_0013_ma04_composite_indexes` (índices `store_id` + colunas de listagem); `RequestIdMiddleware` (`X-Request-Id`); testes `test_ma01_store_isolation.py`, `test_request_id_middleware.py`.

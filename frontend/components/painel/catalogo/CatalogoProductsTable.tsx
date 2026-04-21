@@ -36,6 +36,7 @@ export function CatalogoProductsTable({
           <tr>
             <th className={painelTableCellClass}>Produto</th>
             <th className={painelTableCellClass}>Categoria</th>
+            <th className={`${painelTableCellClass} text-center`}>Stock</th>
             <th className={painelTableCellClass}>Destaque</th>
             <th className={painelTableCellClass}>Venda</th>
             <th className={painelTableCellClass}>URL da imagem</th>
@@ -46,7 +47,7 @@ export function CatalogoProductsTable({
         <tbody className={painelTableTbodyClass}>
           {rows.length > 0 && displayRows.length === 0 ? (
             <tr>
-              <td colSpan={7} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
+              <td colSpan={8} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
                 Nenhum produto corresponde aos filtros.
               </td>
             </tr>
@@ -95,6 +96,9 @@ export function CatalogoProductsTable({
                     </option>
                   ))}
                 </select>
+              </td>
+              <td className={`${painelTableCellClass} text-center align-top text-xs text-slate-600`}>
+                {p.track_inventory === false ? "Não" : "Sim"}
               </td>
               <td className={`${painelTableCellClass} align-top`}>
                 <select

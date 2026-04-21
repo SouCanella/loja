@@ -31,6 +31,8 @@ type CartContextValue = {
     address?: string;
     orderGreeting?: string | null;
     deliveryOptionId?: string;
+    /** IP-05 / IP-07 — observações opcionais por produto (id → texto) */
+    lineNotes?: Record<string, string>;
   }) => string;
 };
 
@@ -128,12 +130,17 @@ export function CartProvider({
       address?: string;
       orderGreeting?: string | null;
       deliveryOptionId?: string;
+      lineNotes?: Record<string, string>;
     }) => {
+      const notes = params.lineNotes ?? {};
       const lines = params.lines
-        .map(
-          (l) =>
-            `• ${l.qty}× ${l.product.name} — ${formatBRL(Number.parseFloat(l.product.price) * l.qty)}`,
-        )
+        .map((l) => {
+          const lineTotal = formatBRL(Number.parseFloat(l.product.price) * l.qty);
+          let row = `• ${l.qty}× ${l.product.name} — ${lineTotal}`;
+          const n = notes[l.product.id]?.trim();
+          if (n) row += `\n   Obs.: ${n}`;
+          return row;
+        })
         .join("\n");
       const sub = params.lines.reduce(
         (s, l) => s + Number.parseFloat(l.product.price) * l.qty,
@@ -143,11 +150,14 @@ export function CartProvider({
       if (params.orderGreeting?.trim()) {
         body += `${params.orderGreeting.trim()}\n\n`;
       }
-      body += `*Pedido — ${params.storeName}*\n\n`;
-      body += `${lines}\n\n`;
-      body += `*Total:* ${formatBRL(sub)}\n\n`;
-      body += `*Cliente:* ${params.customerName || "—"}\n`;
-      body += `*Telefone:* ${params.customerPhone || "—"}\n`;
+      body += `*Pedido — ${params.storeName}*\n`;
+      body += `*Referência interna:* (enviada após registo do pedido)\n\n`;
+      body += `*Itens*\n${lines}\n\n`;
+      body += `*Subtotal / Total:* ${formatBRL(sub)}\n\n`;
+      body += `— — —\n`;
+      body += `*Dados do cliente*\n`;
+      body += `*Nome:* ${params.customerName || "—"}\n`;
+      body += `*Telefone / WhatsApp:* ${params.customerPhone || "—"}\n`;
       body += `*Recebimento:* ${params.delivery}\n`;
       if (params.address) body += `*Endereço:* ${params.address}\n`;
       body += `*Pagamento:* ${params.payment}\n`;

@@ -21,6 +21,7 @@ import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { VitrinePreviewCard } from "@/components/painel/VitrinePreviewCard";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 export default function ConfiguracaoLojaPage() {
@@ -284,6 +285,14 @@ export default function ConfiguracaoLojaPage() {
               shippingLabelSize={shippingLabelSize}
               onShippingLabelSizeChange={setShippingLabelSize}
             />
+            <div className="flex flex-col gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-slate-500">
+                O mesmo botão «Guardar» está fixo no fundo do ecrã ao rolar a página.
+              </p>
+              <button type="submit" className={`min-h-[44px] shrink-0 self-end ${painelBtnPrimaryClass}`}>
+                Guardar alterações
+              </button>
+            </div>
           </form>
           <PainelFormSaveBar formId="config-loja-form" submitLabel="Guardar" />
         </>

@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 CatalogSpotlight = Literal["featured", "new", "bestseller"]
 CatalogSaleMode = Literal["in_stock", "order_only", "unavailable"]
@@ -41,13 +41,23 @@ class ProductCreate(BaseModel):
     category_id: UUID | None = None
     catalog_spotlight: CatalogSpotlight | None = None
     catalog_sale_mode: CatalogSaleMode = "in_stock"
-    inventory: InventorySeed
+    track_inventory: bool = True
+    inventory: InventorySeed | None = None
+
+    @model_validator(mode="after")
+    def inventory_matches_track(self) -> "ProductCreate":
+        if self.track_inventory and self.inventory is None:
+            raise ValueError("inventory é obrigatório quando track_inventory é verdadeiro")
+        if not self.track_inventory and self.inventory is not None:
+            raise ValueError("omitir inventory quando track_inventory é falso")
+        return self
 
 
 class ProductOut(BaseModel):
     id: UUID
     store_id: UUID
-    inventory_item_id: UUID
+    inventory_item_id: UUID | None
+    track_inventory: bool = True
     category_id: UUID | None
     name: str
     description: str | None

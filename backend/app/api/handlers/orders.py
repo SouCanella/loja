@@ -64,11 +64,13 @@ def create_order(
             store_id=current.store_id,
             reject_catalog_unavailable=False,
         )
+        note = line.line_note.strip() if line.line_note else None
         order.items.append(
             OrderItem(
                 product_id=p.id,
                 quantity=line.quantity,
                 unit_price=p.price,
+                line_note=note,
             )
         )
     db.add(order)

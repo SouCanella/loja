@@ -154,7 +154,28 @@ Entregues como **continuidade da experiência lojista** no painel (consistência
 | **Viewport / altura** | `min-h-dvh` no *shell* e páginas públicas (login, registo, landing, termos, privacidade) para coluna estável em mobile. |
 | **Filtros padronizados** | `frontend/lib/painel-filter-classes.ts` — barra de filtros, pesquisa, `select`, datas; páginas: pedidos, clientes, receitas, insumos, catálogo (pesquisa + categoria + estado), precificação, produção (datas + texto), relatório de stock, notificações (lidas/não lidas), analytics vitrine e datas no relatório financeiro. |
 
-Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§10 (§9 — refactor **FR-01…FR-06**; §10 — MA/DT); UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
+Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§12 (§9 — refactor **FR-01…FR-06**; §10 — MA/DT; §11 — demandas **IP**; §12 — E2E, Tailwind `lib/`, cor CTA); UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
+
+### 8.1 Demandas de produto (IP-02 … IP-14) — registo na Fase 3.2
+
+Iteração documentada em **2026-04-21** (código + testes + doc). Itens **não convertidos** permanecem como ideias ou especificação futura no [backlog.md](../projeto/backlog.md).
+
+| ID | Estado | O quê foi entregue (ou nota) |
+|----|--------|------------------------------|
+| **IP-02** | Parcial | Atalhos **Hoje** e **Últimos 7 dias** no intervalo da página **Produção** (`/painel/producao`) — histórico de corridas; *agenda planeada por dia* (calendário de produção) continua como evolução. |
+| **IP-03** | Pendente | Promoções / combos / desconto por quantidade — **não** implementado neste incremento. |
+| **IP-04** | Pendente | Disponibilidade por dia ou horário — **não** implementado. |
+| **IP-05** | Convertido | `order_items.line_note` (migração); vitrine, pedido público, painel e mensagens WhatsApp com observação por linha. |
+| **IP-06** | Parcial | `GET /api/v2/dashboard/customer-order-stats`; secção **Actividade por conta (vitrine)** em `/painel/clientes` (pedidos com `customer_id`). Recompra/inactivos alargados — futuro. |
+| **IP-07** | Convertido | Mensagem WhatsApp e texto de encomenda com estrutura por linhas (nome, quantidade, observação, total) — `cart-context`, checkout, painel. |
+| **IP-08** | Pendente | Domínio próprio / cupons / entrega alargada — fora deste pacote (alinhar **BE-06** / roadmap). |
+| **IP-09** / **IP-10** | Pendente | Avaliações com mídia / resposta pública do lojista — depende de RF-AV e moderação. |
+| **IP-11** | Parcial | MVP e notificações in-app documentados em [ip-11-pedidos-vitrine-painel.md](../execucao/ip-11-pedidos-vitrine-painel.md); evoluções (WA Business API, etc.) pendentes. |
+| **IP-12** | Convertido | Partilha: `ShareStoreBar` no **dashboard**; `lib/painel-share-store.ts` (URL `/loja/{slug}`, copiar, WhatsApp, Web Share). |
+| **IP-13** | Convertido | Texto de cardápio para copiar: `lib/painel-menu-catalog-text.ts`; entrada no **catálogo** do painel. |
+| **IP-14** | Convertido | `products.track_inventory` + `inventory_item_id` opcional (**DEC-23**); coluna **Stock** (Sim/Não) na tabela de produtos; sem stock quando `track_inventory=false`. |
+
+**Testes:** backend `backend/tests/test_ip_demands_product.py`; frontend Vitest `__tests__/painel-menu-catalog-text.test.ts`, `__tests__/painel-share-store.test.ts`.
 
 ---
 
@@ -175,4 +196,4 @@ Incrementos de **qualidade, isolamento multi-tenant, índices, front e CI** docu
 
 ---
 
-*Última revisão: 2026-04-21 — **§9** (engenharia MA/DT); **§8** alargado (tabelas, largura, viewport, filtros). Revisão anterior 2026-04-20: marco 3.2 (impressão, landing, analytics, OpenAPI); incrementos UX (sticky, botões, tips, redes sociais).*
+*Última revisão: 2026-04-21 — **§8.1** (demandas IP); referência **§12** em [fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) (E2E, Tailwind `lib/`, cor CTA). Revisões anteriores: MA/DT §9; UX §8 (tabelas, filtros); marco 3.2 (impressão, landing, analytics).*

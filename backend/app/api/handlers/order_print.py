@@ -69,6 +69,7 @@ def build_order_print_out(db: Session, store: Store, order: Order) -> OrderPrint
                 quantity=str(qty),
                 unit_price=_money_str(up),
                 line_total=_money_str(lt),
+                line_note=it.line_note,
             )
         )
 
