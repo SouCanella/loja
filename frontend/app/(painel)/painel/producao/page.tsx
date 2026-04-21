@@ -115,16 +115,9 @@ export default function ProducaoPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Lista as corridas de produção registadas (a partir de «Produzir lote» nas receitas). Filtre por intervalo de datas (UTC, alinhado ao relatório). Custos e quantidades vêm da API.">
+        <PainelTitleHelp tip="Registo das corridas de produção (lotes). Para registar uma nova corrida: Receitas → «Produzir lote». Filtre por intervalo de datas; custos e quantidades são os guardados em cada produção.">
           <h1 className="text-2xl font-semibold text-slate-900">Produção</h1>
         </PainelTitleHelp>
-        <p className="mt-2 max-w-2xl text-sm text-slate-600">
-          Histórico de lotes produzidos na loja. Para registar uma nova corrida, use{" "}
-          <Link href="/painel/receitas" className="font-medium text-painel-primary hover:underline">
-            Receitas
-          </Link>{" "}
-          → «Produzir lote».
-        </p>
 
         <PainelDateRangeFields
           bar

@@ -4,17 +4,17 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { OrdersByStatusChart, RevenueTrendChart } from "@/components/painel/DashboardCharts";
-import { ShareStoreBar } from "@/components/painel/ShareStoreBar";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PanelCard } from "@/components/painel/PanelCard";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
+import { VitrinePreviewCard } from "@/components/painel/VitrinePreviewCard";
 import { apiPainelJson, formatBRL, orderStatusLabel, PainelApiError } from "@/lib/painel-api";
 import { painelBtnSecondaryClass } from "@/lib/painel-button-classes";
+import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
 
 type DashboardData = {
   date_from: string;
   date_to: string;
-  aggregation_note: string;
   kpis: {
     orders_today: number;
     orders_in_period: number;
@@ -73,12 +73,7 @@ export default function PainelDashboardPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Indicadores e tendência de receita — período seleccionável (UTC, alinhado ao relatório).
-            </p>
-          </div>
+          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
           <div className="flex flex-wrap items-end gap-3">
             <PainelDateRangeFields
               bare
@@ -97,15 +92,18 @@ export default function PainelDashboardPage() {
 
       {data ? (
         <>
-          <p className="mt-6 mb-4 text-xs text-slate-400 md:mt-0">{data.aggregation_note}</p>
-          {me ? (
-            <ShareStoreBar storeSlug={me.store_slug} storeName={me.store_name} className="mb-6" />
-          ) : null}
-          <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <KpiCard label="Pedidos hoje (UTC)" value={String(data.kpis.orders_today)} />
-            <KpiCard label="Pedidos no período" value={String(data.kpis.orders_in_period)} />
-            <KpiCard label="Ticket médio" value={ticket} />
-            <KpiCard label="Insumos em ruptura" value={String(data.kpis.out_of_stock_items_count)} />
+          <div className="mt-6">
+            {me ? (
+              <div className={`mb-6 ${painelPageContentWidthClass}`}>
+                <VitrinePreviewCard storeSlug={me.store_slug} storeName={me.store_name} />
+              </div>
+            ) : null}
+            <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <KpiCard label="Pedidos hoje (UTC)" value={String(data.kpis.orders_today)} />
+              <KpiCard label="Pedidos no período" value={String(data.kpis.orders_in_period)} />
+              <KpiCard label="Ticket médio" value={ticket} />
+              <KpiCard label="Insumos em ruptura" value={String(data.kpis.out_of_stock_items_count)} />
+            </div>
           </div>
 
           <PanelCard className="mb-8">

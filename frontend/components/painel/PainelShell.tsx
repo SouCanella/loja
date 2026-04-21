@@ -149,7 +149,7 @@ export function PainelShell({ children }: { children: ReactNode }) {
       <div className="mx-auto flex min-h-dvh w-full max-w-[1600px] print:max-w-none">
         {/* Desktop sidebar */}
         <aside
-          className="hidden w-60 shrink-0 flex-col border-r border-painel-sidebar-border text-neutral-100 [color-scheme:dark] md:flex print:hidden"
+          className="relative z-[290] hidden w-60 shrink-0 flex-col border-r border-painel-sidebar-border text-neutral-100 [color-scheme:dark] md:flex print:hidden"
           style={{ backgroundColor: SIDEBAR_SOLID, backgroundImage: SIDEBAR_GRADIENT }}
         >
           <div className="flex items-start justify-between gap-2 border-b border-painel-primary/25 bg-painel-primary/[0.07] px-4 py-4">

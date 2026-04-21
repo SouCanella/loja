@@ -13,11 +13,12 @@ type Props = {
 
 export function ConfigSocialSection({ socialLinks, onSocialLinksChange }: Props) {
   return (
-    <ConfigFormSection title="Redes sociais" defaultOpen>
-      <p className="text-xs text-slate-500">
-        Aparecem na vitrine pública (secção «Redes sociais» no catálogo). Cada link abre num novo separador.
-      </p>
-      <div className="mt-3 space-y-3">
+    <ConfigFormSection
+      title="Redes sociais"
+      defaultOpen
+      summaryTip="Links mostrados na vitrine (secção Redes sociais). Cada URL abre num novo separador."
+    >
+      <div className="space-y-3">
         {socialLinks.map((row, idx) => (
           <div
             key={idx}

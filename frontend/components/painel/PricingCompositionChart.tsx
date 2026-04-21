@@ -68,7 +68,7 @@ export function PricingCompositionChart({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-2 min-w-0">
-        <FieldTipBeside tip="O preço sugerido divide-se em matéria-prima, mão de obra (se configurada) e margem bruta aproximada. Custos indirectos fixos ficam fora deste modelo.">
+        <FieldTipBeside tip="Estimativa do preço sugerido: matéria-prima, mão de obra (se definida na loja) e margem. Custos fixos gerais não entram neste cálculo.">
           <h3 className="text-sm font-semibold text-slate-800">Composição do preço sugerido</h3>
         </FieldTipBeside>
       </div>

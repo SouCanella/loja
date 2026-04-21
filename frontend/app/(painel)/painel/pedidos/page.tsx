@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
@@ -60,13 +61,9 @@ export default function PainelPedidosPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Lista por ordem cronológica inversa. Filtre por origem (vitrine ou painel) e por estado. Abra um pedido para ver linhas, totais e alterar o estado.">
             <h1 className="text-2xl font-semibold text-slate-900">Pedidos</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Mais recentes primeiro. Filtre por origem (vitrine vs painel) e por estado; abra um pedido
-              para ver itens e alterar o estado.
-            </p>
-          </div>
+          </PainelTitleHelp>
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/painel/pedidos/novo"

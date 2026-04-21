@@ -69,12 +69,9 @@ export default function FinanceiroPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Resumo do intervalo de datas escolhido. Os números coincidem com o relatório detalhado (Relatórios). Receita e pedidos seguem as regras da API (pedidos contabilizados no período). Custo de insumos vem das produções associadas ao intervalo.">
+        <PainelTitleHelp tip="Indicadores do intervalo seleccionado: os mesmos totais que na página Relatórios. A receita e os pedidos seguem as regras de inclusão no período; o custo de insumos corresponde às produções registadas nesse intervalo.">
           <h1 className="text-2xl font-semibold text-slate-900">Financeiro</h1>
         </PainelTitleHelp>
-        <p className="mt-1 text-sm text-slate-500">
-          Visão sintética do período — mesmos dados do relatório detalhado.
-        </p>
 
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <PainelDateRangeFields
@@ -86,7 +83,7 @@ export default function FinanceiroPage() {
             onFromChange={(v) => setRange((r) => ({ ...r, from: v }))}
             onToChange={(v) => setRange((r) => ({ ...r, to: v }))}
           />
-          <FilterBarFieldTip text="Ao alterar «De» ou «Até», os dados actualizam automaticamente. O critério exacto de inclusão de pedidos e produções no período segue a API de relatórios." />
+          <FilterBarFieldTip text="Ao alterar as datas, os números actualizam de imediato. Pedidos e produções entram no período segundo as mesmas regras do relatório financeiro." />
         </div>
       </PainelStickyHeading>
 
@@ -98,28 +95,28 @@ export default function FinanceiroPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-2">
                 <div className="text-xs font-medium uppercase text-slate-500">Receita (pedidos)</div>
-                <FieldTip text="Soma da receita dos pedidos contabilizados neste período, conforme regras do relatório (exclui estados ignorados pela API, como rascunho/cancelado quando aplicável)." />
+                <FieldTip text="Soma da receita dos pedidos contabilizados neste período (estados como rascunho ou cancelado não entram, conforme regras do relatório)." />
               </div>
               <div className="mt-1 text-xl font-semibold">{formatBRL(report.orders_revenue)}</div>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-2">
                 <div className="text-xs font-medium uppercase text-slate-500">Pedidos</div>
-                <FieldTip text="Quantidade de pedidos incluídos no cálculo da receita deste intervalo." />
+                <FieldTip text="Número de pedidos que entram na receita deste período." />
               </div>
               <div className="mt-1 text-xl font-semibold">{report.orders_count}</div>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-2">
                 <div className="text-xs font-medium uppercase text-slate-500">Custo insumos (produção)</div>
-                <FieldTip text="Custo de insumos registado em corridas de produção associadas ao período (material consumido nas produções contabilizadas)." />
+                <FieldTip text="Custo dos insumos consumido nas produções contabilizadas neste período." />
               </div>
               <div className="mt-1 text-xl font-semibold">{formatBRL(report.production_input_cost)}</div>
             </div>
             <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-2">
                 <div className="text-xs font-medium uppercase text-slate-500">Margem % período</div>
-                <FieldTip text="Margem percentual do período sobre a receita, tal como devolvida pelo relatório financeiro (relação entre receita e custos considerados na API)." />
+                <FieldTip text="Margem % do período sobre a receita, calculada como no relatório financeiro." />
               </div>
               <div className="mt-1 break-words text-xl font-semibold tabular-nums">
                 {formatPercent(report.period_margin_percent)}
@@ -129,7 +126,7 @@ export default function FinanceiroPage() {
 
           <div className="mt-8">
             <div className="mb-3 min-w-0">
-              <PainelTitleHelp printHidden tip="Barras: receita por estado do pedido. Circular: partilha por categoria. No telemóvel, use o «?» de cada cartão; no gráfico, toque numa barra ou fatia para ver valores (tooltip nativo do gráfico).">
+              <PainelTitleHelp printHidden tip="Barras: receita por estado do pedido. Circular: peso de cada categoria na receita. Toque ou passe o rato sobre o gráfico para ver valores.">
                 <h2 className="text-sm font-semibold text-slate-800">Gráficos</h2>
               </PainelTitleHelp>
             </div>

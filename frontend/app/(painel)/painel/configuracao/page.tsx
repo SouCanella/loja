@@ -16,7 +16,7 @@ import {
   socialNetworksFromTheme,
   strFromTheme,
 } from "@/components/painel/config-loja/types";
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { VitrinePreviewCard } from "@/components/painel/VitrinePreviewCard";
@@ -216,10 +216,11 @@ export default function ConfiguracaoLojaPage() {
 
   return (
     <>
-      <PainelStickyHeading
-        title="Configuração da loja"
-        description="Identidade da loja, redes sociais, aparência da vitrine (textos, imagem, cores), WhatsApp, margem e mão de obra."
-      />
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Dados da loja: nome e redes sociais; aspecto da vitrine (textos, imagens, cores); contacto WhatsApp; referências de margem e mão de obra; impressão de recibos.">
+          <h1 className="text-2xl font-semibold text-slate-900">Configuração da loja</h1>
+        </PainelTitleHelp>
+      </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? <p className="mt-4 text-sm text-emerald-800">{msg}</p> : null}
@@ -227,11 +228,6 @@ export default function ConfiguracaoLojaPage() {
       {me ? (
         <>
           <div className={`mt-6 ${painelPageContentWidthClass}`}>
-            <div className="mb-2 text-xs font-medium text-slate-600">
-              <FieldTipBeside tip="Abre a loja pública num novo separador. Guarde as alterações na página para reflectir tema e textos na vitrine. Copiar coloca o URL completo na área de transferência; Partilhar usa a folha nativa do sistema ou copia o link.">
-                Pré-visualização da vitrine
-              </FieldTipBeside>
-            </div>
             <VitrinePreviewCard storeSlug={me.store_slug} storeName={name} />
           </div>
           <form
@@ -286,10 +282,11 @@ export default function ConfiguracaoLojaPage() {
               onShippingLabelSizeChange={setShippingLabelSize}
             />
             <div className="flex flex-col gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-slate-500">
-                O mesmo botão «Guardar» está fixo no fundo do ecrã ao rolar a página.
+              <p className="max-w-xl text-xs text-slate-500 print:hidden">
+                O botão «Guardar» no fundo do ecrã repete a mesma acção e mantém-se visível ao percorrer o
+                formulário.
               </p>
-              <button type="submit" className={`min-h-[44px] shrink-0 self-end ${painelBtnPrimaryClass}`}>
+              <button type="submit" className={`min-h-[44px] shrink-0 self-end sm:self-auto ${painelBtnPrimaryClass}`}>
                 Guardar alterações
               </button>
             </div>

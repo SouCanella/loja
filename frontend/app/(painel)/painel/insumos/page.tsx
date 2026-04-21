@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
@@ -132,12 +132,9 @@ export default function InsumosPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Insumos são matérias-primas e itens sem ficha de produto de venda; servem de base às receitas e ao stock.">
             <h1 className="text-2xl font-semibold text-slate-900">Insumos</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Matéria-prima sem produto de venda — base para receitas e stock.
-            </p>
-          </div>
+          </PainelTitleHelp>
           <div className="flex flex-wrap gap-2">
             <Link
               href="/painel/relatorio-estoque"
@@ -185,7 +182,7 @@ export default function InsumosPage() {
         <div className="mt-3 flex flex-wrap gap-3">
           <div className="min-w-[10rem] flex-1">
             <label className="block text-xs font-medium text-slate-600" htmlFor="nm">
-              <FieldTipBeside tip="Identificação da matéria-prima (ex.: farinha, embalagem). Aparece em receitas e movimentos.">
+              <FieldTipBeside tip="Nome do insumo (ex.: farinha, embalagem). Usado em receitas e no registo de movimentos.">
                 Nome
               </FieldTipBeside>
             </label>
@@ -199,7 +196,7 @@ export default function InsumosPage() {
           </div>
           <div className="w-24">
             <label className="block text-xs font-medium text-slate-600" htmlFor="un">
-              <FieldTipBeside tip="Unidade de medida do stock (kg, L, un). Deve ser consistente com as quantidades nas receitas.">
+              <FieldTipBeside tip="Unidade de stock (kg, L, un, etc.). Deve coincidir com as quantidades nas receitas.">
                 Unidade
               </FieldTipBeside>
             </label>
@@ -217,7 +214,7 @@ export default function InsumosPage() {
         <div className="mt-2 flex flex-wrap gap-3">
           <div className="w-28">
             <label className="block text-xs font-medium text-slate-600" htmlFor="q">
-              <FieldTipBeside tip="Quantidade e custo do primeiro lote; usados no custo médio e na saída FEFO (validade).">
+              <FieldTipBeside tip="Quantidade e custo do primeiro lote; base para o custo médio e para consumo por ordem de validade (FEFO).">
                 Qtd lote
               </FieldTipBeside>
             </label>
@@ -231,7 +228,7 @@ export default function InsumosPage() {
           </div>
           <div className="w-32">
             <label className="block text-xs font-medium text-slate-600" htmlFor="c">
-              <FieldTipBeside tip="Custo unitário deste lote (não confundir com preço de venda).">
+              <FieldTipBeside tip="Custo por unidade deste lote (custo de aquisição, não preço de venda).">
                 Custo / un.
               </FieldTipBeside>
             </label>
@@ -246,7 +243,7 @@ export default function InsumosPage() {
           </div>
           <div className="min-w-[10rem]">
             <label className="block text-xs font-medium text-slate-600" htmlFor="exp">
-              <FieldTipBeside tip="Opcional. Data de validade deste lote (FEFO no consumo). Só aplica com lote inicial preenchido.">
+              <FieldTipBeside tip="Opcional. Validade do lote para consumo por ordem de data. Só tem efeito se existir lote inicial.">
                 Validade do lote
               </FieldTipBeside>
             </label>
@@ -270,17 +267,17 @@ export default function InsumosPage() {
             <tr>
               <th className={painelTableCellClass}>Insumo</th>
               <th className={`${painelTableCellClass} text-right`}>
-                <FieldTipBeside align="end" tip="Soma das quantidades em todos os lotes deste insumo.">
+                <FieldTipBeside align="end" tip="Stock total: soma das quantidades de todos os lotes.">
                   Qtd disponível
                 </FieldTipBeside>
               </th>
               <th className={`${painelTableCellClass} text-right`}>
-                <FieldTipBeside align="end" tip="Custo médio ponderado pelos lotes (quando há stock).">
+                <FieldTipBeside align="end" tip="Custo médio ponderado dos lotes em stock.">
                   Custo médio / un.
                 </FieldTipBeside>
               </th>
               <th className={`${painelTableCellClass} text-right`}>
-                <FieldTipBeside align="end" tip="Quantidade × custo por lote (aproximação do valor inventariado).">
+                <FieldTipBeside align="end" tip="Valor aproximado do stock (quantidade × custo por lote).">
                   Valor em stock
                 </FieldTipBeside>
               </th>

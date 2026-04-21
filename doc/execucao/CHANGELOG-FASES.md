@@ -2,6 +2,13 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (Painel — UX copy, pré-visualização vitrine, barra Guardar)
+
+- **Dashboard:** bloco de partilha alinhado à **Configuração da loja** (`VitrinePreviewCard`); removidos subtítulo do cabeçalho e nota de agregação UTC; removido `ShareStoreBar` (URL e acções passam pelo cartão unificado).
+- **Textos de ajuda:** revisão dos conteúdos dos «?» (`PainelTitleHelp`, `FieldTipBeside`, `FilterBarFieldTip`, `summaryTip` em secções) — linguagem para o lojista, sem jargão de API/códigos internos; subtítulos longos movidos para tooltips onde fazia sentido.
+- **Configuração da loja:** nota sobre o botão **Guardar** fixo no fundo do ecrã em texto visível (sem ícone de interrogação).
+- **Barra fixa Guardar (`PainelFormSaveBar`):** posicionamento explícito `left-0 right-0 md:left-60 md:right-0` para não cobrir o menu lateral; **sidebar** com `relative z-[290]` por cima da barra (`z-[280]`) em desktop.
+
 ## 2026-04-21 (Fase 3.2 — E2E, Tailwind `lib/`, regressão de cor CTA, QA painel)
 
 - **Tailwind:** `content` inclui `./lib/**` — `bg-painel-cta` e classes de `painel-button-classes.ts` passam a ser geradas (botões primários deixam de aparecer brancos sobre fundo claro).

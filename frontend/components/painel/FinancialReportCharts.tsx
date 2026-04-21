@@ -53,7 +53,7 @@ export function FinancialReportCharts({
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-2 min-w-0">
-          <FieldTipBeside tip="Cada barra mostra a receita atribuída a pedidos nesse estado no período (ex.: pago, enviado). Toque nas barras no gráfico para ver o valor exacto (tooltip do gráfico). Estados sem movimento podem não aparecer.">
+          <FieldTipBeside tip="Receita no período por estado do pedido (ex.: pago, enviado). Estados sem valor podem não aparecer. Passe o rato ou toque nas barras para ver o montante.">
             <h3 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h3>
           </FieldTipBeside>
         </div>
@@ -83,7 +83,7 @@ export function FinancialReportCharts({
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-2 min-w-0">
-          <FieldTipBeside tip="Partilha da receita por categoria de produto no catálogo. Apenas categorias com receita maior que zero entram no gráfico; produtos sem categoria entram como «Sem categoria». Toque numa fatia ou use a legenda para ver valores (tooltip do gráfico).">
+          <FieldTipBeside tip="Peso de cada categoria na receita do período. Categorias sem receita não aparecem; produtos sem categoria contam como «Sem categoria». Toque na fatia ou use a legenda para ver valores.">
             <h3 className="text-sm font-semibold text-slate-800">Receita por categoria</h3>
           </FieldTipBeside>
         </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
@@ -112,12 +113,9 @@ export default function RelatorioEstoquePage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Por insumo: quantidade total em stock e valor aproximado (soma dos lotes).">
             <h1 className="text-2xl font-semibold text-slate-900">Relatório de stock (insumos)</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Quantidades disponíveis e valor aproximado por insumo (agregado dos lotes).
-            </p>
-          </div>
+          </PainelTitleHelp>
           <div className="flex flex-wrap gap-3">
             <button
               type="button"

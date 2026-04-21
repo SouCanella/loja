@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import {
@@ -114,10 +114,11 @@ export default function CategoriasPage() {
 
   return (
     <>
-      <PainelStickyHeading
-        title="Categorias"
-        description="Categorias planas da loja (filtros e agrupamento na vitrine)."
-      />
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Lista simples de categorias (sem subníveis), usada para agrupar e filtrar produtos na vitrine.">
+          <h1 className="text-2xl font-semibold text-slate-900">Categorias</h1>
+        </PainelTitleHelp>
+      </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? (
@@ -135,7 +136,7 @@ export default function CategoriasPage() {
         <h2 className="text-sm font-semibold text-slate-800">Nova categoria</h2>
         <div className="mt-3 w-full">
           <label className="text-xs font-medium text-slate-600" htmlFor="cn">
-            <FieldTipBeside tip="Nome visível para clientes e no painel (ex.: Bolos, Bebidas).">Nome</FieldTipBeside>
+            <FieldTipBeside tip="Nome da categoria na vitrine e no painel.">Nome</FieldTipBeside>
           </label>
           <input
             id="cn"

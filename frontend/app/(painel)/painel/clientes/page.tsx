@@ -173,7 +173,7 @@ export default function ClientesPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Contactos agrupados a partir dos pedidos (telefone, nome ou conta na vitrine). Pode também criar contas de login na vitrine (e-mail + palavra-passe) para o cliente aceder à loja com sessão.">
+        <PainelTitleHelp tip="Contactos agrupados a partir dos pedidos (telefone, nome ou cliente com sessão na vitrine). Pode criar contas para o cliente iniciar sessão na loja online com e-mail e palavra-passe.">
           <h1 className="text-2xl font-semibold text-slate-900">Clientes</h1>
         </PainelTitleHelp>
       </PainelStickyHeading>
@@ -199,13 +199,9 @@ export default function ClientesPage() {
       ) : null}
 
       <PanelCard className="mt-8">
-        <PainelTitleHelp tip="Contagens de pedidos no período para clientes com sessão na vitrine (ligação Order.customer_id). Ordenação: mais pedidos primeiro.">
+        <PainelTitleHelp tip="Número de pedidos no intervalo de datas (calendário) para cada cliente com login na vitrine. Ordenação: mais pedidos em primeiro. As datas seguem o calendário local e são enviadas como dia civil (AAAA-MM-DD).">
           <h2 className="text-sm font-semibold text-slate-800">Actividade por conta (vitrine)</h2>
         </PainelTitleHelp>
-        <p className="mt-1 text-xs text-slate-500">
-          Pedidos associados a e-mail de cliente registado — intervalo em data local (enviado como YYYY-MM-DD
-          à API).
-        </p>
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <PainelDateRangeFields
             bare

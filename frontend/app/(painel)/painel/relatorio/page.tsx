@@ -478,7 +478,7 @@ export default function RelatorioPage() {
   return (
     <div className="relatorio-print">
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Receita de pedidos no período (exclui estados ignorados pela API, p.ex. rascunho e cancelados). Custo de insumos refere-se a produções no intervalo. Tabelas por produto/categoria são agregados do período — aproximação contabilística, não custo por lote (COGS) detalhado.">
+        <PainelTitleHelp tip="Totais do período seleccionado: receita de pedidos (rascunho e cancelados excluídos), custo de insumos das produções e repartição por produto e categoria. Os valores são agregados no intervalo; não substituem uma análise de custo de venda por lote. Coincide com a página Relatórios.">
           <h1 className="text-2xl font-semibold text-slate-900">
             Relatório financeiro
             {loading && data ? (
@@ -486,10 +486,6 @@ export default function RelatorioPage() {
             ) : null}
           </h1>
         </PainelTitleHelp>
-        <p className="mt-1 text-sm text-slate-500">
-          Receita de pedidos (exceto rascunho e cancelados), custo de insumos em produções no período e
-          repartição por produto e categoria (aproximação período-a-período; não é COGS por lote).
-        </p>
 
         <div className="mt-6 flex flex-wrap items-end gap-3 print:hidden">
         <PainelDateRangeFields
@@ -533,7 +529,7 @@ export default function RelatorioPage() {
         >
           Atualizar
         </button>
-        <FilterBarFieldTip text="Escolha datas manualmente ou use um atalho (Hoje, 7 dias, etc.). Se «De» for depois de «Até», o intervalo é corrigido automaticamente na consulta. «Atualizar» recarrega os dados do servidor." />
+        <FilterBarFieldTip text="Defina o intervalo nos calendários ou pelos atalhos (Hoje, 7 dias…). Se a data inicial for posterior à final, o sistema ajusta o período. «Atualizar» volta a carregar os dados." />
         </div>
       </PainelStickyHeading>
       {rangeSwapped ? (
@@ -553,7 +549,7 @@ export default function RelatorioPage() {
                 {data.date_from} → {data.date_to}
               </p>
               <span className="print:hidden inline-flex shrink-0 items-start">
-                <FieldTip text="Resumo: totais de receita, pedidos e corridas de produção no período; custo de insumos das produções contabilizadas; margem estimada e percentual sobre a receita, conforme cálculo da API." />
+                <FieldTip text="Resumo do período: receita, número de pedidos, corridas de produção, custo de insumos dessas produções e margem estimada sobre a receita." />
               </span>
             </div>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -610,7 +606,7 @@ export default function RelatorioPage() {
 
           <div className="print:hidden">
             <div className="mb-3 min-w-0">
-              <PainelTitleHelp printHidden tip="Barras: receita por estado do pedido. Circular: partilha por categoria. Use o «?» em cada cartão para explicação; no gráfico, toque numa barra ou fatia para valores (tooltip do gráfico).">
+              <PainelTitleHelp printHidden tip="Barras: receita por estado do pedido no período. Gráfico circular: peso de cada categoria na receita. Passe o rato ou toque no gráfico para ver valores.">
                 <h2 className="text-sm font-semibold text-slate-800">Gráficos</h2>
               </PainelTitleHelp>
             </div>
@@ -627,7 +623,7 @@ export default function RelatorioPage() {
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
-                <PainelTitleHelp tip="Mesma lógica do gráfico de barras: receita atribuída a cada estado (pago, enviado, etc.). A coluna «Partilha» compara visualmente cada linha com o maior valor da tabela.">
+                <PainelTitleHelp tip="Receita por estado do pedido (mesma lógica do gráfico de barras). A coluna «Partilha» indica o peso de cada estado face ao maior valor da tabela.">
                   <h2 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h2>
                 </PainelTitleHelp>
               </div>
@@ -685,7 +681,7 @@ export default function RelatorioPage() {
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
-                <PainelTitleHelp tip="Totais por categoria de produto no catálogo. Quantidade vendida, receita, custo de produção (insumos) e margens são somas do período por essa categoria.">
+                <PainelTitleHelp tip="Por categoria de produto: somas do período de quantidade vendida, receita, custo de insumos e margem.">
                   <h2 className="text-sm font-semibold text-slate-800">Por categoria</h2>
                 </PainelTitleHelp>
               </div>
@@ -739,7 +735,7 @@ export default function RelatorioPage() {
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="min-w-0">
-                <PainelTitleHelp tip="Toque no cabeçalho para ordenar por produto, quantidade, receita, custo ou margem. Pareto % é a receita acumulada ao percorrer a lista ordenada por receita decrescente (curva ABC).">
+                <PainelTitleHelp tip="Clique no cabeçalho da coluna para ordenar. «Pareto %» é a receita acumulada ao percorrer a lista da maior para a menor receita (análise ABC).">
                   <h2 className="text-sm font-semibold text-slate-800">Por produto</h2>
                 </PainelTitleHelp>
               </div>
@@ -854,10 +850,6 @@ export default function RelatorioPage() {
             )}
           </div>
 
-          <p className="text-xs text-slate-500 print:hidden">
-            Dados: <code className="rounded bg-slate-100 px-1">GET /api/v2/reports/financial</code>
-            {" "}(resposta no formato da API v2).
-          </p>
         </div>
       ) : !error && !loading ? (
         <p className="mt-8 text-sm text-slate-500">Sem dados.</p>

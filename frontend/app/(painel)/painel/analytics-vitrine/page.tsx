@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
@@ -48,11 +49,9 @@ export default function PainelAnalyticsVitrinePage() {
   return (
     <>
       <PainelStickyHeading>
-        <h1 className="text-2xl font-semibold text-slate-900">Analytics da vitrine</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Eventos enviados pela loja pública (páginas vistas, produtos vistos, adicionar ao carrinho). Sessões são
-          estimadas por identificador anónimo no navegador.
-        </p>
+        <PainelTitleHelp tip="Estatísticas anónimas da vitrine: páginas vistas, visualizações de produto e adições ao carrinho. «Sessões» estima visitantes distintos por identificador no navegador (não substitui analytics externo).">
+          <h1 className="text-2xl font-semibold text-slate-900">Analytics da vitrine</h1>
+        </PainelTitleHelp>
 
         <PainelDateRangeFields
           boxed

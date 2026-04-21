@@ -37,7 +37,7 @@ export function ClientesVitrineAccountForm({
     >
       <PanelCard>
         <h2 className="text-sm font-semibold text-slate-800">
-          <FieldTipBeside tip="Conta de login na vitrine: o cliente usa este e-mail e palavra-passe na loja pública (área de cliente).">
+          <FieldTipBeside tip="Cria um login para o cliente na loja online com este e-mail e palavra-passe.">
             Nova conta na vitrine
           </FieldTipBeside>
         </h2>

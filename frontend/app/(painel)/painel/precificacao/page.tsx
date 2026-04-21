@@ -95,13 +95,9 @@ export default function PrecificacaoPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="O custo unitário inclui matéria-prima (stock médio dos insumos) e mão de obra (taxa R$/h da loja × tempo da receita ÷ rendimento). A margem % incide sobre esse total. O preço sugerido é orientador — o preço de venda real define-se em Produtos / catálogo. «—» indica dado ausente ou não calculável.">
+        <PainelTitleHelp tip="Por receita: custo estimado (matéria-prima e mão de obra), margem efectiva e preço sugerido. O custo unitário usa o custo médio dos insumos e a mão de obra (taxa horária × tempo da receita ÷ rendimento). O preço de venda real define-se em Produtos / catálogo. «—» significa dado em falta ou não calculável.">
           <h1 className="text-2xl font-semibold text-slate-900">Precificação</h1>
         </PainelTitleHelp>
-        <p className="mt-1 text-sm text-slate-500">
-          Custo estimado (MP + MO), margem efectiva e preço sugerido — alinhe o preço de venda em{" "}
-          <span className="font-medium">Produtos</span> / catálogo.
-        </p>
       </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
@@ -171,10 +167,9 @@ export default function PrecificacaoPage() {
 
       {filteredRows.length > 0 ? (
         <div className={`mt-10 ${painelPageContentWidthClass}`}>
-          <h2 className="text-sm font-semibold text-slate-800">Composição visual (mockup RF-PR)</h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Escolha uma receita para ver a divisão aproximada do preço sugerido entre custo e margem.
-          </p>
+          <PainelTitleHelp tip="Seleccione uma receita para ver como o preço sugerido se reparte entre custos e margem.">
+            <h2 className="text-sm font-semibold text-slate-800">Composição visual (mockup RF-PR)</h2>
+          </PainelTitleHelp>
           <div className="mt-3">
             <label className={painelFilterLabelClass} htmlFor="pc-chart-recipe">
               Receita

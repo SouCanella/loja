@@ -35,15 +35,15 @@ export function ConfigAppearanceSection({
   onAccentColorChange,
 }: Props) {
   return (
-    <ConfigFormSection title="Aparência da vitrine" defaultOpen>
-      <p className="text-xs text-slate-500">
-        O cliente vê estas opções na loja pública (URL da loja definida no registo). São poucos campos a propósito —
-        sem um editor complexo.
-      </p>
+    <ConfigFormSection
+      title="Aparência da vitrine"
+      defaultOpen
+      summaryTip="Aspecto da loja online: logótipo, textos, imagem de fundo e cores. Campos directos, sem editor visual complexo."
+    >
       <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="logo">
-            <FieldTipBeside tip="Imagem quadrada ou horizontal do logótipo no topo da vitrine (PNG ou SVG com URL https). Se ficar vazio, usa-se o emoji de reserva (definido nos dados da loja).">
+            <FieldTipBeside tip="URL https do logótipo (PNG ou SVG). Se estiver vazio, mostra-se o símbolo de reserva da loja.">
               Logótipo da loja (URL https)
             </FieldTipBeside>
           </label>
@@ -61,7 +61,7 @@ export function ConfigAppearanceSection({
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="tg">
-            <FieldTipBeside tip="Texto curto abaixo do nome (ex.: doces artesanais entregues em Lisboa).">
+            <FieldTipBeside tip="Frase curta por baixo do nome (opcional), visível na vitrine.">
               Frase / slogan
             </FieldTipBeside>
           </label>
@@ -75,7 +75,7 @@ export function ConfigAppearanceSection({
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="hi">
-            <FieldTipBeside tip="Textura ou fotografia suave em ecrã inteiro por detrás do conteúdo. Link direto .jpg / .png; apenas https. Deixe vazio para fundo sólido.">
+            <FieldTipBeside tip="Imagem de fundo em ecrã completo (URL https, JPG ou PNG). Vazio: fundo só com cor, sem imagem.">
               Imagem de fundo (URL https)
             </FieldTipBeside>
           </label>
@@ -93,7 +93,7 @@ export function ConfigAppearanceSection({
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="bgsoft">
-            <FieldTipBeside tip="Controla o véu claro sobre a foto: valores mais altos deixam o site mais sóbrio e o texto mais legível; valores mais baixos mostram mais a imagem. Só altera o aspecto quando há imagem de fundo.">
+            <FieldTipBeside tip="Intensidade do véu sobre a foto de fundo: mais alto = fundo mais suave e texto mais legível; mais baixo = imagem mais evidente. Só se aplica quando há imagem de fundo.">
               Suavização do fundo
             </FieldTipBeside>
           </label>
@@ -110,14 +110,11 @@ export function ConfigAppearanceSection({
             />
             <span className="text-sm tabular-nums text-slate-600">{bgOverlayPercent}%</span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">
-            Mais alto = fundo mais discreto (aspecto mais profissional). Mais baixo = foto mais visível.
-          </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="pc">
-              <FieldTipBeside tip="Cor base da identidade na vitrine (hex). Use a barra ou escreva o código.">
+              <FieldTipBeside tip="Cor principal da identidade (código hexadecimal). Pode usar o selector ou escrever o valor.">
                 Cor principal
               </FieldTipBeside>
             </label>
@@ -131,7 +128,7 @@ export function ConfigAppearanceSection({
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="ac">
-              <FieldTipBeside tip="Botões e realces (hex). Use a barra ou escreva o código.">
+              <FieldTipBeside tip="Cor de destaque para botões e realces (hexadecimal).">
                 Cor de destaque
               </FieldTipBeside>
             </label>

@@ -35,7 +35,7 @@ export function ConfigVitrineCheckoutSection({
       <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="clay">
-            <FieldTipBeside tip="Grade ou lista — o cliente ainda pode alternar na vitrine.">
+            <FieldTipBeside tip="Layout inicial do catálogo; o cliente pode mudar para o outro modo na vitrine.">
               Layout padrão do catálogo
             </FieldTipBeside>
           </label>
@@ -51,7 +51,7 @@ export function ConfigVitrineCheckoutSection({
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="og">
-            <FieldTipBeside tip="Texto no início da mensagem do pedido.">Saudação no WhatsApp (opcional)</FieldTipBeside>
+            <FieldTipBeside tip="Texto opcional colocado no início da mensagem do pedido enviada por WhatsApp.">Saudação no WhatsApp (opcional)</FieldTipBeside>
           </label>
           <textarea
             id="og"

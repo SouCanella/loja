@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 
+import { FieldTip } from "@/components/painel/FieldTip";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryCompactClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import { buildEscPosFromOrderPrint, hasWebUsb } from "@/lib/escpos";
@@ -138,10 +139,10 @@ export function OrderPrintPanel({ orderId }: Props) {
 
   return (
     <div className="mt-4 border-t border-slate-100 pt-4">
-      <h3 className="text-sm font-semibold text-slate-900">Impressão</h3>
-      <p className="mt-1 text-xs text-slate-500">
-        Pré-visualização para papel térmico ou A4; envio USB directo é experimental e depende da impressora.
-      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-sm font-semibold text-slate-900">Impressão</h3>
+        <FieldTip text="Visualização do recibo para impressão em papel térmico ou A4. O envio directo por USB depende do navegador e da impressora (experimental)." />
+      </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"
@@ -166,7 +167,7 @@ export function OrderPrintPanel({ orderId }: Props) {
             <div className="mt-8 w-full max-w-lg rounded-xl bg-white p-4 shadow-xl">
               <div className="flex items-start justify-between gap-2">
                 <h4 id="print-preview-title" className="text-sm font-semibold text-slate-900">
-                  Pré-visualização
+                  Recibo
                 </h4>
                 <button
                   type="button"

@@ -13,7 +13,7 @@ export function ConfigIdentitySection({ name, onNameChange }: Props) {
     <ConfigFormSection title="Identidade da loja" defaultOpen>
       <div>
         <label className="block text-sm font-medium text-slate-700" htmlFor="sn">
-          <FieldTipBeside tip="Nome apresentado na vitrine e em comunicações com o cliente.">Nome da loja</FieldTipBeside>
+          <FieldTipBeside tip="Nome público da loja na vitrine e nas mensagens ao cliente.">Nome da loja</FieldTipBeside>
         </label>
         <input
           id="sn"

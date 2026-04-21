@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { usePainelNotifications } from "@/components/painel/PainelNotificationsContext";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import {
@@ -37,12 +38,9 @@ export default function PainelNotificacoesPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Alertas de novos pedidos e outras mensagens da loja. Pode activar notificação sonora no ícone do sino (🔔).">
             <h1 className="text-2xl font-semibold text-slate-900">Notificações</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Novos pedidos da vitrine e outras mensagens da loja. O som pode ser activado no ícone 🔔.
-            </p>
-          </div>
+          </PainelTitleHelp>
           <div className="flex flex-wrap gap-2">
             {inbox && inbox.unread_count > 0 ? (
               <button

@@ -60,12 +60,9 @@ export default function ContaPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Altere a palavra-passe da sua conta de lojista. Mantenha uma palavra-passe forte e única; após alterar, o login anterior deixa de ser válido.">
+        <PainelTitleHelp tip="Conta de administrador da loja. O e-mail não pode ser alterado aqui. Para mudar a palavra-passe, use os campos abaixo; após guardar, utilize sempre a nova palavra-passe para entrar.">
           <h1 className="text-2xl font-semibold text-slate-900">Perfil e segurança</h1>
         </PainelTitleHelp>
-        <p className={`mt-2 ${painelPageContentWidthClass} text-sm text-slate-600`}>
-          Conta de acesso ao painel (RF-AU). O e-mail não pode ser alterado aqui.
-        </p>
       </PainelStickyHeading>
 
       {me ? (

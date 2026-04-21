@@ -2,7 +2,7 @@
 
 import { FormEvent } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PanelCard } from "@/components/painel/PanelCard";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
@@ -59,12 +59,15 @@ export function CatalogoNewProductForm({
   return (
     <form onSubmit={(e) => void onSubmit(e)} className={`mt-6 ${painelPageContentWidthClass}`}>
       <PanelCard>
-        <h2 className="text-sm font-semibold text-slate-800">Novo produto</h2>
-        <p className="mt-1 text-xs text-slate-500">
-          {newTrackInventory
-            ? "Cria o produto de venda e o respectivo insumo de stock com um lote inicial (custo e quantidade)."
-            : "Produto sem controlo de stock (serviços, encomendas externas): não há baixa de lotes em pedidos."}
-        </p>
+        <PainelTitleHelp
+          tip={
+            newTrackInventory
+              ? "Regista o produto de venda e o stock inicial (quantidade e custo do primeiro lote do insumo associado)."
+              : "Sem stock: não há insumo nem baixa de lotes nos pedidos (adequado a serviços ou itens sem inventário)."
+          }
+        >
+          <h2 className="text-sm font-semibold text-slate-800">Novo produto</h2>
+        </PainelTitleHelp>
         <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-700">
           <input
             type="checkbox"
@@ -72,14 +75,14 @@ export function CatalogoNewProductForm({
             checked={newTrackInventory}
             onChange={(e) => onNewTrackInventoryChange(e.target.checked)}
           />
-          <FieldTipBeside tip="Se desmarcar, o produto não tem insumo nem movimentos de stock (IP-14 / DEC-23).">
+          <FieldTipBeside tip="Desmarcado: o produto não tem insumo nem movimentos de stock.">
             Controlar stock deste produto
           </FieldTipBeside>
         </label>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pn">
-              <FieldTipBeside tip="Nome do produto na vitrine e nos pedidos.">Nome</FieldTipBeside>
+              <FieldTipBeside tip="Designação visível na loja online e nas linhas de pedido.">Nome</FieldTipBeside>
             </label>
             <input
               id="pn"
@@ -90,7 +93,7 @@ export function CatalogoNewProductForm({
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pp">
-              <FieldTipBeside tip="Preço público do produto (BRL).">Preço de venda</FieldTipBeside>
+              <FieldTipBeside tip="Preço unitário de venda ao cliente (moeda da loja).">Preço de venda</FieldTipBeside>
             </label>
             <input
               id="pp"
@@ -103,7 +106,7 @@ export function CatalogoNewProductForm({
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pc">
-              <FieldTipBeside tip="Opcional. Agrupa na vitrine e nos relatórios por categoria.">
+              <FieldTipBeside tip="Opcional. Agrupa o produto no catálogo e nos relatórios.">
                 Categoria
               </FieldTipBeside>
             </label>
@@ -123,7 +126,7 @@ export function CatalogoNewProductForm({
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pu">
-              <FieldTipBeside tip="Unidade do lote de produto acabado (ex.: un, caixa).">
+              <FieldTipBeside tip="Unidade do stock de produto acabado (ex.: un, caixa).">
                 Unidade (stock)
               </FieldTipBeside>
             </label>
@@ -139,7 +142,7 @@ export function CatalogoNewProductForm({
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pq">
-              <FieldTipBeside tip="Quantidade do primeiro lote de stock de produto acabado (insumo ligado ao produto).">
+              <FieldTipBeside tip="Quantidade inicial do lote de produto acabado (stock ligado a este produto).">
                 Qtd inicial (lote)
               </FieldTipBeside>
             </label>
@@ -154,7 +157,7 @@ export function CatalogoNewProductForm({
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pco">
-              <FieldTipBeside tip="Custo por unidade desse lote inicial (valorização e custos no painel).">
+              <FieldTipBeside tip="Custo por unidade desse lote inicial (base para custo médio e relatórios).">
                 Custo unit. do lote
               </FieldTipBeside>
             </label>
@@ -171,7 +174,7 @@ export function CatalogoNewProductForm({
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psp">
-              <FieldTipBeside tip="Opcional: aparece na secção «Em destaque» e como fita no card.">
+              <FieldTipBeside tip="Opcional. Texto curto para destaque na vitrine e fita no cartão do produto.">
                 Destaque na vitrine
               </FieldTipBeside>
             </label>
@@ -189,7 +192,7 @@ export function CatalogoNewProductForm({
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psm">
-              <FieldTipBeside tip="Sob encomenda: fita e ainda encomendável; indisponível: bloqueia adicionar ao carrinho.">
+              <FieldTipBeside tip="Disponível: venda normal. Sob encomenda: pode mostrar fita e continuar encomendável. Indisponível: não permite adicionar ao carrinho.">
                 Disponibilidade
               </FieldTipBeside>
             </label>

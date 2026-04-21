@@ -44,7 +44,7 @@ export function MarginVolumeScatter({ rows }: { rows: MarginVolumeRow[] }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-2 min-w-0">
-        <FieldTipBeside tip="Cada ponto é um produto: eixo horizontal = quantidade vendida no período; vertical = margem % sobre a receita. Útil para ver artigos de alto volume com baixa ou alta margem (quadrantes).">
+        <FieldTipBeside tip="Cada ponto é um produto: quantidade vendida no período (horizontal) e margem % sobre a receita (vertical). Permite identificar artigos de grande volume com margem baixa ou alta.">
           <h3 className="text-sm font-semibold text-slate-800">Margem × volume (produtos)</h3>
         </FieldTipBeside>
       </div>

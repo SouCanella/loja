@@ -28,7 +28,7 @@ export function ConfigContactMarginSection({
     <ConfigFormSection title="Contacto, horário e margem" defaultOpen={false}>
       <div>
         <label className="block text-sm font-medium text-slate-700" htmlFor="wa">
-          <FieldTipBeside tip="Número usado no botão ou link wa.me na vitrine.">WhatsApp (vitrine)</FieldTipBeside>
+          <FieldTipBeside tip="Telemóvel usado nos links e botões WhatsApp da vitrine (formato internacional, ex. +351…).">WhatsApp (vitrine)</FieldTipBeside>
         </label>
         <input
           id="wa"
@@ -40,7 +40,9 @@ export function ConfigContactMarginSection({
       </div>
       <div>
         <label className="block text-sm font-medium text-slate-700" htmlFor="tz">
-          Fuso horário (referência)
+          <FieldTipBeside tip="Fuso horário de referência para horários na loja. Os totais do dashboard usam calendário UTC; este campo não altera esses totais.">
+            Fuso horário (referência)
+          </FieldTipBeside>
         </label>
         <input
           id="tz"
@@ -48,13 +50,10 @@ export function ConfigContactMarginSection({
           value={tz}
           onChange={(e) => onTzChange(e.target.value)}
         />
-        <p className="mt-1 text-xs text-slate-500">
-          Usado em configuração; agregações actuais do dashboard continuam em UTC.
-        </p>
       </div>
       <div>
         <label className="block text-sm font-medium text-slate-700" htmlFor="mg">
-          <FieldTipBeside tip="Percentual usado em sugestões de preço e na margem efectiva quando a receita não define margem própria.">
+          <FieldTipBeside tip="Margem de referência da loja para sugestões de preço e para receitas que usam a margem global.">
             Margem alvo da loja (%)
           </FieldTipBeside>
         </label>
@@ -69,7 +68,7 @@ export function ConfigContactMarginSection({
       </div>
       <div>
         <label className="block text-sm font-medium text-slate-700" htmlFor="labor">
-          <FieldTipBeside tip="Usado com o tempo (minutos) de cada receita para repartir o custo de mão de obra por unidade produzida e incluir na sugestão de preço (junto à margem %). Deixe vazio para não contabilizar MO.">
+          <FieldTipBeside tip="Custo de mão de obra por hora. Com o tempo da receita (minutos) e o rendimento, calcula-se o MO por unidade: (taxa × minutos ÷ 60) ÷ rendimento. Vazio: não incluir MO nas sugestões.">
             Mão de obra (R$ / hora)
           </FieldTipBeside>
         </label>
@@ -82,9 +81,6 @@ export function ConfigContactMarginSection({
           onChange={(e) => onLaborRateChange(e.target.value)}
           placeholder="ex.: 100"
         />
-        <p className="mt-1 text-xs text-slate-500">
-          Custo MO por unidade = (taxa × minutos da receita ÷ 60) ÷ rendimento.
-        </p>
       </div>
     </ConfigFormSection>
   );

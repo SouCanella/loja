@@ -6,6 +6,7 @@ import { CatalogoNewProductForm } from "@/components/painel/catalogo/CatalogoNew
 import { CatalogoProductFilters } from "@/components/painel/catalogo/CatalogoProductFilters";
 import { CatalogoProductsTable } from "@/components/painel/catalogo/CatalogoProductsTable";
 import type { CatalogoCategory, CatalogoProduct } from "@/components/painel/catalogo/types";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { buildMenuCatalogText, type MenuCatalogSection } from "@/lib/painel-menu-catalog-text";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
@@ -223,10 +224,11 @@ export default function CatalogoPage() {
 
   return (
     <>
-      <PainelStickyHeading
-        title="Produtos & catálogo"
-        description="Preço, categoria, imagem e estado — o stock inicial do produto acabado fica no primeiro lote do insumo ligado (se controlar stock)."
-      />
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Gestão de produtos de venda: preço, categoria, imagem e disponibilidade. Se controlar stock, o primeiro lote do produto acabado define-se ao criar o produto (quantidade e custo iniciais).">
+          <h1 className="text-2xl font-semibold text-slate-900">Produtos & catálogo</h1>
+        </PainelTitleHelp>
+      </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? (

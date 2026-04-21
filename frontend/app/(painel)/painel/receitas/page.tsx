@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
@@ -136,12 +136,9 @@ export default function ReceitasPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Cada produto acabado tem uma receita (lista de insumos e rendimento). A produção em lote regista-se em «Produzir lote».">
             <h1 className="text-2xl font-semibold text-slate-900">Receitas</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Uma receita por produto. Depois, produzir lote.
-            </p>
-          </div>
+          </PainelTitleHelp>
           <Link href="/painel/receitas/nova" className={`inline-flex items-center justify-center ${painelBtnPrimaryClass}`}>
             Nova receita
           </Link>
@@ -170,7 +167,7 @@ export default function ReceitasPage() {
               onChange={(e) => setIncludeInactive(e.target.checked)}
             />
             <span className="text-sm text-slate-600">
-              <FieldTipBeside tip="Receitas inactivas ficam ocultas na produção até serem reactivadas.">
+              <FieldTipBeside tip="Inactivas não aparecem em «Produzir lote» até serem reactivadas.">
                 Mostrar inactivas
               </FieldTipBeside>
             </span>
@@ -219,7 +216,7 @@ export default function ReceitasPage() {
                   {r.estimated_unit_cost != null ? (
                     <p className="mt-2 text-sm text-slate-600">
                       <span className="inline-flex flex-wrap items-baseline gap-x-1">
-                        <FieldTipBeside tip="Total = matéria-prima (stock médio dos insumos) + mão de obra (taxa hora × tempo ÷ rendimento). A sugestão aplica a margem % sobre este total.">
+                        <FieldTipBeside tip="Custo estimado = matéria-prima (custo médio dos insumos) + mão de obra (taxa/hora × tempo da receita ÷ rendimento). O preço sugerido aplica a margem % sobre esse custo.">
                           Custo estimado / un. (MP+MO):
                         </FieldTipBeside>{" "}
                         {formatBRL(r.estimated_unit_cost)}

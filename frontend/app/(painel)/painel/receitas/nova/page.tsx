@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
@@ -132,9 +132,11 @@ export default function NovaReceitaPage() {
             ← Receitas
           </Link>
         }
-        title="Nova receita"
-        description='Define insumos para um rendimento (lote). Depois use "Produzir lote" na lista.'
-      />
+      >
+        <PainelTitleHelp tip="Indique o produto acabado, os insumos e o rendimento do lote. Depois de guardar, registe produções em Receitas → «Produzir lote».">
+          <h1 className="text-2xl font-semibold text-slate-900">Nova receita</h1>
+        </PainelTitleHelp>
+      </PainelStickyHeading>
       <form
         id="nova-receita-form"
         className={`mt-4 ${painelPageContentWidthClass} space-y-4 pb-28 md:pb-32`}
@@ -207,7 +209,7 @@ export default function NovaReceitaPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="shelf">
-            <FieldTipBeside tip="Se preencher, cada produção grava a data de validade do lote de produto acabado (hoje + estes dias). Deixe vazio para não definir validade na saída.">
+            <FieldTipBeside tip="Se preencher, cada produção calcula a validade do lote como data da produção + estes dias. Vazio: sem regra automática de validade.">
               Validade produto acabado (dias após produção), opcional
             </FieldTipBeside>
           </label>

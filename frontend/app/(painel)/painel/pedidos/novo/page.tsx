@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
 import { painelBtnDangerClass, painelBtnLinkClass, painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
@@ -102,13 +103,9 @@ export default function PainelPedidoNovoPage() {
     <>
       <PainelStickyHeading>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+          <PainelTitleHelp tip="Pedido criado pelo painel com os preços actuais do catálogo. O estado (confirmar, enviar, etc.) gere-o na página do pedido após gravar.">
             <h1 className="text-2xl font-semibold text-slate-900">Novo pedido</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Cria um pedido em rascunho com os preços actuais do catálogo. Depois pode alterar o
-              estado na página do pedido.
-            </p>
-          </div>
+          </PainelTitleHelp>
           <Link
             href="/painel/pedidos"
             className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { FieldTipBeside, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
@@ -200,14 +200,13 @@ export default function EditarReceitaPage() {
             ← Receitas
           </Link>
         }
-        title="Editar receita"
-        description={
-          <>
-            Produto: <span className="font-medium text-slate-800">{productLabel}</span> — o produto acabado não pode ser
-            alterado aqui.
-          </>
-        }
-      />
+      >
+        <PainelTitleHelp
+          tip={`Produto acabado: ${productLabel}. O produto associado à receita não pode ser alterado neste ecrã.`}
+        >
+          <h1 className="text-2xl font-semibold text-slate-900">Editar receita</h1>
+        </PainelTitleHelp>
+      </PainelStickyHeading>
 
       <form
         id="editar-receita-form"
@@ -222,7 +221,7 @@ export default function EditarReceitaPage() {
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            <FieldTipBeside tip="Receitas inactivas não aparecem na produção até serem reactivadas.">
+            <FieldTipBeside tip="Receitas inactivas não aparecem em «Produzir lote» até voltarem a estar activas.">
               Receita activa
             </FieldTipBeside>
           </label>
@@ -230,7 +229,7 @@ export default function EditarReceitaPage() {
         <div className="flex flex-wrap gap-4">
           <div className="min-w-[8rem] flex-1">
             <label className="block text-sm font-medium text-slate-700" htmlFor="marginR">
-              <FieldTipBeside tip="Se usar margem da loja, deixe vazio e marque a opção abaixo.">
+              <FieldTipBeside tip="Percentagem de margem sobre o custo estimado. Vazio + opção abaixo: usar a margem alvo definida na configuração da loja.">
                 Margem % (receita)
               </FieldTipBeside>
             </label>
@@ -285,7 +284,7 @@ export default function EditarReceitaPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="shelf">
-            <FieldTipBeside tip="Cada produção grava a validade do lote de produto acabado (data da produção + estes dias). Vazio remove a regra.">
+            <FieldTipBeside tip="Validade do lote = data da produção + dias indicados. Vazio: remove esta regra para esta receita.">
               Validade produto acabado (dias após produção), opcional
             </FieldTipBeside>
           </label>

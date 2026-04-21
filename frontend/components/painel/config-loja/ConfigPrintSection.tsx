@@ -20,12 +20,12 @@ export function ConfigPrintSection({
   onShippingLabelSizeChange,
 }: Props) {
   return (
-    <ConfigFormSection title="Impressão de pedidos" defaultOpen={false}>
-      <p className="text-xs text-slate-500">
-        Configuração para recibos no painel e tentativa de envio USB (Chrome/Edge, HTTPS ou localhost). Bluetooth Web
-        API é ainda mais limitada — use impressão do sistema quando possível.
-      </p>
-      <div className="mt-3 space-y-3">
+    <ConfigFormSection
+      title="Impressão de pedidos"
+      defaultOpen={false}
+      summaryTip="Impressão de recibos no painel. Envio directo por USB funciona em Chrome ou Edge, em HTTPS ou localhost; Bluetooth é ainda mais limitado. Em caso de dúvida, use Imprimir do sistema."
+    >
+      <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="pch">
             Canal térmico
