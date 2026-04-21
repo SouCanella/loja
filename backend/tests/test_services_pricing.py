@@ -7,7 +7,11 @@ from app.models.inventory import InventoryBatch, InventoryItem
 from app.models.product import Product
 from app.models.recipe import Recipe, RecipeItem
 from app.models.store import Store
-from app.services.pricing import estimate_recipe_unit_cost, weighted_average_unit_cost
+from app.services.pricing import (
+    estimate_recipe_labor_unit_cost,
+    estimate_recipe_unit_cost,
+    weighted_average_unit_cost,
+)
 from sqlalchemy.orm import Session
 
 
@@ -141,3 +145,33 @@ def test_estimate_recipe_unit_cost_zero_yield_returns_zero(db_session: Session) 
     )
     db_session.commit()
     assert estimate_recipe_unit_cost(db_session, recipe) == Decimal("0")
+
+
+def test_estimate_recipe_labor_unit_cost(db_session: Session) -> None:
+    sid = uuid.uuid4()
+    db_session.add(Store(id=sid, name="L", slug=f"l-{sid.hex[:8]}"))
+    flour = InventoryItem(id=uuid.uuid4(), store_id=sid, name="F", unit="kg")
+    db_session.add(flour)
+    prod_item = InventoryItem(id=uuid.uuid4(), store_id=sid, name="P", unit="un")
+    db_session.add(prod_item)
+    product = Product(
+        id=uuid.uuid4(),
+        store_id=sid,
+        inventory_item_id=prod_item.id,
+        name="P",
+        price=Decimal("1"),
+        active=True,
+    )
+    db_session.add(product)
+    recipe = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=product.id,
+        yield_quantity=Decimal("10"),
+        time_minutes=60,
+    )
+    db_session.add(recipe)
+    db_session.commit()
+    # 100 R$/h × 1 h / 10 un = 10 R$/un
+    assert estimate_recipe_labor_unit_cost(recipe, Decimal("100")) == Decimal("10")
+    assert estimate_recipe_labor_unit_cost(recipe, Decimal("0")) == Decimal("0")

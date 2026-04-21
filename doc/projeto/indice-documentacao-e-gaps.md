@@ -13,7 +13,7 @@
 | Visão | [documento_enterprise.md](../documento_enterprise.md) | Canónico: arquitectura, MVP, backlog enterprise |
 | Roadmap | [fases/PLANO-ROADMAP-FASES.md](../fases/PLANO-ROADMAP-FASES.md) | Fases 0–4, 3.1, 3.2 |
 | Fase 3.1 | [fases/fase-03-1-paridade-mockup.md](../fases/fase-03-1-paridade-mockup.md) | Paridade painel — concluída |
-| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional — **concluída** |
+| Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional + analytics vitrine — **concluída**; incrementos UX painel em **§8** / [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) **§7** |
 | Fase 4 | [fases/fase-04-escala.md](../fases/fase-04-escala.md) | Escala, CI, observabilidade |
 | Decisões | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) | DEC-01 … DEC-23 |
 | Backlog | [backlog.md](backlog.md) | MA-*, BE-*, MVP-* |
@@ -24,6 +24,7 @@
 | Vitrine / tema | [vitrine-configuracao-aparencia.md](vitrine-configuracao-aparencia.md) | RF-CF, cache |
 | Paridade vitrine | [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md) | Mockup vs código |
 | Identidade visual | [identidade-visual-e-paletas.md](identidade-visual-e-paletas.md) | Tokens gráficos |
+| Painel UX / precificação / stock | [painel-ux-layout-formularios-precificacao.md](painel-ux-layout-formularios-precificacao.md) | Sticky título na página; Guardar fixo; MO+MP; validades |
 | Qualidade | [qualidade-e-conformidade.md](qualidade-e-conformidade.md) | RNF vs código |
 | API | [api/openapi.json](../api/openapi.json) | Contrato; `make openapi-export` |
 | Execução | [execucao/CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) | Marcos por data |

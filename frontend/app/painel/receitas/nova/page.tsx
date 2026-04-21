@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnDangerCompactClass, painelBtnLinkClass } from "@/lib/painel-button-classes";
 
 type ProductOut = {
   id: string;
@@ -21,6 +25,7 @@ export default function NovaReceitaPage() {
   const [productId, setProductId] = useState("");
   const [yieldQty, setYieldQty] = useState("1");
   const [timeMin, setTimeMin] = useState("");
+  const [shelfLifeDays, setShelfLifeDays] = useState("");
   const [marginPct, setMarginPct] = useState("");
   const [lines, setLines] = useState<Line[]>([{ inventory_item_id: "", quantity: "1" }]);
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +102,15 @@ export default function NovaReceitaPage() {
         }
         payload.target_margin_percent = String(m);
       }
+      if (shelfLifeDays.trim()) {
+        const d = Number.parseInt(shelfLifeDays.trim(), 10);
+        if (Number.isNaN(d) || d < 1) {
+          setError("Validade (dias) deve ser um número inteiro ≥ 1.");
+          setLoading(false);
+          return;
+        }
+        payload.output_shelf_life_days = d;
+      }
       await apiPainelJson("/api/v2/recipes", {
         method: "POST",
         body: JSON.stringify(payload),
@@ -111,14 +125,20 @@ export default function NovaReceitaPage() {
 
   return (
     <>
-      <Link href="/painel/receitas" className="text-sm text-painel-primary hover:underline">
-        ← Receitas
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-slate-900">Nova receita</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Define insumos para um rendimento (lote). Depois use &quot;Produzir lote&quot; na lista.
-      </p>
-      <form className="mt-6 max-w-lg space-y-4" onSubmit={onSubmit}>
+      <PainelStickyHeading
+        leading={
+          <Link href="/painel/receitas" className="text-painel-primary hover:underline">
+            ← Receitas
+          </Link>
+        }
+        title="Nova receita"
+        description='Define insumos para um rendimento (lote). Depois use "Produzir lote" na lista.'
+      />
+      <form
+        id="nova-receita-form"
+        className="mt-4 max-w-lg space-y-4 pb-28 md:pb-32"
+        onSubmit={onSubmit}
+      >
         <div>
           <label className="block text-sm font-medium text-slate-700" htmlFor="product">
             Produto acabado
@@ -185,13 +205,25 @@ export default function NovaReceitaPage() {
           </div>
         </div>
         <div>
+          <label className="block text-sm font-medium text-slate-700" htmlFor="shelf">
+            <FieldTipBeside tip="Se preencher, cada produção grava a data de validade do lote de produto acabado (hoje + estes dias). Deixe vazio para não definir validade na saída.">
+              Validade produto acabado (dias após produção), opcional
+            </FieldTipBeside>
+          </label>
+          <input
+            id="shelf"
+            type="number"
+            min={1}
+            className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2"
+            value={shelfLifeDays}
+            onChange={(e) => setShelfLifeDays(e.target.value)}
+            placeholder="ex.: 7"
+          />
+        </div>
+        <div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-700">Insumos</span>
-            <button
-              type="button"
-              onClick={addLine}
-              className="text-sm text-painel-primary hover:underline"
-            >
+            <button type="button" onClick={addLine} className={painelBtnLinkClass}>
               + Linha
             </button>
           </div>
@@ -221,7 +253,7 @@ export default function NovaReceitaPage() {
                 {lines.length > 1 ? (
                   <button
                     type="button"
-                    className="text-xs text-slate-500 hover:text-red-600"
+                    className={painelBtnDangerCompactClass}
                     onClick={() => removeLine(i)}
                   >
                     remover
@@ -232,14 +264,12 @@ export default function NovaReceitaPage() {
           </div>
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
-        >
-          {loading ? "A guardar…" : "Guardar receita"}
-        </button>
       </form>
+      <PainelFormSaveBar
+        formId="nova-receita-form"
+        submitLabel={loading ? "A guardar…" : "Guardar receita"}
+        disabled={loading}
+      />
     </>
   );
 }

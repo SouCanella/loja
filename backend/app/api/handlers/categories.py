@@ -25,7 +25,7 @@ def list_categories(db: Session, current: User) -> list[Category]:
 
 
 def create_category(db: Session, current: User, body: CategoryCreate) -> Category:
-    slug = _slugify(body.slug)
+    slug = _slugify(body.name)
     cat = Category(store_id=current.store_id, name=body.name.strip(), slug=slug)
     db.add(cat)
     try:
@@ -46,8 +46,7 @@ def update_category(db: Session, current: User, category_id: UUID, body: Categor
         )
     if body.name is not None:
         cat.name = body.name.strip()
-    if body.slug is not None:
-        cat.slug = _slugify(body.slug)
+        cat.slug = _slugify(cat.name)
     try:
         db.commit()
     except IntegrityError:

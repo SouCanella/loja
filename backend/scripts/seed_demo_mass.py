@@ -246,7 +246,7 @@ def build_catalog(
 
     cats: dict[str, UUID] = {}
     for name, slug in [("Doces", "doces"), ("Salgados", "salgados"), ("Bebidas", "bebidas")]:
-        c = post_json(client, h, "/categories", {"name": name, "slug": slug})
+        c = post_json(client, h, "/categories", {"name": name})
         cats[slug] = UUID(c["id"])
 
     prod_ids: dict[str, UUID] = {}

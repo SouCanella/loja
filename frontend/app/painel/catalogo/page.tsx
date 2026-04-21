@@ -2,9 +2,11 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 
 type Product = {
   id: string;
@@ -128,10 +130,10 @@ export default function CatalogoPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-slate-900">Produtos &amp; catálogo</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Preço, categoria, imagem e estado — o stock inicial do produto acabado fica no primeiro lote do insumo ligado.
-      </p>
+      <PainelStickyHeading
+        title="Produtos & catálogo"
+        description="Preço, categoria, imagem e estado — o stock inicial do produto acabado fica no primeiro lote do insumo ligado."
+      />
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? (
@@ -149,8 +151,7 @@ export default function CatalogoPage() {
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pn">
-              Nome
-              <FieldTip text="Nome do produto na vitrine e nos pedidos." />
+              <FieldTipBeside tip="Nome do produto na vitrine e nos pedidos.">Nome</FieldTipBeside>
             </label>
             <input
               id="pn"
@@ -161,8 +162,7 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pp">
-              Preço de venda
-              <FieldTip text="Preço público do produto (BRL)." />
+              <FieldTipBeside tip="Preço público do produto (BRL).">Preço de venda</FieldTipBeside>
             </label>
             <input
               id="pp"
@@ -175,8 +175,9 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pc">
-              Categoria
-              <FieldTip text="Opcional. Agrupa na vitrine e nos relatórios por categoria." />
+              <FieldTipBeside tip="Opcional. Agrupa na vitrine e nos relatórios por categoria.">
+                Categoria
+              </FieldTipBeside>
             </label>
             <select
               id="pc"
@@ -194,8 +195,9 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pu">
-              Unidade (stock)
-              <FieldTip text="Unidade do lote de produto acabado (ex.: un, caixa)." />
+              <FieldTipBeside tip="Unidade do lote de produto acabado (ex.: un, caixa).">
+                Unidade (stock)
+              </FieldTipBeside>
             </label>
             <input
               id="pu"
@@ -205,14 +207,16 @@ export default function CatalogoPage() {
             />
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-4">
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pq">
-              Qtd inicial (lote)
+              <FieldTipBeside tip="Quantidade do primeiro lote de stock de produto acabado (insumo ligado ao produto).">
+                Qtd inicial (lote)
+              </FieldTipBeside>
             </label>
             <input
               id="pq"
-              className="mt-1 w-28 rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={newQty}
               onChange={(e) => setNewQty(e.target.value)}
               inputMode="decimal"
@@ -220,26 +224,29 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="pco">
-              Custo unit. do lote
+              <FieldTipBeside tip="Custo por unidade desse lote inicial (valorização e custos no painel).">
+                Custo unit. do lote
+              </FieldTipBeside>
             </label>
             <input
               id="pco"
-              className="mt-1 w-32 rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={newCost}
               onChange={(e) => setNewCost(e.target.value)}
               inputMode="decimal"
             />
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-4">
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psp">
-              Destaque na vitrine
-              <FieldTip text="Opcional: aparece na secção «Em destaque» e como fita no card." />
+              <FieldTipBeside tip="Opcional: aparece na secção «Em destaque» e como fita no card.">
+                Destaque na vitrine
+              </FieldTipBeside>
             </label>
             <select
               id="psp"
-              className="mt-1 w-48 rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={newSpot}
               onChange={(e) => setNewSpot(e.target.value)}
             >
@@ -251,12 +258,13 @@ export default function CatalogoPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-slate-600" htmlFor="psm">
-              Disponibilidade
-              <FieldTip text="Sob encomenda: fita e ainda encomendável; indisponível: bloqueia adicionar ao carrinho." />
+              <FieldTipBeside tip="Sob encomenda: fita e ainda encomendável; indisponível: bloqueia adicionar ao carrinho.">
+                Disponibilidade
+              </FieldTipBeside>
             </label>
             <select
               id="psm"
-              className="mt-1 w-48 rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               value={newSale}
               onChange={(e) => setNewSale(e.target.value)}
             >
@@ -269,7 +277,7 @@ export default function CatalogoPage() {
         <button
           type="submit"
           disabled={creating}
-          className="mt-4 rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
+          className={`mt-4 ${painelBtnPrimaryClass}`}
         >
           {creating ? "A criar…" : "Criar produto"}
         </button>

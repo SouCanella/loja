@@ -26,6 +26,27 @@ def set_store_target_margin_percent(store: Store, value: Decimal) -> None:
     store.config = cfg
 
 
+def get_store_labor_rate_per_hour(store: Store) -> Decimal:
+    raw = (store.config or {}).get("pricing", {}).get("labor_rate_per_hour")
+    if raw is None:
+        return Decimal("0")
+    try:
+        return Decimal(str(raw))
+    except Exception:
+        return Decimal("0")
+
+
+def set_store_labor_rate_per_hour(store: Store, value: Decimal) -> None:
+    cfg = dict(store.config or {})
+    pricing = dict(cfg.get("pricing") or {})
+    if value <= 0:
+        pricing.pop("labor_rate_per_hour", None)
+    else:
+        pricing["labor_rate_per_hour"] = str(value)
+    cfg["pricing"] = pricing
+    store.config = cfg
+
+
 def effective_recipe_margin_percent(store: Store, recipe: Recipe) -> Decimal:
     if recipe.target_margin_percent is not None:
         return recipe.target_margin_percent

@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTip, FilterBarFieldTip, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
   formatBRL,
@@ -66,37 +67,36 @@ export default function FinanceiroPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Financeiro</h1>
-        <FieldTip text="Resumo do intervalo de datas escolhido. Os números coincidem com o relatório detalhado (Relatórios). Receita e pedidos seguem as regras da API (pedidos contabilizados no período). Custo de insumos vem das produções associadas ao intervalo." />
-      </div>
-      <p className="mt-1 text-sm text-slate-500">
-        Visão sintética do período — mesmos dados do relatório detalhado.
-      </p>
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Resumo do intervalo de datas escolhido. Os números coincidem com o relatório detalhado (Relatórios). Receita e pedidos seguem as regras da API (pedidos contabilizados no período). Custo de insumos vem das produções associadas ao intervalo.">
+          <h1 className="text-2xl font-semibold text-slate-900">Financeiro</h1>
+        </PainelTitleHelp>
+        <p className="mt-1 text-sm text-slate-500">
+          Visão sintética do período — mesmos dados do relatório detalhado.
+        </p>
 
-      <div className="mt-4 flex flex-wrap items-end gap-3">
-        <label className="text-xs text-slate-500">
-          De
-          <input
-            type="date"
-            value={range.from}
-            onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-            className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-          />
-        </label>
-        <label className="text-xs text-slate-500">
-          Até
-          <input
-            type="date"
-            value={range.to}
-            onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-            className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-          />
-        </label>
-        <span className="inline-flex items-center pb-1">
-          <FieldTip text="Ao alterar «De» ou «Até», os dados actualizam automaticamente. O critério exacto de inclusão de pedidos e produções no período segue a API de relatórios." />
-        </span>
-      </div>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="text-xs text-slate-500">
+            De
+            <input
+              type="date"
+              value={range.from}
+              onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
+              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+            />
+          </label>
+          <label className="text-xs text-slate-500">
+            Até
+            <input
+              type="date"
+              value={range.to}
+              onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
+              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+            />
+          </label>
+          <FilterBarFieldTip text="Ao alterar «De» ou «Até», os dados actualizam automaticamente. O critério exacto de inclusão de pedidos e produções no período segue a API de relatórios." />
+        </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 
@@ -136,9 +136,10 @@ export default function FinanceiroPage() {
           </div>
 
           <div className="mt-8">
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <h2 className="text-sm font-semibold text-slate-800">Gráficos</h2>
-              <FieldTip text="Barras: receita por estado do pedido. Circular: partilha por categoria. No telemóvel, use o «?» de cada cartão; no gráfico, toque numa barra ou fatia para ver valores (tooltip nativo do gráfico)." />
+            <div className="mb-3 min-w-0">
+              <PainelTitleHelp printHidden tip="Barras: receita por estado do pedido. Circular: partilha por categoria. No telemóvel, use o «?» de cada cartão; no gráfico, toque numa barra ou fatia para ver valores (tooltip nativo do gráfico).">
+                <h2 className="text-sm font-semibold text-slate-800">Gráficos</h2>
+              </PainelTitleHelp>
             </div>
             <FinancialReportCharts
               byOrderStatus={report.by_order_status}

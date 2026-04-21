@@ -35,6 +35,7 @@ def test_register_login_me(client: TestClient) -> None:
     assert data["store_id"] == store_id
     assert data["role"] == "store_admin"
     assert data.get("store_target_margin_percent") in ("30", 30)
+    assert data.get("store_labor_rate_per_hour") in ("0", 0)
 
     refreshed = client.post(
         "/api/v1/auth/refresh",

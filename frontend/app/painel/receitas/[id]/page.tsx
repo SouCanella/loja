@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnDangerCompactClass, painelBtnLinkClass } from "@/lib/painel-button-classes";
 
 type ProductOut = {
   id: string;
@@ -20,6 +23,7 @@ type RecipeOut = {
   product_id: string;
   yield_quantity: string;
   time_minutes: number | null;
+  output_shelf_life_days: number | null;
   is_active: boolean;
   items: { id: string; inventory_item_id: string; quantity: string }[];
   target_margin_percent: string | null;
@@ -37,6 +41,7 @@ export default function EditarReceitaPage() {
   const [recipe, setRecipe] = useState<RecipeOut | null>(null);
   const [yieldQty, setYieldQty] = useState("1");
   const [timeMin, setTimeMin] = useState("");
+  const [shelfLifeDays, setShelfLifeDays] = useState("");
   const [marginPct, setMarginPct] = useState("");
   const [useStoreMargin, setUseStoreMargin] = useState(true);
   const [isActive, setIsActive] = useState(true);
@@ -58,6 +63,9 @@ export default function EditarReceitaPage() {
         setRecipe(r);
         setYieldQty(String(r.yield_quantity));
         setTimeMin(r.time_minutes != null ? String(r.time_minutes) : "");
+        setShelfLifeDays(
+          r.output_shelf_life_days != null ? String(r.output_shelf_life_days) : "",
+        );
         if (r.target_margin_percent != null) {
           setMarginPct(String(r.target_margin_percent));
           setUseStoreMargin(false);
@@ -137,6 +145,17 @@ export default function EditarReceitaPage() {
       } else {
         payload.target_margin_percent = null;
       }
+      if (shelfLifeDays.trim()) {
+        const d = Number.parseInt(shelfLifeDays.trim(), 10);
+        if (Number.isNaN(d) || d < 1) {
+          setError("Validade (dias) deve ser um número inteiro ≥ 1.");
+          setLoading(false);
+          return;
+        }
+        payload.output_shelf_life_days = d;
+      } else {
+        payload.output_shelf_life_days = null;
+      }
       await apiPainelJson(`/api/v2/recipes/${recipeId}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
@@ -174,33 +193,45 @@ export default function EditarReceitaPage() {
 
   return (
     <>
-      <Link href="/painel/receitas" className="text-sm text-painel-primary hover:underline">
-        ← Receitas
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-slate-900">Editar receita</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Produto: <span className="font-medium text-slate-800">{productLabel}</span> — o produto acabado não pode ser
-        alterado aqui.
-      </p>
+      <PainelStickyHeading
+        leading={
+          <Link href="/painel/receitas" className="text-painel-primary hover:underline">
+            ← Receitas
+          </Link>
+        }
+        title="Editar receita"
+        description={
+          <>
+            Produto: <span className="font-medium text-slate-800">{productLabel}</span> — o produto acabado não pode ser
+            alterado aqui.
+          </>
+        }
+      />
 
-      <form className="mt-6 max-w-lg space-y-4" onSubmit={onSubmit}>
+      <form
+        id="editar-receita-form"
+        className="mt-4 max-w-lg space-y-4 pb-28 md:pb-32"
+        onSubmit={onSubmit}
+      >
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
-          <label className="flex items-center gap-2 text-sm text-slate-800">
+          <label className="flex items-start gap-2 text-sm text-slate-800">
             <input
               type="checkbox"
-              className="h-4 w-4 rounded border-slate-300"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            Receita activa
-            <FieldTip text="Receitas inactivas não aparecem na produção até serem reactivadas." />
+            <FieldTipBeside tip="Receitas inactivas não aparecem na produção até serem reactivadas.">
+              Receita activa
+            </FieldTipBeside>
           </label>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="min-w-[8rem] flex-1">
             <label className="block text-sm font-medium text-slate-700" htmlFor="marginR">
-              Margem % (receita)
-              <FieldTip text="Se usar margem da loja, deixe vazio e marque a opção abaixo." />
+              <FieldTipBeside tip="Se usar margem da loja, deixe vazio e marque a opção abaixo.">
+                Margem % (receita)
+              </FieldTipBeside>
             </label>
             <input
               id="marginR"
@@ -252,9 +283,25 @@ export default function EditarReceitaPage() {
           </div>
         </div>
         <div>
+          <label className="block text-sm font-medium text-slate-700" htmlFor="shelf">
+            <FieldTipBeside tip="Cada produção grava a validade do lote de produto acabado (data da produção + estes dias). Vazio remove a regra.">
+              Validade produto acabado (dias após produção), opcional
+            </FieldTipBeside>
+          </label>
+          <input
+            id="shelf"
+            type="number"
+            min={1}
+            className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2"
+            value={shelfLifeDays}
+            onChange={(e) => setShelfLifeDays(e.target.value)}
+            placeholder="ex.: 7"
+          />
+        </div>
+        <div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-700">Insumos por lote</span>
-            <button type="button" onClick={addLine} className="text-sm text-painel-primary hover:underline">
+            <button type="button" onClick={addLine} className={painelBtnLinkClass}>
               + Linha
             </button>
           </div>
@@ -284,7 +331,7 @@ export default function EditarReceitaPage() {
                 {lines.length > 1 ? (
                   <button
                     type="button"
-                    className="text-xs text-slate-500 hover:text-red-600"
+                    className={painelBtnDangerCompactClass}
                     onClick={() => removeLine(i)}
                   >
                     remover
@@ -295,14 +342,12 @@ export default function EditarReceitaPage() {
           </div>
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
-        >
-          {loading ? "A guardar…" : "Guardar alterações"}
-        </button>
       </form>
+      <PainelFormSaveBar
+        formId="editar-receita-form"
+        submitLabel={loading ? "A guardar…" : "Guardar alterações"}
+        disabled={loading}
+      />
     </>
   );
 }

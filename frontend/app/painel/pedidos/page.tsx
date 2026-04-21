@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
   ORDER_STATUS_VALUES,
   orderStatusLabel,
   PainelApiError,
 } from "@/lib/painel-api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 
 type OrderRow = {
   id: string;
@@ -50,29 +52,31 @@ export default function PainelPedidosPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Pedidos</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Mais recentes primeiro. Filtre por origem (vitrine vs painel) e por estado; abra um pedido
-            para ver itens e alterar o estado.
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Pedidos</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Mais recentes primeiro. Filtre por origem (vitrine vs painel) e por estado; abra um pedido
+              para ver itens e alterar o estado.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/painel/pedidos/novo"
+              className={`inline-flex items-center justify-center ${painelBtnPrimaryClass}`}
+            >
+              Novo pedido
+            </Link>
+            <Link
+              href="/painel"
+              className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
+            >
+              ← Painel
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/painel/pedidos/novo"
-            className="rounded-lg bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-          >
-            Novo pedido
-          </Link>
-          <Link
-            href="/painel"
-            className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
-          >
-            ← Painel
-          </Link>
-        </div>
-      </div>
+      </PainelStickyHeading>
 
       {rows && rows.length > 0 && bySource ? (
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">

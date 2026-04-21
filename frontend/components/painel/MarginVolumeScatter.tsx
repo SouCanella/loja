@@ -1,6 +1,6 @@
 "use client";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { PAINEL_CHART } from "@/lib/painel-chart-colors";
 import {
   CartesianGrid,
@@ -43,9 +43,10 @@ export function MarginVolumeScatter({ rows }: { rows: MarginVolumeRow[] }) {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-2 flex flex-wrap items-center gap-1">
-        <h3 className="text-sm font-semibold text-slate-800">Margem × volume (produtos)</h3>
-        <FieldTip text="Cada ponto é um produto: eixo horizontal = quantidade vendida no período; vertical = margem % sobre a receita. Útil para ver artigos de alto volume com baixa ou alta margem (quadrantes)." />
+      <div className="mb-2 min-w-0">
+        <FieldTipBeside tip="Cada ponto é um produto: eixo horizontal = quantidade vendida no período; vertical = margem % sobre a receita. Útil para ver artigos de alto volume com baixa ou alta margem (quadrantes).">
+          <h3 className="text-sm font-semibold text-slate-800">Margem × volume (produtos)</h3>
+        </FieldTipBeside>
       </div>
       <div className="h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">

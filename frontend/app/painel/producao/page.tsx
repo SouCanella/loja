@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatQty, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 type ProductionRun = {
   id: string;
@@ -77,45 +79,46 @@ export default function ProducaoPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Produção</h1>
-        <FieldTip text="Lista as corridas de produção registadas (a partir de «Produzir lote» nas receitas). Filtre por intervalo de datas (UTC, alinhado ao relatório). Custos e quantidades vêm da API." />
-      </div>
-      <p className="mt-2 max-w-2xl text-sm text-slate-600">
-        Histórico de lotes produzidos na loja. Para registar uma nova corrida, use{" "}
-        <Link href="/painel/receitas" className="font-medium text-painel-primary hover:underline">
-          Receitas
-        </Link>{" "}
-        → «Produzir lote».
-      </p>
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Lista as corridas de produção registadas (a partir de «Produzir lote» nas receitas). Filtre por intervalo de datas (UTC, alinhado ao relatório). Custos e quantidades vêm da API.">
+          <h1 className="text-2xl font-semibold text-slate-900">Produção</h1>
+        </PainelTitleHelp>
+        <p className="mt-2 max-w-2xl text-sm text-slate-600">
+          Histórico de lotes produzidos na loja. Para registar uma nova corrida, use{" "}
+          <Link href="/painel/receitas" className="font-medium text-painel-primary hover:underline">
+            Receitas
+          </Link>{" "}
+          → «Produzir lote».
+        </p>
 
-      <div className="mt-6 flex flex-wrap items-end gap-3">
-        <label className="text-xs text-slate-500">
-          De
-          <input
-            type="date"
-            value={range.from}
-            onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-            className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-          />
-        </label>
-        <label className="text-xs text-slate-500">
-          Até
-          <input
-            type="date"
-            value={range.to}
-            onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-            className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-          />
-        </label>
-        <button
-          type="button"
-          onClick={() => void load()}
-          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-        >
-          Actualizar
-        </button>
-      </div>
+        <div className="mt-6 flex flex-wrap items-end gap-3">
+          <label className="text-xs text-slate-500">
+            De
+            <input
+              type="date"
+              value={range.from}
+              onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
+              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+            />
+          </label>
+          <label className="text-xs text-slate-500">
+            Até
+            <input
+              type="date"
+              value={range.to}
+              onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
+              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => void load()}
+            className={painelBtnPrimaryClass}
+          >
+            Actualizar
+          </button>
+        </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 
@@ -164,13 +167,13 @@ export default function ProducaoPage() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href="/painel/receitas"
-          className="rounded-lg bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
+          className={`inline-flex items-center justify-center ${painelBtnPrimaryClass}`}
         >
           Ir às receitas
         </Link>
         <Link
           href="/painel/relatorio"
-          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50"
+          className={`inline-flex items-center justify-center ${painelBtnSecondaryClass}`}
         >
           Relatório financeiro
         </Link>

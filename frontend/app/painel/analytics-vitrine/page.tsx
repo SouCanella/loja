@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 
 type Summary = {
@@ -45,13 +46,14 @@ export default function PainelAnalyticsVitrinePage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-slate-900">Analytics da vitrine</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Eventos enviados pela loja pública (páginas vistas, produtos vistos, adicionar ao carrinho). Sessões são
-        estimadas por identificador anónimo no navegador.
-      </p>
+      <PainelStickyHeading>
+        <h1 className="text-2xl font-semibold text-slate-900">Analytics da vitrine</h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Eventos enviados pela loja pública (páginas vistas, produtos vistos, adicionar ao carrinho). Sessões são
+          estimadas por identificador anónimo no navegador.
+        </p>
 
-      <div className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div>
           <label className="block text-xs font-medium text-slate-600" htmlFor="af">
             De
@@ -76,7 +78,8 @@ export default function PainelAnalyticsVitrinePage() {
             onChange={(e) => setTo(e.target.value)}
           />
         </div>
-      </div>
+        </div>
+      </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {loading ? <p className="mt-6 text-sm text-slate-500">A carregar…</p> : null}

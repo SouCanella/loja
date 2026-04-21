@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
+import { painelBtnDangerClass, painelBtnLinkClass, painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 type ProductRow = {
   id: string;
@@ -92,21 +94,23 @@ export default function PainelPedidoNovoPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Novo pedido</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Cria um pedido em rascunho com os preços actuais do catálogo. Depois pode alterar o
-            estado na página do pedido.
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Novo pedido</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Cria um pedido em rascunho com os preços actuais do catálogo. Depois pode alterar o
+              estado na página do pedido.
+            </p>
+          </div>
+          <Link
+            href="/painel/pedidos"
+            className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
+          >
+            ← Pedidos
+          </Link>
         </div>
-        <Link
-          href="/painel/pedidos"
-          className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
-        >
-          ← Pedidos
-        </Link>
-      </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 
@@ -157,7 +161,7 @@ export default function PainelPedidoNovoPage() {
                   type="button"
                   onClick={() => removeLine(index)}
                   disabled={lines.length <= 1}
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 disabled:opacity-40"
+                  className={painelBtnDangerClass}
                 >
                   Remover
                 </button>
@@ -166,7 +170,7 @@ export default function PainelPedidoNovoPage() {
             <button
               type="button"
               onClick={addLine}
-              className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
+              className={painelBtnLinkClass}
             >
               + Adicionar linha
             </button>
@@ -187,13 +191,13 @@ export default function PainelPedidoNovoPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-painel-cta px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
+              className={painelBtnPrimaryClass}
             >
               {saving ? "A criar…" : "Criar pedido"}
             </button>
             <Link
               href="/painel/pedidos"
-              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className={`inline-flex items-center justify-center ${painelBtnSecondaryClass}`}
             >
               Cancelar
             </Link>

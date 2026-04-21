@@ -1,5 +1,7 @@
 """Perfil / margem — lógica partilhada v1/v2."""
 
+from decimal import Decimal
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
@@ -15,7 +17,9 @@ from app.schemas.user import (
     UserPasswordPatch,
 )
 from app.services.store_pricing import (
+    get_store_labor_rate_per_hour,
     get_store_target_margin_percent,
+    set_store_labor_rate_per_hour,
     set_store_target_margin_percent,
 )
 
@@ -59,6 +63,7 @@ def read_me(db: Session, current: User) -> UserMeResponse:
         vitrine_whatsapp=_vitrine_whatsapp_from_store(u.store),
         vitrine_theme=_vitrine_theme_from_store(u.store),
         store_target_margin_percent=get_store_target_margin_percent(u.store),
+        store_labor_rate_per_hour=get_store_labor_rate_per_hour(u.store),
         print_config=effective_print_config(u.store),
     )
 
@@ -72,16 +77,6 @@ def patch_store_settings(db: Session, current: User, body: StoreSettingsPatch) -
     store = u.store
     if body.store_name is not None:
         store.name = body.store_name.strip()
-    if body.store_slug is not None:
-        taken = db.scalars(
-            select(Store.id).where(Store.slug == body.store_slug, Store.id != store.id)
-        ).first()
-        if taken is not None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Este slug já está em uso.",
-            )
-        store.slug = body.store_slug
     if body.theme is not None:
         base = dict(store.theme) if isinstance(store.theme, dict) else {}
         for key, val in body.theme.items():
@@ -139,7 +134,15 @@ def patch_store_pricing(db: Session, current: User, body: StorePricingPatch) -> 
     ).first()
     if u is None or u.store is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Utilizador inválido")
-    set_store_target_margin_percent(u.store, body.target_margin_percent)
+    patch_data = body.model_dump(exclude_unset=True)
+    if "target_margin_percent" in patch_data and body.target_margin_percent is not None:
+        set_store_target_margin_percent(u.store, body.target_margin_percent)
+    if "labor_rate_per_hour" in patch_data:
+        raw = patch_data["labor_rate_per_hour"]
+        if raw is None:
+            set_store_labor_rate_per_hour(u.store, Decimal("0"))
+        else:
+            set_store_labor_rate_per_hour(u.store, raw)
     db.add(u.store)
     db.commit()
     db.refresh(u)

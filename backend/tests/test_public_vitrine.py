@@ -26,7 +26,7 @@ def test_public_store_categories_and_products(client: TestClient) -> None:
 
     client.post(
         "/api/v1/categories",
-        json={"name": "Bolos", "slug": "bolos"},
+        json={"name": "Bolos"},
         headers=h,
     )
     pr = client.post(

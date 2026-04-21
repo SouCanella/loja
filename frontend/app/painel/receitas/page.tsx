@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 type RecipeOut = {
   id: string;
@@ -12,6 +14,8 @@ type RecipeOut = {
   yield_quantity: string;
   time_minutes: number | null;
   is_active: boolean;
+  estimated_material_unit_cost?: string | null;
+  estimated_labor_unit_cost?: string | null;
   estimated_unit_cost: string | null;
   target_margin_percent: string | null;
   effective_margin_percent: string;
@@ -123,22 +127,20 @@ export default function ReceitasPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Receitas</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Uma receita por produto. Depois, produzir lote.
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Receitas</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Uma receita por produto. Depois, produzir lote.
+            </p>
+          </div>
+          <Link href="/painel/receitas/nova" className={`inline-flex items-center justify-center ${painelBtnPrimaryClass}`}>
+            Nova receita
+          </Link>
         </div>
-        <Link
-          href="/painel/receitas/nova"
-          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-        >
-          Nova receita
-        </Link>
-      </div>
 
-      <div className="mt-4 flex flex-wrap items-end gap-4">
+        <div className="mt-4 flex flex-wrap items-end gap-4">
         <label className="text-xs text-slate-600">
           Filtrar por nome do produto
           <input
@@ -149,17 +151,19 @@ export default function ReceitasPage() {
             placeholder="Comece a escrever…"
           />
         </label>
-        <label className="flex items-center gap-2 text-xs text-slate-600">
+        <label className="flex items-start gap-2 text-xs text-slate-600">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-slate-300"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300"
             checked={includeInactive}
             onChange={(e) => setIncludeInactive(e.target.checked)}
           />
-          Mostrar inactivas
-          <FieldTip text="Receitas inactivas ficam ocultas na produção até serem reactivadas." />
+          <FieldTipBeside tip="Receitas inactivas ficam ocultas na produção até serem reactivadas.">
+            Mostrar inactivas
+          </FieldTipBeside>
         </label>
-      </div>
+        </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
       {msg ? (
@@ -201,7 +205,23 @@ export default function ReceitasPage() {
                   </p>
                   {r.estimated_unit_cost != null ? (
                     <p className="mt-2 text-sm text-slate-600">
-                      Custo estimado / un.: {formatBRL(r.estimated_unit_cost)}
+                      <span className="inline-flex flex-wrap items-baseline gap-x-1">
+                        <FieldTipBeside tip="Total = matéria-prima (stock médio dos insumos) + mão de obra (taxa hora × tempo ÷ rendimento). A sugestão aplica a margem % sobre este total.">
+                          Custo estimado / un. (MP+MO):
+                        </FieldTipBeside>{" "}
+                        {formatBRL(r.estimated_unit_cost)}
+                      </span>
+                      <span className="ml-2 text-xs text-slate-500">
+                        MP:{" "}
+                        {r.estimated_material_unit_cost != null
+                          ? formatBRL(r.estimated_material_unit_cost)
+                          : "—"}{" "}
+                        · MO:{" "}
+                        {r.estimated_labor_unit_cost != null &&
+                        Number.parseFloat(String(r.estimated_labor_unit_cost)) > 0
+                          ? formatBRL(r.estimated_labor_unit_cost)
+                          : "—"}
+                      </span>
                       <span className="ml-2 text-slate-500">
                         · Margem efectiva: {effLabel}
                         {r.target_margin_percent != null ? " (receita)" : " (loja)"}
@@ -224,7 +244,7 @@ export default function ReceitasPage() {
                 <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
                   <Link
                     href={`/painel/receitas/${r.id}`}
-                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-center text-sm font-medium text-slate-800 hover:bg-slate-50"
+                    className={`inline-flex items-center justify-center text-center ${painelBtnSecondaryClass}`}
                   >
                     Editar
                   </Link>
@@ -232,7 +252,7 @@ export default function ReceitasPage() {
                     type="button"
                     disabled={busyId === r.id}
                     onClick={() => void toggleActive(r)}
-                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-60"
+                    className={painelBtnSecondaryClass}
                   >
                     {r.is_active ? "Inactivar" : "Activar"}
                   </button>
@@ -241,7 +261,7 @@ export default function ReceitasPage() {
                     disabled={busyId === r.id || !r.is_active}
                     onClick={() => void produzir(r.id)}
                     title={!r.is_active ? "Active a receita para produzir." : undefined}
-                    className="rounded-md bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
+                    className={painelBtnPrimaryClass}
                   >
                     {busyId === r.id ? "A processar…" : "Produzir lote"}
                   </button>

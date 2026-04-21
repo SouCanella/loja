@@ -1,8 +1,9 @@
 """Testes — produção: baixa FEFO e validações de execute_production."""
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from app.models.inventory import InventoryBatch, InventoryItem
@@ -10,6 +11,7 @@ from app.models.product import Product
 from app.models.recipe import Recipe, RecipeItem
 from app.models.store import Store
 from app.services.production_service import consume_ingredient_fefo, execute_production
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 
@@ -326,3 +328,62 @@ def test_execute_production_raises_when_recipe_deleted(db_session: Session) -> N
 
     with pytest.raises(ValueError, match="receita não encontrada"):
         execute_production(db_session, store_id=sid, recipe=recipe_ref, idempotency_key=None)
+
+
+def test_execute_production_output_batch_expiration_from_shelf_life(
+    db_session: Session,
+) -> None:
+    sid = uuid.uuid4()
+    db_session.add(Store(id=sid, name="Shelf", slug=f"sh-{sid.hex[:8]}"))
+    flour = InventoryItem(id=uuid.uuid4(), store_id=sid, name="F", unit="kg")
+    fin = InventoryItem(id=uuid.uuid4(), store_id=sid, name="Bolo", unit="un")
+    db_session.add_all([flour, fin])
+    prod = Product(
+        id=uuid.uuid4(),
+        store_id=sid,
+        inventory_item_id=fin.id,
+        name="Bolo",
+        price=Decimal("10"),
+        active=True,
+    )
+    db_session.add(prod)
+    recipe = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=prod.id,
+        yield_quantity=Decimal("2"),
+        time_minutes=None,
+        output_shelf_life_days=5,
+    )
+    db_session.add(recipe)
+    db_session.add(
+        RecipeItem(
+            id=uuid.uuid4(),
+            recipe_id=recipe.id,
+            inventory_item_id=flour.id,
+            quantity=Decimal("1"),
+        )
+    )
+    db_session.add(
+        InventoryBatch(
+            id=uuid.uuid4(),
+            item_id=flour.id,
+            quantity_available=Decimal("10"),
+            unit_cost=Decimal("1"),
+        )
+    )
+    db_session.commit()
+
+    with patch("app.services.production_service.datetime") as mock_dt:
+        mock_dt.now.return_value = datetime(2026, 4, 10, 12, 0, 0, tzinfo=UTC)
+        mock_dt.UTC = UTC
+        execute_production(db_session, store_id=sid, recipe=recipe, idempotency_key=None)
+
+    db_session.flush()
+
+    stmt = select(InventoryBatch).where(InventoryBatch.item_id == fin.id)
+    out_batches = [
+        b for b in db_session.scalars(stmt).all() if b.quantity_available > 0
+    ]
+    assert len(out_batches) == 1
+    assert out_batches[0].expiration_date == date(2026, 4, 15)

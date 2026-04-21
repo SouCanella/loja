@@ -1,12 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { ConfigFormSection } from "@/components/painel/ConfigFormSection";
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelFormSaveBar } from "@/components/painel/PainelFormSaveBar";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
+import { HexColorInput } from "@/components/painel/HexColorInput";
 import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
+import { VitrinePreviewCard } from "@/components/painel/VitrinePreviewCard";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnDangerClass, painelBtnLinkClass } from "@/lib/painel-button-classes";
 
 type Me = {
   store_name: string;
@@ -14,6 +18,7 @@ type Me = {
   vitrine_whatsapp?: string | null;
   vitrine_theme?: Record<string, unknown> | null;
   store_target_margin_percent: string | number;
+  store_labor_rate_per_hour?: string | number;
   print_config?: {
     channel?: string;
     paper_width_mm?: number;
@@ -97,10 +102,10 @@ function socialNetworksFromTheme(v: Record<string, unknown> | null | undefined):
 export default function ConfiguracaoLojaPage() {
   const [me, setMe] = useState<Me | null>(null);
   const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
   const [wa, setWa] = useState("");
   const [tz, setTz] = useState("America/Sao_Paulo");
   const [margin, setMargin] = useState("30");
+  const [laborRate, setLaborRate] = useState("");
   const [tagline, setTagline] = useState("");
   const [logoImageUrl, setLogoImageUrl] = useState("");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
@@ -126,7 +131,6 @@ export default function ConfiguracaoLojaPage() {
       .then((m) => {
         setMe(m);
         setName(m.store_name);
-        setSlug(m.store_slug);
         setWa(m.vitrine_whatsapp ?? "");
         const vt = m.vitrine_theme;
         setTagline(strFromTheme(vt, "tagline"));
@@ -163,6 +167,13 @@ export default function ConfiguracaoLojaPage() {
         setSocialLinks(socialNetworksFromTheme(vt ?? undefined));
         const sm = m.store_target_margin_percent;
         setMargin(typeof sm === "number" ? String(sm) : String(sm ?? "30"));
+        const lr = m.store_labor_rate_per_hour;
+        if (lr != null) {
+          const n = typeof lr === "number" ? lr : Number.parseFloat(String(lr));
+          setLaborRate(!Number.isNaN(n) && n > 0 ? String(lr) : "");
+        } else {
+          setLaborRate("");
+        }
         const pc = m.print_config;
         if (pc && typeof pc === "object") {
           const ch = pc.channel;
@@ -185,7 +196,6 @@ export default function ConfiguracaoLojaPage() {
         method: "PATCH",
         body: JSON.stringify({
           store_name: name.trim(),
-          store_slug: slug.trim(),
           theme: {
             vitrine: {
               whatsapp: wa.trim() || undefined,
@@ -231,10 +241,15 @@ export default function ConfiguracaoLojaPage() {
         }),
       });
       const m = Number.parseFloat(margin.replace(",", "."));
+      const lrRaw = laborRate.trim().replace(",", ".");
+      const lrParsed = lrRaw === "" ? 0 : Number.parseFloat(lrRaw);
       if (!Number.isNaN(m)) {
         await apiPainelJson("/api/v2/me/store-pricing", {
           method: "PATCH",
-          body: JSON.stringify({ target_margin_percent: m }),
+          body: JSON.stringify({
+            target_margin_percent: m,
+            labor_rate_per_hour: Number.isNaN(lrParsed) || lrParsed < 0 ? 0 : lrParsed,
+          }),
         });
       }
       const updated = await apiPainelJson<Me>("/api/v2/me");
@@ -259,6 +274,15 @@ export default function ConfiguracaoLojaPage() {
       setOrderGreeting(strFromTheme(vt2, "order_greeting"));
       setHideUnavailable(vt2?.hide_unavailable_products === true);
       setSocialLinks(socialNetworksFromTheme(vt2 ?? undefined));
+      const sm2 = updated.store_target_margin_percent;
+      setMargin(typeof sm2 === "number" ? String(sm2) : String(sm2 ?? "30"));
+      const lrUp = updated.store_labor_rate_per_hour;
+      if (lrUp != null) {
+        const n = typeof lrUp === "number" ? lrUp : Number.parseFloat(String(lrUp));
+        setLaborRate(!Number.isNaN(n) && n > 0 ? String(lrUp) : "");
+      } else {
+        setLaborRate("");
+      }
       setMsg(
         "Alterações guardadas. Se já tinha a vitrine aberta, actualize o separador da pré-visualização para ver o resultado.",
       );
@@ -269,42 +293,35 @@ export default function ConfiguracaoLojaPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-slate-900">Configuração da loja</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Identidade da loja, tema da vitrine (textos, imagem, cores), WhatsApp e margem alvo.
-      </p>
+      <PainelStickyHeading
+        title="Configuração da loja"
+        description="Identidade da loja, redes sociais, aparência da vitrine (textos, imagem, cores), WhatsApp, margem e mão de obra."
+      />
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? <p className="mt-4 text-sm text-emerald-800">{msg}</p> : null}
 
       {me ? (
         <>
-          <div className="mt-6 max-w-xl rounded-xl border border-painel-border bg-painel-soft/90 px-4 py-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-painel-primary-strong">Pré-visualização da vitrine</h2>
-            <p className="mt-1 text-xs text-slate-600">
-              Abre a loja pública como o cliente vê (novo separador). Útil para validar tema, textos e checkout após
-              guardar.
-            </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link
-                href={`/loja/${(slug.trim() || me.store_slug).replace(/^\/+|\/+$/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-lg bg-painel-cta px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-              >
-                Abrir vitrine
-              </Link>
-              <code className="rounded bg-white/80 px-2 py-1 text-xs text-slate-700">
-                /loja/{slug.trim() || me.store_slug}
-              </code>
+          <div className="mt-6 max-w-xl">
+            <div className="mb-2 text-xs font-medium text-slate-600">
+              <FieldTipBeside tip="Abre a loja pública num novo separador. Guarde as alterações na página para reflectir tema e textos na vitrine. Copiar coloca o URL completo na área de transferência; Partilhar usa a folha nativa do sistema ou copia o link.">
+                Pré-visualização da vitrine
+              </FieldTipBeside>
             </div>
+            <VitrinePreviewCard storeSlug={me.store_slug} storeName={name} />
           </div>
-          <form onSubmit={saveProfile} className="mt-6 max-w-xl space-y-4">
+          <form
+            id="config-loja-form"
+            onSubmit={saveProfile}
+            className="mt-6 max-w-xl space-y-4 pb-28 md:pb-32"
+          >
           <ConfigFormSection title="Identidade da loja" defaultOpen>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="sn">
-              Nome da loja
-              <FieldTip text="Nome apresentado na vitrine e em comunicações com o cliente." />
+              <FieldTipBeside tip="Nome apresentado na vitrine e em comunicações com o cliente.">
+                Nome da loja
+              </FieldTipBeside>
             </label>
             <input
               id="sn"
@@ -314,30 +331,107 @@ export default function ConfiguracaoLojaPage() {
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700" htmlFor="sl">
-              Slug (URL) — /loja/<strong>{slug || "…"}</strong>
-            </label>
-            <input
-              id="sl"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              required
-            />
-          </div>
+          </ConfigFormSection>
+          <ConfigFormSection title="Redes sociais" defaultOpen>
+            <p className="text-xs text-slate-500">
+              Aparecem na vitrine pública (secção «Redes sociais» no catálogo). Cada link abre num novo separador.
+            </p>
+            <div className="mt-3 space-y-3">
+              {socialLinks.map((row, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 lg:flex-row lg:flex-wrap lg:items-end"
+                >
+                  <div className="w-full shrink-0 lg:w-40">
+                    <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-icon-${idx}`}>
+                      Tipo / ícone
+                    </label>
+                    <select
+                      id={`soc-icon-${idx}`}
+                      className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
+                      value={row.icon}
+                      onChange={(e) =>
+                        setSocialLinks((prev) =>
+                          prev.map((r, i) => (i === idx ? { ...r, icon: e.target.value } : r)),
+                        )
+                      }
+                    >
+                      {SOCIAL_ICON_PRESETS.map((p) => (
+                        <option key={p.value} value={p.value}>
+                          {p.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="min-w-0 flex-1 lg:min-w-[220px]">
+                    <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-url-${idx}`}>
+                      URL (https)
+                    </label>
+                    <input
+                      id={`soc-url-${idx}`}
+                      type="url"
+                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                      value={row.url}
+                      onChange={(e) =>
+                        setSocialLinks((prev) =>
+                          prev.map((r, i) => (i === idx ? { ...r, url: e.target.value } : r)),
+                        )
+                      }
+                      placeholder="https://instagram.com/sua_loja"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1 lg:min-w-[200px]">
+                    <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-lbl-${idx}`}>
+                      Rótulo (opcional)
+                    </label>
+                    <input
+                      id={`soc-lbl-${idx}`}
+                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                      value={row.label}
+                      onChange={(e) =>
+                        setSocialLinks((prev) =>
+                          prev.map((r, i) => (i === idx ? { ...r, label: e.target.value } : r)),
+                        )
+                      }
+                      placeholder="Segue-nos no Instagram"
+                    />
+                  </div>
+                  <div className="flex justify-end lg:shrink-0">
+                    <button
+                      type="button"
+                      className={painelBtnDangerClass}
+                      onClick={() => setSocialLinks((prev) => prev.filter((_, i) => i !== idx))}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className={painelBtnLinkClass}
+                onClick={() =>
+                  setSocialLinks((prev) => [
+                    ...prev,
+                    { label: "", url: "", icon: "instagram" },
+                  ])
+                }
+              >
+                + Adicionar rede
+              </button>
+            </div>
           </ConfigFormSection>
           <ConfigFormSection title="Aparência da vitrine" defaultOpen>
             <p className="text-xs text-slate-500">
-              O cliente vê estas opções na loja pública (
-              <code className="rounded bg-slate-100 px-1">/loja/seu-slug</code>). São poucos campos a propósito — sem um
-              editor complexo.
+              O cliente vê estas opções na loja pública (URL da loja definida no registo). São poucos campos a propósito —
+              sem um editor complexo.
             </p>
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="logo">
-                  Logótipo da loja (URL https)
-                  <FieldTip text="Imagem quadrada ou horizontal do logótipo no topo da vitrine (PNG ou SVG com URL https). Se ficar vazio, usa-se o emoji de reserva (definido nos dados da loja)." />
+                  <FieldTipBeside tip="Imagem quadrada ou horizontal do logótipo no topo da vitrine (PNG ou SVG com URL https). Se ficar vazio, usa-se o emoji de reserva (definido nos dados da loja).">
+                    Logótipo da loja (URL https)
+                  </FieldTipBeside>
                 </label>
                 <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end">
                   <input
@@ -357,8 +451,9 @@ export default function ConfiguracaoLojaPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="tg">
-                  Frase / slogan
-                  <FieldTip text="Texto curto abaixo do nome (ex.: doces artesanais entregues em Lisboa)." />
+                  <FieldTipBeside tip="Texto curto abaixo do nome (ex.: doces artesanais entregues em Lisboa).">
+                    Frase / slogan
+                  </FieldTipBeside>
                 </label>
                 <input
                   id="tg"
@@ -368,103 +463,11 @@ export default function ConfiguracaoLojaPage() {
                   placeholder="Opcional"
                 />
               </div>
-              <div className="border-t border-slate-200 pt-4">
-                <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="text-sm font-medium text-slate-700">Redes sociais (vitrine)</span>
-                  <FieldTip text="Aparecem no topo da loja pública como ícones ao lado do nome. Indique o tipo (para o emoji certo) e o URL completo em https://. O texto opcional é usado em dicas de acessibilidade (title)." />
-                </div>
-                <p className="mt-1 text-xs text-slate-500">
-                  Igual ao bloco de redes no hero da loja — antes não era possível editar aqui.
-                </p>
-                <div className="mt-3 space-y-3">
-                  {socialLinks.map((row, idx) => (
-                    <div
-                      key={idx}
-                      className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 lg:flex-row lg:flex-wrap lg:items-end"
-                    >
-                      <div className="w-full shrink-0 lg:w-40">
-                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-icon-${idx}`}>
-                          Tipo / ícone
-                        </label>
-                        <select
-                          id={`soc-icon-${idx}`}
-                          className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
-                          value={row.icon}
-                          onChange={(e) =>
-                            setSocialLinks((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, icon: e.target.value } : r)),
-                            )
-                          }
-                        >
-                          {SOCIAL_ICON_PRESETS.map((p) => (
-                            <option key={p.value} value={p.value}>
-                              {p.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="min-w-0 flex-1 lg:min-w-[220px]">
-                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-url-${idx}`}>
-                          URL (https)
-                        </label>
-                        <input
-                          id={`soc-url-${idx}`}
-                          type="url"
-                          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                          value={row.url}
-                          onChange={(e) =>
-                            setSocialLinks((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, url: e.target.value } : r)),
-                            )
-                          }
-                          placeholder="https://instagram.com/sua_loja"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1 lg:min-w-[200px]">
-                        <label className="block text-xs font-medium text-slate-600" htmlFor={`soc-lbl-${idx}`}>
-                          Rótulo (opcional)
-                        </label>
-                        <input
-                          id={`soc-lbl-${idx}`}
-                          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                          value={row.label}
-                          onChange={(e) =>
-                            setSocialLinks((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, label: e.target.value } : r)),
-                            )
-                          }
-                          placeholder="Segue-nos no Instagram"
-                        />
-                      </div>
-                      <div className="flex justify-end lg:shrink-0">
-                        <button
-                          type="button"
-                          className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-                          onClick={() => setSocialLinks((prev) => prev.filter((_, i) => i !== idx))}
-                        >
-                          Remover
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
-                    onClick={() =>
-                      setSocialLinks((prev) => [
-                        ...prev,
-                        { label: "", url: "", icon: "instagram" },
-                      ])
-                    }
-                  >
-                    + Adicionar rede
-                  </button>
-                </div>
-              </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="hi">
-                  Imagem de fundo (URL https)
-                  <FieldTip text="Textura ou fotografia suave em ecrã inteiro por detrás do conteúdo. Link direto .jpg / .png; apenas https. Deixe vazio para fundo sólido." />
+                  <FieldTipBeside tip="Textura ou fotografia suave em ecrã inteiro por detrás do conteúdo. Link direto .jpg / .png; apenas https. Deixe vazio para fundo sólido.">
+                    Imagem de fundo (URL https)
+                  </FieldTipBeside>
                 </label>
                 <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end">
                   <input
@@ -484,8 +487,9 @@ export default function ConfiguracaoLojaPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="bgsoft">
-                  Suavização do fundo
-                  <FieldTip text="Controla o véu claro sobre a foto: valores mais altos deixam o site mais sóbrio e o texto mais legível; valores mais baixos mostram mais a imagem. Só altera o aspecto quando há imagem de fundo." />
+                  <FieldTipBeside tip="Controla o véu claro sobre a foto: valores mais altos deixam o site mais sóbrio e o texto mais legível; valores mais baixos mostram mais a imagem. Só altera o aspecto quando há imagem de fundo.">
+                    Suavização do fundo
+                  </FieldTipBeside>
                 </label>
                 <div className="mt-2 flex flex-wrap items-center gap-3">
                   <input
@@ -507,28 +511,30 @@ export default function ConfiguracaoLojaPage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-700" htmlFor="pc">
-                    Cor principal (hex)
-                    <FieldTip text="Ex.: #0f766e — usada como base da identidade na vitrine." />
+                    <FieldTipBeside tip="Cor base da identidade na vitrine (hex). Use a barra ou escreva o código.">
+                      Cor principal
+                    </FieldTipBeside>
                   </label>
-                  <input
+                  <HexColorInput
                     id="pc"
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm font-mono"
                     value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    onChange={setPrimaryColor}
                     placeholder="#0f766e"
+                    aria-label="Cor principal (selector e hexadecimal)"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700" htmlFor="ac">
-                    Cor de destaque (hex)
-                    <FieldTip text="Botões e realces (ex.: #f59e0b)." />
+                    <FieldTipBeside tip="Botões e realces (hex). Use a barra ou escreva o código.">
+                      Cor de destaque
+                    </FieldTipBeside>
                   </label>
-                  <input
+                  <HexColorInput
                     id="ac"
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm font-mono"
                     value={accentColor}
-                    onChange={(e) => setAccentColor(e.target.value)}
+                    onChange={setAccentColor}
                     placeholder="#f59e0b"
+                    aria-label="Cor de destaque (selector e hexadecimal)"
                   />
                 </div>
               </div>
@@ -538,8 +544,9 @@ export default function ConfiguracaoLojaPage() {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="clay">
-                  Layout padrão do catálogo
-                  <FieldTip text="Grade ou lista — o cliente ainda pode alternar na vitrine." />
+                  <FieldTipBeside tip="Grade ou lista — o cliente ainda pode alternar na vitrine.">
+                    Layout padrão do catálogo
+                  </FieldTipBeside>
                 </label>
                 <select
                   id="clay"
@@ -553,8 +560,9 @@ export default function ConfiguracaoLojaPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700" htmlFor="og">
-                  Saudação no WhatsApp (opcional)
-                  <FieldTip text="Texto no início da mensagem do pedido." />
+                  <FieldTipBeside tip="Texto no início da mensagem do pedido.">
+                    Saudação no WhatsApp (opcional)
+                  </FieldTipBeside>
                 </label>
                 <textarea
                   id="og"
@@ -617,8 +625,7 @@ export default function ConfiguracaoLojaPage() {
           <ConfigFormSection title="Contacto, horário e margem" defaultOpen={false}>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="wa">
-              WhatsApp (vitrine)
-              <FieldTip text="Número usado no botão ou link wa.me na vitrine." />
+              <FieldTipBeside tip="Número usado no botão ou link wa.me na vitrine.">WhatsApp (vitrine)</FieldTipBeside>
             </label>
             <input
               id="wa"
@@ -644,8 +651,9 @@ export default function ConfiguracaoLojaPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="mg">
-              Margem alvo da loja (%)
-              <FieldTip text="Percentual usado em sugestões de preço e na margem efectiva quando a receita não define margem própria." />
+              <FieldTipBeside tip="Percentual usado em sugestões de preço e na margem efectiva quando a receita não define margem própria.">
+                Margem alvo da loja (%)
+              </FieldTipBeside>
             </label>
             <input
               id="mg"
@@ -655,6 +663,25 @@ export default function ConfiguracaoLojaPage() {
               value={margin}
               onChange={(e) => setMargin(e.target.value)}
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700" htmlFor="labor">
+              <FieldTipBeside tip="Usado com o tempo (minutos) de cada receita para repartir o custo de mão de obra por unidade produzida e incluir na sugestão de preço (junto à margem %). Deixe vazio para não contabilizar MO.">
+                Mão de obra (R$ / hora)
+              </FieldTipBeside>
+            </label>
+            <input
+              id="labor"
+              type="text"
+              inputMode="decimal"
+              className="mt-1 w-full max-w-[200px] rounded-md border border-slate-300 px-3 py-2 text-sm"
+              value={laborRate}
+              onChange={(e) => setLaborRate(e.target.value)}
+              placeholder="ex.: 100"
+            />
+            <p className="mt-1 text-xs text-slate-500">
+              Custo MO por unidade = (taxa × minutos da receita ÷ 60) ÷ rendimento.
+            </p>
           </div>
           </ConfigFormSection>
           <ConfigFormSection title="Impressão de pedidos" defaultOpen={false}>
@@ -711,23 +738,8 @@ export default function ConfiguracaoLojaPage() {
               </div>
             </div>
           </ConfigFormSection>
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <button
-              type="submit"
-              className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-            >
-              Guardar
-            </button>
-            <Link
-              href={`/loja/${(slug.trim() || me.store_slug).replace(/^\/+|\/+$/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-painel-primary hover:underline"
-            >
-              Ver vitrine após guardar →
-            </Link>
-          </div>
         </form>
+          <PainelFormSaveBar formId="config-loja-form" submitLabel="Guardar" />
         </>
       ) : !err ? (
         <p className="mt-8 text-sm text-slate-500">A carregar…</p>

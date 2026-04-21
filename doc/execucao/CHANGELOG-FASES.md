@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-20 (Fase 3.2 — UX do painel: sticky, botões, tips, configuração)
+
+- **Frontend — consistência:** classes partilhadas em `frontend/lib/painel-button-classes.ts`; `FieldTip` / `FilterBarFieldTip` (comportamento unificado do «?», inclusive dentro de acordeões); `PainelStickyHeading` com `children` e uso alargado às páginas do painel (cabeçalho fixo ao scroll como em Configuração).
+- **Configuração da loja:** secção **Redes sociais** separada de **Aparência da vitrine**, após **Identidade da loja** (`/painel/configuracao`); persistência `theme.vitrine.social_networks` inalterada.
+- **Documentação:** [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8; [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §7; [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md); [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md).
+
 ## 2026-04-20 (Fase 3.2 — analytics vitrine)
 
 - **Backend:** tabela `vitrine_analytics_events`; `POST /api/v2/public/stores/{slug}/analytics/events` (rate limit dedicado); `GET /api/v2/analytics/vitrine/summary` (painel). Migração `20260424_0011_vitrine_analytics_events`.

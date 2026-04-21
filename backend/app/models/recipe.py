@@ -41,6 +41,8 @@ class Recipe(Base):
     time_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     # Margem alvo % (None = herda stores.config.pricing.target_margin_percent)
     target_margin_percent: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
+    # Dias até à validade do lote de produto acabado após cada produção (None = sem data).
+    output_shelf_life_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

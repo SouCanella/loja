@@ -2,8 +2,16 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import {
+  painelBtnDangerCompactClass,
+  painelBtnLinkCompactClass,
+  painelBtnPrimaryClass,
+  painelBtnPrimaryCompactClass,
+  painelBtnSecondaryCompactClass,
+} from "@/lib/painel-button-classes";
 
 type Category = { id: string; name: string; slug: string };
 
@@ -12,8 +20,9 @@ export default function CategoriasPage() {
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState("");
 
   const load = useCallback(() => {
     setErr(null);
@@ -32,18 +41,16 @@ export default function CategoriasPage() {
     e.preventDefault();
     setMsg(null);
     const n = name.trim();
-    const s = slug.trim().toLowerCase().replace(/\s+/g, "-");
-    if (!n || !s) {
-      setMsg("Nome e slug são obrigatórios.");
+    if (!n) {
+      setMsg("Indique o nome da categoria.");
       return;
     }
     try {
       await apiPainelJson("/api/v2/categories", {
         method: "POST",
-        body: JSON.stringify({ name: n, slug: s }),
+        body: JSON.stringify({ name: n }),
       });
       setName("");
-      setSlug("");
       setMsg("Categoria criada.");
       void load();
     } catch (e: unknown) {
@@ -51,21 +58,41 @@ export default function CategoriasPage() {
     }
   }
 
-  async function patchRow(id: string, body: { name?: string; slug?: string }) {
+  async function patchName(id: string, newName: string): Promise<boolean> {
     setBusyId(id);
     setMsg(null);
     try {
       await apiPainelJson(`/api/v2/categories/${id}`, {
         method: "PATCH",
-        body: JSON.stringify(body),
+        body: JSON.stringify({ name: newName }),
       });
       setMsg("Guardado.");
       void load();
+      return true;
     } catch (e: unknown) {
       setMsg(e instanceof PainelApiError ? e.message : "Erro ao guardar.");
+      return false;
     } finally {
       setBusyId(null);
     }
+  }
+
+  async function saveEdit(id: string) {
+    const v = editDraft.trim();
+    if (!v) {
+      setMsg("Indique um nome.");
+      return;
+    }
+    const ok = await patchName(id, v);
+    if (ok) {
+      setEditingId(null);
+      setEditDraft("");
+    }
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditDraft("");
   }
 
   async function remove(id: string) {
@@ -75,6 +102,7 @@ export default function CategoriasPage() {
     try {
       await apiPainelJson(`/api/v2/categories/${id}`, { method: "DELETE" });
       setMsg("Removida.");
+      if (editingId === id) cancelEdit();
       void load();
     } catch (e: unknown) {
       setMsg(e instanceof PainelApiError ? e.message : "Não foi possível remover.");
@@ -85,10 +113,10 @@ export default function CategoriasPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-slate-900">Categorias</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Categorias planas da loja (filtros e agrupamento na vitrine).
-      </p>
+      <PainelStickyHeading
+        title="Categorias"
+        description="Categorias planas da loja (filtros e agrupamento na vitrine)."
+      />
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
       {msg ? (
@@ -104,37 +132,21 @@ export default function CategoriasPage() {
         className="mt-6 max-w-xl rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
       >
         <h2 className="text-sm font-semibold text-slate-800">Nova categoria</h2>
-        <div className="mt-3 flex flex-wrap gap-3">
-          <div className="min-w-[8rem] flex-1">
-            <label className="text-xs font-medium text-slate-600" htmlFor="cn">
-              Nome
-              <FieldTip text="Nome visível para clientes e no painel (ex.: Bolos, Bebidas)." />
-            </label>
-            <input
-              id="cn"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Doces"
-            />
-          </div>
-          <div className="min-w-[8rem] flex-1">
-            <label className="text-xs font-medium text-slate-600" htmlFor="cs">
-              Slug (URL)
-              <FieldTip text="Identificador curto na URL, sem espaços (ex.: doces). Usado em filtros da vitrine." />
-            </label>
-            <input
-              id="cs"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="doces"
-            />
-          </div>
+        <div className="mt-3 max-w-md">
+          <label className="text-xs font-medium text-slate-600" htmlFor="cn">
+            <FieldTipBeside tip="Nome visível para clientes e no painel (ex.: Bolos, Bebidas).">Nome</FieldTipBeside>
+          </label>
+          <input
+            id="cn"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex.: Doces"
+          />
         </div>
         <button
           type="submit"
-          className="mt-4 rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
+          className={`mt-4 ${painelBtnPrimaryClass}`}
         >
           Criar
         </button>
@@ -144,38 +156,76 @@ export default function CategoriasPage() {
         {rows.length === 0 && !err ? (
           <li className="px-4 py-8 text-center text-sm text-slate-500">Nenhuma categoria.</li>
         ) : null}
-        {rows.map((c) => (
-          <li key={c.id} className="flex flex-col gap-3 px-4 py-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-              <input
-                defaultValue={c.name}
-                disabled={busyId === c.id}
-                className="min-w-[6rem] flex-1 rounded border border-slate-200 px-2 py-1 font-medium text-slate-900"
-                onBlur={(e) => {
-                  const v = e.target.value.trim();
-                  if (v && v !== c.name) void patchRow(c.id, { name: v });
-                }}
-              />
-              <input
-                defaultValue={c.slug}
-                disabled={busyId === c.id}
-                className="w-40 rounded border border-slate-200 px-2 py-1 font-mono text-xs text-slate-600"
-                onBlur={(e) => {
-                  const v = e.target.value.trim().toLowerCase().replace(/\s+/g, "-");
-                  if (v && v !== c.slug) void patchRow(c.id, { slug: v });
-                }}
-              />
-            </div>
-            <button
-              type="button"
-              disabled={busyId === c.id}
-              onClick={() => void remove(c.id)}
-              className="shrink-0 text-xs font-medium text-red-700 hover:underline disabled:opacity-50"
+        {rows.map((c) => {
+          const isEditing = editingId === c.id;
+          const disabled = busyId === c.id;
+          return (
+            <li
+              key={c.id}
+              className="flex flex-col gap-3 px-4 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
             >
-              Remover
-            </button>
-          </li>
-        ))}
+              <div className="min-w-0 flex-1">
+                {isEditing ? (
+                  <input
+                    autoFocus
+                    className="w-full max-w-md rounded border border-slate-300 px-2 py-1.5 font-medium text-slate-900"
+                    value={editDraft}
+                    disabled={disabled}
+                    onChange={(e) => setEditDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") void saveEdit(c.id);
+                      if (e.key === "Escape") cancelEdit();
+                    }}
+                  />
+                ) : (
+                  <span className="font-medium text-slate-900">{c.name}</span>
+                )}
+              </div>
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
+                {isEditing ? (
+                  <>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => void saveEdit(c.id)}
+                      className={painelBtnPrimaryCompactClass}
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={cancelEdit}
+                      className={painelBtnSecondaryCompactClass}
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => {
+                      setEditingId(c.id);
+                      setEditDraft(c.name);
+                    }}
+                    className={painelBtnLinkCompactClass}
+                  >
+                    Editar
+                  </button>
+                )}
+                <button
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => void remove(c.id)}
+                  className={painelBtnDangerCompactClass}
+                >
+                  Remover
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </>
   );

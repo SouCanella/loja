@@ -6,6 +6,7 @@ from app.api.v2.endpoints import (
     analytics_vitrine,
     auth,
     categories,
+    customers,
     dashboard,
     health,
     inventory_items,
@@ -33,6 +34,7 @@ api_router.include_router(categories.router)
 api_router.include_router(products.router)
 api_router.include_router(inventory_items.router)
 api_router.include_router(orders.router)
+api_router.include_router(customers.router)
 api_router.include_router(notifications.router)
 api_router.include_router(recipes.router)
 api_router.include_router(production.router)

@@ -23,6 +23,14 @@ class RecipeCreate(BaseModel):
         le=100,
         description="Margem % sobre custo; None herda da loja",
     )
+    output_shelf_life_days: int | None = Field(
+        default=None,
+        ge=1,
+        le=3650,
+        description=(
+            "Dias até à validade do lote produzido (produto acabado); None = sem data na saída"
+        ),
+    )
 
 
 class RecipeItemOut(BaseModel):
@@ -38,9 +46,21 @@ class RecipeOut(BaseModel):
     product_id: UUID
     yield_quantity: Decimal
     time_minutes: int | None
+    output_shelf_life_days: int | None = None
     is_active: bool = True
     items: list[RecipeItemOut]
-    estimated_unit_cost: Decimal | None = None
+    estimated_material_unit_cost: Decimal | None = Field(
+        default=None,
+        description="Custo unitário de matéria-prima (insumos / rendimento)",
+    )
+    estimated_labor_unit_cost: Decimal = Field(
+        default=Decimal("0"),
+        description="Custo unitário de mão de obra (taxa h da loja × tempo da receita / rendimento)",
+    )
+    estimated_unit_cost: Decimal | None = Field(
+        default=None,
+        description="Custo unitário total (matéria-prima + MO) para sugestão de preço",
+    )
     target_margin_percent: Decimal | None = None
     effective_margin_percent: Decimal
     suggested_unit_price: Decimal | None = None
@@ -58,6 +78,12 @@ class RecipePatch(BaseModel):
         ge=0,
         le=100,
         description="Enviar null para voltar à margem da loja",
+    )
+    output_shelf_life_days: int | None = Field(
+        default=None,
+        ge=1,
+        le=3650,
+        description="Enviar null para remover; omitir para não alterar",
     )
 
 

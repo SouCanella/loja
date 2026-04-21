@@ -14,31 +14,38 @@ from app.models.recipe import Recipe, RecipeItem
 from app.models.store import Store
 from app.models.user import User
 from app.schemas.phase3 import RecipeCreate, RecipeItemOut, RecipeOut, RecipePatch
-from app.services.pricing import estimate_recipe_unit_cost
+from app.services.pricing import estimate_recipe_labor_unit_cost, estimate_recipe_unit_cost
 from app.services.store_pricing import (
     effective_recipe_margin_percent,
+    get_store_labor_rate_per_hour,
     suggested_unit_price_from_cost,
 )
 
 
 def recipe_to_out(db: Session, r: Recipe) -> RecipeOut:
-    est: Decimal | None = None
+    material: Decimal | None = None
     try:
-        est = estimate_recipe_unit_cost(db, r)
+        material = estimate_recipe_unit_cost(db, r)
     except Exception:
-        est = None
+        material = None
     store = db.get(Store, r.store_id)
     assert store is not None
+    labor_rate = get_store_labor_rate_per_hour(store)
+    labor = estimate_recipe_labor_unit_cost(r, labor_rate)
+    total: Decimal | None = None if material is None else material + labor
     eff = effective_recipe_margin_percent(store, r)
-    sug = suggested_unit_price_from_cost(est, eff)
+    sug = suggested_unit_price_from_cost(total, eff)
     return RecipeOut(
         id=r.id,
         product_id=r.product_id,
         yield_quantity=r.yield_quantity,
         time_minutes=r.time_minutes,
+        output_shelf_life_days=r.output_shelf_life_days,
         is_active=r.is_active,
         items=[RecipeItemOut.model_validate(x) for x in r.items],
-        estimated_unit_cost=est,
+        estimated_material_unit_cost=material,
+        estimated_labor_unit_cost=labor,
+        estimated_unit_cost=total,
         target_margin_percent=r.target_margin_percent,
         effective_margin_percent=eff,
         suggested_unit_price=sug,
@@ -95,6 +102,7 @@ def create_recipe(db: Session, current: User, body: RecipeCreate) -> RecipeOut:
         yield_quantity=body.yield_quantity,
         time_minutes=body.time_minutes,
         target_margin_percent=body.target_margin_percent,
+        output_shelf_life_days=body.output_shelf_life_days,
     )
     for it in body.items:
         recipe.items.append(
@@ -148,6 +156,9 @@ def patch_recipe(db: Session, current: User, recipe_id: UUID, body: RecipePatch)
         r.target_margin_percent = patch_data["target_margin_percent"]
     if body.is_active is not None:
         r.is_active = body.is_active
+
+    if "output_shelf_life_days" in patch_data:
+        r.output_shelf_life_days = patch_data["output_shelf_life_days"]
 
     if body.items is not None:
         p = db.get(Product, r.product_id)

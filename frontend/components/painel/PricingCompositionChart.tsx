@@ -1,6 +1,6 @@
 "use client";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
 import { PAINEL_CHART_SEQUENCE } from "@/lib/painel-chart-colors";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
@@ -13,6 +13,8 @@ function num(s: string | null | undefined): number {
 type Row = {
   id: string;
   product_id: string;
+  estimated_material_unit_cost?: string | null;
+  estimated_labor_unit_cost?: string | null;
   estimated_unit_cost: string | null;
   suggested_unit_price: string | null;
 };
@@ -31,22 +33,33 @@ export function PricingCompositionChart({
     );
   }
 
-  const cost = num(row.estimated_unit_cost);
+  const mat = num(row.estimated_material_unit_cost);
+  const lab = num(row.estimated_labor_unit_cost);
+  const costTotal = num(row.estimated_unit_cost);
   const sugg = num(row.suggested_unit_price);
-  if (!Number.isFinite(cost) || !Number.isFinite(sugg) || sugg <= 0) {
+  if (
+    !Number.isFinite(costTotal) ||
+    !Number.isFinite(sugg) ||
+    sugg <= 0 ||
+    !Number.isFinite(mat)
+  ) {
     return (
       <p className="text-sm text-slate-600">
-        Sem custo unitário ou preço sugerido calculável para «{productLabel}» — complete insumos e rendimento na
-        receita.
+        Sem custo de matéria-prima ou preço sugerido calculável para «{productLabel}» — complete insumos e
+        rendimento na receita (e tempo/MO na loja, se aplicável).
       </p>
     );
   }
 
-  const margin = Math.max(0, sugg - cost);
-  const data = [
-    { name: "Custo estimado (insumos)", value: Math.max(0, cost) },
-    { name: "Margem bruta (aprox.)", value: margin },
+  const laborPart = Number.isFinite(lab) && lab > 0 ? lab : 0;
+  const margin = Math.max(0, sugg - costTotal);
+  const data: { name: string; value: number }[] = [
+    { name: "Matéria-prima (est.)", value: Math.max(0, mat) },
   ];
+  if (laborPart > 0) {
+    data.push({ name: "Mão de obra (est.)", value: laborPart });
+  }
+  data.push({ name: "Margem bruta (aprox.)", value: margin });
   const total = data[0].value + data[1].value;
   if (total <= 0) {
     return <p className="text-sm text-slate-600">Valores não positivos — não é possível desenhar o gráfico.</p>;
@@ -54,9 +67,10 @@ export function PricingCompositionChart({
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-2 flex flex-wrap items-center gap-1">
-        <h3 className="text-sm font-semibold text-slate-800">Composição do preço sugerido</h3>
-        <FieldTip text="O preço sugerido divide-se em custo variável estimado (receita e insumos) e margem bruta aproximada (diferença). Não inclui custos indirectos (RF-PR-04 fica no backlog)." />
+      <div className="mb-2 min-w-0">
+        <FieldTipBeside tip="O preço sugerido divide-se em matéria-prima, mão de obra (se configurada) e margem bruta aproximada. Custos indirectos fixos ficam fora deste modelo.">
+          <h3 className="text-sm font-semibold text-slate-800">Composição do preço sugerido</h3>
+        </FieldTipBeside>
       </div>
       <p className="mb-3 text-xs text-slate-500">
         {productLabel} — valores orientadores (mesma base da tabela).

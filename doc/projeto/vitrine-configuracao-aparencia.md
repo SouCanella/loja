@@ -2,7 +2,7 @@
 
 Documento de **síntese** do que está implementado (painel do lojista → loja pública `/loja/[slug]`), alinhado a [paridade-mockup-vitrine.md](paridade-mockup-vitrine.md) e ao [backlog](backlog.md).
 
-**Última actualização:** 2026-04-22.
+**Última actualização:** 2026-04-20.
 
 Para a **paleta da plataforma (painel de administração)** e **gráficos**, ver [identidade-visual-e-paletas.md](identidade-visual-e-paletas.md).
 
@@ -12,7 +12,7 @@ Para a **paleta da plataforma (painel de administração)** e **gráficos**, ver
 
 | Área | Rota no painel | Persistência |
 |------|----------------|--------------|
-| Identidade, tema, WhatsApp da vitrine, checkout | `/painel/configuracao` | `PATCH /api/v2/me/store-settings` → `stores.theme.vitrine` (merge profundo do objecto `vitrine`) |
+| Identidade, redes sociais, tema, WhatsApp da vitrine, checkout | `/painel/configuracao` | `PATCH /api/v2/me/store-settings` → `stores.theme.vitrine` (merge profundo do objecto `vitrine`). No painel: **Identidade da loja** → **Redes sociais** → **Aparência da vitrine** (e demais secções). |
 
 Campos relevantes em **`theme.vitrine`** (não exaustivo — ver código em `backend/app/api/handlers/me.py` e schemas):
 
@@ -30,7 +30,7 @@ Campos relevantes em **`theme.vitrine`** (não exaustivo — ver código em `bac
 | `hide_unavailable_products` | boolean | Ocultar produtos indisponíveis na listagem pública |
 | `delivery_option_ids` | string[] | Modos de entrega mostrados no checkout |
 | `payment_methods` | `{ id, label, enabled }[]` | Formas de pagamento no checkout |
-| `social_networks` | `{ label, url, icon }[]` | Links no hero da vitrine (ícones por palavra-chave em `icon`, ex.: `instagram`); configurável no painel em **Aparência da vitrine → Redes sociais** |
+| `social_networks` | `{ label, url, icon }[]` | Links no hero da vitrine (ícones por palavra-chave em `icon`, ex.: `instagram`); configurável no painel na secção **Redes sociais** (após **Identidade da loja**) |
 
 **Limpar imagens:** o painel envia `null` em `logo_image_url` / `hero_image_url` quando o campo é apagado, para remover valores antigos no merge do tema.
 
@@ -71,7 +71,7 @@ A documentação OpenAPI canónica está em `doc/api/openapi.json` — regenerar
 ### 3.5 Redes sociais no hero
 
 - **`frontend/components/vitrine/catalog-hero.tsx`:** se `social_networks` tiver entradas com `url` válido, mostram-se botões com emoji conforme `icon` (ex.: texto que contenha `instagram`, `facebook`, `tiktok`, `youtube`; caso contrário ícone de link genérico).
-- **Painel:** `frontend/app/painel/configuracao/page.tsx` — lista editável (tipo + URL https + rótulo opcional); persiste em `theme.vitrine.social_networks` via `PATCH /api/v2/me/store-settings` (merge no objecto `vitrine`).
+- **Painel:** `frontend/app/painel/configuracao/page.tsx` — secção dedicada **Redes sociais**; lista editável (tipo + URL https + rótulo opcional); persiste em `theme.vitrine.social_networks` via `PATCH /api/v2/me/store-settings` (merge no objecto `vitrine`).
 
 ### 3.6 Uso das cores na UI
 

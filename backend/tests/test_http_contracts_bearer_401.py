@@ -19,6 +19,7 @@ PROTECTED: list[tuple[str, str]] = [
     ("GET", "/api/v2/products"),
     ("GET", "/api/v2/inventory-items"),
     ("GET", "/api/v2/orders"),
+    ("GET", "/api/v2/customers"),
     ("GET", "/api/v2/recipes"),
     ("GET", "/api/v2/reports/financial"),
     ("POST", "/api/v2/production"),

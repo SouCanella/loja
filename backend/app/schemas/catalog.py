@@ -13,7 +13,6 @@ CatalogSaleMode = Literal["in_stock", "order_only", "unavailable"]
 
 class CategoryCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
-    slug: str = Field(..., min_length=1, max_length=120)
 
 
 class CategoryOut(BaseModel):
@@ -26,7 +25,6 @@ class CategoryOut(BaseModel):
 
 class CategoryPatch(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
-    slug: str | None = Field(None, min_length=1, max_length=120)
 
 
 class InventorySeed(BaseModel):

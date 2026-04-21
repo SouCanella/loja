@@ -138,4 +138,19 @@ A ordem **3.2-a → 3.2-b → 3.2-c** reduz risco; equipas pequenas podem parar 
 
 ---
 
-*Última revisão: 2026-04-20 — Marco 3.2 concluído no repositório: API `GET /api/v2/orders/{id}/print`, `print_config` em `/me`, painel (config + recibo), landing `/`, `/termos`, `/privacidade`, **analytics de vitrine** (`vitrine_analytics_events`, ingestão pública, `/painel/analytics-vitrine`), OpenAPI e testes.*
+## 8. Incrementos de UX do painel (mesma fase 3.2)
+
+Entregues como **continuidade da experiência lojista** no painel (consistência visual e de interacção), sem alterar o âmbito normativo das sub-fases 3.2-a–e:
+
+| Tema | O quê |
+|------|--------|
+| **Cabeçalho sticky** | `PainelStickyHeading` alargado (`children` opcional) e aplicado às rotas principais do painel — título (e, onde faz sentido, filtros/acções) permanecem visíveis ao scroll; `print:static` ao imprimir. |
+| **Botões** | Classes canónicas em `frontend/lib/painel-button-classes.ts` (primário, secundário, perigo, links) reutilizadas nas páginas e componentes (`PainelFormSaveBar`, `ImageUploadButton`, `OrderPrintPanel`, etc.). |
+| **Ajuda contextual («?»)** | `FieldTip`: `stopPropagation` dentro de `<summary>`/acordeões, posicionamento do painel com flip vertical, `z-index` elevado, `aria-label` único; `FilterBarFieldTip` para o «?» junto a filtros de datas (ex.: Financeiro, Relatórios). |
+| **Configuração — redes sociais** | Secção **Redes sociais** separada de **Aparência da vitrine**, colocada **depois de Identidade da loja** (`/painel/configuracao`); persistência inalterada (`theme.vitrine.social_networks`). |
+
+Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7.
+
+---
+
+*Última revisão: 2026-04-20 — Marco 3.2 no repositório: impressão, landing, analytics de vitrine, OpenAPI e testes; **§8** — incrementos UX do painel (sticky, botões, tips, ordem «Redes sociais» na configuração).*

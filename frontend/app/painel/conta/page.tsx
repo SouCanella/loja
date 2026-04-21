@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 
 type Me = { email: string };
 
@@ -56,13 +58,14 @@ export default function ContaPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Perfil e segurança</h1>
-        <FieldTip text="Altere a palavra-passe da sua conta de lojista. Mantenha uma palavra-passe forte e única; após alterar, o login anterior deixa de ser válido." />
-      </div>
-      <p className="mt-2 max-w-xl text-sm text-slate-600">
-        Conta de acesso ao painel (RF-AU). O e-mail não pode ser alterado aqui.
-      </p>
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="Altere a palavra-passe da sua conta de lojista. Mantenha uma palavra-passe forte e única; após alterar, o login anterior deixa de ser válido.">
+          <h1 className="text-2xl font-semibold text-slate-900">Perfil e segurança</h1>
+        </PainelTitleHelp>
+        <p className="mt-2 max-w-xl text-sm text-slate-600">
+          Conta de acesso ao painel (RF-AU). O e-mail não pode ser alterado aqui.
+        </p>
+      </PainelStickyHeading>
 
       {me ? (
         <p className="mt-4 text-sm text-slate-700">
@@ -124,7 +127,7 @@ export default function ContaPage() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:opacity-70"
+          className={`${painelBtnPrimaryClass} disabled:opacity-70`}
         >
           {saving ? "A guardar…" : "Actualizar palavra-passe"}
         </button>

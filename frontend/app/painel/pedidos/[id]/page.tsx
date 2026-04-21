@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { OrderPrintPanel } from "@/components/painel/OrderPrintPanel";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
   draftOrderWhatsAppMessage,
@@ -153,27 +154,29 @@ export default function PainelPedidoDetalhePage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Pedido</h1>
-          <p className="mt-1 font-mono text-xs text-slate-500">{id}</p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Pedido</h1>
+            <p className="mt-1 font-mono text-xs text-slate-500">{id}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/painel/pedidos"
+              className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
+            >
+              ← Lista
+            </Link>
+            <button
+              type="button"
+              onClick={() => load()}
+              className="text-sm text-slate-600 hover:text-slate-900"
+            >
+              Recarregar
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/painel/pedidos"
-            className="text-sm font-medium text-painel-primary hover:text-painel-primary-strong"
-          >
-            ← Lista
-          </Link>
-          <button
-            type="button"
-            onClick={() => load()}
-            className="text-sm text-slate-600 hover:text-slate-900"
-          >
-            Recarregar
-          </button>
-        </div>
-      </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 

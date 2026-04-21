@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 
+import { painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import { apiPainelMediaUpload, PainelApiError } from "@/lib/painel-api";
 
 export function ImageUploadButton({
@@ -49,7 +50,7 @@ export function ImageUploadButton({
         type="button"
         disabled={busy || disabled}
         onClick={() => ref.current?.click()}
-        className="whitespace-nowrap rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+        className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap ${painelBtnSecondaryClass}`}
       >
         {busy ? "A enviar…" : label}
       </button>

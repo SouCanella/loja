@@ -28,13 +28,14 @@ def issue_tokens_for_customer(customer: Customer) -> TokenResponse:
     return TokenResponse(access_token=access, token_type="bearer", refresh_token=refresh)
 
 
-def register_customer(
+def persist_new_customer(
     db: Session,
     *,
     store_id: UUID,
     email: str,
     password: str,
-) -> CustomerAuthResponse:
+) -> Customer:
+    """Cria registo na tabela `customers` (conta vitrine)."""
     em = email.lower().strip()
     cust = Customer(
         store_id=store_id,
@@ -48,6 +49,17 @@ def register_customer(
         db.rollback()
         raise
     db.refresh(cust)
+    return cust
+
+
+def register_customer(
+    db: Session,
+    *,
+    store_id: UUID,
+    email: str,
+    password: str,
+) -> CustomerAuthResponse:
+    cust = persist_new_customer(db, store_id=store_id, email=email, password=password)
     tokens = issue_tokens_for_customer(cust)
     return CustomerAuthResponse(
         access_token=tokens.access_token,

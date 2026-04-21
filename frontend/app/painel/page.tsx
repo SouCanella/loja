@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { OrdersByStatusChart, RevenueTrendChart } from "@/components/painel/DashboardCharts";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, orderStatusLabel, PainelApiError } from "@/lib/painel-api";
+import { painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 type DashboardData = {
   date_from: string;
@@ -66,40 +68,42 @@ export default function PainelDashboardPage() {
 
   return (
     <>
-      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Indicadores e tendência de receita — período seleccionável (UTC, alinhado ao relatório).
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Indicadores e tendência de receita — período seleccionável (UTC, alinhado ao relatório).
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="text-xs text-slate-500">
+              De
+              <input
+                type="date"
+                value={range.from}
+                onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
+                className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+              />
+            </label>
+            <label className="text-xs text-slate-500">
+              Até
+              <input
+                type="date"
+                value={range.to}
+                onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
+                className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
+              />
+            </label>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs text-slate-500">
-            De
-            <input
-              type="date"
-              value={range.from}
-              onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-            />
-          </label>
-          <label className="text-xs text-slate-500">
-            Até
-            <input
-              type="date"
-              value={range.to}
-              onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-            />
-          </label>
-        </div>
-      </div>
+      </PainelStickyHeading>
 
-      {error ? <p className="mb-4 text-sm text-amber-800">{error}</p> : null}
+      {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 
       {data ? (
         <>
-          <p className="mb-4 text-xs text-slate-400">{data.aggregation_note}</p>
+          <p className="mt-6 mb-4 text-xs text-slate-400 md:mt-0">{data.aggregation_note}</p>
           <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <KpiCard label="Pedidos hoje (UTC)" value={String(data.kpis.orders_today)} />
             <KpiCard label="Pedidos no período" value={String(data.kpis.orders_in_period)} />
@@ -120,13 +124,13 @@ export default function PainelDashboardPage() {
           <div className="flex flex-wrap gap-2">
             <Link
               href="/painel/pedidos"
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50"
+              className={`inline-flex items-center justify-center ${painelBtnSecondaryClass}`}
             >
               Pedidos
             </Link>
             <Link
               href="/painel/catalogo"
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50"
+              className={`inline-flex items-center justify-center ${painelBtnSecondaryClass}`}
             >
               Catálogo
             </Link>
@@ -141,7 +145,7 @@ export default function PainelDashboardPage() {
           </div>
         </>
       ) : !error ? (
-        <p className="text-sm text-slate-500">A carregar…</p>
+        <p className="mt-6 text-sm text-slate-500 md:mt-4">A carregar…</p>
       ) : null}
     </>
   );

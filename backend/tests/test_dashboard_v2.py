@@ -84,15 +84,3 @@ def test_patch_product_image_url(client: TestClient) -> None:
     )
     assert r.status_code == 200, r.text
     assert r.json()["data"]["image_url"] == "https://example.com/x.jpg"
-
-
-def test_patch_store_slug_conflict_second_store(client: TestClient) -> None:
-    a = register_random_store(client)
-    b = register_random_store(client)
-    slug_a = client.get("/api/v2/me", headers=a["headers"]).json()["data"]["store_slug"]
-    r = client.patch(
-        "/api/v2/me/store-settings",
-        headers=b["headers"],
-        json={"store_slug": slug_a},
-    )
-    assert r.status_code == 400

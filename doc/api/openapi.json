@@ -2715,6 +2715,76 @@
         }
       }
     },
+    "/api/v2/customers": {
+      "get": {
+        "tags": [
+          "customers-v2"
+        ],
+        "summary": "List Customers V2",
+        "operationId": "list_customers_v2_api_v2_customers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffCustomerListEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "customers-v2"
+        ],
+        "summary": "Create Customer V2",
+        "operationId": "create_customer_v2_api_v2_customers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaffCustomerCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffCustomerEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/notifications": {
       "get": {
         "tags": [
@@ -4029,18 +4099,11 @@
             "maxLength": 255,
             "minLength": 1,
             "title": "Name"
-          },
-          "slug": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Slug"
           }
         },
         "type": "object",
         "required": [
-          "name",
-          "slug"
+          "name"
         ],
         "title": "CategoryCreate"
       },
@@ -4160,19 +4223,6 @@
               }
             ],
             "title": "Name"
-          },
-          "slug": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 120,
-                "minLength": 1
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Slug"
           }
         },
         "type": "object",
@@ -7040,6 +7090,20 @@
             ],
             "title": "Target Margin Percent",
             "description": "Margem % sobre custo; None herda da loja"
+          },
+          "output_shelf_life_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3650.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Shelf Life Days",
+            "description": "Dias até à validade do lote produzido (produto acabado); None = sem data na saída"
           }
         },
         "type": "object",
@@ -7210,6 +7274,17 @@
             ],
             "title": "Time Minutes"
           },
+          "output_shelf_life_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Shelf Life Days"
+          },
           "is_active": {
             "type": "boolean",
             "title": "Is Active",
@@ -7222,6 +7297,26 @@
             "type": "array",
             "title": "Items"
           },
+          "estimated_material_unit_cost": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Material Unit Cost",
+            "description": "Custo unitário de matéria-prima (insumos / rendimento)"
+          },
+          "estimated_labor_unit_cost": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Estimated Labor Unit Cost",
+            "description": "Custo unitário de mão de obra (taxa h da loja × tempo da receita / rendimento)",
+            "default": "0"
+          },
           "estimated_unit_cost": {
             "anyOf": [
               {
@@ -7232,7 +7327,8 @@
                 "type": "null"
               }
             ],
-            "title": "Estimated Unit Cost"
+            "title": "Estimated Unit Cost",
+            "description": "Custo unitário total (matéria-prima + MO) para sugestão de preço"
           },
           "target_margin_percent": {
             "anyOf": [
@@ -7346,6 +7442,20 @@
             ],
             "title": "Target Margin Percent",
             "description": "Enviar null para voltar à margem da loja"
+          },
+          "output_shelf_life_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3650.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Shelf Life Days",
+            "description": "Enviar null para remover; omitir para não alterar"
           }
         },
         "type": "object",
@@ -7501,6 +7611,130 @@
         ],
         "title": "SocialNetworkLink"
       },
+      "StaffCustomerCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "StaffCustomerCreate"
+      },
+      "StaffCustomerEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StaffCustomerOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "StaffCustomerEnvelope"
+      },
+      "StaffCustomerListEnvelope": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/StaffCustomerOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ApiErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "StaffCustomerListEnvelope"
+      },
+      "StaffCustomerOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "created_at"
+        ],
+        "title": "StaffCustomerOut"
+      },
       "StoreNotificationOut": {
         "properties": {
           "id": {
@@ -7581,15 +7815,34 @@
               {
                 "type": "string",
                 "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
               }
             ],
-            "title": "Target Margin Percent"
+            "title": "Target Margin Percent",
+            "description": "Omitir para não alterar a margem da loja"
+          },
+          "labor_rate_per_hour": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Labor Rate Per Hour",
+            "description": "R$/h; 0 ou omitir remove a taxa; omitir só o campo não altera o valor guardado"
           }
         },
         "type": "object",
-        "required": [
-          "target_margin_percent"
-        ],
         "title": "StorePricingPatch"
       },
       "StorePublicEnvelope": {
@@ -7780,19 +8033,6 @@
             ],
             "title": "Store Name"
           },
-          "store_slug": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 80,
-                "minLength": 2
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Store Slug"
-          },
           "theme": {
             "anyOf": [
               {
@@ -7820,7 +8060,7 @@
         },
         "type": "object",
         "title": "StoreSettingsPatch",
-        "description": "Actualização parcial da loja (nome, slug, tema, config JSON)."
+        "description": "Actualização parcial da loja (nome, tema, config JSON). O slug da URL é definido no registo e não é alterável aqui."
       },
       "TokenEnvelope": {
         "properties": {
@@ -8010,6 +8250,11 @@
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Store Target Margin Percent"
           },
+          "store_labor_rate_per_hour": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Store Labor Rate Per Hour"
+          },
           "print_config": {
             "additionalProperties": true,
             "type": "object",
@@ -8025,7 +8270,8 @@
           "store_slug",
           "store_name",
           "created_at",
-          "store_target_margin_percent"
+          "store_target_margin_percent",
+          "store_labor_rate_per_hour"
         ],
         "title": "UserMeResponse"
       },

@@ -30,6 +30,7 @@ def weighted_average_unit_cost(db: Session, item_id: UUID) -> Decimal:
 
 
 def estimate_recipe_unit_cost(db: Session, recipe: Recipe) -> Decimal:
+    """Custo unitário de matéria-prima (média ponderada dos insumos / rendimento)."""
     num = Decimal("0")
     for line in recipe.items:
         w = weighted_average_unit_cost(db, line.inventory_item_id)
@@ -38,3 +39,17 @@ def estimate_recipe_unit_cost(db: Session, recipe: Recipe) -> Decimal:
     if den <= 0:
         return Decimal("0")
     return num / den
+
+
+def estimate_recipe_labor_unit_cost(recipe: Recipe, labor_rate_per_hour: Decimal) -> Decimal:
+    """Custo de mão de obra por unidade: (R$/h × min/60) / rendimento."""
+    if labor_rate_per_hour <= 0:
+        return Decimal("0")
+    tm = recipe.time_minutes
+    if tm is None or tm <= 0:
+        return Decimal("0")
+    y = recipe.yield_quantity
+    if y <= 0:
+        return Decimal("0")
+    batch_labor = labor_rate_per_hour * (Decimal(tm) / Decimal("60"))
+    return batch_labor / y

@@ -18,9 +18,9 @@ export function ConfigFormSection({
       open={defaultOpen}
       className="group rounded-xl border border-slate-200 bg-white shadow-sm open:shadow-md"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-4 py-3 text-left [&::-webkit-details-marker]:hidden">
-        <span className="text-sm font-semibold text-slate-900">{title}</span>
-        <span className="flex shrink-0 items-center gap-2">
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-3 rounded-xl px-4 py-3 text-left [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0 flex-1 text-sm font-semibold text-slate-900">{title}</span>
+        <span className="flex shrink-0 items-start gap-2">
           {summaryTip ? <FieldTip text={summaryTip} /> : null}
           <span className="text-[10px] text-slate-400 transition group-open:rotate-180" aria-hidden>
             ▼

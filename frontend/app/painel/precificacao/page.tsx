@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { PricingCompositionChart } from "@/components/painel/PricingCompositionChart";
 import { apiPainelJson, formatBRL, formatPercent, PainelApiError } from "@/lib/painel-api";
 
@@ -10,6 +11,8 @@ type Recipe = {
   id: string;
   product_id: string;
   yield_quantity: string;
+  estimated_material_unit_cost?: string | null;
+  estimated_labor_unit_cost?: string | null;
   estimated_unit_cost: string | null;
   effective_margin_percent: string;
   suggested_unit_price: string | null;
@@ -51,14 +54,15 @@ export default function PrecificacaoPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Precificação</h1>
-        <FieldTip text="Custo unitário estimado usa insumos e rendimento da receita. A margem % reflecte a configuração efectiva do produto/receita. O preço sugerido é orientador — o preço de venda real define-se em Produtos / catálogo. «—» indica dado ausente ou não calculável." />
-      </div>
-      <p className="mt-1 text-sm text-slate-500">
-        Custo estimado por insumos, margem efectiva e preço sugerido — alinhe o preço de venda em{" "}
-        <span className="font-medium">Produtos</span> / catálogo.
-      </p>
+      <PainelStickyHeading>
+        <PainelTitleHelp tip="O custo unitário inclui matéria-prima (stock médio dos insumos) e mão de obra (taxa R$/h da loja × tempo da receita ÷ rendimento). A margem % incide sobre esse total. O preço sugerido é orientador — o preço de venda real define-se em Produtos / catálogo. «—» indica dado ausente ou não calculável.">
+          <h1 className="text-2xl font-semibold text-slate-900">Precificação</h1>
+        </PainelTitleHelp>
+        <p className="mt-1 text-sm text-slate-500">
+          Custo estimado (MP + MO), margem efectiva e preço sugerido — alinhe o preço de venda em{" "}
+          <span className="font-medium">Produtos</span> / catálogo.
+        </p>
+      </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}
 
@@ -68,7 +72,7 @@ export default function PrecificacaoPage() {
             <tr>
               <th className="px-4 py-3">Receita</th>
               <th className="px-4 py-3 text-right">Rendimento</th>
-              <th className="px-4 py-3 text-right">Custo unit. estimado</th>
+              <th className="px-4 py-3 text-right">Custo unit. (MP+MO)</th>
               <th className="px-4 py-3 text-right">Margem %</th>
               <th className="px-4 py-3 text-right">Preço sugerido</th>
             </tr>

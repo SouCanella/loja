@@ -78,4 +78,18 @@ make openapi-export   # actualiza doc/api/openapi.json
 
 ---
 
+## 7. Incrementos de UX do painel (Fase 3.2 — iteração de consistência)
+
+**Objectivo:** alinhar comportamento e aparência do painel após o marco principal (impressão, landing, analytics), documentado também em [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) **§8** e em [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md).
+
+| Área | Ficheiros / notas |
+|------|-------------------|
+| **Classes de botão** | `frontend/lib/painel-button-classes.ts` — `painelBtnPrimaryClass`, `Secondary`, `Danger`, `Link` (+ variantes `Compact` onde aplicável). Uso em páginas do painel, `PainelFormSaveBar`, `ImageUploadButton`, `OrderPrintPanel`, etc. |
+| **Ajuda «?»** | `frontend/components/painel/FieldTip.tsx` — clique para abrir; `stopPropagation` em `pointerdown`/`click` (evita fechar/abrir `<details>` ao tocar no ícone); cálculo de posição (`computeTipBox`); portal em `document.body`; `FilterBarFieldTip` para alinhar o «?» aos filtros de período (Relatórios, Financeiro). |
+| **Cabeçalho sticky global** | `PainelStickyHeading` — suporta `title` + `description` **ou** `children` (layouts com `PainelTitleHelp`, filtros, CTAs). Aplicado às rotas sob `/painel/*` (dashboard, vendas, operação, relatórios, conta, etc.), alinhado a [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1. |
+| **Configuração — ordem das secções** | `frontend/app/painel/configuracao/page.tsx` — **Identidade da loja** → **Redes sociais** → **Aparência da vitrine** (demais secções inalteradas). Dados: `social_networks` dentro de `theme.vitrine` como antes. |
+| **Vitrine (doc)** | [vitrine-configuracao-aparencia.md](../projeto/vitrine-configuracao-aparencia.md) — referência à ordem no painel e ao contrato público. |
+
+---
+
 *Documento de arquivo técnico; critérios normativos completos continuam nos ficheiros de fase e roadmap citados.*

@@ -1,6 +1,6 @@
 "use client";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
 import {
   Bar,
   BarChart,
@@ -52,9 +52,10 @@ export function FinancialReportCharts({
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="mb-2 flex flex-wrap items-center gap-1">
-          <h3 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h3>
-          <FieldTip text="Cada barra mostra a receita atribuída a pedidos nesse estado no período (ex.: pago, enviado). Toque nas barras no gráfico para ver o valor exacto (tooltip do gráfico). Estados sem movimento podem não aparecer." />
+        <div className="mb-2 min-w-0">
+          <FieldTipBeside tip="Cada barra mostra a receita atribuída a pedidos nesse estado no período (ex.: pago, enviado). Toque nas barras no gráfico para ver o valor exacto (tooltip do gráfico). Estados sem movimento podem não aparecer.">
+            <h3 className="text-sm font-semibold text-slate-800">Receita por estado do pedido</h3>
+          </FieldTipBeside>
         </div>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -81,9 +82,10 @@ export function FinancialReportCharts({
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="mb-2 flex flex-wrap items-center gap-1">
-          <h3 className="text-sm font-semibold text-slate-800">Receita por categoria</h3>
-          <FieldTip text="Partilha da receita por categoria de produto no catálogo. Apenas categorias com receita maior que zero entram no gráfico; produtos sem categoria entram como «Sem categoria». Toque numa fatia ou use a legenda para ver valores (tooltip do gráfico)." />
+        <div className="mb-2 min-w-0">
+          <FieldTipBeside tip="Partilha da receita por categoria de produto no catálogo. Apenas categorias com receita maior que zero entram no gráfico; produtos sem categoria entram como «Sem categoria». Toque numa fatia ou use a legenda para ver valores (tooltip do gráfico).">
+            <h3 className="text-sm font-semibold text-slate-800">Receita por categoria</h3>
+          </FieldTipBeside>
         </div>
         {catData.length === 0 ? (
           <p className="text-sm text-slate-500">Sem dados de categoria no período.</p>

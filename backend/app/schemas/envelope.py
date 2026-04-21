@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.schemas.auth import RegisterResponse, TokenResponse
 from app.schemas.catalog import CategoryOut, ProductOut
+from app.schemas.customers_painel import StaffCustomerOut
 from app.schemas.customers_public import CustomerAuthResponse, CustomerMeOut
 from app.schemas.dashboard import DashboardSummaryOut
 from app.schemas.inventory_items import InventoryItemDetailOut, InventoryItemListOut
@@ -189,6 +190,18 @@ class CustomerAuthEnvelope(BaseModel):
 class CustomerMeEnvelope(BaseModel):
     success: bool
     data: CustomerMeOut | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class StaffCustomerListEnvelope(BaseModel):
+    success: bool
+    data: list[StaffCustomerOut] | None = None
+    errors: list[ApiErrorDetail] | None = None
+
+
+class StaffCustomerEnvelope(BaseModel):
+    success: bool
+    data: StaffCustomerOut | None = None
     errors: list[ApiErrorDetail] | None = None
 
 

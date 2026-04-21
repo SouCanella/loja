@@ -27,6 +27,17 @@ def test_me_patch_store_pricing_422_margin_over_100(
     assert r.status_code == 422
 
 
+def test_me_patch_store_pricing_422_negative_labor_rate(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
+    r = client.patch(
+        "/api/v1/me/store-pricing",
+        headers=auth_headers,
+        json={"labor_rate_per_hour": "-1"},
+    )
+    assert r.status_code == 422
+
+
 def test_inventory_post_422_empty_name(client: TestClient, auth_headers: dict[str, str]) -> None:
     r = client.post(
         "/api/v1/inventory-items",

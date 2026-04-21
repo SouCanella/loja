@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
   formatBRL,
   formatQty,
   PainelApiError,
 } from "@/lib/painel-api";
+import { painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 type InvRow = {
   id: string;
@@ -88,27 +90,29 @@ export default function RelatorioEstoquePage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Relatório de stock (insumos)</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Quantidades disponíveis e valor aproximado por insumo (agregado dos lotes).
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Relatório de stock (insumos)</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Quantidades disponíveis e valor aproximado por insumo (agregado dos lotes).
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={rows.length === 0}
+              onClick={downloadCsv}
+              className={`${painelBtnSecondaryClass} disabled:opacity-50`}
+            >
+              Exportar CSV
+            </button>
+            <Link href="/painel/insumos" className="text-sm text-painel-primary hover:underline">
+              ← Insumos
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            disabled={rows.length === 0}
-            onClick={downloadCsv}
-            className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50"
-          >
-            Exportar CSV
-          </button>
-          <Link href="/painel/insumos" className="text-sm text-painel-primary hover:underline">
-            ← Insumos
-          </Link>
-        </div>
-      </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 

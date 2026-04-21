@@ -331,7 +331,7 @@ def test_products_list_category_and_404(client: TestClient, db_session) -> None:
     h = ctx["headers"]
     cat = client.post(
         "/api/v1/categories",
-        json={"name": "Doces", "slug": "doces"},
+        json={"name": "Doces"},
         headers=h,
     )
     assert cat.status_code == 201
@@ -385,13 +385,13 @@ def test_categories_delete_404_and_slug_conflict(client: TestClient) -> None:
     h = register_random_store(client)["headers"]
     r1 = client.post(
         "/api/v1/categories",
-        json={"name": "A", "slug": "dup-slug"},
+        json={"name": "dup-slug"},
         headers=h,
     )
     assert r1.status_code == 201
     r2 = client.post(
         "/api/v1/categories",
-        json={"name": "B", "slug": "dup-slug"},
+        json={"name": "dup-slug"},
         headers=h,
     )
     assert r2.status_code == 409
@@ -526,7 +526,7 @@ def test_public_store_theme_social_and_product_filters(client: TestClient, db_se
 
     client.post(
         "/api/v1/categories",
-        json={"name": "C", "slug": "cat-x"},
+        json={"name": "cat-x"},
         headers=h,
     )
     assert (
@@ -712,7 +712,7 @@ def test_public_products_filtered_by_existing_category(client: TestClient) -> No
     slug = client.get("/api/v1/me", headers=h).json()["store_slug"]
     cat = client.post(
         "/api/v1/categories",
-        json={"name": "Filtro", "slug": "filtro"},
+        json={"name": "Filtro"},
         headers=h,
     ).json()
     client.post(

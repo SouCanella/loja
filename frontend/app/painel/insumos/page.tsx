@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { FieldTip } from "@/components/painel/FieldTip";
+import { FieldTipBeside } from "@/components/painel/FieldTip";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
   formatBRL,
   formatQty,
   PainelApiError,
 } from "@/lib/painel-api";
+import { painelBtnDangerCompactClass, painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 
 type InvRow = {
   id: string;
@@ -29,6 +31,7 @@ export default function InsumosPage() {
   const [unit, setUnit] = useState("un");
   const [qty, setQty] = useState("");
   const [cost, setCost] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(() => {
@@ -61,6 +64,9 @@ export default function InsumosPage() {
         return;
       }
       body.initial_batch = { quantity: String(q), unit_cost: String(c) };
+      if (expirationDate.trim()) {
+        (body.initial_batch as Record<string, string>).expiration_date = expirationDate.trim();
+      }
     } else if (qty || cost) {
       setMsg("Lote inicial: preencha quantidade e custo unitário, ou deixe vazio.");
       return;
@@ -73,6 +79,7 @@ export default function InsumosPage() {
       setName("");
       setQty("");
       setCost("");
+      setExpirationDate("");
       setMsg("Insumo criado.");
       void load();
     } catch (err: unknown) {
@@ -103,25 +110,27 @@ export default function InsumosPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Insumos</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Matéria-prima sem produto de venda — base para receitas e stock.
-          </p>
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Insumos</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Matéria-prima sem produto de venda — base para receitas e stock.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/painel/relatorio-estoque"
+              className="text-sm text-painel-primary hover:underline"
+            >
+              Relatório de stock →
+            </Link>
+            <Link href="/painel" className="text-sm text-painel-primary hover:underline">
+              ← Painel
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/painel/relatorio-estoque"
-            className="text-sm text-painel-primary hover:underline"
-          >
-            Relatório de stock →
-          </Link>
-          <Link href="/painel" className="text-sm text-painel-primary hover:underline">
-            ← Painel
-          </Link>
-        </div>
-      </div>
+      </PainelStickyHeading>
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
       {msg ? (
         <p
@@ -139,8 +148,9 @@ export default function InsumosPage() {
         <div className="mt-3 flex flex-wrap gap-3">
           <div className="min-w-[10rem] flex-1">
             <label className="block text-xs font-medium text-slate-600" htmlFor="nm">
-              Nome
-              <FieldTip text="Identificação da matéria-prima (ex.: farinha, embalagem). Aparece em receitas e movimentos." />
+              <FieldTipBeside tip="Identificação da matéria-prima (ex.: farinha, embalagem). Aparece em receitas e movimentos.">
+                Nome
+              </FieldTipBeside>
             </label>
             <input
               id="nm"
@@ -152,8 +162,9 @@ export default function InsumosPage() {
           </div>
           <div className="w-24">
             <label className="block text-xs font-medium text-slate-600" htmlFor="un">
-              Unidade
-              <FieldTip text="Unidade de medida do stock (kg, L, un). Deve ser consistente com as quantidades nas receitas." />
+              <FieldTipBeside tip="Unidade de medida do stock (kg, L, un). Deve ser consistente com as quantidades nas receitas.">
+                Unidade
+              </FieldTipBeside>
             </label>
             <input
               id="un"
@@ -169,7 +180,9 @@ export default function InsumosPage() {
         <div className="mt-2 flex flex-wrap gap-3">
           <div className="w-28">
             <label className="block text-xs font-medium text-slate-600" htmlFor="q">
-              Qtd lote
+              <FieldTipBeside tip="Quantidade e custo do primeiro lote; usados no custo médio e na saída FEFO (validade).">
+                Qtd lote
+              </FieldTipBeside>
             </label>
             <input
               id="q"
@@ -181,7 +194,9 @@ export default function InsumosPage() {
           </div>
           <div className="w-32">
             <label className="block text-xs font-medium text-slate-600" htmlFor="c">
-              Custo / un.
+              <FieldTipBeside tip="Custo unitário deste lote (não confundir com preço de venda).">
+                Custo / un.
+              </FieldTipBeside>
             </label>
             <input
               id="c"
@@ -192,11 +207,22 @@ export default function InsumosPage() {
               placeholder="0,00"
             />
           </div>
+          <div className="min-w-[10rem]">
+            <label className="block text-xs font-medium text-slate-600" htmlFor="exp">
+              <FieldTipBeside tip="Opcional. Data de validade deste lote (FEFO no consumo). Só aplica com lote inicial preenchido.">
+                Validade do lote
+              </FieldTipBeside>
+            </label>
+            <input
+              id="exp"
+              type="date"
+              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-2 text-sm"
+              value={expirationDate}
+              onChange={(e) => setExpirationDate(e.target.value)}
+            />
+          </div>
         </div>
-        <button
-          type="submit"
-          className="mt-4 rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-        >
+        <button type="submit" className={`mt-4 ${painelBtnPrimaryClass}`}>
           Adicionar insumo
         </button>
       </form>
@@ -207,22 +233,19 @@ export default function InsumosPage() {
             <tr>
               <th className="px-4 py-3">Insumo</th>
               <th className="px-4 py-3 text-right">
-                <span className="inline-flex items-center">
+                <FieldTipBeside align="end" tip="Soma das quantidades em todos os lotes deste insumo.">
                   Qtd disponível
-                  <FieldTip text="Soma das quantidades em todos os lotes deste insumo." />
-                </span>
+                </FieldTipBeside>
               </th>
               <th className="px-4 py-3 text-right">
-                <span className="inline-flex items-center justify-end">
+                <FieldTipBeside align="end" tip="Custo médio ponderado pelos lotes (quando há stock).">
                   Custo médio / un.
-                  <FieldTip text="Custo médio ponderado pelos lotes (quando há stock)." />
-                </span>
+                </FieldTipBeside>
               </th>
               <th className="px-4 py-3 text-right">
-                <span className="inline-flex items-center justify-end">
+                <FieldTipBeside align="end" tip="Quantidade × custo por lote (aproximação do valor inventariado).">
                   Valor em stock
-                  <FieldTip text="Quantidade × custo por lote (aproximação do valor inventariado)." />
-                </span>
+                </FieldTipBeside>
               </th>
               <th className="px-4 py-3 text-right"> </th>
             </tr>
@@ -260,7 +283,7 @@ export default function InsumosPage() {
                     type="button"
                     disabled={busyId === r.id}
                     onClick={() => void remove(r.id)}
-                    className="text-xs font-medium text-red-700 hover:underline disabled:opacity-50"
+                    className={painelBtnDangerCompactClass}
                   >
                     {busyId === r.id ? "…" : "Remover"}
                   </button>

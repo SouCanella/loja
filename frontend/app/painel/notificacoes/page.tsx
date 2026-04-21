@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { usePainelNotifications } from "@/components/painel/PainelNotificationsContext";
+import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
+import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 
 export default function PainelNotificacoesPage() {
   const { inbox, loading, error, markRead, markAllRead } = usePainelNotifications();
@@ -18,31 +20,33 @@ export default function PainelNotificacoesPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Notificações</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Novos pedidos da vitrine e outras mensagens da loja. O som pode ser activado no ícone 🔔.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {inbox && inbox.unread_count > 0 ? (
-            <button
-              type="button"
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50"
-              onClick={() => void markAllRead()}
+      <PainelStickyHeading>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">Notificações</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Novos pedidos da vitrine e outras mensagens da loja. O som pode ser activado no ícone 🔔.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {inbox && inbox.unread_count > 0 ? (
+              <button
+                type="button"
+                className={painelBtnSecondaryClass}
+                onClick={() => void markAllRead()}
+              >
+                Marcar todas como lidas
+              </button>
+            ) : null}
+            <Link
+              href="/painel/pedidos"
+              className={`inline-flex items-center justify-center ${painelBtnPrimaryClass}`}
             >
-              Marcar todas como lidas
-            </button>
-          ) : null}
-          <Link
-            href="/painel/pedidos"
-            className="rounded-lg bg-painel-cta px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover"
-          >
-            Ir para pedidos
-          </Link>
+              Ir para pedidos
+            </Link>
+          </div>
         </div>
-      </div>
+      </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}
 

@@ -1,5 +1,6 @@
 """Execução de receita: baixa DEC-17 e custo médio do lote de saída (DEC-09)."""
 
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
 
@@ -121,11 +122,15 @@ def execute_production(
         )
 
     unit_out = (total_in / yld) if yld > 0 else Decimal("0")
+    out_exp = None
+    days = recipe.output_shelf_life_days
+    if days is not None and days > 0:
+        out_exp = (datetime.now(UTC) + timedelta(days=days)).date()
     out_batch = InventoryBatch(
         item_id=finished_item_id,
         quantity_available=yld,
         unit_cost=unit_out,
-        expiration_date=None,
+        expiration_date=out_exp,
     )
     db.add(out_batch)
     db.add(

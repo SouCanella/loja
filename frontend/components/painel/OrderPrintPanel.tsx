@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { painelBtnPrimaryCompactClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import { buildEscPosFromOrderPrint, hasWebUsb } from "@/lib/escpos";
 
 export type OrderPrintData = {
@@ -142,7 +143,7 @@ export function OrderPrintPanel({ orderId }: Props) {
           type="button"
           disabled={loading}
           onClick={() => void loadPrint()}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+          className={`${painelBtnSecondaryClass} disabled:opacity-50`}
         >
           {loading ? "A carregar…" : "Pré-visualizar / imprimir"}
         </button>
@@ -175,7 +176,7 @@ export function OrderPrintPanel({ orderId }: Props) {
                 <button
                   type="button"
                   onClick={handlePrintDialog}
-                  className="rounded-lg bg-painel-cta px-3 py-2 text-sm font-semibold text-white hover:bg-painel-cta-hover"
+                  className={painelBtnPrimaryCompactClass}
                 >
                   Imprimir (sistema)
                 </button>
