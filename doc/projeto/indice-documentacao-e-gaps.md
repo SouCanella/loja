@@ -16,7 +16,7 @@
 | Fase 3.2 | [fases/fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) | Impressão + site institucional + analytics vitrine — **concluída**; incrementos UX painel em **§8** / [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) **§7** |
 | Fase 4 | [fases/fase-04-escala.md](../fases/fase-04-escala.md) | Escala, CI, observabilidade |
 | Decisões | [decisoes-e-pendencias.md](decisoes-e-pendencias.md) | DEC-01 … DEC-23 |
-| Backlog | [backlog.md](backlog.md) | MA-*, BE-*, MVP-* |
+| Backlog | [backlog.md](backlog.md) | MA-*, FR-* (refactor painel), BE-*, MVP-* |
 | Relatórios | [relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md) | Analytics vs operação |
 | Relatórios (negócio) | [relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md) | **DEC-22** — estados, cupons, descontos |
 | Landing marketing | [landing-site-produto.md](landing-site-produto.md) | Página inicial — especificação Fase 3.2 |

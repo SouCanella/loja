@@ -71,7 +71,7 @@ O planejamento **detalhado** de cada fase está em [fases/](fases/).
 
 | Documento | Descrição |
 |-----------|------------|
-| [projeto/backlog.md](projeto/backlog.md) | Backlog enterprise (BE-*), MVP, débitos técnicos, **ideias de produto** (IP-*) |
+| [projeto/backlog.md](projeto/backlog.md) | Backlog enterprise (BE-*), MVP, débitos técnicos, melhorias MA-*, **refactor painel** (FR-*), **ideias de produto** (IP-*) |
 | [execucao/CHANGELOG-FASES.md](execucao/CHANGELOG-FASES.md) | Notas datadas por sprint ou marco |
 | [execucao/plano-implementacao-fase-3-2.md](execucao/plano-implementacao-fase-3-2.md) | **Plano mestre** Fase 3.2: tarefas, testes (pytest/Vitest/E2E), documentação no merge |
 | [execucao/fase-3-2-implementacao-resumo.md](execucao/fase-3-2-implementacao-resumo.md) | **Resumo do código entregue** na Fase 3.2 (impressão, landing, analytics vitrine, testes, migração) |

@@ -55,6 +55,23 @@ Sugestões de **arquitetura e qualidade** alinhadas ao [documento_enterprise.md]
 
 ---
 
+## Refactor frontend — painel Next.js
+
+Melhorias de **estrutura e consistência** no painel; não bloqueiam funcionalidade. Contexto UX: [painel-ux-layout-formularios-precificacao.md](painel-ux-layout-formularios-precificacao.md); classes de botão: `frontend/lib/painel-button-classes.ts`.
+
+| ID | Item | Estado | Fase alvo | Notas |
+|----|------|--------|-----------|--------|
+| **FR-01** | **Partir** `frontend/app/painel/configuracao/page.tsx` **em componentes por secção** (Identidade, Redes sociais, Aparência, checkout, impressão, etc.), mantendo estado e `saveProfile` na página ou num hook | nao_iniciado | técnico / 3.x | Ficheiro muito grande (~750 linhas); reduz conflitos e facilita testes |
+| **FR-02** | **Componente reutilizável** para filtros **De / Até** (e variantes com botão «Actualizar» ou só datas), p.ex. `PainelDateRangeFields`, usado em Dashboard, Financeiro, Produção, Relatório financeiro, Analytics vitrine | nao_iniciado | técnico | Evita divergência de classes e melhora acessibilidade |
+| **FR-03** | **TypeScript:** tipar `Navigator.usb` (ou helper) para `OrderPrintPanel` e eliminar erro `tsc` sobre Web USB | nao_iniciado | técnico | Melhora CI/DX; ver `frontend/components/painel/OrderPrintPanel.tsx` |
+| **FR-04** | **Partir** `frontend/app/painel/clientes/page.tsx` e **`catalogo/page.tsx`** em sub-componentes (formulários, tabelas, edição) | nao_iniciado | técnico | ~400+ linhas cada; extrair quando houver alterações grandes |
+| **FR-05** | **Alinhar** páginas **login** e **registo** (`frontend/app/login`, `frontend/app/registo`) às classes **`painel-button-classes`** (CTA `w-full`), como no painel | nao_iniciado | técnico | Só consistência visual com o resto da plataforma |
+| **FR-06** | **Opcional:** componente **`PanelCard`** (ou tokens Tailwind partilhados) para cartões `rounded-lg border border-slate-200 bg-white …` repetidos no painel | nao_iniciado | técnico | Reduz duplicação de utilitários; prioridade baixa |
+
+Ao concluir um FR-*, actualizar esta tabela e, se aplicável, [indice-documentacao-e-gaps.md](indice-documentacao-e-gaps.md).
+
+---
+
 ## Backlog enterprise (§23)
 
 | ID | Item | Estado | Notas |
