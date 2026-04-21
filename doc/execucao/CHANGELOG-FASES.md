@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (Refactor painel — FR-01 a FR-06)
+
+- **Frontend:** secções extraídas em `components/painel/config-loja/`; `PainelDateRangeFields`; `PanelCard` + `painel-surface-classes` (login/registo); `types/webusb.d.ts`; clientes (`clientes/*`, `painel-clientes-helpers.ts`); catálogo (`catalogo/*`).
+- **Backlog:** [backlog.md](../projeto/backlog.md) — FR-01…FR-06 **convertido**.
+- **Documentação:** [fase-3-2-implementacao-resumo.md](fase-3-2-implementacao-resumo.md) §9; [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
+
 ## 2026-04-21 (Fase 3.2 — tabelas, layout, filtros padronizados, testes Vitest)
 
 - **Frontend — consistência:** `frontend/lib/painel-table-classes.ts`, `painel-layout-classes.ts`, `painel-filter-classes.ts`; filtros de pesquisa/seleção/datas nas páginas do painel (pedidos, clientes, receitas, insumos, catálogo, precificação, produção, relatório de stock, notificações, analytics vitrine, relatório financeiro — datas).

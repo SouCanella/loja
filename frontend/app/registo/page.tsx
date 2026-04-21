@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 
 import { messageFromV2Error } from "@/lib/api-v2";
 import { getApiBaseUrl } from "@/lib/api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 import { setSessionTokens } from "@/lib/painel-api";
+import { painelAuthInputClass } from "@/lib/painel-surface-classes";
 
 export default function RegistoLojaPage() {
   const router = useRouter();
@@ -72,7 +74,7 @@ export default function RegistoLojaPage() {
             id="store_name"
             type="text"
             autoComplete="organization"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={storeName}
             onChange={(ev) => setStoreName(ev.target.value)}
             required
@@ -87,7 +89,7 @@ export default function RegistoLojaPage() {
             type="text"
             autoComplete="off"
             placeholder="minha-loja"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={storeSlug}
             onChange={(ev) => setStoreSlug(ev.target.value)}
             required
@@ -104,7 +106,7 @@ export default function RegistoLojaPage() {
             id="email"
             type="email"
             autoComplete="email"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
             required
@@ -119,7 +121,7 @@ export default function RegistoLojaPage() {
             type="password"
             autoComplete="new-password"
             minLength={8}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
             required
@@ -128,7 +130,7 @@ export default function RegistoLojaPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
+          className={`w-full ${painelBtnPrimaryClass}`}
         >
           {loading ? "A criar…" : "Criar conta"}
         </button>

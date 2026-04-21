@@ -106,4 +106,19 @@ Documentação de UX: [painel-ux-layout-formularios-precificacao.md](../projeto/
 
 ---
 
+## 9. Refactor painel — FR-01 a FR-06 (backlog técnico)
+
+| FR | Entrega no código |
+|----|-------------------|
+| **FR-01** | Secções da configuração em `frontend/components/painel/config-loja/` (`ConfigIdentitySection`, `ConfigSocialSection`, `ConfigAppearanceSection`, `ConfigVitrineCheckoutSection`, `ConfigContactMarginSection`, `ConfigPrintSection`); `types.ts`, `constants.ts`. |
+| **FR-02** | `frontend/components/painel/PainelDateRangeFields.tsx` — intervalo De/Até (`bare` \| `bar` \| `boxed`); usado em dashboard, financeiro, produção, relatório financeiro, analytics vitrine. |
+| **FR-03** | `frontend/types/webusb.d.ts`; `OrderPrintPanel` com guarda se `navigator.usb` ausente. |
+| **FR-04** | Clientes: `components/painel/clientes/*`, `lib/painel-clientes-helpers.ts`. Catálogo: `components/painel/catalogo/*`. |
+| **FR-05** | Login/registo: `painelBtnPrimaryClass` + `painelAuthInputClass` (`lib/painel-surface-classes.ts`). |
+| **FR-06** | `PanelCard`, `painelCardClass` / `painelCardSubtleClass`; uso em dashboard e formulários extraídos. |
+
+Rastreio: [backlog.md](../projeto/backlog.md) — linhas **FR-01…FR-06** com estado **convertido**.
+
+---
+
 *Documento de arquivo técnico; critérios normativos completos continuam nos ficheiros de fase e roadmap citados.*

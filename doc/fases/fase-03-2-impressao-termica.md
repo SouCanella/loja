@@ -153,7 +153,7 @@ Entregues como **continuidade da experiência lojista** no painel (consistência
 | **Viewport / altura** | `min-h-dvh` no *shell* e páginas públicas (login, registo, landing, termos, privacidade) para coluna estável em mobile. |
 | **Filtros padronizados** | `frontend/lib/painel-filter-classes.ts` — barra de filtros, pesquisa, `select`, datas; páginas: pedidos, clientes, receitas, insumos, catálogo (pesquisa + categoria + estado), precificação, produção (datas + texto), relatório de stock, notificações (lidas/não lidas), analytics vitrine e datas no relatório financeiro. |
 
-Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§8; UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
+Detalhe técnico: [execucao/fase-3-2-implementacao-resumo.md](../execucao/fase-3-2-implementacao-resumo.md) §7–§9 (§9 — refactor **FR-01…FR-06**: componentes config-loja, `PainelDateRangeFields`, `PanelCard`, divisão clientes/catálogo); UX normativa em [projeto/painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §1.3.
 
 ---
 

@@ -4,7 +4,7 @@
 **Normas:** [requisitos-nao-funcionais.md](../normativos/requisitos-nao-funcionais.md) (**RNF-QA-01** … **RNF-QA-03**, **RNF-DevEx-03/04**).  
 **Detalhe normativo + lacunas:** [qualidade-e-conformidade.md](../projeto/qualidade-e-conformidade.md).
 
-**Última actualização:** 2026-04-21.
+**Última actualização:** 2026-04-22.
 
 **Testes HTTP / contrato da API:** política e checklist em [criterios-testes-http-api.md](criterios-testes-http-api.md).
 
@@ -14,7 +14,7 @@
 
 | Comando | O quê corre |
 |---------|-------------|
-| `make test` | `pytest` em `backend/tests/` + `npm run test` (Vitest) em `frontend/`. |
+| `make test` | `pytest` em `backend/tests/` + `npm run test` (Vitest) em `frontend/` — **gate local recomendado** antes de commit (mesmo fluxo que o utilizador pode repetir). |
 | `make dev` | Postgres (Docker) + `uvicorn --reload` + `next dev` — ver [`scripts/dev-local.sh`](../../scripts/dev-local.sh); requer `.env` com `DATABASE_URL` para `localhost:5433` (ou `POSTGRES_HOST_PORT`). |
 | `make lint` | Ruff (`backend/app`, `backend/tests`) + ESLint (`frontend/`). |
 | `make test-report` | Pytest com relatório HTML + cobertura `app`; frontend `test:coverage`. |

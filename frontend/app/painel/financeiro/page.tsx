@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { FieldTip, FilterBarFieldTip, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import {
   apiPainelJson,
@@ -76,24 +77,15 @@ export default function FinanceiroPage() {
         </p>
 
         <div className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="text-xs text-slate-500">
-            De
-            <input
-              type="date"
-              value={range.from}
-              onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-            />
-          </label>
-          <label className="text-xs text-slate-500">
-            Até
-            <input
-              type="date"
-              value={range.to}
-              onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-              className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-            />
-          </label>
+          <PainelDateRangeFields
+            bare
+            idFrom="fin-from"
+            idTo="fin-to"
+            from={range.from}
+            to={range.to}
+            onFromChange={(v) => setRange((r) => ({ ...r, from: v }))}
+            onToChange={(v) => setRange((r) => ({ ...r, to: v }))}
+          />
           <FilterBarFieldTip text="Ao alterar «De» ou «Até», os dados actualizam automaticamente. O critério exacto de inclusão de pedidos e produções no período segue a API de relatórios." />
         </div>
       </PainelStickyHeading>

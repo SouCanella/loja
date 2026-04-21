@@ -5,7 +5,9 @@ import Link from "next/link";
 
 import { messageFromV2Error } from "@/lib/api-v2";
 import { getApiBaseUrl } from "@/lib/api";
+import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 import { setSessionTokens } from "@/lib/painel-api";
+import { painelAuthInputClass } from "@/lib/painel-surface-classes";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -69,7 +71,7 @@ export default function LoginPage() {
             id="email"
             type="email"
             autoComplete="username"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
             required
@@ -83,7 +85,7 @@ export default function LoginPage() {
             id="password"
             type="password"
             autoComplete="current-password"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-painel-primary focus:outline-none focus:ring-1 focus:ring-painel-primary"
+            className={`mt-1 ${painelAuthInputClass}`}
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
             required
@@ -92,7 +94,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-painel-cta px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-painel-cta-hover disabled:cursor-not-allowed disabled:bg-stone-400 disabled:text-white"
+          className={`w-full ${painelBtnPrimaryClass}`}
         >
           {loading ? "A enviar…" : "Entrar"}
         </button>

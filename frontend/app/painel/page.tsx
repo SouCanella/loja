@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { OrdersByStatusChart, RevenueTrendChart } from "@/components/painel/DashboardCharts";
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
+import { PanelCard } from "@/components/painel/PanelCard";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, orderStatusLabel, PainelApiError } from "@/lib/painel-api";
 import { painelBtnSecondaryClass } from "@/lib/painel-button-classes";
@@ -76,25 +78,16 @@ export default function PainelDashboardPage() {
               Indicadores e tendência de receita — período seleccionável (UTC, alinhado ao relatório).
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="text-xs text-slate-500">
-              De
-              <input
-                type="date"
-                value={range.from}
-                onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-                className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-              />
-            </label>
-            <label className="text-xs text-slate-500">
-              Até
-              <input
-                type="date"
-                value={range.to}
-                onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-                className="ml-2 rounded border border-slate-200 px-2 py-1 text-sm"
-              />
-            </label>
+          <div className="flex flex-wrap items-end gap-3">
+            <PainelDateRangeFields
+              bare
+              idFrom="dash-from"
+              idTo="dash-to"
+              from={range.from}
+              to={range.to}
+              onFromChange={(v) => setRange((r) => ({ ...r, from: v }))}
+              onToChange={(v) => setRange((r) => ({ ...r, to: v }))}
+            />
           </div>
         </div>
       </PainelStickyHeading>
@@ -111,15 +104,15 @@ export default function PainelDashboardPage() {
             <KpiCard label="Insumos em ruptura" value={String(data.kpis.out_of_stock_items_count)} />
           </div>
 
-          <div className="mb-8 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <PanelCard className="mb-8">
             <h2 className="text-sm font-semibold text-slate-800">Receita por dia + média móvel 7 dias</h2>
             <RevenueTrendChart revenueByDay={data.revenue_by_day} movingAvg={data.revenue_moving_avg_7d} />
-          </div>
+          </PanelCard>
 
-          <div className="mb-8 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <PanelCard className="mb-8">
             <h2 className="text-sm font-semibold text-slate-800">Pedidos por estado (período)</h2>
             <OrdersByStatusChart rows={data.orders_by_status} labelForStatus={orderStatusLabel} />
-          </div>
+          </PanelCard>
 
           <div className="flex flex-wrap gap-2">
             <Link
@@ -153,9 +146,9 @@ export default function PainelDashboardPage() {
 
 function KpiCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <PanelCard>
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</div>
       <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">{value}</div>
-    </div>
+    </PanelCard>
   );
 }

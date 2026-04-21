@@ -4,12 +4,11 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatQty, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import {
-  painelFilterBarClass,
-  painelFilterDateInputClass,
   painelFilterFieldColClass,
   painelFilterLabelCompactClass,
   painelFilterSearchInputClass,
@@ -115,31 +114,15 @@ export default function ProducaoPage() {
           → «Produzir lote».
         </p>
 
-        <div className={painelFilterBarClass}>
-          <div className={painelFilterFieldColClass}>
-            <label className={painelFilterLabelCompactClass} htmlFor="prod-from">
-              De
-            </label>
-            <input
-              id="prod-from"
-              type="date"
-              value={range.from}
-              onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-              className={painelFilterDateInputClass}
-            />
-          </div>
-          <div className={painelFilterFieldColClass}>
-            <label className={painelFilterLabelCompactClass} htmlFor="prod-to">
-              Até
-            </label>
-            <input
-              id="prod-to"
-              type="date"
-              value={range.to}
-              onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-              className={painelFilterDateInputClass}
-            />
-          </div>
+        <PainelDateRangeFields
+          bar
+          idFrom="prod-from"
+          idTo="prod-to"
+          from={range.from}
+          to={range.to}
+          onFromChange={(v) => setRange((r) => ({ ...r, from: v }))}
+          onToChange={(v) => setRange((r) => ({ ...r, to: v }))}
+        >
           <div className={`min-w-0 flex-1 sm:max-w-xs ${painelFilterFieldColClass}`}>
             <label className={painelFilterLabelCompactClass} htmlFor="prod-search">
               Receita / produto
@@ -161,7 +144,7 @@ export default function ProducaoPage() {
           >
             Actualizar
           </button>
-        </div>
+        </PainelDateRangeFields>
       </PainelStickyHeading>
 
       {error ? <p className="mt-4 text-sm text-amber-800">{error}</p> : null}

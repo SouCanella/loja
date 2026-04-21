@@ -93,6 +93,10 @@ export function OrderPrintPanel({ orderId }: Props) {
       return;
     }
     const usb = navigator.usb;
+    if (!usb) {
+      setUsbMsg("Web USB não está disponível neste navegador.");
+      return;
+    }
     try {
       const device = await usb.requestDevice({
         filters: [

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FieldTip, FilterBarFieldTip, PainelTitleHelp } from "@/components/painel/FieldTip";
 import { FinancialReportCharts } from "@/components/painel/FinancialReportCharts";
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { MarginVolumeScatter } from "@/components/painel/MarginVolumeScatter";
 import {
@@ -18,7 +19,6 @@ import {
   painelBtnSecondaryClass,
   painelBtnSecondaryCompactClass,
 } from "@/lib/painel-button-classes";
-import { painelFilterDateInputClass } from "@/lib/painel-filter-classes";
 import {
   painelTableCellDenseClass,
   painelTableClass,
@@ -492,30 +492,15 @@ export default function RelatorioPage() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-end gap-3 print:hidden">
-        <div>
-          <label className="block text-xs font-medium text-slate-600" htmlFor="df">
-            De
-          </label>
-          <input
-            id="df"
-            type="date"
-            className={painelFilterDateInputClass}
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-slate-600" htmlFor="dt">
-            Até
-          </label>
-          <input
-            id="dt"
-            type="date"
-            className={painelFilterDateInputClass}
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-          />
-        </div>
+        <PainelDateRangeFields
+          bare
+          idFrom="df"
+          idTo="dt"
+          from={from}
+          to={to}
+          onFromChange={setFrom}
+          onToChange={setTo}
+        />
         <div className="flex flex-wrap gap-2">
           <span className="self-end pb-2 text-xs text-slate-500">Períodos:</span>
           {(

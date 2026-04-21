@@ -36,6 +36,8 @@
 | **`frontend/lib/painel-layout-classes.ts`** | Largura máxima do bloco principal em páginas que precisam alinhar ao mesmo *grid* (ex.: `painelPageContentWidthClass`). |
 | **`frontend/lib/painel-filter-classes.ts`** | Barra de filtros: pesquisa, `select`, datas (`De`/`Até`), checkbox — reutilizado em pedidos, clientes, receitas, insumos, catálogo, precificação, produção, relatório de stock, notificações, analytics vitrine e relatório financeiro (inputs de data). |
 | **`globals.css` / `app/layout.tsx` / `PainelShell`** | Altura mínima da app (`min-h-dvh`) e coluna do painel para evitar «saltos» de layout em mobile/desktop. |
+| **`PainelDateRangeFields`** | `frontend/components/painel/PainelDateRangeFields.tsx` — intervalo **De/Até** reutilizável (`bare`, `bar`, `boxed`). |
+| **`PanelCard` / `painel-surface-classes`** | `PanelCard.tsx`, `painelCardClass`, `painelAuthInputClass` — cartões e inputs públicos alinhados ao painel. |
 
 ---
 

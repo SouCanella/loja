@@ -2,13 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
-import {
-  painelFilterBarBoxClass,
-  painelFilterDateInputClass,
-  painelFilterLabelCompactClass,
-} from "@/lib/painel-filter-classes";
 
 type Summary = {
   date_from: string;
@@ -58,32 +54,15 @@ export default function PainelAnalyticsVitrinePage() {
           estimadas por identificador anónimo no navegador.
         </p>
 
-        <div className={painelFilterBarBoxClass}>
-          <div>
-            <label className={painelFilterLabelCompactClass} htmlFor="af">
-              De
-            </label>
-            <input
-              id="af"
-              type="date"
-              className={painelFilterDateInputClass}
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={painelFilterLabelCompactClass} htmlFor="at">
-              Até
-            </label>
-            <input
-              id="at"
-              type="date"
-              className={painelFilterDateInputClass}
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </div>
-        </div>
+        <PainelDateRangeFields
+          boxed
+          idFrom="af"
+          idTo="at"
+          from={from}
+          to={to}
+          onFromChange={setFrom}
+          onToChange={setTo}
+        />
       </PainelStickyHeading>
 
       {err ? <p className="mt-4 text-sm text-amber-800">{err}</p> : null}

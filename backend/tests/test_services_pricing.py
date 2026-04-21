@@ -175,3 +175,32 @@ def test_estimate_recipe_labor_unit_cost(db_session: Session) -> None:
     # 100 R$/h × 1 h / 10 un = 10 R$/un
     assert estimate_recipe_labor_unit_cost(recipe, Decimal("100")) == Decimal("10")
     assert estimate_recipe_labor_unit_cost(recipe, Decimal("0")) == Decimal("0")
+
+
+def test_estimate_recipe_labor_unit_cost_time_or_yield_zero() -> None:
+    """Não persiste — a função só lê campos da receita."""
+    sid, pid = uuid.uuid4(), uuid.uuid4()
+    recipe_no_time = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=pid,
+        yield_quantity=Decimal("10"),
+        time_minutes=None,
+    )
+    recipe_zero_time = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=pid,
+        yield_quantity=Decimal("10"),
+        time_minutes=0,
+    )
+    recipe_zero_yield = Recipe(
+        id=uuid.uuid4(),
+        store_id=sid,
+        product_id=pid,
+        yield_quantity=Decimal("0"),
+        time_minutes=30,
+    )
+    assert estimate_recipe_labor_unit_cost(recipe_no_time, Decimal("50")) == Decimal("0")
+    assert estimate_recipe_labor_unit_cost(recipe_zero_time, Decimal("50")) == Decimal("0")
+    assert estimate_recipe_labor_unit_cost(recipe_zero_yield, Decimal("50")) == Decimal("0")

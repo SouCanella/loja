@@ -2,44 +2,16 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import { FieldTipBeside } from "@/components/painel/FieldTip";
-import { ImageUploadButton } from "@/components/painel/ImageUploadButton";
+import { CatalogoNewProductForm } from "@/components/painel/catalogo/CatalogoNewProductForm";
+import { CatalogoProductFilters } from "@/components/painel/catalogo/CatalogoProductFilters";
+import { CatalogoProductsTable } from "@/components/painel/catalogo/CatalogoProductsTable";
+import type { CatalogoCategory, CatalogoProduct } from "@/components/painel/catalogo/types";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
-import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
-import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
-import {
-  painelTableCellClass,
-  painelTableClassWide,
-  painelTableTbodyClass,
-  painelTableTheadClass,
-  painelTableWrapClass,
-} from "@/lib/painel-table-classes";
-import {
-  painelFilterBarClass,
-  painelFilterFieldColClass,
-  painelFilterLabelClass,
-  painelFilterSearchInputClass,
-  painelFilterSelectClass,
-} from "@/lib/painel-filter-classes";
-import { painelPageContentWidthClass } from "@/lib/painel-layout-classes";
-
-type Product = {
-  id: string;
-  category_id: string | null;
-  name: string;
-  description: string | null;
-  price: string;
-  image_url: string | null;
-  active: boolean;
-  catalog_spotlight: string | null;
-  catalog_sale_mode: string;
-};
-
-type Category = { id: string; name: string; slug: string };
+import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
 
 export default function CatalogoPage() {
-  const [rows, setRows] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [rows, setRows] = useState<CatalogoProduct[]>([]);
+  const [categories, setCategories] = useState<CatalogoCategory[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
@@ -76,8 +48,8 @@ export default function CatalogoPage() {
   const load = useCallback(() => {
     setErr(null);
     Promise.all([
-      apiPainelJson<Product[]>("/api/v2/products?active_only=false"),
-      apiPainelJson<Category[]>("/api/v2/categories"),
+      apiPainelJson<CatalogoProduct[]>("/api/v2/products?active_only=false"),
+      apiPainelJson<CatalogoCategory[]>("/api/v2/categories"),
     ])
       .then(([p, c]) => {
         setRows(p);
@@ -174,350 +146,46 @@ export default function CatalogoPage() {
         <p className={`mt-4 text-sm ${msg.includes("criado") ? "text-emerald-800" : "text-red-700"}`}>{msg}</p>
       ) : null}
 
-      <form
-        onSubmit={(e) => void onCreateProduct(e)}
-        className={`mt-6 ${painelPageContentWidthClass} rounded-xl border border-slate-200 bg-white p-4 shadow-sm`}
-      >
-        <h2 className="text-sm font-semibold text-slate-800">Novo produto</h2>
-        <p className="mt-1 text-xs text-slate-500">
-          Cria o produto de venda e o respectivo insumo de stock com um lote inicial (custo e quantidade).
-        </p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pn">
-              <FieldTipBeside tip="Nome do produto na vitrine e nos pedidos.">Nome</FieldTipBeside>
-            </label>
-            <input
-              id="pn"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pp">
-              <FieldTipBeside tip="Preço público do produto (BRL).">Preço de venda</FieldTipBeside>
-            </label>
-            <input
-              id="pp"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newPrice}
-              onChange={(e) => setNewPrice(e.target.value)}
-              inputMode="decimal"
-              placeholder="0,00"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pc">
-              <FieldTipBeside tip="Opcional. Agrupa na vitrine e nos relatórios por categoria.">
-                Categoria
-              </FieldTipBeside>
-            </label>
-            <select
-              id="pc"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newCat}
-              onChange={(e) => setNewCat(e.target.value)}
-            >
-              <option value="">— Nenhuma —</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pu">
-              <FieldTipBeside tip="Unidade do lote de produto acabado (ex.: un, caixa).">
-                Unidade (stock)
-              </FieldTipBeside>
-            </label>
-            <input
-              id="pu"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newUnit}
-              onChange={(e) => setNewUnit(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pq">
-              <FieldTipBeside tip="Quantidade do primeiro lote de stock de produto acabado (insumo ligado ao produto).">
-                Qtd inicial (lote)
-              </FieldTipBeside>
-            </label>
-            <input
-              id="pq"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newQty}
-              onChange={(e) => setNewQty(e.target.value)}
-              inputMode="decimal"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="pco">
-              <FieldTipBeside tip="Custo por unidade desse lote inicial (valorização e custos no painel).">
-                Custo unit. do lote
-              </FieldTipBeside>
-            </label>
-            <input
-              id="pco"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newCost}
-              onChange={(e) => setNewCost(e.target.value)}
-              inputMode="decimal"
-            />
-          </div>
-        </div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="psp">
-              <FieldTipBeside tip="Opcional: aparece na secção «Em destaque» e como fita no card.">
-                Destaque na vitrine
-              </FieldTipBeside>
-            </label>
-            <select
-              id="psp"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newSpot}
-              onChange={(e) => setNewSpot(e.target.value)}
-            >
-              <option value="">— Nenhum —</option>
-              <option value="featured">Destaque</option>
-              <option value="new">Novidade</option>
-              <option value="bestseller">Mais vendido</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600" htmlFor="psm">
-              <FieldTipBeside tip="Sob encomenda: fita e ainda encomendável; indisponível: bloqueia adicionar ao carrinho.">
-                Disponibilidade
-              </FieldTipBeside>
-            </label>
-            <select
-              id="psm"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              value={newSale}
-              onChange={(e) => setNewSale(e.target.value)}
-            >
-              <option value="in_stock">Disponível</option>
-              <option value="order_only">Sob encomenda</option>
-              <option value="unavailable">Indisponível</option>
-            </select>
-          </div>
-        </div>
-        <button
-          type="submit"
-          disabled={creating}
-          className={`mt-4 ${painelBtnPrimaryClass}`}
-        >
-          {creating ? "A criar…" : "Criar produto"}
-        </button>
-      </form>
+      <CatalogoNewProductForm
+        categories={categories}
+        newName={newName}
+        newPrice={newPrice}
+        newCat={newCat}
+        newUnit={newUnit}
+        newQty={newQty}
+        newCost={newCost}
+        newSpot={newSpot}
+        newSale={newSale}
+        creating={creating}
+        onNewNameChange={setNewName}
+        onNewPriceChange={setNewPrice}
+        onNewCatChange={setNewCat}
+        onNewUnitChange={setNewUnit}
+        onNewQtyChange={setNewQty}
+        onNewCostChange={setNewCost}
+        onNewSpotChange={setNewSpot}
+        onNewSaleChange={setNewSale}
+        onSubmit={onCreateProduct}
+      />
 
-      <div className={painelFilterBarClass}>
-        <div className={`min-w-0 flex-1 sm:max-w-md ${painelFilterFieldColClass}`}>
-          <label className={painelFilterLabelClass} htmlFor="catalogo-search">
-            Pesquisar produto
-          </label>
-          <input
-            id="catalogo-search"
-            type="search"
-            autoComplete="off"
-            placeholder="Nome ou descrição…"
-            value={filterQuery}
-            onChange={(e) => setFilterQuery(e.target.value)}
-            className={painelFilterSearchInputClass}
-          />
-        </div>
-        <div className={painelFilterFieldColClass}>
-          <label className={painelFilterLabelClass} htmlFor="catalogo-cat">
-            Categoria
-          </label>
-          <select
-            id="catalogo-cat"
-            className={painelFilterSelectClass}
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option value="">Todas</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={painelFilterFieldColClass}>
-          <label className={painelFilterLabelClass} htmlFor="catalogo-act">
-            Estado
-          </label>
-          <select
-            id="catalogo-act"
-            className={painelFilterSelectClass}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
-          >
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-          </select>
-        </div>
-      </div>
+      <CatalogoProductFilters
+        categories={categories}
+        filterQuery={filterQuery}
+        onFilterQueryChange={setFilterQuery}
+        categoryFilter={categoryFilter}
+        onCategoryFilterChange={setCategoryFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
-      <div className={`mt-8 ${painelTableWrapClass}`}>
-        <table className={painelTableClassWide}>
-          <thead className={painelTableTheadClass}>
-            <tr>
-              <th className={painelTableCellClass}>Produto</th>
-              <th className={painelTableCellClass}>Categoria</th>
-              <th className={painelTableCellClass}>Destaque</th>
-              <th className={painelTableCellClass}>Venda</th>
-              <th className={painelTableCellClass}>URL da imagem</th>
-              <th className={`${painelTableCellClass} text-right`}>Preço</th>
-              <th className={`${painelTableCellClass} text-center`}>Activo</th>
-            </tr>
-          </thead>
-          <tbody className={painelTableTbodyClass}>
-            {rows.length > 0 && displayRows.length === 0 ? (
-              <tr>
-                <td colSpan={7} className={`${painelTableCellClass} py-8 text-center text-slate-500`}>
-                  Nenhum produto corresponde aos filtros.
-                </td>
-              </tr>
-            ) : null}
-            {displayRows.map((p) => (
-              <tr key={p.id} className={saving === p.id ? "opacity-60" : undefined}>
-                <td className={`max-w-[12rem] ${painelTableCellClass} align-top`}>
-                  <input
-                    className="w-full rounded border border-slate-200 px-2 py-1 font-medium text-slate-900"
-                    defaultValue={p.name}
-                    disabled={saving === p.id}
-                    onBlur={(e) => {
-                      const v = e.target.value.trim();
-                      if (v && v !== p.name) void patchProduct(p.id, { name: v });
-                    }}
-                  />
-                  <textarea
-                    className="mt-2 w-full rounded border border-slate-100 px-2 py-1 text-xs text-slate-600"
-                    rows={2}
-                    defaultValue={p.description ?? ""}
-                    disabled={saving === p.id}
-                    placeholder="Descrição (opcional)"
-                    onBlur={(e) => {
-                      const v = e.target.value.trim();
-                      const cur = p.description ?? "";
-                      if (v !== cur) void patchProduct(p.id, { description: v || null });
-                    }}
-                  />
-                </td>
-                <td className={`${painelTableCellClass} align-top`}>
-                  <select
-                    className="max-w-[10rem] rounded border border-slate-200 px-2 py-1 text-xs"
-                    value={p.category_id ?? ""}
-                    disabled={saving === p.id}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      void patchProduct(p.id, {
-                        category_id: v ? v : null,
-                      });
-                    }}
-                  >
-                    <option value="">— Nenhuma —</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className={`${painelTableCellClass} align-top`}>
-                  <select
-                    className="max-w-[9rem] rounded border border-slate-200 px-2 py-1 text-xs"
-                    value={p.catalog_spotlight ?? ""}
-                    disabled={saving === p.id}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      void patchProduct(p.id, {
-                        catalog_spotlight: v ? v : null,
-                      });
-                    }}
-                  >
-                    <option value="">— Nenhum —</option>
-                    <option value="featured">Destaque</option>
-                    <option value="new">Novidade</option>
-                    <option value="bestseller">Mais vendido</option>
-                  </select>
-                </td>
-                <td className={`${painelTableCellClass} align-top`}>
-                  <select
-                    className="max-w-[9rem] rounded border border-slate-200 px-2 py-1 text-xs"
-                    value={p.catalog_sale_mode ?? "in_stock"}
-                    disabled={saving === p.id}
-                    onChange={(e) => void patchProduct(p.id, { catalog_sale_mode: e.target.value })}
-                  >
-                    <option value="in_stock">Disponível</option>
-                    <option value="order_only">Sob encomenda</option>
-                    <option value="unavailable">Indisponível</option>
-                  </select>
-                </td>
-                <td className={`max-w-md ${painelTableCellClass} align-top`}>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-                    <input
-                      key={`${p.id}-img-${p.image_url ?? ""}`}
-                      type="url"
-                      className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs"
-                      defaultValue={p.image_url ?? ""}
-                      placeholder="https://…"
-                      disabled={saving === p.id}
-                      onBlur={(e) => {
-                        const v = e.target.value.trim();
-                        if (v !== (p.image_url ?? "")) void patchProduct(p.id, { image_url: v || null });
-                      }}
-                    />
-                    <ImageUploadButton
-                      purpose="product"
-                      disabled={saving === p.id}
-                      label="Enviar"
-                      onUploaded={(url) => void patchProduct(p.id, { image_url: url })}
-                    />
-                  </div>
-                </td>
-                <td className={`${painelTableCellClass} text-right align-top`}>
-                  <input
-                    className="w-24 rounded border border-slate-200 px-2 py-1 text-right tabular-nums"
-                    defaultValue={p.price}
-                    disabled={saving === p.id}
-                    inputMode="decimal"
-                    onBlur={(e) => {
-                      const raw = e.target.value.replace(",", ".").trim();
-                      const n = Number.parseFloat(raw);
-                      if (Number.isNaN(n) || n < 0) return;
-                      if (String(p.price) !== String(n)) void patchProduct(p.id, { price: String(n) });
-                    }}
-                  />
-                  <div className="mt-1 text-xs text-slate-500">{formatBRL(p.price)}</div>
-                </td>
-                <td className={`${painelTableCellClass} text-center align-top`}>
-                  <input
-                    key={`${p.id}-${p.active ? "1" : "0"}`}
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300"
-                    defaultChecked={p.active}
-                    disabled={saving === p.id}
-                    onChange={(e) => {
-                      void patchProduct(p.id, { active: e.target.checked });
-                    }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {rows.length === 0 && !err ? <p className="p-6 text-sm text-slate-500">Sem produtos.</p> : null}
-      </div>
+      <CatalogoProductsTable
+        rows={rows}
+        displayRows={displayRows}
+        categories={categories}
+        err={err}
+        saving={saving}
+        patchProduct={patchProduct}
+      />
     </>
   );
 }
