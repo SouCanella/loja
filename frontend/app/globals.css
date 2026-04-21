@@ -15,3 +15,283 @@ button:disabled,
 button[disabled] {
   opacity: 1;
 }
+
+/**
+ * Botões do painel — **só CSS** (sem @apply), para o estilo não depender do JIT encontrar utilitários Tailwind.
+ * Nomes exportados em `lib/painel-button-classes.ts`.
+ */
+@layer components {
+  .painel-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #5c0d73;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    cursor: pointer;
+    transition-property: color, background-color, box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  .painel-btn-primary:hover:not(:disabled) {
+    background-color: #4a0a5e;
+  }
+  .painel-btn-primary:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px #8a05be;
+  }
+  .painel-btn-primary:disabled {
+    cursor: not-allowed;
+    background-color: #a8a29e;
+    color: #ffffff;
+  }
+
+  .painel-btn-primary-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: none;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #5c0d73;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    cursor: pointer;
+    transition-property: color, background-color;
+    transition-duration: 150ms;
+  }
+  .painel-btn-primary-compact:hover:not(:disabled) {
+    background-color: #4a0a5e;
+  }
+  .painel-btn-primary-compact:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .painel-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    transition-property: background-color, border-color;
+    transition-duration: 150ms;
+  }
+  .painel-btn-secondary:hover:not(:disabled) {
+    background-color: #f8fafc;
+  }
+  .painel-btn-secondary:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 1px #8a05be;
+  }
+  .painel-btn-secondary:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .painel-btn-secondary-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+  }
+  .painel-btn-secondary-compact:hover:not(:disabled) {
+    background-color: #f8fafc;
+  }
+  .painel-btn-secondary-compact:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .painel-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid #fecaca;
+    background-color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #991b1b;
+    cursor: pointer;
+  }
+  .painel-btn-danger:hover:not(:disabled) {
+    background-color: #fef2f2;
+  }
+  .painel-btn-danger:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 1px #f87171;
+  }
+  .painel-btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .painel-btn-danger-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid #fecaca;
+    background-color: #ffffff;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #991b1b;
+    cursor: pointer;
+  }
+  .painel-btn-danger-compact:hover:not(:disabled) {
+    background-color: #fef2f2;
+  }
+  .painel-btn-danger-compact:disabled {
+    opacity: 0.5;
+  }
+
+  .painel-btn-link {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #8a05be;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .painel-btn-link:hover:not(:disabled) {
+    color: #4a0d5c;
+    text-decoration: underline;
+  }
+  .painel-btn-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .painel-btn-link-compact {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #8a05be;
+    cursor: pointer;
+  }
+  .painel-btn-link-compact:hover:not(:disabled) {
+    text-decoration: underline;
+  }
+  .painel-btn-link-compact:disabled {
+    opacity: 0.5;
+  }
+}
+
+/**
+ * Fallbacks de cor — mesmos tokens que `tailwind.config.ts`.
+ * Garante `bg-loja-primary`, `bg-painel-primary`, etc., mesmo quando o JIT não inclui classes vindas só de strings ou templates.
+ */
+@layer utilities {
+  .text-painel-cta {
+    color: #5c0d73;
+  }
+  .bg-painel-cta {
+    background-color: #5c0d73;
+  }
+  .bg-painel-cta-hover,
+  .hover\:bg-painel-cta-hover:hover {
+    background-color: #4a0a5e;
+  }
+  .bg-painel-primary {
+    background-color: #8a05be;
+  }
+  .bg-painel-primary-hover,
+  .hover\:bg-painel-primary-hover:hover {
+    background-color: #7311a3;
+  }
+  .text-painel-primary {
+    color: #8a05be;
+  }
+  .text-painel-primary-strong {
+    color: #4a0d5c;
+  }
+  .text-painel-nav-label {
+    color: #c9b3dd;
+  }
+  .border-painel-primary {
+    border-color: #8a05be;
+  }
+  .border-painel-border {
+    border-color: #e4c7f2;
+  }
+  .ring-painel-primary {
+    --tw-ring-color: #8a05be;
+  }
+  .bg-painel-soft {
+    background-color: #f4e9fb;
+  }
+  .hover\:bg-painel-soft-hover:hover {
+    background-color: #ebd4f7;
+  }
+  .bg-painel-secondary {
+    background-color: #ffde21;
+  }
+  .text-painel-on-secondary {
+    color: #1a1512;
+  }
+  .text-painel-secondary {
+    color: #ffde21;
+  }
+
+  .bg-loja-primary {
+    background-color: rgb(var(--loja-primary-rgb, 15 118 110) / 1);
+  }
+  .text-loja-primary {
+    color: rgb(var(--loja-primary-rgb, 15 118 110) / 1);
+  }
+  .bg-loja-accent {
+    background-color: rgb(var(--loja-accent-rgb, 184 69 46) / 1);
+  }
+  .bg-loja-accentSoft {
+    background-color: rgb(var(--loja-accent-soft-rgb, 252 238 233) / 1);
+  }
+  .bg-loja-whatsapp {
+    background-color: #128c7e;
+  }
+  .bg-loja-bg {
+    background-color: #faf6f2;
+  }
+  .bg-loja-surface {
+    background-color: #ffffff;
+  }
+  .text-loja-ink {
+    color: #1a1512;
+  }
+  .text-loja-muted {
+    color: #5c4d42;
+  }
+}
