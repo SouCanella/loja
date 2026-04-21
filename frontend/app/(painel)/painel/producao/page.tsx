@@ -10,6 +10,7 @@ import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, formatQty, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
 import {
+  painelFilterCheckboxClass,
   painelFilterFieldColClass,
   painelFilterLabelCompactClass,
   painelFilterSearchInputClass,
@@ -67,6 +68,7 @@ export default function ProducaoPage() {
   const [recipeNames, setRecipeNames] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [textFilter, setTextFilter] = useState("");
+  const [groupByDay, setGroupByDay] = useState(false);
 
   const load = useCallback(() => {
     setError(null);
@@ -115,17 +117,34 @@ export default function ProducaoPage() {
   }, [sorted, recipeNames, textFilter]);
 
   const producaoPagination = usePainelPagination(displayed.length, {
-    resetKey: `${range.from}:${range.to}:${textFilter}`,
+    resetKey: `${range.from}:${range.to}:${textFilter}:${groupByDay ? "1" : "0"}`,
   });
   const pagedDisplayed = useMemo(
     () => slicePage(displayed, producaoPagination.page, producaoPagination.pageSize),
     [displayed, producaoPagination.page, producaoPagination.pageSize],
   );
 
+  /** Agrupa corridas pelo dia civil local (YYYY-MM-DD) — IP-02. */
+  const runsGroupedByDay = useMemo(() => {
+    if (!groupByDay) return null;
+    const map = new Map<string, ProductionRun[]>();
+    for (const r of displayed) {
+      const key = formatLocalIsoDate(new Date(r.created_at));
+      const cur = map.get(key);
+      if (cur) cur.push(r);
+      else map.set(key, [r]);
+    }
+    const entries = [...map.entries()].sort((a, b) => (a[0] < b[0] ? 1 : -1));
+    for (const [, rows] of entries) {
+      rows.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    }
+    return entries;
+  }, [displayed, groupByDay]);
+
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Registo das corridas de produção (lotes). Para registar uma nova corrida: Receitas → «Produzir lote». Filtre por intervalo de datas; custos e quantidades são os guardados em cada produção.">
+        <PainelTitleHelp tip="Registo das corridas de produção (lotes). Para registar uma nova corrida: Receitas → «Produzir lote». Filtre por intervalo de datas; active «Agrupar por dia» para ver secções por dia civil local (sem paginação entre dias). Até 200 corridas por pedido à API.">
           <h1 className="text-2xl font-semibold text-slate-900">Produção</h1>
         </PainelTitleHelp>
 
@@ -168,6 +187,15 @@ export default function ProducaoPage() {
               className={painelFilterSearchInputClass}
             />
           </div>
+          <label className="flex cursor-pointer items-center gap-2 self-end pb-0.5 sm:pb-2">
+            <input
+              type="checkbox"
+              className={painelFilterCheckboxClass}
+              checked={groupByDay}
+              onChange={(e) => setGroupByDay(e.target.checked)}
+            />
+            <span className="text-sm text-slate-600">Agrupar por dia</span>
+          </label>
           <button
             type="button"
             onClick={() => void load()}
@@ -194,12 +222,12 @@ export default function ProducaoPage() {
         </p>
       ) : null}
 
-      {displayed.length > 0 ? (
+      {displayed.length > 0 && !groupByDay ? (
         <div className={`mt-8 ${painelTableWrapClass}`}>
           <table className={painelTableClass}>
             <thead className={painelTableTheadClass}>
               <tr>
-                <th className={painelTableCellClass}>Data (UTC)</th>
+                <th className={painelTableCellClass}>Data / hora</th>
                 <th className={painelTableCellClass}>Receita / produto</th>
                 <th className={`${painelTableCellClass} text-right`}>Quantidade produzida</th>
                 <th className={`${painelTableCellClass} text-right`}>Custo insumos</th>
@@ -238,6 +266,62 @@ export default function ProducaoPage() {
             pageSize={producaoPagination.pageSize}
             onPageChange={producaoPagination.setPage}
           />
+        </div>
+      ) : null}
+
+      {displayed.length > 0 && groupByDay && runsGroupedByDay ? (
+        <div className="mt-8 space-y-6">
+          <p className="text-xs text-slate-500">
+            Vista por dia civil (fuso local). Lista completa no intervalo (até {displayed.length}{" "}
+            corridas carregadas).
+          </p>
+          {runsGroupedByDay.map(([dayKey, dayRuns]) => (
+            <div key={dayKey} className={painelTableWrapClass}>
+              <table className={painelTableClass}>
+                <caption className="border-b border-slate-100 bg-slate-50 px-4 py-2 text-left text-sm font-semibold text-slate-800">
+                  {new Date(`${dayKey}T12:00:00`).toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </caption>
+                <thead className={painelTableTheadClass}>
+                  <tr>
+                    <th className={painelTableCellClass}>Data / hora</th>
+                    <th className={painelTableCellClass}>Receita / produto</th>
+                    <th className={`${painelTableCellClass} text-right`}>Quantidade produzida</th>
+                    <th className={`${painelTableCellClass} text-right`}>Custo insumos</th>
+                    <th className={`${painelTableCellClass} text-right`}>Custo unit. saída</th>
+                  </tr>
+                </thead>
+                <tbody className={painelTableTbodyClass}>
+                  {dayRuns.map((r) => (
+                    <tr key={r.id} className="text-slate-800">
+                      <td className={`${painelTableCellClass} text-xs text-slate-600`}>
+                        {new Date(r.created_at).toLocaleString("pt-BR", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </td>
+                      <td className={`${painelTableCellClass} font-medium text-slate-900`}>
+                        {recipeNames[r.recipe_id] ?? r.recipe_id.slice(0, 8) + "…"}
+                      </td>
+                      <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                        {formatQty(r.output_quantity)}
+                      </td>
+                      <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                        {formatBRL(r.total_input_cost)}
+                      </td>
+                      <td className={`${painelTableCellClass} text-right tabular-nums`}>
+                        {formatBRL(r.unit_output_cost)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
         </div>
       ) : null}
 

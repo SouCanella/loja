@@ -1,7 +1,7 @@
-.PHONY: up down dev test test-report migrate lint openapi-export seed-demo-massa help backend-venv
+.PHONY: up down dev test test-report migrate lint openapi-export seed-demo-massa help backend-venv frontend-audit security-audit
 
 help:
-	@echo "Comandos: up | down | dev | test | test-report | migrate | openapi-export | seed-demo-massa | lint | backend-venv"
+	@echo "Comandos: up | down | dev | test | test-report | migrate | openapi-export | seed-demo-massa | lint | backend-venv | frontend-audit | security-audit"
 
 # Cria backend/.venv na primeira utilização (PEP 668 / Debian).
 backend-venv:
@@ -48,3 +48,10 @@ seed-demo-massa: backend-venv
 lint: backend-venv
 	cd backend && .venv/bin/ruff check app tests
 	cd frontend && npm run lint
+
+# MA-08 — auditoria de dependências (requer rede). Corrigir com `npm audit fix` no frontend quando seguro.
+frontend-audit:
+	cd frontend && npm audit
+
+security-audit: frontend-audit
+	@echo "Opcional Python: pip-audit no venv — cd backend && .venv/bin/pip install pip-audit && .venv/bin/pip-audit -r requirements.txt"

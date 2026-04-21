@@ -8512,9 +8512,12 @@
       "UserRole": {
         "type": "string",
         "enum": [
-          "store_admin"
+          "store_admin",
+          "store_operator",
+          "store_viewer"
         ],
-        "title": "UserRole"
+        "title": "UserRole",
+        "description": "Papel na loja. Hoje só se cria `store_admin` no registo; outros para RBAC (BE-05)."
       },
       "ValidationError": {
         "properties": {

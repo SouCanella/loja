@@ -2,6 +2,15 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-21 (Engenharia — MA-08, DT-03, IP-02, BE-05 enum, MA-05 doc, plano IP/MVP)
+
+- **MA-08:** alvos `make frontend-audit` e `make security-audit`; guia [seguranca-dependencias-ma08.md](seguranca-dependencias-ma08.md).
+- **DT-03:** Vitest `painel-pagination.test.ts`; pytest `test_user_roles.py`.
+- **IP-02:** `/painel/producao` — opção **Agrupar por dia** (secções por dia civil local; lista completa no intervalo sem paginação entre dias).
+- **BE-05 (parcial):** `UserRole.store_operator` e `UserRole.store_viewer` em `app/models/user.py` (convites / RBAC futuro); OpenAPI regenerado.
+- **MA-05:** proposta técnica [ma05-rls-postgres-proposta.md](ma05-rls-postgres-proposta.md) (sem SQL aplicado).
+- **Ideias IP / MVP:** critérios iniciais em [incrementos-produto-mvp-be05.md](../projeto/incrementos-produto-mvp-be05.md); `backlog.md` com ligações.
+
 ## 2026-04-21 (Painel — paginação de listas, barra Guardar alinhada, WhatsApp na vitrine)
 
 - **Paginação (cliente):** `frontend/lib/painel-pagination.ts` (`usePainelPagination`, `slicePage`, `PAINEL_DEFAULT_PAGE_SIZE = 20`) e `PainelPaginationBar.tsx`. Listagens com barra «Anterior / Seguinte» e intervalo «a–b de n»: pedidos, clientes (contactos, métricas, contas vitrine), insumos, receitas, catálogo (`filterResetKey`), categorias, notificações, produção, precificação (só a tabela; o selector do gráfico usa a lista completa), relatório de stock, relatório financeiro (três tabelas; totais «Por produto» em `<tfoot>`), analytics vitrine (top produtos).

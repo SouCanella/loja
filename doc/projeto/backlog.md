@@ -29,6 +29,8 @@ Commits na `main` com mensagem `feat(phase-0): …` fecham o registro técnico n
 
 ---
 
+Planeamento de incrementos (IP-03, IP-04, IP-06, MVP, BE-05, MA-05) com critérios mínimos: [incrementos-produto-mvp-be05.md](incrementos-produto-mvp-be05.md). Auditoria de dependências (MA-08): [seguranca-dependencias-ma08.md](../execucao/seguranca-dependencias-ma08.md). RLS (MA-05): [ma05-rls-postgres-proposta.md](../execucao/ma05-rls-postgres-proposta.md).
+
 ## Relatórios e analytics ampliados (produto)
 
 Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** e definições fechadas **DEC-22** em **[relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md)** (partição de estados, cupons, desconto em linha, faixa PRO).
@@ -80,7 +82,7 @@ Ao concluir um FR-*, actualizar esta tabela e, se aplicável, [indice-documentac
 | BE-02 | Pagamentos | nao_iniciado | origem enterprise |
 | BE-03 | App mobile | nao_iniciado | origem enterprise |
 | BE-04 | BI avançado | nao_iniciado | origem enterprise |
-| BE-05 | Multi-usuário por loja | parcial | modelo prevê `users`; RBAC (Admin / Operador / Leitura) e convites — ver §16 do enterprise |
+| BE-05 | Multi-usuário por loja | parcial | modelo `users.role`: `store_admin` (registo), `store_operator` e `store_viewer` no enum (2026-04-21); RBAC por rota e convites — ver §16 do enterprise e [incrementos-produto-mvp-be05.md](incrementos-produto-mvp-be05.md) |
 | BE-06 | Assinatura SaaS / monetização | nao_iniciado | inclui **limite por plano** quando aplicável |
 | BE-07 | Cache de catálogo | nao_iniciado | §23 proposta consolidada |
 | BE-08 | Offline mode | nao_iniciado | §23 |
@@ -116,7 +118,7 @@ Itens de **melhoria** ou pesquisa; não são compromissos de escopo até promovi
 | ID | Ideia | Estado | Notas |
 |----|-------|--------|-------|
 | IP-01 | Categorias e produtos em destaque / “novo” / mais vendido | convertido | Ver **RF-CA-11**; exemplo em [mockups/loja-vitrine-layout-sugestao.html](../mockups/loja-vitrine-layout-sugestao.html) |
-| IP-02 | Agenda de produção planejada por dia | parcial | Atalhos **Hoje** / **Últimos 7 dias** no histórico em `/painel/producao`; planeamento por dia — [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8.1 |
+| IP-02 | Agenda de produção planejada por dia | parcial | Atalhos **Hoje** / **Últimos 7 dias** + vista **Agrupar por dia** no histórico em `/painel/producao`; planeamento por capacidade — [fase-03-2-impressao-termica.md](../fases/fase-03-2-impressao-termica.md) §8.1 |
 | IP-03 | Promoções: combos, desconto por quantidade, produto promocional | ideia | P1 — não iniciado |
 | IP-04 | Disponibilidade por dia/horário (ex.: só fim de semana) | ideia | P1 — não iniciado |
 | IP-05 | Observações por item de pedido (sem granulado, embalagem especial) | convertido | `line_note`; vitrine + painel + WA — §8.1 fase 3.2 |

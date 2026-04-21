@@ -35,7 +35,7 @@ A partir de **`doc/`** ou **`doc/api/`** pode usar o mesmo alvo: existe um `Make
 
 Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_pricing.py`, `test_services_production.py`, `test_services_dec12_coverage.py` (lacunas DEC-12 / refresh / dashboard / stock).
 
-**Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md). **Isolamento multi-tenant (MA-01):** `test_ma01_store_isolation.py`. **Request id (DT-02):** `test_request_id_middleware.py`.
+**Contrato HTTP (401, 404, 422, rotas públicas, v2):** `test_http_contracts_*.py` — ver [criterios-testes-http-api.md](criterios-testes-http-api.md). **Isolamento multi-tenant (MA-01):** `test_ma01_store_isolation.py`. **Request id (DT-02):** `test_request_id_middleware.py`. **Papéis de utilizador (BE-05, enum):** `test_user_roles.py`.
 
 **Cobertura alargada de rotas e auth:** `test_coverage_gaps.py` (JWT, refresh, rate limit, receitas, vitrine, v2). Referência global: `pytest --cov=app` ~**97%** — [qualidade-e-conformidade §1](../projeto/qualidade-e-conformidade.md#1-verificações-automáticas-gate-local-e-ci).
 
@@ -45,7 +45,7 @@ Ficheiros de serviço dedicados: `test_services_order_flow.py`, `test_services_p
 |------|--------|
 | Config | `frontend/vitest.config.ts` (alias `@/` alinhado ao Next.js); **Vitest 3.x**; **`pool: "threads"`** + **`singleThread: true`** — evita crash do `tinypool` ao encerrar o pool de *forks* em alguns ambientes (Linux/Node 20+); `npm run test` invoca só `vitest run` (opções no config). |
 | Padrão de ficheiros | `frontend/__tests__/**/*.test.ts` |
-| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts`, `painel-menu-catalog-text.test.ts`, `painel-share-store.test.ts` |
+| Foco actual | `painel-api.test.ts`, `customer-session.test.ts` (refresh vitrine), `painel-filter-classes.test.ts`, `painel-menu-catalog-text.test.ts`, `painel-share-store.test.ts`, `painel-pagination.test.ts` (`slicePage` / `paginationRangeLabel`, DT-03) |
 
 Comando: `cd frontend && npm run test` (ou `npm run test:coverage`). O `make test` na raiz depende deste comando concluir com **exit 0**.
 

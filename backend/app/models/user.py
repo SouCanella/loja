@@ -15,7 +15,11 @@ if TYPE_CHECKING:
 
 
 class UserRole(str, enum.Enum):
+    """Papel na loja. Hoje só se cria `store_admin` no registo; outros para RBAC (BE-05)."""
+
     store_admin = "store_admin"
+    store_operator = "store_operator"
+    store_viewer = "store_viewer"
 
 
 class User(Base):
