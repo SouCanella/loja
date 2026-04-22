@@ -36,6 +36,47 @@ Planeamento de incrementos (IP-03, IP-04, IP-06, MVP, BE-05, MA-05) com critéri
 - **Estado:** `parcial` — é possível gravar vários contactos com o mesmo telefone; não há índice único.
 - **Próximo passo:** definir regra de negócio (normalização, aviso na UI, merge) antes de impor `UNIQUE (store_id, phone)` ou equivalente. Referência: [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) **2026-04-22**.
 
+### Precificação — evolução (planilha, canais e RF-PR-01)
+
+- **Estado:** `parcial` — o núcleo actual (MP por lotes + MO com taxa horária da loja + margem → preço sugerido; página **Precificação**) está descrito em [painel-ux-layout-formularios-precificacao.md](painel-ux-layout-formularios-precificacao.md) §3. A norma **RF-PR-01** ([requisitos-funcionais.md](../normativos/requisitos-funcionais.md)) prevê ainda embalagem, indiretos e markup; **RN-090 / RN-091** falam em custo total alargado e preço sugerido com margem/markup.
+- **Fonte de ideias (domínio):** ficheiro na pasta `doc/` com o nome **precificação da planilha** (texto livre; mesmo nível que `doc/projeto/`).
+
+#### Decisões de produto (alinhamento com o lojista)
+
+| Tema | Decisão |
+|------|---------|
+| **Embalagem e outros custos** | **Cadastro de custos adicionais** (lista na loja ou por receita): nome, valor por unidade **ou** percentual sobre custo variável (fechar no DEC); somam ao custo **antes** da margem. |
+| **Apps (iFood, etc.)** | **Simples:** um campo **%** (por canal ou canal único no MVP) sobre uma **referência** fixa (ex. preço sugerido ou preço de catálogo); o sistema **mostra o preço sugerido** para aquele canal. Sem comissão iterativa na primeira versão. |
+| **Mão de obra** | **Manter como hoje:** **R$/hora** na configuração da loja × tempo da receita (não implementar motor salário ÷ 4,33 nesta fase). |
+| **Desconto por quantidade** | **Cadastro pelo admin:** regras do tipo «a partir de **N** unidades → desconto **D%**» (ou tabela de escalões); usadas para **preço sugerido em lote** / etiqueta B2B, não obrigatoriamente para checkout vitrine na v1. |
+
+#### Custos fixos — como fazer bem (mercado + recomendação)
+
+**Problema:** dividir «tudo o que é fixo do mês» por **um único** produto com pouca produção infla o custo unitário e o preço fica **desproporcional** — matematicamente correcto, mas **engana na decisão** se o mix real for vários produtos.
+
+**Como o mercado costuma tratar:**
+
+1. **Margem de contribuição (muito comum em PME e food):** o preço cobre **custos variáveis + margem**; **fixos** entram na **conta global da loja** (ponto de equilíbrio: «preciso de X € de contribuição por mês para pagar aluguel+luz»), **não** diluídos automaticamente em cada SKU.
+2. **Rateio por mix (custeio ABC / horas-máquina / % receita):** empresas maiores alocam o pool fixo por **chaves** (horas de produção, % das vendidas previstas, etc.) — exige dados de **mix** e manutenção.
+3. **Orçamento mensal + unidades totais esperadas:** `fixo_mês ÷ unidades_totais_previstas_todas_linhas` — cada produto leva uma fatia **proporcional** ao seu peso no plano (não «um produto come o fixo inteiro» a menos que seja o único no plano).
+
+**Recomendação para a aplicação (faseada):**
+
+- **Fase A (segura):** cadastro de **totais fixos mensais** (aluguel, energia, …) só para **painel de referência**: mostrar «custo fixo mensal declarado» e **contribuição mensal estimada** a partir de vendas/pedidos (quando houver dados) — **sem** empurrar fixo para dentro do preço unitário por defeito.
+- **Fase B (opcional, com aviso):** o lojista **opta por** incluir fixo no cálculo do preço sugerido e escolhe **modo**: (i) **denominador global** — «unidades totais previstas no mês (soma de todas as linhas)» e cada receita usa `(fixo × participação_prevista_do_produto) ÷ unidades_previstas_desse_produto`; ou (ii) **só este produto** — campo «unidades/mês previstas» **neste** produto, com **alerta** se o valor for baixo («custo fixo por unidade fica alto — confirme o volume»).
+- **Evitar por defeito:** `fixo_mês ÷ unidades_só_deste_produto` como única regra sem contexto — é o que gera o efeito «desproporcional» quando há mais actividade na loja além desse SKU.
+
+#### Entregas técnicas sugeridas (ordem)
+
+1. **Cadastro de custos adicionais** + soma no custo da receita/produto.
+2. **Campo % por canal (app)** + **preço sugerido** derivado na UI/API.
+3. **Custos fixos** conforme Fase A; depois Fase B opcional com modos e alertas.
+4. **Regras de desconto por quantidade** (admin) + cálculo de preço para lote (ex. cento / caixa).
+
+- **Modelo de dados (proposta):** custos adicionais em tabela ou `store.config.pricing.additional_costs[]`; canais em `pricing.channels[]` (`slug`, `markup_percent`); fixos em `pricing.fixed_monthly` + flags `allocation_mode`; escalões de quantidade em `pricing.volume_discounts[]` ou entidade dedicada.
+- **Norma:** **DEC-24** em [decisoes-e-pendencias.md](decisoes-e-pendencias.md) (tabela + ADR).
+- **Próximo passo (implementação):** schema e APIs por fases conforme entregas técnicas acima; referência de % de app e soma de custos adicionais fechadas na DEC-24.
+
 ## Relatórios e analytics ampliados (produto)
 
 Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** e definições fechadas **DEC-22** em **[relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md)** (partição de estados, cupons, desconto em linha, faixa PRO).

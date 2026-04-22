@@ -2,6 +2,12 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (Documentação — precificação DEC-24 e backlog)
+
+- **DEC-24** em [decisoes-e-pendencias.md](../projeto/decisoes-e-pendencias.md): custos adicionais, canais % (preço sugerido por app), MO mantém R$/h, custos fixos (fase informativa + opt-in com modos), escalões de quantidade (admin).
+- **Backlog** [backlog.md](../projeto/backlog.md): secção **Precificação — evolução** actualizada com tabela de decisões, mercado/recomendação para fixos, ordem de entregas técnicas.
+- **UX precificação** [painel-ux-layout-formularios-precificacao.md](../projeto/painel-ux-layout-formularios-precificacao.md) §3: referência cruzada à DEC-24 e backlog.
+
 ## 2026-04-22 (IP-06 — métricas, export CSV, clientes na base, pedido manual com cliente)
 
 - **BD:** migração `20260428_0015_customer_painel_manual` — `customers.source` (`vitrine` | `painel_manual`), `contact_name`, `phone`; `email` e `password_hash` passam a opcionais (contactos só painel sem login na vitrine).

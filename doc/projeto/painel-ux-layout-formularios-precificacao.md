@@ -88,6 +88,8 @@
 
 Resposta **`RecipeOut`** inclui ainda `estimated_material_unit_cost` e `estimated_labor_unit_cost` para transparência na UI (Receitas, Precificação, gráfico de composição).
 
+**Evolução (produto, não ainda no código):** custos adicionais, canais %, fixos faseados e escalões de quantidade — **DEC-24** e prioridades em [backlog.md](backlog.md) secção **Precificação — evolução**.
+
 ---
 
 ## 4. Insumos e lotes — validade

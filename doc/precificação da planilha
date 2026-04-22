@@ -1,0 +1,206 @@
+[Norma no repositório] Decisão **DEC-24** e prioridades de implementação: `doc/projeto/decisoes-e-pendencias.md` (tabela + ADR) e `doc/projeto/backlog.md` (secção «Precificação — evolução»). O motor actual no código continua descrito em `doc/projeto/painel-ux-layout-formularios-precificacao.md` §3.
+
+---
+
+🧠 O que essa planilha faz (visão de alto nível)
+
+Ela calcula o preço do produto baseado em 5 pilares:
+
+Custo dos ingredientes (variável)
+Custo do tempo de produção (mão de obra)
+Custos adicionais (embalagem, apps, taxas)
+Custos fixos rateados
+Margem de lucro
+
+👉 Resultado:
+
+Preço unitário
+Preço por cento (com desconto)
+⚙️ COMO FUNCIONA (lógica real da planilha)
+
+Agora vamos desmontar o motor.
+
+1. 🧾 Custo dos ingredientes
+
+A lógica é:
+
+custo ingrediente = (preço / quantidade da embalagem) * quantidade usada
+Exemplo real:
+Maracujá:
+Preço: 30,17
+Embalagem: 3541g
+Uso: 550g
+custo = (30,17 / 3541) * 550 ≈ 4,68
+
+👉 Depois soma tudo:
+
+custo_material = soma dos ingredientes
+
+✔ No exemplo:
+
+35,46
+2. ⏱️ Custo da mão de obra (a parte que separa amador de profissional)
+
+Aqui tá o ouro da planilha.
+
+Inputs:
+Tempo da receita (minutos)
+Salário mensal
+Horas por dia
+Dias por semana
+Etapas:
+2.1 Calcular valor da hora:
+horas_mes = horas_dia * dias_semana * 4.33
+valor_hora = salario / horas_mes
+2.2 Converter tempo da receita:
+tempo_horas = minutos / 60
+2.3 Custo da mão de obra:
+custo_horas = valor_hora * tempo_horas
+
+✔ No exemplo:
+
+≈ 8,81
+3. 💸 Custos adicionais
+
+Inclui:
+
+Embalagem
+Taxa de apps (iFood, Rappi, etc)
+Outros custos
+Apps:
+taxa_app = percentual * preço_base
+
+Mas aqui tem um detalhe estratégico:
+
+👉 A planilha calcula isso antes do preço final e depois ajusta.
+
+✔ Exemplo:
+
+iFood = 10%
+Rappi = 10%
+4. 🏢 Custos fixos (rateio inteligente)
+
+Essa é a parte que quase ninguém faz.
+
+Entrada:
+Custos fixos mensais (ex: 700)
+A planilha distribui isso por unidade:
+custo_fixo_unitario = custo_fixo / produção_mensal_estimada
+
+✔ Resultado no exemplo:
+
+≈ 0,68 por unidade
+5. 📈 Margem de lucro
+
+Simples:
+
+lucro = total_parcial * percentual_lucro
+
+✔ Exemplo:
+
+50% → 22,31
+🧮 CÁLCULO FINAL
+
+Agora junta tudo:
+
+total_parcial =
+    custo_material
+  + custo_horas
+  + custos_adicionais
+  + comissões
+  + impostos
+
+Depois:
+
+preço_final =
+    total_parcial
+  + lucro
+  + custo_fixo_unitario
+🎯 OUTPUTS DA PLANILHA
+
+Ela gera:
+
+💰 Preço unitário:
+≈ 4,50
+📦 Preço do cento:
+preço_cento = preço_unitario * 100 * (1 - desconto)
+
+✔ Exemplo:
+
+5% desconto → 428,30
+🧠 O QUE ISSO SIGNIFICA (nível empresário)
+
+Essa planilha resolve 3 problemas críticos:
+
+1. Evita prejuízo invisível
+
+(tempo + custo fixo normalmente ignorados)
+
+2. Padroniza preço
+
+(cada produto segue a mesma lógica)
+
+3. Permite escalar
+
+(dá pra automatizar no sistema)
+
+🧩 COMO EXPLICAR ISSO PRO CURSOR (modelo direto)
+
+Aqui vai o prompt praticamente pronto:
+
+🧠 Modelo de domínio
+Criar sistema de precificação baseado em:
+
+1. Ingredientes:
+- nome
+- preco_embalagem
+- quantidade_embalagem
+- quantidade_usada
+
+2. Receita:
+- tempo_preparo_minutos
+- rendimento
+
+3. Configurações:
+- salario_mensal
+- horas_dia
+- dias_semana
+- margem_lucro
+- custo_fixo_mensal
+- taxa_apps (%)
+- custo_embalagem
+- desconto_cento
+⚙️ Regras de cálculo
+1. custo_material =
+  soma(preco_embalagem / quantidade_embalagem * quantidade_usada)
+
+2. valor_hora =
+  salario / (horas_dia * dias_semana * 4.33)
+
+3. custo_horas =
+  valor_hora * (tempo_preparo / 60)
+
+4. custo_fixo_unitario =
+  custo_fixo_mensal / produção_mensal_estimada
+
+5. total_parcial =
+  custo_material + custo_horas + custos_adicionais
+
+6. lucro =
+  total_parcial * margem_lucro
+
+7. preco_final =
+  total_parcial + lucro + custo_fixo_unitario
+
+8. preco_cento =
+  preco_final * 100 * (1 - desconto_cento)
+🚀 Insight avançado (isso aqui vale dinheiro)
+
+Você pode transformar isso em um diferencial do seu SaaS:
+
+🔥 Feature premium:
+“Simulação de preço ideal”
+“Comparação lucro vs volume”
+“Preço mínimo sustentável”
+
+👉 Isso vira argumento de venda, não só funcionalidade.
