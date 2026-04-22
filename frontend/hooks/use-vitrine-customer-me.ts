@@ -5,7 +5,12 @@ import { useCallback, useEffect, useState } from "react";
 import { getVitrineCustomerTokens } from "@/lib/vitrine/customer-session";
 import { vitrineCustomerFetch } from "@/lib/vitrine/vitrine-customer-fetch";
 
-export type VitrineCustomerMe = { email: string; store_slug: string };
+export type VitrineCustomerMe = {
+  email: string | null;
+  contact_name: string | null;
+  phone: string | null;
+  store_slug: string;
+};
 
 export function useVitrineCustomerMe(storeSlug: string) {
   const [me, setMe] = useState<VitrineCustomerMe | null>(null);

@@ -6,10 +6,13 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.api.handlers import customers_painel as customers_painel_handlers
+from app.models.customer import Customer
 from app.models.enums import OrderStatus
 from app.models.order import Order, OrderItem, OrderStatusHistory
 from app.models.user import User
 from app.schemas.orders import OrderCreate, OrderStatusPatch
+from app.services.customer_contact import order_contact_snapshot
 from app.services.order_flow import apply_status_change
 from app.services.order_line_items import get_product_for_order_line
 from app.services.order_queries import list_orders_for_store
@@ -50,12 +53,35 @@ def create_order(
     else:
         key = None
 
+    resolved_customer: Customer | None = None
+    if body.new_customer is not None:
+        resolved_customer = customers_painel_handlers.create_customer_for_store(
+            db, current, body.new_customer
+        )
+    elif body.customer_id is not None:
+        c = db.get(Customer, body.customer_id)
+        if c is None or c.store_id != current.store_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cliente não encontrado.",
+            )
+        resolved_customer = c
+
+    cname: str | None = None
+    cphone: str | None = None
+    if resolved_customer is not None:
+        cname, cphone = order_contact_snapshot(resolved_customer)
+
     order = Order(
         store_id=current.store_id,
         status=OrderStatus.rascunho,
         customer_note=body.customer_note,
         idempotency_key=key,
         stock_committed=False,
+        source="painel",
+        customer_id=resolved_customer.id if resolved_customer else None,
+        contact_name=cname,
+        contact_phone=cphone,
     )
     for line in body.items:
         p = get_product_for_order_line(

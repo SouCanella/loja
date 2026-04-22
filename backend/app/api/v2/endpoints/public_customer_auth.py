@@ -89,6 +89,11 @@ def customer_me_v2(
         )
     return CustomerMeEnvelope(
         success=True,
-        data=CustomerMeOut(email=customer.email, store_slug=store.slug),
+        data=CustomerMeOut(
+            email=customer.email,
+            contact_name=customer.contact_name,
+            phone=customer.phone,
+            store_slug=store.slug,
+        ),
         errors=None,
     )

@@ -23,5 +23,7 @@ class CustomerAuthResponse(TokenResponse):
 
 
 class CustomerMeOut(BaseModel):
-    email: str
+    email: str | None = None
+    contact_name: str | None = None
+    phone: str | None = None
     store_slug: str

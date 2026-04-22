@@ -31,6 +31,11 @@ Commits na `main` com mensagem `feat(phase-0): …` fecham o registro técnico n
 
 Planeamento de incrementos (IP-03, IP-04, IP-06, MVP, BE-05, MA-05) com critérios mínimos: [incrementos-produto-mvp-be05.md](incrementos-produto-mvp-be05.md). Auditoria de dependências (MA-08): [seguranca-dependencias-ma08.md](../execucao/seguranca-dependencias-ma08.md). RLS (MA-05): [ma05-rls-postgres-proposta.md](../execucao/ma05-rls-postgres-proposta.md).
 
+### Clientes — telefone duplicado na mesma loja (pendência)
+
+- **Estado:** `parcial` — é possível gravar vários contactos com o mesmo telefone; não há índice único.
+- **Próximo passo:** definir regra de negócio (normalização, aviso na UI, merge) antes de impor `UNIQUE (store_id, phone)` ou equivalente. Referência: [CHANGELOG-FASES.md](../execucao/CHANGELOG-FASES.md) **2026-04-22**.
+
 ## Relatórios e analytics ampliados (produto)
 
 Pedido de **métricas de vitrine** (visitas, vistas, carrinho, geo, produtos mais vistos) e **KPIs operacionais** (por hora, confirmado/pendente, património, cupons, descontos, etc.): ver **[relatorios-analytics-roadmap.md](relatorios-analytics-roadmap.md)** e definições fechadas **DEC-22** em **[relatorios-definicoes-negocio.md](relatorios-definicoes-negocio.md)** (partição de estados, cupons, desconto em linha, faixa PRO).

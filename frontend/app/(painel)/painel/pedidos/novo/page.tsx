@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
+import { type PainelCustomerRow } from "@/components/painel/clientes/ClientesVitrineAccountsTable";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
 import { apiPainelJson, formatBRL, PainelApiError } from "@/lib/painel-api";
 import { painelBtnDangerClass, painelBtnLinkClass, painelBtnPrimaryClass, painelBtnSecondaryClass } from "@/lib/painel-button-classes";
@@ -26,9 +27,19 @@ type OrderDetail = {
   id: string;
 };
 
+function formatCustomerOption(c: PainelCustomerRow): string {
+  const parts = [c.contact_name, c.phone, c.email].filter(Boolean);
+  return parts.length ? parts.join(" · ") : c.id;
+}
+
 export default function PainelPedidoNovoPage() {
   const router = useRouter();
   const [products, setProducts] = useState<ProductRow[] | null>(null);
+  const [customers, setCustomers] = useState<PainelCustomerRow[] | null>(null);
+  const [customerSel, setCustomerSel] = useState<string>("");
+  const [newContactName, setNewContactName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newEmailOptional, setNewEmailOptional] = useState("");
   const [lines, setLines] = useState<Line[]>([{ product_id: "", quantity: "1", line_note: "" }]);
   const [customerNote, setCustomerNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +51,9 @@ export default function PainelPedidoNovoPage() {
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Não foi possível carregar produtos.");
       });
+    void apiPainelJson<PainelCustomerRow[]>("/api/v2/customers")
+      .then(setCustomers)
+      .catch(() => setCustomers([]));
   }, []);
 
   function addLine() {
@@ -79,6 +93,27 @@ export default function PainelPedidoNovoPage() {
       setError("Adicione pelo menos um item.");
       return;
     }
+    const payload: Record<string, unknown> = {
+      items,
+      customer_note: customerNote.trim() || null,
+    };
+    if (customerSel === "__new__") {
+      const name = newContactName.trim();
+      const phone = newPhone.trim();
+      const emOpt = newEmailOptional.trim();
+      if (!name || phone.length < 3) {
+        setError("Para novo contacto, indique nome e telefone (mínimo 3 caracteres no telefone).");
+        return;
+      }
+      payload.new_customer = {
+        contact_name: name,
+        phone,
+        ...(emOpt ? { email: emOpt } : {}),
+      };
+    } else if (customerSel) {
+      payload.customer_id = customerSel;
+    }
+
     setSaving(true);
     try {
       const created = await apiPainelJson<OrderDetail>("/api/v2/orders", {
@@ -86,10 +121,7 @@ export default function PainelPedidoNovoPage() {
         headers: {
           "Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({
-          items,
-          customer_note: customerNote.trim() || null,
-        }),
+        body: JSON.stringify(payload),
       });
       router.push(`/painel/pedidos/${created.id}`);
     } catch (err: unknown) {
@@ -125,6 +157,63 @@ export default function PainelPedidoNovoPage() {
         </p>
       ) : (
         <form onSubmit={submit} className="mt-6 space-y-6">
+          <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900">Cliente (opcional)</h2>
+            <p className="text-xs text-slate-500">
+              Associe a um contacto da base ou crie um novo ao gravar o pedido (origem Painel).
+            </p>
+            <label className="block text-sm">
+              <span className="text-slate-600">Contacto</span>
+              <select
+                className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                value={customerSel}
+                onChange={(e) => setCustomerSel(e.target.value)}
+              >
+                <option value="">— Sem cliente —</option>
+                {(customers ?? []).map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {formatCustomerOption(c)}
+                  </option>
+                ))}
+                <option value="__new__">+ Novo contacto (gravar na base)</option>
+              </select>
+            </label>
+            {customerSel === "__new__" ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <label className="block text-sm">
+                  <span className="text-slate-600">Nome</span>
+                  <input
+                    type="text"
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                    value={newContactName}
+                    onChange={(e) => setNewContactName(e.target.value)}
+                    placeholder="Nome do cliente"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="text-slate-600">Telefone</span>
+                  <input
+                    type="tel"
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="11999999999"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="text-slate-600">E-mail (opcional)</span>
+                  <input
+                    type="email"
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                    value={newEmailOptional}
+                    onChange={(e) => setNewEmailOptional(e.target.value)}
+                    placeholder="opcional@exemplo.com"
+                  />
+                </label>
+              </div>
+            ) : null}
+          </div>
+
           <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="text-sm font-semibold text-slate-900">Itens</h2>
             {lines.map((line, index) => (

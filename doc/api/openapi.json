@@ -1925,6 +1925,73 @@
         }
       }
     },
+    "/api/v2/dashboard/customer-order-stats/export": {
+      "get": {
+        "tags": [
+          "dashboard-v2"
+        ],
+        "summary": "Export Customer Order Stats Segment Csv",
+        "operationId": "export_customer_order_stats_segment_csv_api_v2_dashboard_customer_order_stats_export_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date To"
+            }
+          },
+          {
+            "name": "segment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Segmento: inactive, buyers_all, buyers_repeat, buyers_single",
+              "title": "Segment"
+            },
+            "description": "Segmento: inactive, buyers_all, buyers_repeat, buyers_single"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/categories": {
       "get": {
         "tags": [
@@ -4490,8 +4557,37 @@
       "CustomerMeOut": {
         "properties": {
           "email": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Email"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
           },
           "store_slug": {
             "type": "string",
@@ -4500,7 +4596,6 @@
         },
         "type": "object",
         "required": [
-          "email",
           "store_slug"
         ],
         "title": "CustomerMeOut"
@@ -4512,8 +4607,19 @@
             "format": "uuid",
             "title": "Customer Id"
           },
-          "email": {
+          "display_label": {
             "type": "string",
+            "title": "Display Label"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Email"
           },
           "order_count": {
@@ -4530,7 +4636,7 @@
         "type": "object",
         "required": [
           "customer_id",
-          "email",
+          "display_label",
           "order_count",
           "last_order_at"
         ],
@@ -4596,6 +4702,54 @@
             "type": "integer",
             "minimum": 0.0,
             "title": "Accounts Without Orders In Period"
+          },
+          "total_orders_with_account_in_period": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total Orders With Account In Period"
+          },
+          "repeat_buyers_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Repeat Buyers Count"
+          },
+          "single_purchase_buyers_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Single Purchase Buyers Count"
+          },
+          "avg_orders_per_buyer": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Orders Per Buyer"
+          },
+          "recompra_rate_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recompra Rate Pct"
+          },
+          "avg_days_between_orders_repeat_buyers": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Days Between Orders Repeat Buyers"
           }
         },
         "type": "object",
@@ -4603,7 +4757,10 @@
           "stats",
           "registered_accounts_count",
           "accounts_with_orders_in_period",
-          "accounts_without_orders_in_period"
+          "accounts_without_orders_in_period",
+          "total_orders_with_account_in_period",
+          "repeat_buyers_count",
+          "single_purchase_buyers_count"
         ],
         "title": "CustomerOrderStatsOut"
       },
@@ -5717,6 +5874,28 @@
               }
             ],
             "title": "Customer Note"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "new_customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StaffCustomerCreate"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -7842,24 +8021,38 @@
       },
       "StaffCustomerCreate": {
         "properties": {
-          "email": {
+          "contact_name": {
             "type": "string",
-            "format": "email",
-            "title": "Email"
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Contact Name"
           },
-          "password": {
+          "phone": {
             "type": "string",
-            "maxLength": 128,
-            "minLength": 8,
-            "title": "Password"
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "Phone"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
           }
         },
         "type": "object",
         "required": [
-          "email",
-          "password"
+          "contact_name",
+          "phone"
         ],
-        "title": "StaffCustomerCreate"
+        "title": "StaffCustomerCreate",
+        "description": "Contacto no painel (`painel_manual`). E-mail opcional; sem palavra-passe na vitrine."
       },
       "StaffCustomerEnvelope": {
         "properties": {
@@ -7946,9 +8139,46 @@
             "format": "uuid",
             "title": "Id"
           },
-          "email": {
+          "source": {
             "type": "string",
+            "title": "Source"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Email"
+          },
+          "has_vitrine_login": {
+            "type": "boolean",
+            "title": "Has Vitrine Login"
           },
           "created_at": {
             "type": "string",
@@ -7959,7 +8189,11 @@
         "type": "object",
         "required": [
           "id",
+          "source",
+          "contact_name",
+          "phone",
           "email",
+          "has_vitrine_login",
           "created_at"
         ],
         "title": "StaffCustomerOut"

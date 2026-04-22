@@ -104,6 +104,32 @@ export async function apiPainelJson<T>(
   return unwrapV2Success<T>(raw);
 }
 
+/** GET autenticado que devolve corpo binário (CSV, etc.) — não usa envelope JSON. */
+export async function apiPainelBlob(path: string): Promise<Blob> {
+  let token = getAccessToken();
+  if (!token) {
+    throw new PainelApiError("Faça login para continuar.", 401);
+  }
+  const pathV2 = toApiV2Path(path.startsWith("/") ? path : `/${path}`);
+  const url = `${getApiBaseUrl()}${pathV2.startsWith("/") ? pathV2 : `/${pathV2}`}`;
+  const doFetch = (bearer: string) =>
+    fetch(url, {
+      headers: { Authorization: `Bearer ${bearer}` },
+    });
+  let res = await doFetch(token);
+  if (res.status === 401 && getRefreshToken()) {
+    const next = await refreshAccessToken();
+    if (next) {
+      res = await doFetch(next);
+    }
+  }
+  if (!res.ok) {
+    const raw = await res.json().catch(() => ({}));
+    throw new PainelApiError(errorMessageFromResponse(raw, res.status), res.status);
+  }
+  return res.blob();
+}
+
 /** Upload multipart para `POST /api/v2/media/upload` (MA-03). Devolve URL pública do ficheiro. */
 export async function apiPainelMediaUpload(
   purpose: "product" | "vitrine_logo" | "vitrine_hero",

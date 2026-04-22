@@ -5,13 +5,16 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { ClientesOrdersByContactSection } from "@/components/painel/clientes/ClientesOrdersByContactSection";
 import { ClientesVitrineAccountForm } from "@/components/painel/clientes/ClientesVitrineAccountForm";
-import { ClientesVitrineAccountsTable } from "@/components/painel/clientes/ClientesVitrineAccountsTable";
+import {
+  ClientesVitrineAccountsTable,
+  type PainelCustomerRow,
+} from "@/components/painel/clientes/ClientesVitrineAccountsTable";
 import { PainelPaginationBar } from "@/components/painel/PainelPaginationBar";
 import { PainelTitleHelp } from "@/components/painel/FieldTip";
 import { PanelCard } from "@/components/painel/PanelCard";
 import { PainelDateRangeFields } from "@/components/painel/PainelDateRangeFields";
 import { PainelStickyHeading } from "@/components/painel/PainelStickyHeading";
-import { apiPainelJson, PainelApiError } from "@/lib/painel-api";
+import { apiPainelBlob, apiPainelJson, PainelApiError } from "@/lib/painel-api";
 import { painelBtnPrimaryClass } from "@/lib/painel-button-classes";
 import {
   painelTableCellClass,
@@ -29,15 +32,10 @@ import {
 } from "@/lib/painel-clientes-helpers";
 import { slicePage, usePainelPagination } from "@/lib/painel-pagination";
 
-type VitrineCustomer = {
-  id: string;
-  email: string;
-  created_at: string;
-};
-
 type CustomerOrderStatRow = {
   customer_id: string;
-  email: string;
+  display_label: string;
+  email: string | null;
   order_count: number;
   last_order_at: string;
 };
@@ -47,6 +45,12 @@ type CustomerOrderStatsPayload = {
   registered_accounts_count: number;
   accounts_with_orders_in_period: number;
   accounts_without_orders_in_period: number;
+  total_orders_with_account_in_period: number;
+  repeat_buyers_count: number;
+  single_purchase_buyers_count: number;
+  avg_orders_per_buyer: number | null;
+  recompra_rate_pct: number | null;
+  avg_days_between_orders_repeat_buyers: number | null;
 };
 
 function formatLocalIsoDate(d: Date): string {
@@ -65,27 +69,32 @@ function defaultCustomerStatsRange(): { from: string; to: string } {
 
 export default function ClientesPage() {
   const [rows, setRows] = useState<OrderRow[] | null>(null);
-  const [vitrineCustomers, setVitrineCustomers] = useState<VitrineCustomer[] | null>(null);
+  const [painelCustomers, setPainelCustomers] = useState<PainelCustomerRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [vitrineError, setVitrineError] = useState<string | null>(null);
   const [filterQuery, setFilterQuery] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [newPassword2, setNewPassword2] = useState("");
+  const [newContactName, setNewContactName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newEmailOptional, setNewEmailOptional] = useState("");
   const [vitrineMsg, setVitrineMsg] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [statsRange, setStatsRange] = useState(defaultCustomerStatsRange);
   const [custOrderStats, setCustOrderStats] = useState<CustomerOrderStatsPayload | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
+  const [exportSegment, setExportSegment] = useState<
+    "inactive" | "buyers_all" | "buyers_repeat" | "buyers_single"
+  >("inactive");
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
-  const loadVitrineCustomers = useCallback(() => {
+  const loadPainelCustomers = useCallback(() => {
     setVitrineError(null);
-    void apiPainelJson<VitrineCustomer[]>("/api/v2/customers")
-      .then(setVitrineCustomers)
+    void apiPainelJson<PainelCustomerRow[]>("/api/v2/customers")
+      .then(setPainelCustomers)
       .catch((e: unknown) => {
-        setVitrineCustomers([]);
+        setPainelCustomers([]);
         setVitrineError(
-          e instanceof PainelApiError ? e.message : "Não foi possível carregar as contas na vitrine.",
+          e instanceof PainelApiError ? e.message : "Não foi possível carregar os clientes.",
         );
       });
   }, []);
@@ -96,8 +105,8 @@ export default function ClientesPage() {
       .catch((e: unknown) => {
         setError(e instanceof PainelApiError ? e.message : "Não foi possível carregar os pedidos.");
       });
-    void loadVitrineCustomers();
-  }, [loadVitrineCustomers]);
+    void loadPainelCustomers();
+  }, [loadPainelCustomers]);
 
   useEffect(() => {
     setStatsError(null);
@@ -151,35 +160,35 @@ export default function ClientesPage() {
     [customerOrderStatRows, statsPagination.page, statsPagination.pageSize],
   );
 
-  async function onCreateVitrineCustomer(e: FormEvent) {
+  async function onCreatePainelCustomer(e: FormEvent) {
     e.preventDefault();
     setVitrineMsg(null);
-    const em = newEmail.trim();
-    if (!em) {
-      setVitrineMsg("Indique o e-mail.");
+    const name = newContactName.trim();
+    const phone = newPhone.trim();
+    const emOpt = newEmailOptional.trim();
+    if (!name) {
+      setVitrineMsg("Indique o nome.");
       return;
     }
-    if (newPassword.length < 8) {
-      setVitrineMsg("A palavra-passe deve ter pelo menos 8 caracteres.");
-      return;
-    }
-    if (newPassword !== newPassword2) {
-      setVitrineMsg("As palavras-passe não coincidem.");
+    if (phone.length < 3) {
+      setVitrineMsg("Indique um telefone válido (pelo menos 3 caracteres).");
       return;
     }
     setCreating(true);
     try {
-      await apiPainelJson<VitrineCustomer>("/api/v2/customers", {
+      const body: Record<string, string> = { contact_name: name, phone };
+      if (emOpt) body.email = emOpt;
+      await apiPainelJson<PainelCustomerRow>("/api/v2/customers", {
         method: "POST",
-        body: JSON.stringify({ email: em, password: newPassword }),
+        body: JSON.stringify(body),
       });
-      setNewEmail("");
-      setNewPassword("");
-      setNewPassword2("");
-      setVitrineMsg("Conta criada. O cliente pode iniciar sessão na vitrine com este e-mail.");
-      void loadVitrineCustomers();
+      setNewContactName("");
+      setNewPhone("");
+      setNewEmailOptional("");
+      setVitrineMsg("Cliente gravado na base (origem Painel).");
+      void loadPainelCustomers();
     } catch (err: unknown) {
-      setVitrineMsg(err instanceof PainelApiError ? err.message : "Não foi possível criar a conta.");
+      setVitrineMsg(err instanceof PainelApiError ? err.message : "Não foi possível gravar o cliente.");
     } finally {
       setCreating(false);
     }
@@ -188,34 +197,34 @@ export default function ClientesPage() {
   return (
     <>
       <PainelStickyHeading>
-        <PainelTitleHelp tip="Contactos agrupados a partir dos pedidos (telefone, nome ou cliente com sessão na vitrine). Pode criar contas para o cliente iniciar sessão na loja online com e-mail e palavra-passe.">
+        <PainelTitleHelp tip="Contactos agrupados a partir dos pedidos (telefone, nome ou cliente na base). Pode gravar clientes com nome e telefone (origem Painel); o e-mail é opcional e não define palavra-passe na vitrine.">
           <h1 className="text-2xl font-semibold text-slate-900">Clientes</h1>
         </PainelTitleHelp>
       </PainelStickyHeading>
 
       <ClientesVitrineAccountForm
-        newEmail={newEmail}
-        newPassword={newPassword}
-        newPassword2={newPassword2}
-        onNewEmailChange={setNewEmail}
-        onNewPasswordChange={setNewPassword}
-        onNewPassword2Change={setNewPassword2}
-        vitrineMsg={vitrineMsg}
+        contactName={newContactName}
+        phone={newPhone}
+        emailOptional={newEmailOptional}
+        onContactNameChange={setNewContactName}
+        onPhoneChange={setNewPhone}
+        onEmailOptionalChange={setNewEmailOptional}
+        msg={vitrineMsg}
         creating={creating}
-        onSubmit={onCreateVitrineCustomer}
+        onSubmit={onCreatePainelCustomer}
       />
 
       {vitrineError ? <p className="mt-4 text-sm text-amber-800">{vitrineError}</p> : null}
 
-      {vitrineCustomers && vitrineCustomers.length > 0 ? (
-        <ClientesVitrineAccountsTable vitrineCustomers={vitrineCustomers} />
-      ) : vitrineCustomers && vitrineCustomers.length === 0 && !vitrineError ? (
-        <p className="mt-4 text-sm text-slate-500">Ainda não há contas de vitrine criadas pelo painel.</p>
+      {painelCustomers && painelCustomers.length > 0 ? (
+        <ClientesVitrineAccountsTable customers={painelCustomers} />
+      ) : painelCustomers && painelCustomers.length === 0 && !vitrineError ? (
+        <p className="mt-4 text-sm text-slate-500">Ainda não há clientes gravados na base.</p>
       ) : null}
 
       <PanelCard className="mt-8">
-        <PainelTitleHelp tip="Número de pedidos no intervalo de datas (calendário) para cada cliente com login na vitrine. Ordenação: mais pedidos em primeiro (até 100 linhas). O resumo indica contas registadas e quantas não tiveram pedidos no período (IP-06). As datas seguem o calendário local e são enviadas como dia civil (AAAA-MM-DD).">
-          <h2 className="text-sm font-semibold text-slate-800">Actividade por conta (vitrine)</h2>
+        <PainelTitleHelp tip="Pedidos no intervalo ligados a um cliente na base (vitrine ou Painel). Ordenação: mais pedidos em primeiro (até 100 linhas). Recompra, frequência e exportação CSV (IP-06). As datas são dia civil (AAAA-MM-DD).">
+          <h2 className="text-sm font-semibold text-slate-800">Actividade por cliente</h2>
         </PainelTitleHelp>
         {custOrderStats && !statsError ? (
           <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/90 px-4 py-3 text-sm text-slate-700">
@@ -225,7 +234,7 @@ export default function ClientesPage() {
                 <span className="tabular-nums font-medium text-slate-800">
                   {custOrderStats.registered_accounts_count}
                 </span>{" "}
-                conta(s) de vitrine registada(s)
+                cliente(s) na base
               </li>
               <li>
                 <span className="tabular-nums font-medium text-slate-800">
@@ -238,6 +247,49 @@ export default function ClientesPage() {
                   {custOrderStats.accounts_without_orders_in_period}
                 </span>{" "}
                 sem pedidos neste intervalo
+              </li>
+              <li>
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.total_orders_with_account_in_period}
+                </span>{" "}
+                pedido(s) com conta no período
+              </li>
+              <li>
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.repeat_buyers_count}
+                </span>{" "}
+                comprador(es) com recompra (≥2 pedidos) ·{" "}
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.single_purchase_buyers_count}
+                </span>{" "}
+                só com uma compra
+              </li>
+              <li>
+                Média de pedidos por comprador:{" "}
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.avg_orders_per_buyer ?? "—"}
+                </span>
+                {" · "}
+                Taxa de recompra (entre compradores):{" "}
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.recompra_rate_pct != null
+                    ? `${custOrderStats.recompra_rate_pct.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 2,
+                      })}%`
+                    : "—"}
+                </span>
+              </li>
+              <li>
+                Média de dias entre pedidos (quem recompra):{" "}
+                <span className="tabular-nums font-medium text-slate-800">
+                  {custOrderStats.avg_days_between_orders_repeat_buyers != null
+                    ? custOrderStats.avg_days_between_orders_repeat_buyers.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 2,
+                      })
+                    : "—"}
+                </span>
               </li>
             </ul>
           </div>
@@ -252,14 +304,66 @@ export default function ClientesPage() {
             onFromChange={(v) => setStatsRange((r) => ({ ...r, from: v }))}
             onToChange={(v) => setStatsRange((r) => ({ ...r, to: v }))}
           />
+          <div className="flex min-w-[12rem] flex-col gap-1">
+            <label htmlFor="cli-export-seg" className="text-xs font-medium text-slate-600">
+              Segmento CSV
+            </label>
+            <select
+              id="cli-export-seg"
+              className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-800"
+              value={exportSegment}
+              onChange={(e) =>
+                setExportSegment(
+                  e.target.value as "inactive" | "buyers_all" | "buyers_repeat" | "buyers_single",
+                )
+              }
+            >
+              <option value="inactive">Sem pedidos no período</option>
+              <option value="buyers_all">Todos com pedidos</option>
+              <option value="buyers_repeat">Recompra (≥2 pedidos)</option>
+              <option value="buyers_single">Uma compra</option>
+            </select>
+          </div>
+          <button
+            type="button"
+            disabled={exportBusy}
+            className={`inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50 disabled:opacity-50`}
+            onClick={() => {
+              setExportError(null);
+              setExportBusy(true);
+              const q = new URLSearchParams({
+                date_from: statsRange.from,
+                date_to: statsRange.to,
+                segment: exportSegment,
+              });
+              void apiPainelBlob(`/api/v2/dashboard/customer-order-stats/export?${q.toString()}`)
+                .then((blob) => {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `clientes_${exportSegment}_${statsRange.from}_${statsRange.to}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                })
+                .catch((e: unknown) => {
+                  setExportError(
+                    e instanceof PainelApiError ? e.message : "Não foi possível exportar o CSV.",
+                  );
+                })
+                .finally(() => setExportBusy(false));
+            }}
+          >
+            {exportBusy ? "A exportar…" : "Exportar CSV"}
+          </button>
         </div>
+        {exportError ? <p className="mt-2 text-sm text-amber-800">{exportError}</p> : null}
         {statsError ? <p className="mt-3 text-sm text-amber-800">{statsError}</p> : null}
         {custOrderStats === null && !statsError ? (
           <p className="mt-4 text-sm text-slate-500">A carregar métricas…</p>
         ) : null}
         {custOrderStats && custOrderStats.stats.length === 0 ? (
           <p className="mt-4 text-sm text-slate-600">
-            Nenhum pedido com conta na vitrine neste período.
+            Nenhum pedido ligado a cliente na base neste período.
           </p>
         ) : null}
         {custOrderStats && custOrderStats.stats.length > 0 ? (
@@ -267,7 +371,7 @@ export default function ClientesPage() {
             <table className={painelTableClass}>
               <thead className={painelTableTheadClass}>
                 <tr>
-                  <th className={painelTableCellClass}>E-mail</th>
+                  <th className={painelTableCellClass}>Contacto</th>
                   <th className={`${painelTableCellClass} text-right`}>Pedidos</th>
                   <th className={painelTableCellClass}>Último pedido</th>
                 </tr>
@@ -275,7 +379,9 @@ export default function ClientesPage() {
               <tbody className={painelTableTbodyClass}>
                 {pagedCustomerOrderStats.map((s) => (
                   <tr key={s.customer_id}>
-                    <td className={`${painelTableCellClass} font-medium text-slate-900`}>{s.email}</td>
+                    <td className={`${painelTableCellClass} font-medium text-slate-900`}>
+                      {s.display_label}
+                    </td>
                     <td className={`${painelTableCellClass} text-right tabular-nums`}>
                       {s.order_count}
                     </td>

@@ -25,9 +25,17 @@ class Customer(Base):
         nullable=False,
         index=True,
     )
-    email: Mapped[str] = mapped_column(String(255), nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    #: `vitrine`: registo público; `painel_manual`: criado no painel (sem login obrigatório).
+    source: Mapped[str] = mapped_column(String(32), nullable=False, server_default="vitrine")
+    contact_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    phone: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    email: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def has_vitrine_login(self) -> bool:
+        return self.password_hash is not None
 
     store: Mapped["Store"] = relationship("Store", back_populates="customers")
     orders: Mapped[list["Order"]] = relationship(

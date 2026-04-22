@@ -2,6 +2,20 @@
 
 Registro opcional de marcos por data.
 
+## 2026-04-22 (IP-06 — métricas, export CSV, clientes na base, pedido manual com cliente)
+
+- **BD:** migração `20260428_0015_customer_painel_manual` — `customers.source` (`vitrine` | `painel_manual`), `contact_name`, `phone`; `email` e `password_hash` passam a opcionais (contactos só painel sem login na vitrine).
+- **API — métricas:** `GET /api/v2/dashboard/customer-order-stats` — `CustomerOrderStatsOut` com totais de pedidos com conta, recompra, compradores de uma compra, `avg_orders_per_buyer`, `recompra_rate_pct`, `avg_days_between_orders_repeat_buyers`; `CustomerOrderStatOut.display_label` (e-mail ou nome · telefone).
+- **API — exportação:** `GET /api/v2/dashboard/customer-order-stats/export?date_from=&date_to=&segment=` — CSV (`text/csv`), segmentos `inactive` | `buyers_all` | `buyers_repeat` | `buyers_single`; primeira coluna `contacto`. Handler `customer_segment_export.py`; clientes inactivos via `NOT EXISTS`.
+- **API — clientes painel:** `POST /api/v2/customers` com `contact_name`, `phone`, `email?` (origem `painel_manual`, sem palavra-passe); `StaffCustomerOut` inclui `source`, `has_vitrine_login`.
+- **API — pedido manual:** `POST /api/v2/orders` aceita `customer_id` **ou** `new_customer` (mesmo shape que o painel); pedido com `source="painel"`, `contact_name`/`contact_phone` copiados do cliente; exclusividade mútua (422 se ambos).
+- **API — vitrine:** `GET .../customers/me` — `CustomerMeOut` com `email`, `contact_name`, `phone` opcionais.
+- **Código partilhado:** `app/services/customer_contact.py` (`contact_display_label`, `order_contact_snapshot`).
+- **Frontend:** `/painel/clientes` — resumo, tabela por origem, export CSV (`apiPainelBlob`); `/painel/pedidos/novo` — cliente opcional (existente ou novo contacto); vitrine conta — rótulo quando não há e-mail.
+- **Testes:** `test_ip_demands_product.py`, `test_customers_painel_v2.py`, `test_orders_painel_customer_v2.py`.
+- **Contrato:** `doc/api/openapi.json` (`make openapi-export`).
+- **Pendência de produto:** regra de **unicidade / normalização de telefone** na mesma loja — ver [backlog.md](../projeto/backlog.md).
+
 ## 2026-04-21 (IP-06 — resumo de contas vitrine no período)
 
 - **API:** `CustomerOrderStatsOut` com `registered_accounts_count`, `accounts_with_orders_in_period`, `accounts_without_orders_in_period` (`customer_order_stats.py`).

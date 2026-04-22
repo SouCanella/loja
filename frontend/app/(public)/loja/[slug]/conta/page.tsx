@@ -83,7 +83,11 @@ export default function VitrineContaPage() {
       ) : me ? (
         <div className="mt-6 rounded-2xl border border-loja-primary/20 bg-white/90 p-5 shadow-loja">
           <p className="text-sm text-loja-muted">Sessão iniciada como</p>
-          <p className="mt-1 font-medium text-loja-ink">{me.email}</p>
+          <p className="mt-1 font-medium text-loja-ink">
+            {me.email?.trim() ||
+              [me.contact_name, me.phone].filter(Boolean).join(" · ") ||
+              "Cliente"}
+          </p>
           <button
             type="button"
             className="mt-4 w-full rounded-xl bg-loja-primary px-4 py-2.5 text-sm font-semibold text-white shadow-loja hover:opacity-95"

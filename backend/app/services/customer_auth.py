@@ -15,12 +15,19 @@ from app.core.security import (
 from app.models.customer import Customer
 from app.schemas.auth import TokenResponse
 from app.schemas.customers_public import CustomerAuthResponse
+from app.services.customer_contact import contact_display_label
 
 
 def issue_tokens_for_customer(customer: Customer) -> TokenResponse:
+    label = contact_display_label(
+        customer_id=customer.id,
+        email=customer.email,
+        contact_name=customer.contact_name,
+        phone=customer.phone,
+    )
     extra = {
         "store_id": str(customer.store_id),
-        "email": customer.email,
+        "email": label,
         "role": "customer",
     }
     access = create_access_token(str(customer.id), extra)
@@ -39,6 +46,7 @@ def persist_new_customer(
     em = email.lower().strip()
     cust = Customer(
         store_id=store_id,
+        source="vitrine",
         email=em,
         password_hash=hash_password(password),
     )
@@ -81,7 +89,11 @@ def login_customer(
     cust = db.scalars(
         select(Customer).where(Customer.store_id == store_id, Customer.email == em)
     ).first()
-    if cust is None or not verify_password(password, cust.password_hash):
+    if (
+        cust is None
+        or cust.password_hash is None
+        or not verify_password(password, cust.password_hash)
+    ):
         return None
     tokens = issue_tokens_for_customer(cust)
     return CustomerAuthResponse(
